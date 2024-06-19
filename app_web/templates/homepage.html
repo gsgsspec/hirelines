@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <!-- SEO Meta Tags -->
+        <meta name="description" content="Your description">
+        <meta name="author" content="Your name">
+
+
+        <!-- Webpage Title -->
+        <title>HireLines</title>
+        
+        <!-- Styles -->
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+        <link href="{% static 'lib/homePage/css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'lib/homePage/css/fontawesome-all.min.css' %}" rel="stylesheet">
+        <link href="{% static 'lib/homePage/css/swiper.css' %}" rel="stylesheet">
+        <link href="{% static 'lib/homePage/css/styles.css' %}" rel="stylesheet">
+        
+        <!-- Favicon  -->
+        <link rel="icon" href="{% static 'img/logos/favicon.png' %}">
+    </head>
+
+    <body data-bs-spy="scroll" data-bs-target="#navbarExample">
+        
+        <!-- Navigation -->
+        <nav id="navbarExample" class="navbar navbar-expand-lg fixed-top navbar-light" aria-label="Main navigation">
+            <div class="container nav-container">
+
+                <a class="navbar-brand" href="index.html"><img src="{% static 'img/logos/logo-no-background.svg' %}" alt="logo" class="hireline-logo"></a>
+
+                <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+                    <ul class="navbar-nav ms-auto navbar-nav-scroll">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#header">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#features">Features</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#details">Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pricing">Pricing</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Drop</a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdown01">
+                                <li><a class="dropdown-item" href="article.html">Article Details</a></li>
+                                <li><div class="dropdown-divider"></div></li>
+                                <li><a class="dropdown-item" href="terms.html">Terms Conditions</a></li>
+                                <li><div class="dropdown-divider"></div></li>
+                                <li><a class="dropdown-item" href="privacy.html">Privacy Policy</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <span class="nav-item">
+                        <a class="btn-outline-sm" href="log-in.html">Log in</a>
+                    </span>
+                </div> 
+            </div> 
+        </nav> 
+        
+        <header id="header" class="header animated fadeIn">
+            <div class="container" style="margin-right: 7rem;">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="image-container">
+                            <img class="img-fluid home-img" src="{% static 'lib/homePage/images/home-img.png' %}" alt="alternative">
+                        </div> 
+                    </div> 
+                    <div class="col-lg-6">
+                        <div class="text-container slide-in-right">
+                            <div class="form-div">
+                                <div class="detiails-sec" hidden>
+                                    <div class="form-card-heading">
+                                        <h2>Get registered now</h2>
+                                    </div>
+                                    <form>
+                                        <div class="mb-4 form-floating">
+                                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                                            <label for="floatingInput">Bussiness Email</label>
+                                        </div>
+                                        <div class="mb-4 form-floating">
+                                            <input type="text" class="form-control" placeholder="Company">
+                                            <label >Company Name</label>
+                                        </div>
+                                        <div class="mb-4 form-floating">
+                                            <input type="text" class="form-control" placeholder="Location">
+                                            <label>Location</label>
+                                        </div>
+                                        <button class="btn-solid-lg">Register</button>
+                                    </form>
+                                </div>
+                                <div class="success-sec">
+                                    <div class="success-tick">
+                                        <i class="fas fa-check-circle check-icon"></i>
+                                    </div>
+                                    <div class="suc-txt-content">
+                                        <p><b>Registration Successfull</b></p>
+                                        <p>We will reach out to you shortly</p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </header> 
+        
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-col first">
+                            <h6>About Website</h6>
+                            <p class="p-small">Proin ut felis purus vestibulum in orci molestie, efficitur lacus ac pellentesque elit. Fusce mollis laoreet lobortis nulla ac efficitur lacus ac </p>
+                        </div> 
+                        <div class="footer-col second">
+                            <h6>Links</h6>
+                            <ul class="list-unstyled li-space-lg p-small">
+                                <li>Important: <a href="terms.html">Terms & Conditions</a>, <a href="privacy.html">Privacy Policy</a></li>
+                                <li>Useful: <a href="#">Colorpicker</a>, <a href="#">Icon Library</a>, <a href="#">Illustrations</a></li>
+                                <li>Menu: <a href="#header">Home</a>, <a href="#features">Features</a>, <a href="#details">Details</a>, <a href="#pricing">Pricing</a></li>
+                            </ul>
+                        </div> 
+                        <div class="footer-col third">
+                            <span class="fa-stack">
+                                <a href="#your-link">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-facebook-f fa-stack-1x"></i>
+                                </a>
+                            </span>
+                            <span class="fa-stack">
+                                <a href="#your-link">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-twitter fa-stack-1x"></i>
+                                </a>
+                            </span>
+                            <span class="fa-stack">
+                                <a href="#your-link">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-pinterest-p fa-stack-1x"></i>
+                                </a>
+                            </span>
+                            <span class="fa-stack">
+                                <a href="#your-link">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-instagram fa-stack-1x"></i>
+                                </a>
+                            </span>
+                            <p class="p-small">Quam posuerei pellent esque vam <a href="mailto:contact@site.com"><strong>contact@site.com</strong></a></p>
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+   
+        <div class="copyright"> 
+            <div class="container">
+                <p class="p-small">Copyright © <a href="#your-link">HireLines.io</a></p>
+            </div>
+        </div>
+        
+
+        <!-- Back To Top Button -->
+        <button onclick="topFunction()" id="myBtn">
+            <img src="{% static 'lib/homePage/images/up-arrow.png' %}" alt="alternative">
+        </button>
+        <!-- end of back to top button -->
+            
+        <!-- Scripts -->
+        <script src="{% static 'lib/homePage/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'lib/homePage/js/swiper.min.js' %}"></script>
+        <script src="{% static 'lib/homePage/js/purecounter.min.js' %}"></script>
+        <script src="{% static 'lib/homePage/js/replaceme.min.js' %}"></script>
+        <script src="{% static 'lib/homePage/js/scripts.js' %}"></script>
+
+
+        <style>
+            .form-div {
+                background-color: #fff;
+                padding: 1.5rem 2rem;
+                border-radius: 10px;
+            }
+            .form-card-heading {
+                padding-bottom: 1rem;
+            }
+            @media (min-width: 1200px) {
+                .header {
+                    overflow: hidden;
+                    padding-top: 11.5rem;
+                    padding-bottom: 18rem;
+                }
+            }
+            .header {
+                background-color: #edebfe;
+            }
+
+            .slide-in-right {
+                -webkit-animation: slide-in-right 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+                        animation: slide-in-right 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+            }
+            @-webkit-keyframes slide-in-right {
+                0% {
+                    -webkit-transform: translateX(1000px);
+                            transform: translateX(1000px);
+                    opacity: 0;
+                }
+                100% {
+                    -webkit-transform: translateX(0);
+                            transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            .hireline-logo {
+                height: 50px;
+                width: auto;
+            }
+
+            .nav-container {
+                max-width: 1400px;
+            }
+
+            .home-img {
+                right: -10px;
+                left: inherit !important;
+                top: -120px !important;
+            }
+            .check-icon {   
+                color: green;
+                font-size: 3rem;
+            }
+            .success-tick {
+                padding: 2rem;
+            }
+            .success-sec {
+                text-align: center;
+            }
+        </style>
+    </body>
+</html>
