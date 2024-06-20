@@ -23,7 +23,7 @@ def addCompanyDataService(dataObjs):
             company_email = bussiness_email,
             location = dataObjs['reg-location']
         )
-        # company_data.save()
+        company_data.save()
         
         return 0
 
