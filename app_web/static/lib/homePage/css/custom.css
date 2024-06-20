@@ -1,0 +1,93 @@
+.form-div {
+    background-color: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+}
+
+.mr-7 {
+    margin-right: 7rem;
+}
+
+.form-card-heading {
+    padding-bottom: 1rem;
+}
+
+.domain-check {
+    display: none;
+    width: 100%;
+    margin-top: .25rem;
+    font-size: .875em;
+    color: #dc3545;
+}
+
+@media (min-width: 1200px) {
+    .header {
+        overflow: hidden;
+        padding-top: 11.5rem;
+        padding-bottom: 18rem;
+    }
+}
+
+.header {
+    background-color: #a5ddfe;
+}
+
+.was-validated .form-control:valid {
+    background-image: none !important;
+}
+
+.slide-in-right {
+    -webkit-animation: slide-in-right 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: slide-in-right 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+@-webkit-keyframes slide-in-right {
+    0% {
+        -webkit-transform: translateX(1000px);
+        transform: translateX(1000px);
+        opacity: 0;
+    }
+
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.nav-container {
+    max-width: 1400px;
+}
+
+.home-img {
+    right: -10px;
+    left: inherit !important;
+    top: -120px !important;
+}
+
+.check-icon {
+    color: green;
+    font-size: 1rem;
+}
+
+.success-sec {
+    /* text-align: center;  */
+    padding: 1rem;
+    display: none;
+}
+
+.existing-email {
+    display: none;
+    width: 100%;
+    margin-top: .25rem;
+    font-size: .875em;
+    color: #dc3545;
+}
+
+
+@media screen and (max-width: 990px) {
+    .header {
+        padding-top: 5rem;
+    }
+
+}
