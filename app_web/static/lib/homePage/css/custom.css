@@ -4,6 +4,12 @@
     border-radius: 10px;
 }
 
+.powered-by {
+    text-align: right;
+    background-color: #e3f0fc;
+    padding-top: 1rem;
+}
+
 .mr-7 {
     margin-right: 7rem;
 }
