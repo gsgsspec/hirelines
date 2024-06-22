@@ -11,6 +11,7 @@ document.getElementById("register").onclick = function () {
             'reg-bemail': $('#reg-bemail').val(),
             'reg-company':$('#reg-company').val(),
             'reg-location': $("#reg-location").val(),
+            'reg-name': $("#reg-name").val(),
         }
 
         var final_data = {
@@ -21,7 +22,6 @@ document.getElementById("register").onclick = function () {
         $.post(CONFIG['portal'] + "/api/add-companydata", final_data, function (res) {
             if (res.statusCode == 0) {
 
-                // $('.detiails-sec').hide();
                 $('.success-sec').show()
                 $('#register').hide();
 
@@ -29,7 +29,6 @@ document.getElementById("register").onclick = function () {
 
                 $('#reg-bemail').css('border-color', 'red');
                 $('.domain-check').css('display', 'block');
-                
                 
             }
             else if (res.statusCode == 2){

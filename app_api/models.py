@@ -8,6 +8,7 @@ class CompanyData(models.Model):
     company_name = models.CharField(max_length=120, null=True, blank=True) 
     company_email = models.CharField(max_length=120, null=True, blank=True) 
     location = models.CharField(max_length=120, null=True, blank=True) 
+    contactperson = models.CharField(max_length=50, null=True, blank=True) 
 
     class Meta:
         db_table = 'companydata'

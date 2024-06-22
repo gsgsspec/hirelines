@@ -25,7 +25,7 @@
 
         
         <!-- Favicon  -->
-        <link rel="icon" href="{% static 'img/logos/favicon.png' %}">
+        <link rel="icon" href="{% static 'img/logos/fav1.jpg' %}">
 
         <!-- J Query link -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -52,7 +52,7 @@
         <nav id="navbarExample" class="navbar navbar-expand-lg fixed-top navbar-light" aria-label="Main navigation">
             <div class="container nav-container">
 
-                <a class="navbar-brand" href="index.html"><img src="{% static 'img/logos/logo-no-background.svg' %}" alt="logo" class="hireline-logo"></a>
+                <a class="navbar-brand" ><img src="{% static 'img/logos/logo-no-background.svg' %}" alt="logo" class="hireline-logo"></a>
 
                 <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -91,63 +91,66 @@
         </nav> 
         
         <header id="header" class="header animated fadeIn">
-            <div class="container mr-7">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="image-container">
-                            <img class="img-fluid home-img" src="{% static 'lib/homePage/images/home-img.png' %}" alt="alternative">
-                        </div> 
-                    </div> 
-                    <div class="col-lg-6">
-                        <div class="text-container slide-in-right">
-                            <div style="text-align: left;"><h3>
-                                For Early access please register
-                            </h3></div>
-                            <div class="form-div">
-                                <div class="detiails-sec">
-                                    <div class="form-card-heading">
-                                        <h4>Get registered now</h4>
+            <div class="landing-sec">
+                <div class="landing-img">
+                    <img class="img-fluid" src="{% static 'lib/homePage/images/home-img.png' %}" alt="alternative">
+                </div>
+                <div class="landing-content">
+                    <div class="text-container slide-in-right">
+                        <div style="text-align: left;"><h3>
+                            Request for early access
+                        </h3></div><br>
+                        <div class="form-div">
+                            <div class="detiails-sec">
+                                <div class="form-card-heading">
+                                    <h4>Register to get notified</h4>
+                                </div>
+                                <form id="registerForm" class="needs-validation" novalidate>
+                                    <div class="mb-4 form-floating">
+                                        <input type="email" class="form-control" id="reg-bemail" placeholder="name@example.com" required>
+                                        <label for="reg-bemail">Business Email</label>
+                                        <div class="invalid-feedback">
+                                            Please enter email address.
+                                        </div>
+                                        <div class="domain-check">
+                                            Business domain is required
+                                        </div>
+                                        <div class="existing-email">
+                                            Email already registered
+                                        </div>
                                     </div>
-                                    <form id="registerForm" class="needs-validation" novalidate>
-                                        <div class="mb-4 form-floating">
-                                            <input type="email" class="form-control" id="reg-bemail" placeholder="name@example.com" required>
-                                            <label for="reg-bemail">Business Email</label>
-                                            <div class="invalid-feedback">
-                                                Please enter email address.
-                                            </div>
-                                            <div class="domain-check">
-                                                Business domain is required
-                                            </div>
-                                            <div class="existing-email">
-                                                Email already registered
-                                            </div>
+                                    <div class="mb-4 form-floating">
+                                        <input type="text" class="form-control" id="reg-company" placeholder="Company" required>
+                                        <label for="reg-company">Company Name</label>
+                                        <div class="invalid-feedback">
+                                            Please enter your company name.
                                         </div>
-                                        <div class="mb-4 form-floating">
-                                            <input type="text" class="form-control" id="reg-company" placeholder="Company" required>
-                                            <label for="reg-company">Company Name</label>
-                                            <div class="invalid-feedback">
-                                                Please enter your company name.
-                                            </div>
+                                    </div>
+                                    <div class="mb-4 form-floating">
+                                        <input type="text" class="form-control" id="reg-name" placeholder="Name" required>
+                                        <label for="reg-name">Name</label>
+                                        <div class="invalid-feedback">
+                                            Please enter your name.
                                         </div>
-                                        <div class="mb-4 form-floating">
-                                            <input type="text" class="form-control" id="reg-location" placeholder="Location" required>
-                                            <label for="reg-location">Location</label>
-                                            <div class="invalid-feedback">
-                                                Please enter your location.
-                                            </div>
+                                    </div>
+                                    <div class="mb-4 form-floating">
+                                        <input type="text" class="form-control" id="reg-location" placeholder="Location" required>
+                                        <label for="reg-location">Location</label>
+                                        <div class="invalid-feedback">
+                                            Please enter your location.
                                         </div>
-                                        <button type="submit" id="register" class="btn-solid-lg">Register</button>
-                                    </form>
-                                </div>
-                                <div class="success-sec">
-                                        <i class="fas fa-check-circle check-icon"></i>
-                                        <span>Thank you for your intrest in <b> HireLines</b>.</span><br>
-                                        <span>You will soon receive email updates</span>
-                                </div>
+                                    </div>
+                                    <button type="submit" id="register" class="btn-solid-lg">Register</button>
+                                </form>
                             </div>
-                        </div> 
+                            <div class="success-sec">
+                                    <i class="fas fa-check-circle check-icon"></i>
+                                    <span>Thank you for your intrest in <b> HireLines</b>.</span><br>
+                                    <span>You will soon receive email updates</span>
+                            </div>
+                        </div>
                     </div> 
-                </div> 
+                </div>
             </div> 
         </header> 
         

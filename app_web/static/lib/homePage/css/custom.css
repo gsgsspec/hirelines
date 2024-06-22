@@ -10,6 +10,7 @@
 
 .form-card-heading {
     padding-bottom: 1rem;
+    text-align: left;
 }
 
 .domain-check {
@@ -23,13 +24,14 @@
 @media (min-width: 1200px) {
     .header {
         overflow: hidden;
-        padding-top: 11.5rem;
-        padding-bottom: 18rem;
+        padding-top: 5rem;
+        padding-bottom: 0rem !important;
     }
 }
 
 .header {
-    background-color: #a5ddfe;
+    /* background-color: #a5ddfe; */
+    background-color: #e3f0fc;
 }
 
 .was-validated .form-control:valid {
@@ -88,6 +90,50 @@
 @media screen and (max-width: 990px) {
     .header {
         padding-top: 5rem;
+        padding-bottom: 0rem;
     }
 
+}
+
+
+@media screen and (max-width: 1150px) {
+    .header {
+        padding-top: 5rem;
+        padding-bottom: 0rem;
+    }
+
+    
+    .landing-sec {
+        flex-direction: column !important;
+        max-width: 100% !important;
+        gap: 0px !important;
+    }
+
+    .landing-img {
+        width: 100% !important;
+    }
+    
+    .landing-content {
+        width: 100% !important;
+        padding: 1rem !important;
+    }
+
+}
+
+
+.landing-sec {
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+    gap: 2rem;
+    max-width: 95%;
+}
+
+.landing-img {
+    width: 55%;
+}
+
+.landing-content {
+    width: 45%;
+    padding: 2rem 2rem;
 }

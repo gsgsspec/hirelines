@@ -21,7 +21,8 @@ def addCompanyDataService(dataObjs):
         company_data = CompanyData(
             company_name = dataObjs["reg-company"],
             company_email = bussiness_email,
-            location = dataObjs['reg-location']
+            location = dataObjs['reg-location'],
+            contactperson = dataObjs["reg-name"]
         )
         company_data.save()
         
