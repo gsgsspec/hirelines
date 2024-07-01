@@ -12,6 +12,7 @@ document.getElementById("register").onclick = function () {
             'reg-company':$('#reg-company').val(),
             'reg-location': $("#reg-location").val(),
             'reg-name': $("#reg-name").val(),
+            'reg-companytype': $("#reg-companytype").val()
         }
 
         var final_data = {
@@ -48,5 +49,17 @@ document.getElementById("register").onclick = function () {
 
 
 
+$('#reg-bemail').on('keyup', function() {
 
+    var classesToCheck = ['.invalid-feedback', '.domain-check', '.existing-email'];
+
+    classesToCheck.forEach(function(className) {
+        $(className).each(function() {
+            if ($(this).css('display') === 'block') {
+                $(this).hide();
+            }
+        });
+    });
+
+});
 

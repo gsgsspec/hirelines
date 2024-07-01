@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from .constants import public_email_domains
 from app_api.models import CompanyData
 
@@ -13,16 +15,18 @@ def addCompanyDataService(dataObjs):
         if email_domain in public_email_domains:
             return 1
         
-        email_check = CompanyData.objects.filter(company_email=bussiness_email)
+        email_check = CompanyData.objects.filter(companyemail=bussiness_email)
 
         if email_check:
             return 2
 
         company_data = CompanyData(
-            company_name = dataObjs["reg-company"],
-            company_email = bussiness_email,
+            companyname = dataObjs["reg-company"],
+            companyemail = bussiness_email,
             location = dataObjs['reg-location'],
-            contactperson = dataObjs["reg-name"]
+            contactperson = dataObjs["reg-name"],
+            companytype = dataObjs["reg-companytype"],
+            registerationtime = datetime.now()
         )
         company_data.save()
         

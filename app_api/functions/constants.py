@@ -3,3 +3,7 @@ public_email_domains = [
     "yandex.com", "gmx.com", "fastmail.com", "tutanota.com", "mail.ru", "hushmail.com", "airmail.net", "lycos.com", "netcourrier.com",
     "zimbra.com", "rediffmail.com", "mailinator.com"
 ]
+
+company_types = [
+    "Software Development Company", "HR Consultancy", "Software Product Company", "Enterprise", "Others"
+]

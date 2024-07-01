@@ -44,6 +44,14 @@
     background-image: none !important;
 }
 
+.form-select.is-valid:not([multiple]):not([size]), .form-select.is-valid:not([multiple])[size="1"], .was-validated .form-select:valid:not([multiple]):not([size]), .was-validated .form-select:valid:not([multiple])[size="1"] {
+    padding-right: 4.125rem;
+    background-position: right .75rem center, center right 2.25rem;
+    background-size: 16px 12px, calc(.75em + .375rem) calc(.75em + .375rem);
+    background-image: none;
+}
+
+
 .slide-in-right {
     -webkit-animation: slide-in-right 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
     animation: slide-in-right 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
@@ -137,9 +145,16 @@
 
 .landing-img {
     width: 55%;
+    display: flex;
+    align-items: center;
 }
 
 .landing-content {
     width: 45%;
-    padding: 2rem 2rem;
+    padding: 0rem 2rem;
+}
+
+.req-access {
+    text-align: left;
+    margin-bottom: 20px;
 }
