@@ -1,0 +1,30 @@
+@media screen and (max-width: 768px) {
+
+    .rating {
+        gap: 10px;
+        justify-content: space-between;
+    }
+
+    .question-box {
+        padding: 10px;
+    }
+    
+    .rating label {
+        padding: 5px 2.5% ;
+    }
+
+    .log-button {
+        text-align: right;
+        margin-bottom: 20px;
+        float: none;
+    }
+
+    .section {
+        margin-top: 15px;
+    }
+
+    .q-img {
+        height: 50vh;
+    }
+}   
+

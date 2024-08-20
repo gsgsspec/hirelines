@@ -33,6 +33,13 @@ Colors:
 /**************************/
 /*     General Styles     */
 /**************************/
+
+:root {
+	--primary-color : #274699;
+	--secondary-color : #f25c05;
+	--button-primary-color : #274699;
+}
+
 body,
 html {
     width: 100%;
@@ -45,7 +52,7 @@ body, p {
 }
 
 h1 {
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 2.5rem;
 	line-height: 3.25rem;
@@ -53,7 +60,7 @@ h1 {
 }
 
 h2 {
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 2rem;
 	line-height: 2.625rem;
@@ -61,7 +68,7 @@ h2 {
 }
 
 h3 {
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 1.75rem;
 	line-height: 2.25rem;
@@ -69,7 +76,7 @@ h3 {
 }
 
 h4 {
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 1.5rem;
 	line-height: 2.125rem;
@@ -77,14 +84,14 @@ h4 {
 }
 
 h5 {
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 1.25rem;
 	line-height: 1.625rem;
 }
 
 h6 {
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 1rem;
 	line-height: 1.375rem;
@@ -143,9 +150,9 @@ a:hover {
 .btn-solid-reg {
 	display: inline-block;
 	padding: 1.375rem 2.25rem 1.375rem 2.25rem;
-	border: 1px solid #274699;
+	border: 1px solid var(--primary-color);
 	border-radius: 30px;
-	background-color: #274699;
+	background-color: var(--primary-color);
 	color: #ffffff;
 	font-weight: 600;
 	font-size: 0.875rem;
@@ -156,16 +163,16 @@ a:hover {
 
 .btn-solid-reg:hover {
 	background-color: transparent;
-	color: #274699; /* needs to stay here because of the color property of a tag */
+	color: var(--primary-color); /* needs to stay here because of the color property of a tag */
 	text-decoration: none;
 }
 
 .btn-solid-lg {
 	display: inline-block;
 	padding: 1.625rem 2.625rem 1.625rem 2.625rem;
-	border: 1px solid #274699;
+	border: 1px solid var(--primary-color);
 	border-radius: 30px;
-	background-color: #274699;
+	background-color: var(--primary-color);
 	color: #ffffff;
 	font-weight: 600;
 	font-size: 0.875rem;
@@ -176,16 +183,16 @@ a:hover {
 
 .btn-solid-lg:hover {
 	background-color: transparent;
-	color: #274699; /* needs to stay here because of the color property of a tag */
+	color: var(--primary-color); /* needs to stay here because of the color property of a tag */
 	text-decoration: none;
 }
 
 .btn-solid-sm {
 	display: inline-block;
 	padding: 1rem 1.5rem 1rem 1.5rem;
-	border: 1px solid #274699;
+	border: 1px solid var(--primary-color);
 	border-radius: 30px;
-	background-color: #274699;
+	background-color: var(--primary-color);
 	color: #ffffff;
 	font-weight: 600;
 	font-size: 0.875rem;
@@ -196,17 +203,17 @@ a:hover {
 
 .btn-solid-sm:hover {
 	background-color: transparent;
-	color: #274699; /* needs to stay here because of the color property of a tag */
+	color: var(--primary-color); /* needs to stay here because of the color property of a tag */
 	text-decoration: none;
 }
 
 .btn-outline-reg {
 	display: inline-block;
 	padding: 1.375rem 2.25rem 1.375rem 2.25rem;
-	border: 1px solid #f25c05;
+	border: 1px solid var(--button-primary-color);
 	border-radius: 30px;
 	background-color: transparent;
-	color: #f25c05;
+	color: var(--button-primary-color);
 	font-weight: 600;
 	font-size: 0.875rem;
 	line-height: 0;
@@ -215,7 +222,7 @@ a:hover {
 }
 
 .btn-outline-reg:hover {
-	background-color: #f25c05;
+	background-color: var(--button-primary-color);
 	color: #ffffff;
 	text-decoration: none;
 }
@@ -223,10 +230,10 @@ a:hover {
 .btn-outline-lg {
 	display: inline-block;
 	padding: 1.625rem 2.625rem 1.625rem 2.625rem;
-	border: 1px solid #f25c05;
+	border: 1px solid var(--button-primary-color);
 	border-radius: 30px;
 	background-color: transparent;
-	color: #f25c05;
+	color: var(--button-primary-color);
 	font-weight: 600;
 	font-size: 0.875rem;
 	line-height: 0;
@@ -243,10 +250,10 @@ a:hover {
 .btn-outline-sm {
 	display: inline-block;
 	padding: 1rem 1.5rem 1rem 1.5rem;
-	border: 1px solid #f25c05;
+	border: 1px solid var(--button-primary-color);
 	border-radius: 30px;
 	background-color: transparent;
-	color: #f25c05;
+	color: var(--button-primary-color);
 	font-weight: 600;
 	font-size: 0.875rem;
 	line-height: 0;
@@ -255,7 +262,7 @@ a:hover {
 }
 
 .btn-outline-sm:hover {
-	background-color: #f25c05;
+	background-color: var(--button-primary-color);
 	color: #ffffff;
 	text-decoration: none;
 }
@@ -273,9 +280,9 @@ a:hover {
 	display: inline-block;
 	width: 100%;
 	height: 3.25rem;
-	border: 1px solid #f25c05;
+	border: 1px solid var(--button-primary-color);
 	border-radius: 30px;
-	background-color: #f25c05;
+	background-color: var(--button-primary-color);
 	color: #ffffff;
 	font-weight: 600;
 	font-size: 0.875rem;
@@ -285,9 +292,9 @@ a:hover {
 }
 
 .form-control-submit-button:hover {
-	border: 1px solid #f25c05;
+	border: 1px solid var(--button-primary-color);
 	background-color: transparent;
-	color: #f25c05;
+	color: var(--button-primary-color);
 }
 
 /* Fade Animation For Rotating Text - ReplaceMe  */
@@ -355,7 +362,7 @@ a:hover {
 }
 
 .navbar .logo-text {
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 1.875rem;
 	line-height: 1rem;
@@ -392,7 +399,7 @@ a:hover {
 .navbar .nav-item .nav-link {
 	padding-top: 0.625rem;
 	padding-bottom: 0.625rem;
-	color: #274699;
+	color: var(--primary-color);
 	text-decoration: none;
 	transition: all 0.2s ease;
 }
@@ -400,7 +407,7 @@ a:hover {
 .navbar .nav-item.dropdown.show .nav-link,
 .navbar .nav-item .nav-link:hover,
 .navbar .nav-item .nav-link.active {
-	color: #f25c05;
+	color: var(--secondary-color);
 }
 
 /* Dropdown Menu */
@@ -428,7 +435,7 @@ a:hover {
 .navbar .dropdown-item {
 	padding-top: 0.625rem;
 	padding-bottom: 0.625rem;
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 0.875rem;
 	line-height: 0.875rem;
@@ -437,7 +444,7 @@ a:hover {
 
 .navbar .dropdown-item:hover {
 	background-color: #fff2dc;
-	color: #f25c05;
+	color: var(--button-primary-color);
 }
 
 .navbar .dropdown-divider {
@@ -471,7 +478,7 @@ a:hover {
 }
 
 .header .replace-me {
-	color: #f25c05;
+	color: var(--button-primary-color);
 }
 
 .header .replace-me span {
@@ -506,7 +513,7 @@ a:hover {
 }
 
 .cards-1 .h2-heading span {
-	color: #f25c05;
+	color: var(--button-primary-color);
 	text-decoration: underline;
 }
 
@@ -764,7 +771,7 @@ a:hover {
 .basic-3 {
 	padding-top: 9rem;
 	padding-bottom: 9rem;
-	background-color: #274699;
+	background-color: var(--primary-color);
 	text-align: center;
 }
 
@@ -780,7 +787,7 @@ a:hover {
 
 .basic-3 .btn-outline-lg:hover {
 	background-color: #ffffff;
-	color: #274699;
+	color: var(--primary-color);
 }
 
 
@@ -826,7 +833,7 @@ a:hover {
 .cards-2 .card-title span {
 	margin-right: 0.75rem;
 	margin-left: 0.75rem;
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 1.75rem;
 	line-height: 2rem;
@@ -843,7 +850,7 @@ a:hover {
 
 .cards-2 .card-body .price {
 	margin-bottom: 3rem;
-	color: #274699;
+	color: var(--primary-color);
 	font-weight: 600;
 	font-size: 3.5rem;
 	line-height: 2rem;
@@ -933,7 +940,7 @@ a:hover {
 .footer {
 	padding-top: 6.5rem;
 	padding-bottom: 2rem;
-	background-color: #274699;
+	background-color: var(--primary-color);
 }
 
 .footer a {
@@ -974,12 +981,12 @@ a:hover {
 }
 
 .footer .footer-col.third .fa-stack .fa-stack-1x {
-	color: #274699;
+	color: var(--primary-color);
 	transition: all 0.2s ease;
 }
 
 .footer .footer-col.third .fa-stack:hover .fa-stack-2x {
-	color: #274699;
+	color: var(--primary-color);
 }
 
 .footer .footer-col.third .fa-stack:hover .fa-stack-1x {
@@ -992,7 +999,7 @@ a:hover {
 /*********************/
 .copyright {
 	padding-bottom: 1rem;
-	background-color: #274699;
+	background-color: var(--primary-color);
 	text-align: center;
 }
 
@@ -1021,12 +1028,12 @@ a:hover {
 	border: none; 
 	border-radius: 50%; 
 	outline: none; 
-	background-color: #44434a; 
+	background-color: var(--primary-color); 
 	cursor: pointer; 
 }
 
 #myBtn:hover {
-	background-color: #1d1d21;
+	background-color: var(--secondary-color);
 }
 
 #myBtn img {
@@ -1069,7 +1076,7 @@ a:hover {
 }
 
 .ex-cards-1 .card .fa-stack-2x {
-	color: #f25c05;
+	color: var(--button-primary-color);
 }
 
 .ex-cards-1 .card .fa-stack-1x {

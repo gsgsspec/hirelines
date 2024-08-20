@@ -1,0 +1,165 @@
+{% load static %}
+
+<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme w-100" id="layout-navbar">
+
+    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+            <i class="bx bx-menu bx-sm"></i>
+        </a>
+    </div>
+    <div id="display_icon" style="display:block;cursor:pointer" onclick='showFullPage()'><i class="bx bx-menu bx-sm"></i></div>
+    <div id="hide_icon" style="display:none;cursor:pointer" onclick='hideFullPage()'><i class="bx bx-menu bx-sm"></i></div>
+    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse"> <h3 class="course_title_heading" style="margin: 0px;"> {{jd_data.title}} </h3>
+    </div>
+</nav>
+
+<div class="row">
+    <div class="col-md-6 col-xl-6">
+        <img src="{% static 'lib/portal/assets/img/illustrations/trace.svg' %}" alt="funnel-icon" class="img-fluid">
+        <!-- <img src="{% static 'lib/portal/assets/img/illustrations/Untitled.svg' %}" alt="funnel-icon" class="img-fluid"> -->
+    </div>
+    <div class="col-md-6 col-xl-6">
+        <div class="row mt-5 text-center">
+            <div class="col-md-6 col-xl-6">
+                <div class="card text-white mb-3" style="background-color: blue;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Screened</h5>
+                        <p class="card-text num-txt">{{jd_data.screening_tests}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-6">
+                <div class="card text-white mb-3" style="background-color: #FFBF00;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Coding</h5>
+                        <p class="card-text num-txt">{{jd_data.coding_tests}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-6">
+                <div class="card text-white mb-3" style="background-color: #f46a24;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Interview</h5>
+                        <p class="card-text num-txt">{{jd_data.interviews}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-6">
+                <div class="card text-white mb-3" style="background-color: green;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Offer Letter</h5>
+                        <p class="card-text num-txt">{{jd_data.offer_letters}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="table-responsive text-nowrap table-cls">
+        <table class="table table-hover" id="position-report-table">
+            <thead>
+                <tr>
+                    <th> <strong> Candidate ID </strong></th>
+                    <th> <strong> Name </strong></th>
+                    <th> <strong> Email </strong></th>
+                    <th> <strong> Screened on </strong></th>
+                    <th> <strong> Promote </strong></th>
+                    <th> <strong> Code Test </strong></th>
+                    <th> <strong> Promote </strong></th>
+                    <th> <strong> Interviewed on </strong></th>
+                    <th> <strong> Promote </strong></th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for candidate in candidates_data %}
+                    <tr onclick="getReportData('{{candidate.cid}}')">
+                        <td> {{ candidate.cid }} </td>
+                        <td> {{ candidate.name }} </td>
+                        <td> {{ candidate.email }} </td>
+                        <td>
+                            {% for reg in candidate.registrations.S %}
+                                {{ reg.date }}<br>
+                            {% endfor %}
+                        </td>
+                        <td style="text-align: center;">
+                            {% for reg in candidate.registrations.S %}
+                                {% if reg.status == 'Q' %}
+                                    <i class="fas fa-check" style="color: #4CAF50;"></i>
+                                {% else %}
+                                    <i class="fas fa-times" style="color: #f44336;"></i>
+                                {% endif %}    
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for reg in candidate.registrations.E %}
+                                {{ reg.date }}<br>
+                            {% endfor %}
+                        </td>
+                        <td style="text-align: center;">
+                            {% for reg in candidate.registrations.E %}
+                                {% if reg.status == 'Q' %}
+                                    <i class="fas fa-check" style="color: #4CAF50;"></i>
+                                {% else %}
+                                    <i class="fas fa-times" style="color: #f44336;"></i>
+                                {% endif %}    
+                                <br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for reg in candidate.registrations.I %}
+                                {{ reg.date }}<br>
+                            {% endfor %}
+                        </td>
+                        <td style="text-align: center;">
+                            {% for reg in candidate.registrations.I %}
+                                {% if reg.status == 'O' %}
+                                <i class="fas fa-check" style="color: #4CAF50;"></i>
+                                {% else %}
+                                    <i class="fas fa-times" style="color: #f44336;"></i>
+                                {% endif %}    
+                                <br>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<style>
+
+    tbody tr:hover {
+        cursor: pointer;
+    }
+
+    thead, tbody, tfoot, tr, td, th {
+        border-color: inherit;
+        border-style: solid;
+        border-width: 0;
+    }
+
+    .table-bordered > :not(caption) > * > * {
+        border-width: 1px 1px;
+    }
+
+</style>
+
+<script src="{% static 'js/jd_data.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        $.noConflict();
+        $('#position-report-table').DataTable(
+            {
+                "ordering": false
+            }
+        );
+    });
+</script>

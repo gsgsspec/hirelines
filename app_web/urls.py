@@ -3,5 +3,17 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.homePage)
+    path("", views.webHomePage),
+    path("login",views.loginPage),
+    path("register",views.registerPage),
+    path("dashboard",views.dashboardPage),
+    path("email-templates",views.emailTemplatesPage),
+    path("candidates",views.candidatesPage),
+    path("add-candidate",views.addCandidatePage),
+    path("reports",views.reportsPage),
+    path("branding",views.brandingPage),
+    path("jd/<int:jid>",views.jdDataPage),
+
+    # Company data page
+    path("cmp-reg", views.homePage),
 ]

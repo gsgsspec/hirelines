@@ -1,0 +1,175 @@
+:root {
+  --primary-color : #274699;
+	--secondary-color : #f25c05;
+  --light-primary-color: #e3f0fc;
+	--button-primary-color : #274699;
+}
+
+.question-box {
+  padding: 10px 20px;
+}
+
+.rating input[type="radio"] {
+  display: none;
+}
+
+.section p ,h3 {
+  color: black;
+}
+
+.rating label {
+  display: inline-block;
+  width: auto;
+  height: auto;
+  padding: 5px 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  border: 1px solid black;
+
+}
+
+.rating input[type="radio"]:checked+label {
+  background-color: #20c1bf;
+  color: #fff;
+  border: none;
+}
+
+.rating {
+  display: flex;
+  gap: 30px;
+}
+
+
+.score-label {
+  font-size: 18px;
+}
+
+.question-label {
+  font-size: 16px;
+  margin-bottom: 0.5rem;
+}
+
+.log-button {
+  float: right;
+}
+
+.error-creds {
+  color: red;
+  padding-bottom: 15px;
+  display: none;
+}
+
+.email-error {
+  color: red;
+  display: none;
+}
+
+.pass-check {
+  color: red;
+  display: none;
+}
+
+.brand-text {
+  display: flex;
+  align-items: center;
+}
+
+.prev-btn{
+  color: #fff !important;
+  background: #59bec6;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.next-btn{
+  background-color: #f46a24;
+  color: #fff !important;
+  cursor: pointer;
+}
+
+.next-btn:hover {
+  background-color: #ec7e48 !important;
+  color: #fff !important;
+}
+
+.prev-btn:hover {
+  background-color: #70cfd5 !important;
+  color: #fff !important;
+}
+
+
+.q-img {
+  float: left;
+  height: 100vh;
+}
+
+.card-title-table {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  background-color:var(--light-primary-color);
+  border-radius: 0.5rem 0.5rem 0rem 0rem;
+}
+
+.header-btn {
+  margin-right: 30px;
+}
+
+.table-cls {
+  padding: 30px;
+}
+
+.btn-light {
+  color: var(--light-primary-color);
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 0.125rem 0.25rem 0 rgba(105, 108, 255, 0.4);
+}
+
+.card-header {
+  color: var(--primary-color);
+}
+
+/* Data Tables */
+
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+  color: #697a8d !important;
+}
+
+.table.dataTable.no-footer {
+  border-bottom: none;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+  padding: 10px 10px !important;
+}
+
+.dataTables_length {
+  margin-bottom: 2rem !important;
+}
+
+/* End Datatables Css */
+
+
+.card-badge {
+  padding-bottom: 10px;
+  text-align: end;
+}
+
+
+.num-txt {
+  font-size: 40px;
+}
+
+
+.pointer {
+  cursor: pointer;
+}
+
+.container-center {
+  display: flex;
+  justify-content: center;
+}

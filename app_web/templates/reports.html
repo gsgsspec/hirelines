@@ -1,0 +1,21 @@
+<h2 class="text-center">Job Descriptions</h2>
+
+<div class="row mb-5">
+    {% for jd in job_descriptions %}
+    <div class="col-md-6 col-lg-4 pointer" onclick="window.location.href='jd/{{jd.id}}'">
+      <div class="card mb-3 h-100">
+        <div class="card-body">
+            <div class="card-badge">
+                {% if jd.status == 'O'  %}
+                    <span class="badge bg-label-success">OPEN</span>
+                {% elif jd.status == 'C' %}
+                    <span class="badge bg-label-danger">CLOSED</span>
+                {% endif %}
+            </div>
+            <h5 class="card-title">{{ jd.title }}</h5>
+            <p class="card-text">{{ jd.description }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+</div>
