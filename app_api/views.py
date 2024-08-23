@@ -36,10 +36,7 @@ def addCompanyData(request):
 
 
 @csrf_exempt
-@api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
-def company_paper_registration(request):
+def addJDCandidate(request):
     response = {
         'data': None,
         'error': None,
@@ -47,20 +44,20 @@ def company_paper_registration(request):
     }
 
     try:
-        if request.method == "POST" and check_referrer(request):
+        if request.method == "POST":
 
             dataObjs = json.loads(request.body)
-
+            
             candidateRegistrationService(dataObjs)
 
             response['data'] = "Details Saved Sucessfully"
             response['statusCode'] = 0
 
-        else:
-            return HttpResponseForbidden('Request Blocked')
-        
     except Exception as e:
            response['data'] = 'Error in Registration'
            response['error'] = str(e)
            raise
     return JsonResponse(response)
+
+
+

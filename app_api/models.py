@@ -34,7 +34,7 @@ class Candidate(models.Model):
     country = models.CharField(max_length=40, null=True)
     dob = models.DateField(null=True)
     jobid = models.IntegerField(null=True)
-    status = models.CharField(max_length=1, null=True)
+    status = models.CharField(max_length=1, null=True)  # I - In-Progress , S - Selected, R - Rejected 
 
     class Meta:
             db_table = 'candidate'
@@ -97,4 +97,15 @@ class Company(models.Model):
 
     class Meta:
         db_table = 'company'
+
+
+class ReferenceId(models.Model):
+    type = models.CharField(max_length=1, null=True)
+    prefix1 = models.CharField(max_length=3, null=True)
+    prefix2 = models.CharField(max_length=3, null=True)
+    prefix3 = models.CharField(max_length=3, null=True)
+    lastid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'referenceid'
 

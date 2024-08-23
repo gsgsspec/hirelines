@@ -1,7 +1,10 @@
+import json
+import requests
 from datetime import datetime
-
+from urllib.parse import urljoin
 from .constants import public_email_domains
-from app_api.models import CompanyData, JobDesc, Candidate, Registration
+from hirelines.metadata import getConfig
+from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId
 
 
 
@@ -76,6 +79,7 @@ def candidateRegistrationService(dataObjs):
         mobile =  dataObjs['mobile']
         paper_id =  dataObjs['paper_id']
         company_id =  dataObjs['company_id']
+        job_id = dataObjs['job_id']
 
         candidate = Candidate(
             firstname = fname,
@@ -83,9 +87,62 @@ def candidateRegistrationService(dataObjs):
             companyid = company_id,
             paperid = paper_id,
             email = email,
-            mobile = mobile
+            mobile = mobile,
+            jobid = job_id,
+            registrationdate = datetime.now(),
+            status = 'I'
         )
-        # candidate.save()
+
+        
+        year = datetime.now().strftime("%y")
+
+        refid_obj, refid_flag = ReferenceId.objects.get_or_create(type = "R", prefix1 = "{:03}".format(company_id), prefix2 = year)
+            
+        if refid_flag == True:
+            lastid = 1
+            refid_obj.lastid = lastid
+            refid_obj.save()
+
+        if refid_flag == False:
+            lastid = refid_obj.lastid+1
+            refid_obj.lastid = lastid
+            refid_obj.save()
+
+        candidate_id_seq = str('{:05}'.format(int(refid_obj.lastid)))
+        candidate_code = f"{refid_obj.prefix1}{refid_obj.prefix2}{candidate_id_seq}"
+
+        candidate.candidateid = candidate_code
+
+        candidate.save()
+
+        # Acert API
+
+        acert_domain = getConfig()['DOMAIN']['acert']
+        endpoint = '/api/hirelines-add-candidate'
+
+        url = urljoin(acert_domain, endpoint)
+
+        candidate_data = {'fname' : fname,'lname': lname, 'email':email, 'mobile': mobile, 'paper_id':paper_id, 'company_id':company_id, 'reference_id': candidate.candidateid}
+
+        send_candidate_data = requests.post(url, json = candidate_data)
+        
+        response_content = send_candidate_data.content
+
+        if response_content:
+            json_data = json.loads(response_content.decode('utf-8'))
+
+            c_registration = Registration(
+                candidateid = candidate.id,
+                paperid = candidate.paperid,
+                registrationdate = candidate.registrationdate,
+                status = 'P',
+                companyid = candidate.companyid,
+                jobid = candidate.jobid,
+                papertype = json_data['data']
+            )
+
+            c_registration.save()
+
 
     except Exception as e:
         raise
