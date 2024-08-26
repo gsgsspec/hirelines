@@ -107,11 +107,11 @@ def registerUserService(dataObjs):
 
             user.save()
 
-            hirelines_domain = getConfig()['DOMAIN']['hirelines']
+        hirelines_domain = getConfig()['DOMAIN']['hirelines']
 
-            mail_data = {'name':user.name,'email':user.email,'password':user.password,'url': f"{hirelines_domain}/login"}
+        mail_data = {'name':user.name,'email':user.email,'password':user.password,'url': f"{hirelines_domain}/login"}
 
-            sendRegistrainMail(mail_data)
+        sendRegistrainMail(mail_data)
 
         return 0
             
