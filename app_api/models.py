@@ -1,6 +1,26 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 # Create your models here.
+
+class User_data(AbstractUser):
+    id = models.AutoField(primary_key=True)
+    usr_email = models.CharField(max_length=120)
+    usr_password = models.CharField(max_length=60)
+    user = models.CharField(max_length=1,null=True) # A - Admin, S - Student
+
+    class Meta:
+        db_table = 'user_data'
+
+
+@receiver(post_save, sender=User_data)
+def create_auth_token_for_customer(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+
 
 class CompanyData(models.Model):
     
@@ -34,7 +54,7 @@ class Candidate(models.Model):
     country = models.CharField(max_length=40, null=True)
     dob = models.DateField(null=True)
     jobid = models.IntegerField(null=True)
-    status = models.CharField(max_length=1, null=True)  # I - In-Progress , S - Selected, R - Rejected 
+    status = models.CharField(max_length=1, null=True)  # P - Pending , S - Selected, R - Rejected 
 
     class Meta:
             db_table = 'candidate'
@@ -43,7 +63,6 @@ class Candidate(models.Model):
 
 class JobDesc(models.Model):
     id = models.AutoField(primary_key=True)
-    jobcode = models.CharField(max_length=10, null=True)
     title = models.CharField(max_length=100, null=True)
     description = models.CharField(max_length=1024, null=True)
     expmin = models.IntegerField(null=True)
@@ -81,19 +100,22 @@ class Registration(models.Model):
 
 class Company(models.Model):
     id = models.AutoField(primary_key=True)
-    company_name = models.CharField(max_length=100)
-    company_add1 = models.CharField(max_length=100, null=True, blank=True)
-    company_add2 = models.CharField(max_length=100, null=True, blank=True)
-    company_city = models.CharField(max_length=100, null=True, blank=True)
-    company_state = models.CharField(max_length=100, null=True, blank=True)
-    company_country = models.CharField(max_length=100, null=True, blank=True)
-    company_domain = models.CharField(max_length=4, null=True, blank=True)
-    company_status = models.CharField(max_length=1, null=True, blank=True)
-    company_organization = models.IntegerField(null=True)
-    company_website = models.CharField(max_length=100, null=True, blank=True)
-    company_phone1 = models.CharField(max_length=100, null=True, blank=True)
-    company_phone2 = models.CharField(max_length=100, null=True, blank=True)
-    company_email = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=100)
+    address1 = models.CharField(max_length=100, null=True, blank=True)
+    address2 = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    state = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
+    companydomain = models.CharField(max_length=4, null=True, blank=True)
+    status = models.CharField(max_length=1, null=True, blank=True) # A - Active, I - Inactive, T - Trail
+    website = models.CharField(max_length=100, null=True, blank=True)
+    phone1 = models.CharField(max_length=100, null=True, blank=True)
+    phone2 = models.CharField(max_length=100, null=True, blank=True)
+    email = models.CharField(max_length=100, null=True, blank=True)
+    emaildomain = models.CharField(max_length=100,null=True)
+    companytype = models.CharField(max_length=100, null=True, blank=True)
+    freetrail = models.CharField(max_length=1, null=True)  # C - Completed, I - In-progress 
+    registrationdate = models.DateTimeField(null=True)
 
     class Meta:
         db_table = 'company'
@@ -109,3 +131,41 @@ class ReferenceId(models.Model):
     class Meta:
         db_table = 'referenceid'
 
+
+class RolesPermissions(models.Model):
+    id = models.AutoField(primary_key=True)
+    function = models.CharField(max_length=120, null=True)
+    sub_function = models.CharField(max_length=120, null=True)
+    function_category = models.CharField(max_length=120, null=True)
+    function_link = models.CharField(max_length=120, null=True)
+    enable = models.CharField(max_length=260, null=True)
+    function_icon = models.CharField(max_length=120, null=True)
+    orderby = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'rolespermissions'
+
+
+class Role(models.Model):
+    id = models.AutoField(primary_key=True)
+    Name = models.CharField(max_length=120, null=True)
+    status = models.CharField(max_length=1, null=True)
+
+    class Meta:
+        db_table = 'role'
+
+
+class User(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, null=True)
+    mobile = models.CharField(max_length=20, null=True)
+    location = models.CharField(max_length=120, null=True, blank=True)
+    datentime = models.DateTimeField(null=True)
+    email = models.CharField(max_length=120, null=True, blank=True)
+    password = models.CharField(max_length=40, null=True)
+    role = models.CharField(max_length=120, null=True)
+    companyid = models.IntegerField(null=True)
+    status = models.CharField(max_length=1, null=True) # A - Active, I - Inactive
+
+    class Meta:
+        db_table = 'user'

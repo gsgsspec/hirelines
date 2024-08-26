@@ -1,10 +1,13 @@
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.utils import timezone
+from django.shortcuts import redirect
 from urllib.parse import urljoin
+from rest_framework.authtoken.models import Token
 from .constants import public_email_domains
 from hirelines.metadata import getConfig
-from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId
+from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions
 
 
 
@@ -39,6 +42,70 @@ def addCompanyDataService(dataObjs):
     except Exception as e:
         raise
 
+
+
+def registerUserService(dataObjs):
+    try:
+
+        bussiness_email = str(dataObjs['reg-bemail'])
+
+        user_email_domain = bussiness_email.split('@')[1]
+
+        if user_email_domain in public_email_domains:
+            return 1
+        
+        user_check = User.objects.filter(email=bussiness_email).last()
+
+        if user_check:
+            return 2
+
+        company_check = Company.objects.filter(emaildomain=user_email_domain).last()
+
+        if company_check:
+            user = User(
+                name =  dataObjs["reg-name"],
+                datentime = datetime.now(),
+                location = dataObjs['reg-location'],
+                companyid = company_check.id,
+                role = "HR",
+                password = "gsspec",
+                email = bussiness_email,
+                status = "A"
+            )
+
+            user.save()
+
+        else:
+
+            company = Company(
+                name = dataObjs["reg-company"],
+                emaildomain = user_email_domain,
+                email = bussiness_email,
+                companytype = dataObjs["reg-companytype"],
+                status = "T",
+                freetrail = 'I'
+            )
+
+            company.save()
+
+            user = User(
+                name =  dataObjs["reg-name"],
+                datentime = datetime.now(),
+                location = dataObjs['reg-location'],
+                companyid = company.id,
+                role = "HR",
+                password = "gsspec",
+                email = bussiness_email,
+                status = "A"
+            )
+
+            user.save()
+
+        return 0
+            
+
+    except Exception as e:
+        raise
 
 
 def getJobDescData(jid):
@@ -90,7 +157,7 @@ def candidateRegistrationService(dataObjs):
             mobile = mobile,
             jobid = job_id,
             registrationdate = datetime.now(),
-            status = 'I'
+            status = 'P'
         )
 
         
@@ -211,3 +278,98 @@ def getCandidatesData():
 
     except Exception as e:
         raise
+
+
+
+def authentication_service(dataObjs):
+
+    try:
+        user = User.objects.get(email=dataObjs['email'],password=dataObjs['password'],status='A')
+
+    except:
+        return (None,)
+    
+    try:
+
+        if user:
+            check1 = User_data.objects.filter(usr_email=user.email, usr_password=user.password,user='C')
+            
+            if not check1:
+                User_data(username=user.email, usr_email=user.email, usr_password=user.password, is_staff=True, user='C').save()
+            token_obj = Token.objects.filter(user__usr_email=user.email).order_by('-created').first()
+            user_data = User_data.objects.get(usr_email=user.email, usr_password=user.password,user='C')
+            user_data.is_staff = True 
+            user_data.save()
+            if token_obj:
+                return token_obj.key
+            else:
+                check = User_data.objects.filter(usr_email=user.email).first()
+                token_obj, token_flag = Token.objects.get_or_create(user=check)
+                return token_obj.key
+    except Exception as e:
+        print(str(e))
+        raise
+
+
+
+def get_functions_service(user_role):
+    try:
+        functions = RolesPermissions.objects.filter(enable__contains=user_role)
+        temp = []
+
+        for function in functions:
+            
+            functionObjList = [func for func in temp if
+                               func['menuItemParent'] == function.function]
+            if not functionObjList:
+                uifuncObj = {
+                    'menuItemParent': function.function,
+                    'UIIcon': function.function_icon,
+                    'menuItemKey': function.function_category,
+                    'child': [],
+                }
+                uifuncObj['child'].append(
+                    {'menuItemName': function.sub_function, 'menuItemLink': function.function_link})
+                temp.append(uifuncObj)
+            elif functionObjList:
+                temp = [
+                    menuItem for menuItem in temp if menuItem['menuItemParent'] != function.function]
+                functionObjList[0]['child'].append(
+                    {'menuItemName': function.sub_function, 'menuItemLink': function.function_link})
+                temp.append(functionObjList[0])
+        menuItemList = temp
+        return menuItemList
+    except Exception as e:
+        print(str(e))
+        raise
+
+
+
+def checkCompanyTrailPeriod(user_mail):
+    try:
+
+        user = User.objects.filter(email=user_mail).last()
+
+        if user:
+
+            company = Company.objects.get(id=user.companyid)
+
+            trial_days = getConfig()['FREETRAIL']['days']
+
+            if company.freetrail == "I" and company.status == "T" :
+
+                trial_end_date = company.registrationdate + timedelta(days=int(trial_days))
+
+                if timezone.now() > trial_end_date:
+                    
+                    company.freetrail = "C"
+                    company.save()
+                    return True
+                
+            if company.freetrail == "C" and company.status == "T" :
+        
+                return True
+
+
+    except Exception as e:
+        raise 

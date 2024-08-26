@@ -20,7 +20,7 @@ document.getElementById("register").onclick = function () {
             csrfmiddlewaretoken: CSRF_TOKEN,
         }
 
-        $.post(CONFIG['portal'] + "/api/add-companydata", final_data, function (res) {
+        $.post(CONFIG['portal'] + "/api/register-user", final_data, function (res) {
             if (res.statusCode == 0) {
 
                 $('.success-sec').show()

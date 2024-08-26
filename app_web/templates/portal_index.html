@@ -85,8 +85,19 @@
               <li class="menu-header small text-uppercase">
                 <span class="menu-header-text">Menu</span>
               </li>
+
+              {% for menuItemObj in menuItemList%}
+                {% if menuItemObj.child|length_is:"1" and not menuItemObj.child.0.menuItemName %}
+                <li class="menu-item">
+                  <a class="menu-link" href="/{{menuItemObj.child.0.menuItemLink}}" title="{{menuItemObj.menuItemParent}}{{menuItemObj.menuItemDisplay}}">
+                      <i class="menu-icon tf-icons {{menuItemObj.UIIcon}}"></i><span
+                        data-localize="sidebar.nav.WIDGETS">{{menuItemObj.menuItemParent}}{{menuItemObj.menuItemDisplay}}</span>
+                  </a>
+                </li>
+                {% endif %}
+              {% endfor %}
   
-              <li class="menu-item">
+              <!-- <li class="menu-item">
                 <a href="/dashboard" class="menu-link">
                   <i class="fas fa-chart-line menu-icon"></i>
                   <div data-i18n="Analytics">Dashboard</div>
@@ -119,7 +130,7 @@
                   <i class="fas fa-users menu-icon"></i>
                   <div data-i18n="Analytics">Candidates</div>
                 </a>
-              </li>
+              </li> -->
   
               <!-- <li class="menu-item">
                 <a href="/" class="menu-link">

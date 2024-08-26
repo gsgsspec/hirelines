@@ -40,11 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
 
+    'allauth', # for allauth
+    'allauth.account', # for allauth accounts
+    'allauth.socialaccount', # for allauth social login / signups       
+    'rest_framework.authtoken',
+
     'app_api',
     'app_web'
 ]
 
 MIDDLEWARE = [
+    'allauth.account.middleware.AccountMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -138,3 +144,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+                  'DEFAULT_PERMISSION_CLASSES': [
+                      'rest_framework.permissions.IsAuthenticated' # Basic authentication classs check user is logged in or not
+                  ],
+                  'DEFAULT_AUTHENTICATION_CLASSES': [
+                      'rest_framework.authentication.TokenAuthentication', # Token based authentication for restful api services
+                      'rest_framework.authentication.SessionAuthentication', # Session based authentication
+                  ],
+                  }
+
+# Custom auth user model, it extends the django auth user model.
+
+AUTH_USER_MODEL = 'app_api.User_data'

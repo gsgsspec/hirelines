@@ -13,6 +13,7 @@ urlpatterns = [
     path("reports",views.reportsPage),
     path("branding",views.brandingPage),
     path("jd/<int:jid>",views.jdDataPage),
+    path('trial-expired',views.trialExpired),
 
     # Company data page
     path("cmp-reg", views.homePage),

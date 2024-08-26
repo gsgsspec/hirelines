@@ -42,29 +42,30 @@
                 <div class="form-div">
                     <div class="detiails-sec">
                         <div class="form-card-heading">
-                            <h4>Sign in to your Hireline account
+                            <h4>Sign in to your Hirelines account
                             </h4>
                         </div>
-                        <form>
+                        <form id="login-form">
                             <div class="mb-4 form-floating">
-                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                                <label for="floatingInput">Email address</label>
+                                <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                                <label>Email address</label>
                             </div>
                             <div class="mb-4 form-floating">
-                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                                <label for="floatingPassword">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Password" required>
+                                <label>Password</label>
                             </div>
-                            <p class="mb-4">  <a href=""> Forgot password? </a> </p>
-                            <button type="submit" class="form-control-submit-button">Log in</button>
+                            <!-- <p class="mb-4">  <a href=""> Forgot password? </a> </p> -->
+                             <div id="invalid_cred" hidden>
+                                <p style="color: red;">Invalid Credentials</p>
+                             </div>
+                            <button type="submit" id="login-btn" class="form-control-submit-button">Log in</button>
                         </form>
-                    </div>
-                    <div class="success-sec">
-                            <i class="fas fa-check-circle check-icon"></i>
-                            <span>Thank you for your intrest in <b> HireLines</b>.</span><br>
-                            <span>You will soon receive email updates</span>
                     </div>
                 </div>
             </div> 
         </div>
     </div> 
 </header>
+
+
+<script src="{% static 'js/login.js' %}"></script>
