@@ -2,6 +2,8 @@ document.getElementById("register").onclick = function () {
     $('#registerForm').unbind('submit').bind('submit', function (event) {
         event.preventDefault();
 
+        $('#register').prop('disabled', true);
+
         $('#reg-bemail').css('border-color', '');
         $('.domain-check').css('display', 'none');
         $('.existing-email').css('display', 'none');
@@ -30,17 +32,21 @@ document.getElementById("register").onclick = function () {
 
                 $('#reg-bemail').css('border-color', 'red');
                 $('.domain-check').css('display', 'block');
+
+                $('#register').prop('disabled', false);
                 
             }
             else if (res.statusCode == 2){
 
                 $('#reg-bemail').css('border-color', 'red');
                 $('.existing-email').css('display', 'block');
+
+                $('#register').prop('disabled', false);
                 
             }
 
             else {
-                // swal("Internal Server Error", "", "error");
+                $('.error-sec').show()
             }
         })
         

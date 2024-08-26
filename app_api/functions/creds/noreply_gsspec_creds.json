@@ -1,0 +1,13 @@
+{
+    "installed": {
+        "client_id": "1069788442287-lfrplti78grf74j4dai2dk6u8ae64br0.apps.googleusercontent.com",
+        "project_id": "acert-380606",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "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",
+        "redirect_uris": [
+            "http://localhost"
+        ]
+    }
+}

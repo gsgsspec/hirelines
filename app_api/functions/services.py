@@ -1,5 +1,7 @@
 import json
 import requests
+import string
+import secrets
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -7,6 +9,7 @@ from urllib.parse import urljoin
 from rest_framework.authtoken.models import Token
 from .constants import public_email_domains
 from hirelines.metadata import getConfig
+from .mailing import sendRegistrainMail
 from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions
 
 
@@ -59,7 +62,9 @@ def registerUserService(dataObjs):
         if user_check:
             return 2
 
-        company_check = Company.objects.filter(emaildomain=user_email_domain).last()
+        company_check = Company.objects.filter(emaildon=user_email_domain).last()
+
+        random_password = generate_random_password()
 
         if company_check:
             user = User(
@@ -68,7 +73,7 @@ def registerUserService(dataObjs):
                 location = dataObjs['reg-location'],
                 companyid = company_check.id,
                 role = "HR",
-                password = "gsspec",
+                password = random_password,
                 email = bussiness_email,
                 status = "A"
             )
@@ -82,6 +87,7 @@ def registerUserService(dataObjs):
                 emaildomain = user_email_domain,
                 email = bussiness_email,
                 companytype = dataObjs["reg-companytype"],
+                registrationdate = datetime.now(),
                 status = "T",
                 freetrail = 'I'
             )
@@ -94,12 +100,18 @@ def registerUserService(dataObjs):
                 location = dataObjs['reg-location'],
                 companyid = company.id,
                 role = "HR",
-                password = "gsspec",
+                password = random_password,
                 email = bussiness_email,
                 status = "A"
             )
 
             user.save()
+
+            hirelines_domain = getConfig()['DOMAIN']['hirelines']
+
+            mail_data = {'name':user.name,'email':user.email,'password':user.password,'url': f"{hirelines_domain}/login"}
+
+            sendRegistrainMail(mail_data)
 
         return 0
             
@@ -370,6 +382,17 @@ def checkCompanyTrailPeriod(user_mail):
         
                 return True
 
-
     except Exception as e:
         raise 
+
+
+def generate_random_password(length=15):
+    try:
+        characters = string.ascii_letters + string.digits
+
+        password = ''.join(secrets.choice(characters) for _ in range(length))
+
+        return password
+    
+    except Exception as e:
+        raise
