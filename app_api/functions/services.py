@@ -62,7 +62,7 @@ def registerUserService(dataObjs):
         if user_check:
             return 2
 
-        company_check = Company.objects.filter(emaildon=user_email_domain).last()
+        company_check = Company.objects.filter(emaildomain=user_email_domain).last()
 
         random_password = generate_random_password()
 
