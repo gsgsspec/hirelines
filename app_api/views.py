@@ -41,6 +41,9 @@ def addCompanyData(request):
 
 
 @csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
 def addJDCandidate(request):
     response = {
         'data': None,
