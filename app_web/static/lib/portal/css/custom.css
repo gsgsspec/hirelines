@@ -5,6 +5,14 @@
 	--button-primary-color : #274699;
 }
 
+.p-clr {
+  color: var(--primary-color);
+}
+
+.s-clr {
+  color: var(--secondary-color);
+}
+
 .question-box {
   padding: 10px 20px;
 }
