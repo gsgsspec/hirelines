@@ -1,0 +1,798 @@
+{% load static %}
+
+<body>
+    <!-- web streams API polyfill to support Firefox -->
+    <script src="https://unpkg.com/@mattiasbuelens/web-streams-polyfill/dist/polyfill.min.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <!-- ../libs/DBML.js to fix video seeking issues -->
+    <script src="https://www.webrtc-experiment.com/EBML.js"></script>
+
+    <!-- for Edge/FF/Chrome/Opera/etc. getUserMedia support -->
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="https://www.webrtc-experiment.com/DetectRTC.js"> </script>
+  
+    <!-- video element -->
+    <!--    <link href="https://www.webrtc-experiment.com/getHTMLMediaElement.css" rel="stylesheet">-->
+      <script src="https://www.webrtc-experiment.com/getHTMLMediaElement.js"></script>
+
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg " id="meeting_main">
+    <!-- Navbar -->
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur"
+      navbar-scroll="true" style="margin-top: -1%; padding-top: 0% !important;">
+      <div class="container-fluid py-1 px-3">
+        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+          <ul class="navbar-nav  justify-content-end">
+            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+              <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                <div class="sidenav-toggler-inner">
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- End Navbar -->
+    <div class="container-fluid py-2">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="interview-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-3 pb-3">
+                <div class="text-white text-capitalize ps-3 page_heading hdng" style="display: flex; justify-content: space-evenly; align-items: center;">
+                  <span>Srikanth G</span>
+                  <span style="font-size: 15px;">Python Fresher Questionnaire</span>
+                  <span style="font-size: 15px;" id="time_lapsed"></span>
+                  <!-- <span>{{jobDesc_data.candidate_details.candid_name}}</span>
+                  <span style="font-size: 15px;">{{jobDesc_data.candidate_details.paper_title}}</span>
+                  <span style="font-size: 15px;" id="time_lapsed"></span> -->
+                </div>
+              </div>
+            </div>
+            <div class="card-body pb-2">
+              <div class="row" style="flex-flow: row;padding: 1%;padding-top: 0%;padding-bottom: 0.1%;" id="ini_div">
+                
+                <div style="height: 522px;width: 60%;border: solid 1px #d2d6da; border-radius: 6px; border-top-left-radius: 0px; border-bottom-left-radius: 0px;">
+                    <div>
+                        <p id="reg_code" hidden>{{jobDesc_data.candidate_details.user_reg_id}}_{{ jobDesc_data.call_shud_id }}</p>
+
+                        <div class="grid-container pb-2">
+                        <div class="grid-item cursor-pointer sec_selected" name="ins" id="ins_sec" onclick="show_ins();" style="align-items: center;">
+                            <h5 style="font-size: 17px; font-weight: 800;">Job Description</h5>
+                        </div>
+                        <div class="grid-item cursor-pointer" name="secs" id="verif_sec"
+                            onclick="showCandidateInfo();" style="align-items: center;">
+                            <h5 style="font-size: 17px; font-weight: 800;">Candidate Info</h5>
+                        </div>
+                        {% for section in interview_sections %}
+                        <span name="vs" >
+                          <div class="grid-item cursor-pointer" name="secs" id="{{ section.id }}"
+                          onclick="show_section(this.id);" style="align-items: center;">
+                          <h5 style="font-size: 17px; font-weight: 500;text-transform: capitalize; font-weight: 800;">{{ section.name }}</h5>
+                          </div>
+                        </span>
+                        {% endfor %}
+                        </div>
+                    </div>
+
+                  <!-- Started container -->
+
+                  <!-- <h5 class="ins">Candidate Info</h5> -->
+                  <div class="ins" style="overflow: auto; position: relative; height: 72%; padding:1%">
+                    <div class="qol">
+                      <table style="width:100%;">
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Job Title</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:80% !important;">
+                            <h6 class="clear-text">{{jobDesc_data.job_title}}</h6>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Job Description</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:80% !important;">
+                            <h6 class="clear-text">{{jobDesc_data.job_desc}}</h6>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Department</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:80% !important;">
+                            <h6 class="clear-text">{{jobDesc_data.department}}</h6>
+                          </th>
+                        </tr>
+
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Purpose Of Hiring</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:80% !important;">
+                            <h6 class="clear-text">{{jobDesc_data.purpos}}</h6>
+                          </th>
+                        </tr>
+
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Work Location</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:80% !important;">
+                            <h6 class="clear-text">{{jobDesc_data.work_loc}}</h6>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Skills</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th>
+                            <h6 class="clear-text">{{jobDesc_data.skills}}</h6>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Any Special Notes</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:80% !important;">
+                            <h6 class="clear-text">{% if jobDesc_data.any_spec_note %} {{ jobDesc_data.any_spec_note }} {% else %} N/A {% endif %} </h6>
+                          </th>
+                        </tr>
+
+
+                      </table>
+                      
+                    </div>
+                  </div>
+
+                  <div class="apl_sec" style="overflow: auto; position: relative; padding:1%;height: 85%;" hidden>
+                    <div class="qol">
+                      <table style="width:100%;">
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Name</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:73% !important;">
+                            <h6>{{jobDesc_data.candidate_details.candid_name}}</h6>
+                          </th>
+                        </tr>
+                  
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Mobile Number</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th>
+                            <div style="display:flex;">{{jobDesc_data.candidate_details.candid_num}}</div>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Email Id</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th>
+                            <div style="display:flex;">{{jobDesc_data.candidate_details.candid_email_add}}</div>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Questionnaire</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:73% !important;">
+                            <h6>{{jobDesc_data.candidate_details.paper_title}}</h6>
+                          </th>
+                        </tr>
+                      </table>
+                      <div class="screeing-bar">
+                        <span>Screening -  8/10(Promoted)</span>
+                        <span style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><u>view details</u></span>
+                      </div>
+                      <div class="collapse" id="collapseExample">
+                        <div class="d-grid d-sm-flex p-3 border">
+                          <table class="table table-bordered mb-0">
+                            <thead>
+                              <tr>
+                                <th><strong> #</strong></th>
+                                <th><strong>Question</strong></th>
+                                <th><strong>Response</strong></th>
+                                <th><strong>Marks</strong></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>1</td>
+                                <td>Do you have at least 5 years of Java Developer experience, working on
+                                  commercial applications</td>
+                                <td>Yes</td>
+                                <td>4</td>
+                              </tr>
+                              <tr>
+                                <td>2</td>
+                                <td>do you have at least 2 plus years of experience of developing applications
+                                  using MySQL</td>
+                                <td>Yes</td>
+                                <td>2</td>
+                              </tr>
+                              <tr>
+                                <td>3</td>
+                                <td>do you have at least 2 plus years of experience of developing applications
+                                  using MongoDB</td>
+                                <td>No</td>
+                                <td>4</td>
+                              </tr>
+                              <tr>
+                                <td>4</td>
+                                <td>Are you familiar with Apache Kafka, have you done any projects in Kafka</td>
+                                <td>Yes</td>
+                                <td>4</td>
+                              </tr>
+                              <tr>
+                                <td>5</td>
+                                <td>Are you familiar with Apache Kafka Architecture, if needed can you explain it</td>
+                                <td>No</td>
+                                <td>4</td>
+                              </tr>
+                              <tr>
+                                <td>6</td>
+                                <td>Do you have experience of working on Streaming Applications </td>
+                                <td>Yes</td>
+                                <td>3</td>
+                              </tr>
+                              <tr>
+                                <td>7</td>
+                                <td>Are you familiar with React or Angular frontend frameworks</td>
+                                <td>Yes</td>
+                                <td>5</td>
+                              </tr>
+                              <tr>
+                                <td>8</td>
+                                <td>Do you have LRU cache experience</td>
+                                <td>No</td>
+                                <td>4</td>
+                              </tr>
+                              <tr>
+                                <td>9</td>
+                                <td>Do you have sound knowledge and application of Oops concepts</td>
+                                <td>Yes</td>
+                                <td>5</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="screeing-bar mt-2">
+                      <span>Coding - 10/10(Promoted)</span>
+                      <span style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#codingExample" aria-expanded="false" aria-controls="codingExample"><u>view details</u></span>
+                    </div>
+                    <div class="collapse" id="codingExample">
+                      <div class="d-grid d-sm-flex p-3 border" style="flex-direction: column;">
+                        <p>1. Write a Program to Replace all 0’s with 1’s in a Number.  use this function name replace_zero_to_ones(int x)
+                        </p>
+                        <textarea class="form-control" rows="23" disabled="">int replace_zero_to_ones(int num) {
+                          int result = 0, place = 1;
+                          
+                          // Handle the case when the input number is 0
+                          if (num == 0) {
+                              return 1;
+                          }
+                          
+                          while (num &gt; 0) {
+                              int digit = num % 10;
+                              if (digit == 0) {
+                                  digit = 1;
+                              }
+                              result += digit * place;
+                              place *= 10;
+                              num /= 10;
+                          }
+                          
+                          return result;
+                      }</textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div hidden id="sec" class="sec_q" style="position: relative; height: 75%; padding:1%">
+
+                    {% for question in sections_questions_lst %}
+
+                    <h4 hidden class="sec_{{question.section_id}}" style="font-size: 17px; font-weight: 800;text-transform: capitalize;">{{question.section_name}}</h4>
+
+                    <div hidden class="sec_{{question.section_id}}"
+                      style="overflow: auto; position: relative; height: 97%; padding:1%">
+                      <ol class="qol">
+                        {% for q in question.section_questions %}
+                        <div class="form-check mt-1" style="width:80%; font-size: 16px;">
+                          <li class="ql mb-3"><span> {{ q.qus }} </span><br>
+                            <span for="qr_{{ q.qus_id }}">Lowest(0)</span>
+                            <input style="padding: 0px; width: 62%;" type="range" min="0" max="5" step="1" value="0"
+                              name="q3" id="qr_{{ q.qus_id }}"
+                              onchange="answer({ 'question_id' : {{ q.qus_id }}, 'call_shud_id' : {{ jobDesc_data.call_shud_id }}, 'inpt_id' : this.id , 'candid_id' : {{ jobDesc_data.candidate_details.candid_id }}} );">
+                            <span for="qr_{{ q.qus_id }}" >Highest(5)</span>
+                            <div style="padding-top: 10px;">Rating :<span id="qs_{{ q.qus_id }}">0</span></div>
+                          </li>
+                        </div>
+
+                        {% endfor %}
+
+                        {% if 'Y' == question.ask_remark %}
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <span style="width: 20%;font-size: 16px;">Interview Remarks</span>
+                                </td>
+                                <td>
+                                  :
+                                </td>
+                                <td>
+                                  <div class="input-group input-group-outline mb-2">
+                                          <textarea class="form-control" rows="3" cols="50" style="border: 1px solid #d6d5d5; padding:0%;" id="interviewRemarkNote" name="{{applicant_details.call_sch_id}}" onchange="remarks()"></textarea>
+                                      </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+
+                      </ol>
+                    </div>
+                    
+                    {% endfor %}
+                    
+
+                  </div>
+
+                </div>
+                <div
+                style="padding: 0%;height: 522px;width: 40%;border: solid 1px #d2d6da;overflow:scroll;overflow-x:hidden;overflow-y:auto;border-radius: 6px; border-top-right-radius: 0px; border-bottom-right-radius: 0px;">
+                  <iframe style="width:100% !important; " allow="autoplay;camera;microphone;"
+                    src="https://onecall.ae/vn/?room={{jobDesc_data.meeting_link}}&wc&q=2"></iframe>
+
+                </div>
+              </div>
+              <div style="width:50%">
+                
+                <div id="end_div" hidden>
+                  <span id="ustat" hidden></span>
+                  <label id="file_uploaded" hidden><i class="fas fa-check-circle" style="color:green"></i> &ensp;File
+                    Uploaded</label>
+
+                  <div id="upload_loadingp">
+                    <label id="fupload_label">Please wait while the file has been uploading.....</label>
+                    <div id="loadingProgressG">
+                      <div id="loadingProgressG_1" class="loadingProgressG"></div>
+                    </div>
+                  </div>
+                  <div id="alertMessage"></div>
+
+                  <table style="width:90%;margin-top: 6%;">
+                    <tbody>
+                      <tr style="display: none;">
+                        <td><span style="width: 20%;">Interview Rate</span> </td>
+                        <td>
+                          <div class="input-group input-group-outline mb-2">
+                            <select class="form-control" id="impairment_code" onchange="fill_data();" required>
+                              <option disabled ></option>
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5" selected>5</option>
+                            </select>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 30%;">
+                          <h6>Interview Status</h6>
+                        </td>
+                        <td>
+                          <div class="input-group input-group-outline mb-2">
+                            <select class="form-control" id="action_plan" onchange="fill_data();" required>
+                              <option disabled selected> Select status </option>
+                              <option value="C">Completed</option>
+                            </select>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table><br>
+                  <h6>Your Decision on Hiring the Candidate</h6>
+                    <div class="toogler_div">
+                      <label class="n_hire">Not Hire</label>
+                      <label class="toggle-switch">
+                              <input type="checkbox" id="toggle" />
+                          <span class="slider"></span>
+                      </label>
+                      <label class="hire">Hire</label>
+                  </div><br>
+                  <h6>Remarks / Notes</h6>
+                            <textarea class="form-control" id="notes" rows="12" maxlength="1000" name="question"
+                                style="height: 100px;" required>{{feedback_data.notes}}</textarea>
+
+                </div>
+
+              </div>
+              <button id="call_flag" hidden>Start Call</button>
+              <button class="btn bg-gradient-dark mb-0 js-btn-next cust-btn-color" style="width:140px;margin-left: 87%; background-color: var(--primary-color); color: white; font-weight: 500;"
+                id="done_btn">End Interview</button>
+              <button class="btn bg-gradient-dark mb-0 js-btn-next cust-btn-color mb-3"
+                style="width:140px;float:right;margin-left: 13px; background-color: var(--primary-color); color: white; font-weight: 500;" id="submit_btn" disabled hidden>OK</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="{% static 'js/candidate_meeting.js' %}"></script>
+  <script src="{% static 'js/screen_recorder.js' %}"></script>
+  <script>
+
+    var candid__id = {{ jobDesc_data.candidate_details.candid_id }}
+    var candid_call_shed_id = {{ jobDesc_data.call_shud_id }}
+    var library_id = {{ cdn_data.libraryid }}
+    var auth_key = "{{ cdn_data.auth_key }}"
+
+  </script>
+  <style>
+    .clear-text{
+      letter-spacing: 0.2px;
+      word-spacing: 0.8px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    iframe {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      display: block;
+      width: 100%;
+      height: 520px;
+    }
+
+    #viewlink {
+      width: 400px;
+    }
+
+    #container {
+      display: block;
+      padding: 0px;
+    }
+
+    input {
+      padding: 5px;
+      margin: 5px;
+    }
+
+    button {
+      padding: 5px;
+      margin: 5px;
+    }
+
+  </style>
+  <style>
+    .ml_input {
+      width: 132.3%;
+      margin-left: 1.5%;
+      padding: 4px;
+      border: 1px solid grey;
+    }
+
+    .grid-container {
+      width: 100%;
+      position: relative;
+      display: grid;
+      grid-template-columns: auto auto auto;
+      background-color: #ffffff;
+    }
+
+    .grid-item {
+      border: 0.5px solid rgba(236, 236, 236, 0.8);
+      padding: 5px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50px;
+    }
+
+    .grid-item h5 {
+      margin-bottom: 0;
+    }
+
+    .app_info {
+      width: 75% !important;
+      border: 1px solid gray !important;
+      height: 38px !important;
+      padding: 5px;
+    }
+
+    .sl_input {
+      width: 133% !important;
+      border: 1px solid gray !important;
+      height: 38px !important;
+      padding: 5px;
+    }
+
+    ol>li {
+      counter-increment: item;
+    }
+
+    ol>li:first-child {
+      counter-reset: item;
+    }
+
+    ol ol>li {
+      display: block;
+    }
+
+    ol ol>li:before {
+      content: counters(item, ".") ". ";
+      margin-left: -20px;
+    }
+
+    .sec_selected {
+      background-color: var(--light-primary-color);
+    }
+
+    .sec_selected h5{
+      color: var(--primary-color);
+    }
+
+    .verify_failed {
+      padding: 3px;
+      font-size: 25px;
+      color: red;
+    }
+
+    ::placeholder {
+      text-align: left;
+      opacity: 1;
+      /* Firefox */
+    }
+
+    :-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      text-align: left;
+    }
+
+    ::-ms-input-placeholder {
+      /* Microsoft Edge */
+      text-align: left;
+    }
+
+    .green_tick {
+      color: green;
+      font-size: 20px;
+      margin-top: 1.5%;
+    }
+
+    .red_wrong {
+      color: red;
+      font-size: 28px;
+    }
+
+
+    #loadingProgressG {
+      width: 130%;
+      height: 5px;
+      overflow: hidden;
+      background-image: linear-gradient(300deg, var(--primary-color) 0%, var(--primary-color) 100%);
+      margin: auto;
+      border-radius: 10px;
+      -o-border-radius: 10px;
+      -ms-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 10px;
+    }
+
+    .loadingProgressG {
+      background-color: rgb(255, 255, 255);
+      margin-top: 0;
+      margin-left: -130%;
+      animation-name: bounce_loadingProgressG;
+      -o-animation-name: bounce_loadingProgressG;
+      -ms-animation-name: bounce_loadingProgressG;
+      -webkit-animation-name: bounce_loadingProgressG;
+      -moz-animation-name: bounce_loadingProgressG;
+      animation-duration: 3.5s;
+      -o-animation-duration: 3.5s;
+      -ms-animation-duration: 3.5s;
+      -webkit-animation-duration: 3.5s;
+      -moz-animation-duration: 3.5s;
+      animation-iteration-count: infinite;
+      -o-animation-iteration-count: infinite;
+      -ms-animation-iteration-count: infinite;
+      -webkit-animation-iteration-count: infinite;
+      -moz-animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      -o-animation-timing-function: linear;
+      -ms-animation-timing-function: linear;
+      -webkit-animation-timing-function: linear;
+      -moz-animation-timing-function: linear;
+      width: 130%;
+      height: 5px;
+    }
+
+
+
+    @keyframes bounce_loadingProgressG {
+      0% {
+        margin-left: -130%;
+      }
+
+      100% {
+        margin-left: 130%;
+      }
+    }
+
+    @-o-keyframes bounce_loadingProgressG {
+      0% {
+        margin-left: -130%;
+      }
+
+      100% {
+        margin-left: 130%;
+      }
+    }
+
+    @-ms-keyframes bounce_loadingProgressG {
+      0% {
+        margin-left: -130%;
+      }
+
+      100% {
+        margin-left: 130%;
+      }
+    }
+
+    @-webkit-keyframes bounce_loadingProgressG {
+      0% {
+        margin-left: -130%;
+      }
+
+      100% {
+        margin-left: 130%;
+      }
+    }
+
+    @-moz-keyframes bounce_loadingProgressG {
+      0% {
+        margin-left: -130%;
+      }
+
+      100% {
+        margin-left: 130%;
+      }
+    }
+
+
+    input[type='range']{ accent-color: #707070; }
+  </style>
+  
+  <style>
+    .toogler_div {
+      width: 230px;
+    }
+
+    .n_hire {
+      float: left;
+      padding-right: 13px;
+      padding-top: 5px;
+      font-size: medium;
+    }
+
+    .hire {
+      float: right;
+      padding-top: 5px;
+      font-size: medium;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 8em;
+        height: 2.4em;
+    }
+
+    .toggle-switch input {
+        display: none;
+    }
+
+    .slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        border-radius: 1.2em;
+        cursor: pointer;
+        transition: 0.4s;
+        padding: 0.3em;
+        box-sizing: border-box;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 1.8em;
+        width: 1.8em;
+        left: 0.3em;
+        bottom: 0.3em;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.4s;
+    }
+
+    input:checked+.slider {
+        background-color: var(--primary-color);
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(5.5em);
+    }
+</style>
+
+
+<style>
+    #layout-menu {
+        display: none;
+    }
+    .layout-page {
+        padding-left: 0px !important;
+    }
+</style>
+
+</body>

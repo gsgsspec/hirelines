@@ -1,0 +1,107 @@
+{% load static %}
+<div class="mb-2">
+    <a href="/feedbacks" style="color: black;">
+        <i class="fas fa-angle-double-left" style="color: #000000;"></i>&nbsp;<u>Back</u> 
+    </a>
+</div>
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Srikanth G</h4>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+        <div class="col-md-9" style="border:2px solid var(--primary-color);border-radius: 5px;">
+            <div style="text-align: center">
+                <div style="position: relative; padding-top: 56.25%;">
+                    <iframe src="https://iframe.mediadelivery.net/embed/310101/efcc31f7-e359-4026-bd47-70e77fc31ac8" 
+                        loading="lazy" style="border: none; position: absolute;z-index:1; top: 0;left: 0; height: 100%; width: 100%;" 
+                        allow="accelerometer; gyroscope; encrypted-media; picture-in-picture;" allowfullscreen="true">
+                    </iframe>
+                    <h1 style="position: absolute;top: 50%;left: 50%;transform:translate(-50%,-50%);z-index:0">Video will available shortly.....</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7" style="padding: 3rem;">
+        <form id="ivfeedback_form">
+            <h6>Your Decision on Hiring the Candidate</h6>
+            <div class="toogler_div">
+                <label class="n_hire">Not Hire</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle">
+                    <span class="slider"></span>
+                </label>
+                <label class="hire">Hire</label>
+            </div><br>
+            <h6>Remarks / Notes</h6>
+            <textarea class="form-control" id="notes" rows="12" maxlength="1000" name="question" style="height: 100px;" required></textarea><br>
+            <p id="candidateid" name="584" hidden></p>
+            <div class="float-right">
+                <button class="mb-1 btn btn-primary btn_width ml-2" type="save" id="save">Submit Feedback</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .toogler_div {
+        width: 230px;
+    }
+
+    .n_hire {
+        float: left;
+        padding-right: 13px;
+        padding-top: 5px;
+        font-size: medium;
+    }
+
+    .hire {
+        float: right;
+        padding-top: 5px;
+        font-size: medium;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 8em;
+        height: 2.4em;
+    }
+
+    .toggle-switch input {
+        display: none;
+    }
+
+    .slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        border-radius: 1.2em;
+        cursor: pointer;
+        transition: 0.4s;
+        padding: 0.3em;
+        box-sizing: border-box;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 1.8em;
+        width: 1.8em;
+        left: 0.3em;
+        bottom: 0.3em;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.4s;
+    }
+
+    input:checked+.slider {
+        background-color: var(--primary-color);
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(5.5em);
+    }
+</style>

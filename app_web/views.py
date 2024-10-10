@@ -96,13 +96,32 @@ def emailTemplatesPage(request):
 
 
 def candidatesPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
     if checkCompanyTrailPeriod(request.user):
         return redirect('/trial-expired')
+    
     try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
 
         candidates_data = getCandidatesData()
 
-        return render(request, "portal_index.html", {"template_name": 'candidates.html',"candidates_data" : candidates_data})
+        if menuItemObjList:
+            return render(request, "portal_index.html", {"template_name": 'candidates.html','menuItemList': menuItemList,"candidates_data" : candidates_data})
+
+        else:
+            return redirect('../')
 
     except Exception as e:
         raise
@@ -131,7 +150,6 @@ def reportsPage(request):
                         child['menuItemLink'] == currentPath]
 
         job_descriptions = JobDesc.objects.all()
-
     
         if menuItemObjList: 
             return render(request, "portal_index.html", {"template_name": 'reports.html','menuItemList': menuItemList ,"job_descriptions":job_descriptions})
@@ -160,7 +178,14 @@ def addCandidatePage(request):
         return redirect('/trial-expired')
     try:
 
-        return render(request, "portal_index.html", {"template_name": 'add_candidate.html'})
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        return render(request, "portal_index.html", {"template_name": 'add_candidate.html','menuItemList': menuItemList})
 
     except Exception as e:
         raise
@@ -187,5 +212,109 @@ def trialExpired(request):
 
         return render(request, "trail_expired.html")
 
+    except Exception as e:
+        raise
+
+
+
+def interviewCandidatesList(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    if checkCompanyTrailPeriod(request.user):
+        return redirect('/trial-expired')
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+
+        if menuItemObjList: 
+
+            return render(request, "portal_index.html", {"template_name": 'interview_candidates.html','menuItemList': menuItemList })
+        
+        else:
+            return redirect('../')
+
+    except Exception as e:
+        raise
+
+
+def candidateInterview(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    if checkCompanyTrailPeriod(request.user):
+        return redirect('/trial-expired')
+    try:
+
+
+        return render(request, "portal_index.html", {"template_name": 'candidate_interview.html' })
+
+    except Exception as e:
+        raise
+
+
+
+def interviewSchedule(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        return render(request, "portal_index.html", {"template_name": 'interview_schedule.html','menuItemList':menuItemList })
+    
+    except Exception as e:
+        raise
+
+
+def feedbacksPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        return render(request, "portal_index.html", {"template_name": 'feedback.html','menuItemList':menuItemList })
+    
+    except Exception as e:
+        raise
+
+
+def interviewerFeedback(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        return render(request, "portal_index.html", {"template_name": 'interviewer_feedback.html','menuItemList':menuItemList })
+    
     except Exception as e:
         raise

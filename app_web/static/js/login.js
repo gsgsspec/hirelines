@@ -16,11 +16,12 @@ document.getElementById('login-btn').onclick=function(){
 
         $.post(CONFIG['portal'] + "/api/login-user", final_data, function (res) {
         
-            if (res.statusCode == 0){
+            if (res.statusCode == 0){   
                 if (res.token == 'token_generated'){
-                    // window.location.href = '/courses';
                     if(res.data == 'HR'){
                         window.location.href = '/dashboard'
+                    } else if(res.data == 'Interviewer'){
+                        window.location.href = '/interviews' 
                     }
                 }
                 else{

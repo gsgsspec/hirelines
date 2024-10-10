@@ -1,0 +1,149 @@
+{% load static %}
+<div class="card">
+  <div class="card-title-table">
+    <h4 class="card-header">Scheduled interviews</h4>
+    <div class="p-3 text-align-right">
+      <input id="searchInput" class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+        onkeyup="searchCandidate()" style="width: 300px;">
+    </div>
+  </div>
+  <div class="row p-3">
+    <div class="col-md-6 col-lg-4 c-card" data-bs-toggle="modal" data-bs-target="#modalCenter">
+      <div class="card mb-3 shadow">
+        <div class="card-body int-card-bd">
+          <i class="fas fa-user fa-4x me-4 p-clr"></i>
+          <div>
+            <h5 class="card-title p-clr">Java Developer 3 - 4 years</h5>
+            <p class="card-title mb-0">Name : Srikanth 01</p>
+            <p class="card-text mb-0">Code : 0032400002</p>
+            <p class="card-text mb-0">Email : srikanth@gsspec.com</p>
+            <p class="card-text mb-0">Time : 24-Aug-2024 02:30 PM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 c-card">
+      <div class="card mb-3 shadow">
+        <div class="card-body int-card-bd">
+          <i class="fas fa-user fa-4x me-4 p-clr"></i>
+          <div>
+            <h5 class="card-title p-clr">Java Developer 4 - 5 years</h5>
+            <p class="card-title mb-0">Name : Srikanth 02</p>
+            <p class="card-text mb-0">Code : 0032400002</p>
+            <p class="card-text mb-0">Email : srikanth@gsspec.com</p>
+            <p class="card-text mb-0">Time : 24-Aug-2024 02:30 PM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 c-card">
+      <div class="card mb-3 shadow">
+        <div class="card-body int-card-bd">
+          <i class="fas fa-user fa-4x me-4 p-clr"></i>
+          <div>
+            <h5 class="card-title p-clr">Java Developer 3 - 6 years</h5>
+            <p class="card-title mb-0">Name : Srikanth 02 </p>
+            <p class="card-text mb-0">Code : 0032400002</p>
+            <p class="card-text mb-0">Email : srikanth@gsspec.com</p>
+            <p class="card-text mb-0">Time : 24-Aug-2024 02:30 PM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 c-card">
+      <div class="card mb-3 shadow">
+        <div class="card-body int-card-bd">
+          <i class="fas fa-user fa-4x me-4 p-clr"></i>
+          <div>
+            <h5 class="card-title p-clr">Java Developer 3 - 7 years</h5>
+            <p class="card-title mb-0">Name : Srikanth 01</p>
+            <p class="card-text mb-0">Code : 0032400002</p>
+            <p class="card-text mb-0">Email : srikanth@gsspec.com</p>
+            <p class="card-text mb-0">Time : 24-Aug-2024 02:30 PM</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Java Developer 3 - 4 years</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pb-1">
+        <table class="table table-bordered mb-0">
+          <tbody>
+            <tr>
+              <td><strong>Candidate ID</strong></td>
+              <td>PS24000186</td>
+            </tr>
+            <tr>
+              <td><strong>Candidate Name</strong></td>
+              <td>Srikanth G</td>
+            </tr>
+            <tr>
+              <td><strong>Mobile</strong></td>
+              <td>09121867652</td>
+            </tr>
+            <tr>
+              <td><strong>Email</strong></td>
+              <td>srikanth@gsspec.com</td>
+            </tr>
+            <tr>
+              <td><strong>Job Description</strong></td>
+              <td>Python Full Stack Developer</td>
+            </tr>
+            <tr>
+              <td><strong>Interview Plan</strong></td>
+              <td>Python Fresher Questionnaire</td>
+            </tr>
+            <tr>
+              <td><strong>Scheduled Time</strong></td>
+              <td>25-Aug-2024 10:00 AM</td>
+            </tr>
+            <tr>
+              <td><strong>HR</strong></td>
+              <td>Admin GSSPEC</td>
+            </tr>
+            <tr>
+              <td><strong>Notes</strong></td>
+              <td>Admin GSSPEC</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='/candidate-interview'">Start
+          Interview</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function searchCandidate() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const listItems = document.querySelectorAll('.c-card');
+
+    listItems.forEach(item => {
+      const textContent = item.textContent.toLowerCase();
+      if (textContent.includes(input)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+<style>
+  input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+</style>

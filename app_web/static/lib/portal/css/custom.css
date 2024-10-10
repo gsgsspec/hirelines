@@ -50,7 +50,6 @@
   gap: 30px;
 }
 
-
 .score-label {
   font-size: 18px;
 }
@@ -93,7 +92,7 @@
 }
 
 .next-btn{
-  background-color: #f46a24;
+  background-color: var(--secondary-color);
   color: #fff !important;
   cursor: pointer;
 }
@@ -107,7 +106,6 @@
   background-color: #70cfd5 !important;
   color: #fff !important;
 }
-
 
 .q-img {
   float: left;
@@ -161,17 +159,14 @@ table.dataTable thead th, table.dataTable thead td {
 
 /* End Datatables Css */
 
-
 .card-badge {
   padding-bottom: 10px;
   text-align: end;
 }
 
-
 .num-txt {
   font-size: 40px;
 }
-
 
 .pointer {
   cursor: pointer;
@@ -180,4 +175,18 @@ table.dataTable thead th, table.dataTable thead td {
 .container-center {
   display: flex;
   justify-content: center;
+}
+
+.interview-header {
+  background-color: var(--primary-color);
+  border-radius: 5px;
+}
+
+.screeing-bar {
+  background-color: var(--primary-color);
+  padding: 0.5rem 0.5rem;
+  color: #fff;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
 }

@@ -1,0 +1,60 @@
+{% load static %}
+
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Interviewed Candidates</h4>
+    </div>
+    <div class="table-responsive text-nowrap table-cls">
+        <table class="table table-hover" id="feedbacks-table">
+            <thead>
+                <tr>
+                    <th> <strong> Candidate ID </strong></th>
+                    <th> <strong> Name </strong></th>
+                    <th> <strong> Email </strong></th>
+                    <th> <strong> HR </strong></th>
+                    <th> <strong> Interviewed by </strong></th>
+                    <th> <strong> Feedback </strong></th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                <tr onclick="window.location.href='/interviewer-feedback'">
+                    <td>PY24000005</td>
+                    <td>Srikanth G</td>
+                    <td>srikanth@gmail.com</td>
+                    <td>NA</td>
+                    <td>NA</td>
+                    <td><i class="fas fa-thumbs-up" style="color: green;"></i>&nbsp; Hire</td>
+                </tr>
+                <tr>
+                    <td>PY24000006</td>
+                    <td>Balu P</td>
+                    <td>balu@gmail.com</td>
+                    <td>NA</td>
+                    <td>NA</td>
+                    <td><i class="fas fa-thumbs-up fa-flip-vertical" style="color: red;"></i>&nbsp; Not Hire</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<style>
+    tbody tr:hover {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        $.noConflict();
+        $('#feedbacks-table').DataTable({
+            "order": [],
+            "ordering": false,
+            language: { search: "",searchPlaceholder: "Search..." } ,
+            pagingType: 'simple_numbers'
+        });
+    });
+</script>
+
+
