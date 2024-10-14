@@ -19,6 +19,9 @@ urlpatterns = [
     path('interview-schedule',views.interviewSchedule),
     path('feedbacks',views.feedbacksPage),
     path('interviewer-feedback',views.interviewerFeedback),
+    path('job-descriptions',views.jobDescription),
+    path('add-job-description',views.Addjobdescription),
+    path('job-description-set-up',views.AddjobdescriptionSetUp),
 
     # Company data page
     path("cmp-reg", views.homePage),

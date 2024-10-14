@@ -1,0 +1,363 @@
+{% load static %}
+<!-- 
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Add Job Description</h4>
+    </div>
+    <div class="row p-3">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="exampleFormControlSelect1" class="form-label">Select Job Description</label>
+              <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+                <option value="1">Python Developer 0 - 2 years</option>
+                <option value="2">Python Developer 2 - 4 years</option>
+                <option value="3">Java Developer 0 - 2 years</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlSelect1" class="form-label">Role</label>
+              <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+                <option value="1">Python Developer 0 - 2 years</option>
+                <option value="2">Python Developer 2 - 4 years</option>
+                <option value="3">Java Developer 0 - 2 years</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Budget</label>
+              <div style="display: flex; justify-content: start; ">
+                <input
+                type="number"
+                class="form-control w-25 mr-2"
+                id="min_experince"
+                placeholder="LPA"
+                aria-describedby="defaultFormControlHelp"
+                style="margin-right: 1rem;"
+              />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Experinces</label>
+              <div style="display: flex; justify-content: start; ">
+                <input
+                type="number"
+                class="form-control w-25 mr-2"
+                id="min_experince"
+                placeholder="Min - Exp"
+                aria-describedby="defaultFormControlHelp"
+                style="margin-right: 1rem;"
+              />
+              <input
+                type="number"
+                class="form-control w-25"
+                id="max_experince"
+                placeholder="Max - Exp"
+                aria-describedby="defaultFormControlHelp"
+              />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<style>
+  .jd_card_border{
+    border: 0.8px solid #b5b2b261;
+    border-radius: 10px;
+  }
+</style> -->
+
+<div class="content-wrapper">
+  <!-- Content -->
+
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Horizontal Layouts</h4> -->
+
+    <!-- Basic Layout & Basic with Icons -->
+    <div class="row">
+      <!-- Basic Layout -->
+      <div class="col-xxl">
+        <div class="container-center">
+          <div class="card mb-4 w-75">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h5 class="mb-0">Add Job Description</h5>
+              <!-- <small class="text-muted float-end">Default label</small> -->
+            </div>
+            <div class="card-body">
+              <form>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="basic-default-name">Select Job Description</label>
+                  <div class="col-sm-9">
+                    <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+                      <option value="1">Python Developer 0 - 2 years</option>
+                      <option value="2">Python Developer 2 - 4 years</option>
+                      <option value="3">Java Developer 0 - 2 years</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Description</label>
+                  <div class="col-sm-9 ">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="basic-default-name">Role</label>
+                  <div class="col-sm-9">
+                    <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+                      <option value="1">Development</option>
+                      <option value="2">Testing</option>
+                      <option value="3">Deployment</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Experinces</label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input
+                    type="number"
+                    class="form-control w-25 mr-2"
+                    id="min_experince"
+                    placeholder=""
+                    aria-describedby="defaultFormControlHelp"
+                    style="margin-right: 1rem;"
+                  />
+                  <input
+                    type="number"
+                    class="form-control w-25"
+                    id="max_experince"
+                    placeholder=""
+                    aria-describedby="defaultFormControlHelp"
+                  />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Budget <small>(LPA)</small></label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input
+                    type="number"
+                    class="form-control w-25 mr-2"
+                    id="min_experince"
+                    placeholder=""
+                    aria-describedby="defaultFormControlHelp"
+                    style="margin-right: 1rem;"
+                  />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">No of Positions</label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input
+                    type="number"
+                    class="form-control w-25 mr-2"
+                    id="min_experince"
+                    placeholder="Members count.."
+                    aria-describedby="defaultFormControlHelp"
+                    style="margin-right: 1rem;"
+                  />
+                  </div>
+                </div>
+  
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="basic-default-company">Work Location</label>
+                  <div class="col-sm-9">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="basic-default-company"
+                      placeholder=""
+                    />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Skill Set</label>
+                  <div class="col-sm-9">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                  </div>
+                </div>
+
+            
+
+                <div class="row mb-1 container-center">
+                  <label class="col-sm-2 col-form-label">Interview Panel</label>
+                  <div id="interviewPanelContainer" class="col-sm-9">
+                    <div class="form-group row interview-panel" id="panel_1">
+                      <div class="col-sm-5">
+                          <select class="custom-select custom-select-sm interviewer-select form-select mb-2" required>
+                            <option value="None" selected>Select Interviewer</option>
+                            <option value="1">Srinivas</option>
+                            <option value="2">Srikanth</option>
+                            <option value="3">Balu</option>
+                            <option value="4">Pratap</option>
+                          </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label"></label>
+                  <div class="col-sm-9">
+                    <button type="button" id="addInterviewerButton" class="btn btn-primary">Add Interviewer</button>
+                  </div>
+                </div>
+
+                <!-- <div class="row mb-3 container-center">
+                  <div class="col-sm-2"></div>
+                  <div class="col-sm-5">
+                    <button type="button" id="addInterviewerButton" class="btn btn-primary">Add Interviewer</button>
+                </div>
+                </div> -->
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="basic-default-message">Any Special Notes <small>(optional)</small></label>
+                  <div class="col-sm-9">
+                    <textarea
+                      id="basic-default-message"
+                      class="form-control"
+                      placeholder="Any Special instruction"
+                      aria-describedby="basic-icon-default-message2"
+                      rows="3"
+                    ></textarea>
+                  </div>
+                </div>
+
+                <div class="row justify-content-end">
+                  <div class="col-sm-9 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Done</button>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      <!-- Basic with Icons -->
+      <!-- <div class="col-xxl">
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Basic with Icons</h5>
+            <small class="text-muted float-end">Merged input group</small>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Name</label>
+                <div class="col-sm-9">
+                  <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-fullname2" class="input-group-text"
+                      ><i class="bx bx-user"></i
+                    ></span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="basic-icon-default-fullname"
+                      placeholder="John Doe"
+                      aria-label="John Doe"
+                      aria-describedby="basic-icon-default-fullname2"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-icon-default-company">Company</label>
+                <div class="col-sm-10">
+                  <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-company2" class="input-group-text"
+                      ><i class="bx bx-buildings"></i
+                    ></span>
+                    <input
+                      type="text"
+                      id="basic-icon-default-company"
+                      class="form-control"
+                      placeholder="ACME Inc."
+                      aria-label="ACME Inc."
+                      aria-describedby="basic-icon-default-company2"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-icon-default-email">Email</label>
+                <div class="col-sm-10">
+                  <div class="input-group input-group-merge">
+                    <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                    <input
+                      type="text"
+                      id="basic-icon-default-email"
+                      class="form-control"
+                      placeholder="john.doe"
+                      aria-label="john.doe"
+                      aria-describedby="basic-icon-default-email2"
+                    />
+                    <span id="basic-icon-default-email2" class="input-group-text">@example.com</span>
+                  </div>
+                  <div class="form-text">You can use letters, numbers & periods</div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 form-label" for="basic-icon-default-phone">Phone No</label>
+                <div class="col-sm-10">
+                  <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-phone2" class="input-group-text"
+                      ><i class="bx bx-phone"></i
+                    ></span>
+                    <input
+                      type="text"
+                      id="basic-icon-default-phone"
+                      class="form-control phone-mask"
+                      placeholder="658 799 8941"
+                      aria-label="658 799 8941"
+                      aria-describedby="basic-icon-default-phone2"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 form-label" for="basic-icon-default-message">Message</label>
+                <div class="col-sm-10">
+                  <div class="input-group input-group-merge">
+                    <span id="basic-icon-default-message2" class="input-group-text"
+                      ><i class="bx bx-comment"></i
+                    ></span>
+                    <textarea
+                      id="basic-icon-default-message"
+                      class="form-control"
+                      placeholder="Hi, Do you have a moment to talk Joe?"
+                      aria-label="Hi, Do you have a moment to talk Joe?"
+                      aria-describedby="basic-icon-default-message2"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row justify-content-end">
+                <div class="col-sm-10">
+                  <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+  <!-- / Content -->
+</div>
+<script src="{% static 'js/add_job_description.js' %}"></script>

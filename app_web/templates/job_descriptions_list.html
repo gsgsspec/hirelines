@@ -1,0 +1,95 @@
+{% load static  %}
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Job Descriptions</h4>
+        <div class="p-3 text-align-right d-flex">
+            <input id="searchInput" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onkeyup="searchCandidate()" style="width: 300px;">
+            <!-- <a href="/add-job-description"><button class="btn btn-primary m-0"> <i class="fas fa-plus"></i> Add JD</button></a> -->
+        </div>
+    </div>
+    <div class="row p-3">
+
+      <div class="c-card col-sm" style="max-width: max-content;">
+        <a href="/add-job-description">
+          <div class="card mb-3 new_jd_card_border">
+            <i class="fas fa-plus custm_icon_new_jd" style="color: var(--primary-color);"></i> 
+            <div class="new_jd_txt">New JD</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-lg-4 c-card">
+        <div class="card mb-3 shadow jd_card_border">
+          <a href="/add-job-description">
+            <div class="card-body int-card-bd ">
+              <div>
+                <h5 class="card-title p-clr mb-1 text_size_custm">Python Developer 0 - 3 years</h5>
+                <div class="" style="color: gray;">Description : Lorem ipsum dolor sit, amet consectetur adipisicing Lorem, ipsum dolor. elit...</div>
+                <div class="row justify-content-between">
+                  <div style="color: gray; width: 50%;">Exp : 3 - 7 Yrs</div>
+                    <!-- <a href="/job-description-set-up" > -->
+                      <button style="width: 30%;" onclick="redirectToJobDetails()" type="button" class="btn btn-sm btn-primary">Details</button>
+                    <!-- </a> -->
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 c-card">
+          <div class="card mb-3 shadow jd_card_border">
+            <div onclick="window.location.href='/add-job-description'" style="cursor: pointer;">
+              <div class="card-body int-card-bd ">
+                <div>
+                  <h5 class="card-title p-clr mb-1">Java Developer 3 - 7 years</h5>
+                  <div style="color: gray;">Description : Lorem ipsum dolor sit, amet consectetur adipisicing Lorem, ipsum dolor. elit...</div>
+                  <div class="row justify-content-between">
+                    <div style="color: gray; width: 50%;">Exp : 0 - 2 Yrs</div>
+                    <button style="width: 30%;" onclick="event.stopPropagation();redirectToJobDetails()" type="button" class="btn btn-sm btn-primary">Details</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+
+    </div>
+    
+</div>
+
+<style>
+  .jd_card_border{
+    border: 0.8px solid #b5b2b261;
+    border-radius: 10px;
+  }
+
+  .new_jd_card_border{
+    border: 2.5px dashed #9abedd;
+    border-radius: 10px;
+    height: 165px;
+    /* background-color: #f5f5f9; */
+    background-color: #ffff;
+    width: 165px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+  }
+  .custm_icon_new_jd{
+    font-size: 28px;
+    color: gray;
+  }
+  .new_jd_txt{
+    font-size: 20px;
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+  /* .text_size_custm{
+    font-size: clamp(lrem, 0.3043rem + 3.4783vw, 3rem);
+  } */
+</style>
+<script>
+  function redirectToJobDetails() {
+    window.location.href = '/job-description-set-up';
+  }
+</script>

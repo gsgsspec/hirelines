@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.db.models import Q
 from app_api.functions import constants
-from app_api.functions.masterdata import user_not_active,auth_user, get_current_path
+from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import User, Role, JobDesc
-from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod
+from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData
 
 # Create your views here.
 
@@ -159,7 +159,71 @@ def reportsPage(request):
 
     except Exception as e:
         raise
+def jobDescription(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    if checkCompanyTrailPeriod(request.user):
+        return redirect('/trial-expired')
 
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+        if menuItemObjList:
+            return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList })
+        else:
+            return redirect('../')
+
+    except Exception as e:
+        raise
+
+
+# this function render's inside html pages
+def Addjobdescription(request):
+    if checkCompanyTrailPeriod(request.user):
+        return redirect('/trial-expired')
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+        
+        return render(request, "portal_index.html", {"template_name": 'add_job_description.html', 'menuItemList': menuItemList})
+
+    except Exception as e:
+        raise
+
+# this function render's inside html pages
+def AddjobdescriptionSetUp(request):
+    if checkCompanyTrailPeriod(request.user):
+        return redirect('/trial-expired')
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+        
+        return render(request, "portal_index.html", {"template_name": 'jd_set_up.html', 'menuItemList': menuItemList})
+
+    except Exception as e:
+        raise
 
 def brandingPage(request):
     if checkCompanyTrailPeriod(request.user):
@@ -180,12 +244,14 @@ def addCandidatePage(request):
 
         user_mail = request.user
         user_data = auth_user(user_mail)
-
         user_role = user_data.role
 
         menuItemList = get_functions_service(user_role)
+        company_id = getCompanyId(user_mail)
 
-        return render(request, "portal_index.html", {"template_name": 'add_candidate.html','menuItemList': menuItemList})
+        jds_list = getCompanyJdData(company_id)
+
+        return render(request, "portal_index.html", {"template_name": 'add_candidate.html','menuItemList': menuItemList,'jds_data':jds_list})
 
     except Exception as e:
         raise

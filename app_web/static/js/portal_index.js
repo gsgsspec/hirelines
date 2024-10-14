@@ -7,7 +7,8 @@ var menuItemsUrls = {
     'candidates': ['/candidates', '/add-candidate'],
     'branding': ['/branding'],
     'reports': ['/reports','/jd'],
-    'logout': ['/']
+    'logout': ['/'],
+    'job-descriptions' : ['/job-descriptions','/add-job-description','/job-description-set-up']
 };
 
 var menuItems = document.querySelectorAll('.menu-item');

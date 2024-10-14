@@ -1,0 +1,111 @@
+{% load static %}
+
+<div class="content-wrapper">
+  <!-- Content -->
+
+  <div class="container-xxl flex-grow-1 container-p-y">
+
+    <!-- Basic Layout & Basic with Icons -->
+    <div class="row justify-content-end">
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="addInterviewer()" data-bs-toggle="modal" data-bs-target="#modalCenter">
+        <i class='bx bx-male-female icons_custm_weight'></i> {{ csrf }}
+      </button>
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('screening')" data-bs-toggle="modal" data-bs-target="#modalCenter">
+        <i class='bx bx-badge-check icons_custm_weight'></i>
+      </button>
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('coding')" data-bs-toggle="modal" data-bs-target="#modalCenter">
+        <i class='bx bx-code-alt icons_custm_weight'></i>
+      </button>
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('interview')" data-bs-toggle="modal" data-bs-target="#modalCenter">
+        <i class='bx bx-select-multiple icons_custm_weight' ></i>
+      </button>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6 col-lg-4 mb-4">
+        <div class="card p-3">
+          <figure class="p-3 mb-0">
+            <blockquote class="blockquote">
+              <figcaption class="custm_blockquote-footer mb-0 text-muted">
+                Screening
+                <!-- <cite title="Source Title">Source Title</cite> -->
+              </figcaption>
+              <p>A well-known quote, contained in a blockquote element.</p>
+            </blockquote>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- / Content -->
+</div>
+
+<!-- Models -->
+
+<!-- Modals start -->
+<div class="col-lg-4 col-md-6">
+  <div class="mt-3">
+    <!-- Modal -->
+    <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCenterTitle"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col mb-3">
+                <label for="testType" class="form-label">Screening Test Name <span hidden id="test_name_validator" class="validator_font_color mx-3">Please Enter Screening Test Name</span></label>
+                <input
+                  type="text"
+                  id="testType"
+                  class="form-control"
+                  placeholder="Test Name"
+                  value="Screening - 1"
+                  data-test_type="hell"
+                />
+              </div>
+            </div>
+            <div class="row g-2">
+              <div class="col mb-0">
+                <label for="emailWithTitle" class="form-label">Promot <small>(percentage)</small><span hidden id="promot_validator" class="validator_font_color mx-3">Please Enter Promot level</span></label>
+                <input
+                  type="number"
+                  id="promot_level"
+                  class="form-control"
+                  placeholder=""
+                  value="60"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" onclick="addTest()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<script src="{% static 'js/jd_set_up.js' %}"></script>
+<style>
+  .icons_custm_weight{
+    font-weight: 500;
+  }
+  .custm_blockquote-footer{
+    font-size: 85%;
+    margin-top: -1rem;
+  }
+  .validator_font_color{
+    color: red;
+  }
+</style>

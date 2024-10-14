@@ -134,3 +134,26 @@ def loginUser(request):
         response['error'] = str(e)
         raise
     return JsonResponse(response)
+
+
+@api_view(['POST'])
+def addCompanyData(request):
+    response = {
+        'data':None,
+        'error': None,
+        'statusCode':11
+    }
+    try:
+
+        if request.method == 'POST':
+            dataObjs = json.loads(request.POST.get('data'))
+            
+            data_add_status = addCompanyDataService(dataObjs) 
+
+            response['statusCode'] = int(data_add_status)
+
+    except Exception as e:
+        response['data'] = 'Error in adding company data'
+        response['error'] = str(e)
+
+    return JsonResponse(response)
