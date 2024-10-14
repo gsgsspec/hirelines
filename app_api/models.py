@@ -44,7 +44,7 @@ class Candidate(models.Model):
     lastname = models.CharField(max_length=100, null=True)
     registrationdate = models.DateTimeField(null=True)
     companyid = models.IntegerField(null=True)
-    paperid = models.IntegerField(null=True, blank=True)
+    # paperid = models.IntegerField(null=True, blank=True)
     email = models.CharField(max_length=100, null=True)
     mobile = models.CharField(max_length=40, null=True)
     add1 = models.CharField(max_length=100, null=True)
@@ -78,6 +78,7 @@ class JobDesc(models.Model):
     positions = models.IntegerField(null=True)
     createdby = models.IntegerField(null=True)
     status = models.CharField(max_length=1, null=True) # O - Open, C - Closed
+    companyid = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'jobdesc'
@@ -169,3 +170,16 @@ class User(models.Model):
 
     class Meta:
         db_table = 'user'
+
+
+class Workflow(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    paperid = models.IntegerField(null=True)
+    papertype = models.CharField(max_length=1, null=True)
+    order = models.IntegerField(null=True)
+    jobid = models.IntegerField(null=True)
+    papertitle = models.CharField(max_length=120, null=True, blank=True)
+
+    class Meta:
+        db_table = 'workflow'
