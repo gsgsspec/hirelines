@@ -5,10 +5,10 @@ from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from allauth.account.utils import perform_login
 from allauth.account import app_settings as allauth_settings
-from app_api.functions.masterdata import auth_user
+from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service
+from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService
 from .models import User_data
 
 # Create your views here.
@@ -155,5 +155,25 @@ def addCompanyData(request):
     except Exception as e:
         response['data'] = 'Error in adding company data'
         response['error'] = str(e)
+        raise
+    return JsonResponse(response)
 
+
+@api_view(['GET'])
+def getJdWorkflow(request):
+    response = {
+        'data':None,
+        'error':None,
+        'statusCode':1
+    }
+    try:
+        if request.method == "GET":
+            jobid = request.GET.get('jid')
+            company_id = getCompanyId(request.user)
+            getJdWorkflowService(jobid,company_id)
+
+    except Exception as e:
+        response['data'] = 'Error in getting jd worflow'
+        response['error'] = str(e)
+        raise
     return JsonResponse(response)

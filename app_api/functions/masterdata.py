@@ -21,3 +21,11 @@ def get_current_path(path):
         raise
 
 
+def getCompanyId(user_email):
+    try:
+
+        user = User.objects.get(email=user_email)
+        return user.companyid
+    
+    except Exception as e:
+        raise

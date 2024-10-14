@@ -4,11 +4,13 @@ var menuItemsUrls = {
     'dashboard': ['/dashboard'],
     'questionnaire': ['/questionnaire', '/add-category', '/add-report-data', '/edit-category', '/section-edit', '/section-add'],
     'email-templates': ['/email-templates'],
-    'candidates': ['/candidates', '/add-candidate'],
+    'candidates': ['/candidates', '/add-candidate','interview-schedule'],
     'branding': ['/branding'],
     'reports': ['/reports','/jd'],
-    'logout': ['/'],
-    'job-descriptions' : ['/job-descriptions','/add-job-description','/job-description-set-up']
+    'job-descriptions' : ['/job-descriptions','/add-job-description','/job-description-set-up'],
+    'interviews': ['/interviews'],
+    'feedback': ['/feedbacks','/interviewer-feedback'],
+    'logout': ['/']
 };
 
 var menuItems = document.querySelectorAll('.menu-item');

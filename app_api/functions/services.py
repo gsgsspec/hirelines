@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from .constants import public_email_domains
 from hirelines.metadata import getConfig
 from .mailing import sendRegistrainMail
-from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions
+from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow
 
 
 
@@ -394,5 +394,35 @@ def generate_random_password(length=15):
 
         return password
     
+    except Exception as e:
+        raise
+
+
+def getCompanyJdData(cid):
+    try:
+        company_jds = JobDesc.objects.filter(companyid=cid,status='O')
+
+        jds_list = []
+
+        if company_jds:
+
+            for jd in company_jds:
+
+                jds_list.append({
+                    'id': jd.id,
+                    'title': jd.title
+                })
+
+        return jds_list
+
+    except Exception as e:
+        raise
+
+
+def getJdWorkflowService(jid):
+    try:
+
+        jd_workflows = Workflow.objects.filter(jobid,)
+
     except Exception as e:
         raise
