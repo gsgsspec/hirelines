@@ -4,7 +4,7 @@ from django.db.models import Q
 from app_api.functions import constants
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import User, Role, JobDesc
-from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData
+from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, candidateInterviewers
 
 # Create your views here.
 
@@ -329,7 +329,7 @@ def candidateInterview(request):
 
 
 
-def interviewSchedule(request):
+def interviewSchedule(request,cid):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
@@ -342,7 +342,9 @@ def interviewSchedule(request):
 
         menuItemList = get_functions_service(user_role)
 
-        return render(request, "portal_index.html", {"template_name": 'interview_schedule.html','menuItemList':menuItemList })
+        interviewers = candidateInterviewers(cid)
+
+        return render(request, "portal_index.html", {"template_name": 'interview_schedule.html','menuItemList':menuItemList,'interviewers':interviewers })
     
     except Exception as e:
         raise
