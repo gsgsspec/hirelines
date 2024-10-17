@@ -10,6 +10,7 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService
 from .models import User_data
+from .functions.database import addCandidateDB
 
 # Create your views here.
 
@@ -170,10 +171,40 @@ def getJdWorkflow(request):
         if request.method == "GET":
             jobid = request.GET.get('jid')
             company_id = getCompanyId(request.user)
-            getJdWorkflowService(jobid,company_id)
+            workflow_data = getJdWorkflowService(jobid,company_id)
+            response['data'] = workflow_data
+            response['statusCode'] = 0
 
     except Exception as e:
         response['data'] = 'Error in getting jd worflow'
         response['error'] = str(e)
         raise
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def addCandidate(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+       
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            user_email = request.user
+            company_id = getCompanyId(user_email)
+            c_data = addCandidateDB(dataObjs,company_id)
+            response['data'] = c_data
+            response['statusCode'] = 0
+
+        else:
+            return HttpResponseForbidden('Request Blocked')
+        
+    except Exception as e:
+        response['data'] = 'Error in saving Job Description'
+        response['error'] = str(e)
+        raise
+
     return JsonResponse(response)

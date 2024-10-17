@@ -2,6 +2,7 @@ import json
 import requests
 import string
 import secrets
+import ast
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -222,7 +223,7 @@ def candidateRegistrationService(dataObjs):
 
             c_registration.save()
 
-
+    
     except Exception as e:
         raise
 
@@ -419,10 +420,45 @@ def getCompanyJdData(cid):
         raise
 
 
-def getJdWorkflowService(jid):
+def getJdWorkflowService(jid,cid):
     try:
 
-        jd_workflows = Workflow.objects.filter(jobid,)
+        jd_workflows = Workflow.objects.filter(jobid=jid,companyid=cid).order_by('order')
+
+        workflow_data = []
+
+        if jd_workflows:
+            for workflow in jd_workflows:
+                workflow_data.append({
+                    'id':workflow.id,
+                    'papertype':workflow.papertype,
+                    'title': workflow.papertitle,
+                    'paperid':workflow.paperid
+                })
+
+        return workflow_data
+    
+    except Exception as e:
+        raise
+
+
+
+def candidateInterviewers(cid):
+    try:
+        candidate = Candidate.objects.get(id=cid)
+
+        jd = JobDesc.objects.get(id=candidate.jobid)
+
+        jd_interviewers = ast.literal_eval(jd.interviewers)
+
+        job_interviewers = []
+
+        for job_interviewer in jd_interviewers:
+
+            interviewer = User.objects.get(id=job_interviewer)
+            job_interviewers.append({'id':interviewer.id,'name':interviewer.name})
+
+        return job_interviewers
 
     except Exception as e:
         raise

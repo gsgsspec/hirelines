@@ -183,3 +183,22 @@ class Workflow(models.Model):
 
     class Meta:
         db_table = 'workflow'
+
+
+class CallSchedule(models.Model):
+    id = models.AutoField(primary_key=True)
+    candidateid = models.IntegerField(null=True)
+    hrid = models.IntegerField(null=True)
+    paper_id = models.IntegerField(null=True)
+    interviewerid = models.IntegerField(null=True)
+    datentime = models.DateTimeField(null=True)
+    status = models.CharField(max_length=1, null=True)
+    callstarteddtt = models.DateTimeField(null=True)
+    callendeddtt = models.DateTimeField(null=True)
+    intnotes = models.CharField(max_length=1000, null=True)
+    meetinglink = models.CharField(max_length=100, null=True)
+    callendflag = models.CharField(max_length=1,null=True)
+    companyid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'callschedule'
