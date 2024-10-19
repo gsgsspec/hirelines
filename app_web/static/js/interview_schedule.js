@@ -1,11 +1,11 @@
-$('#position').on('change', function () {
+$('#interviewer').on('change', function () {
   var candidate_id = $('#cid').html()
   var int_id = $(this).val()
 
   $("#thead").empty();
   $("#tbody").empty();
 
-  $.get(CONFIG['domain'] + "/api/call-scheduling/" + candidate_id + "?int_id=" + int_id, function (res) {
+  $.get(CONFIG['portal'] + "/api/interview-scheduling/" + candidate_id + "?int_id=" + int_id, function (res) {
 
     var DATA = res.data;
     console.log('Data', DATA)
@@ -17,7 +17,7 @@ $('#position').on('change', function () {
 
     for (var n = 0; n < DATA[0]['hours_list'].length; n++) {
       $("#tbody").append('<tr>' +
-        '<td><h6 class="text-sm">' + DATA[0]['hours_list'][n] + '</h6></td>' +
+        '<td><h6 class="text-sm mb-0">' + DATA[0]['hours_list'][n] + '</h6></td>' +
         '<td name="' + DATA[0]['status'][n] + '" class="data-center ' + DATA[0]['status'][n] + '" id="' + DATA[0]['day'] + '__' + DATA[0]['hours_list'][n].replace(/:/gi, "_").replace(/ /gi, "_") + '__' + DATA[0]['ids'][n].filter(Boolean).join(",").replace(/ /gi, "").replace(/,/gi, "_") + '" onclick="selected(this.id);"></td>' +
         '<td name="' + DATA[1]['status'][n] + '" class="data-center ' + DATA[1]['status'][n] + '" id="' + DATA[1]['day'] + '__' + DATA[0]['hours_list'][n].replace(/:/gi, "_").replace(/ /gi, "_") + '__' + DATA[1]['ids'][n].filter(Boolean).join(",").replace(/ /gi, "").replace(/,/gi, "_") + '" onclick="selected(this.id);"></td>' +
         '<td name="' + DATA[2]['status'][n] + '" class="data-center ' + DATA[2]['status'][n] + '" id="' + DATA[2]['day'] + '__' + DATA[0]['hours_list'][n].replace(/:/gi, "_").replace(/ /gi, "_") + '__' + DATA[2]['ids'][n].filter(Boolean).join(",").replace(/ /gi, "").replace(/,/gi, "_") + '" onclick="selected(this.id);"></td>' +
@@ -72,7 +72,6 @@ $('#schedule_btn').on('click', function () {
   if (!sch) {
     alert("Please Select a Slot.");
   } else {
-    // $('#schedule_btn').prop("disabled", true);
     $('#cancel_btn').prop("disabled", true);
     dataObj = {
       "candidate_id": $('#cid').html(),
@@ -85,37 +84,35 @@ $('#schedule_btn').on('click', function () {
       csrfmiddlewaretoken: CSRF_TOKEN,
     }
 
-    $.post(CONFIG['domain'] + "/api/schedule-call", final_data, function (res) {
+    $.post(CONFIG['portal'] + "/api/schedule-interview", final_data, function (res) {
       if (res.statusCode == 0) {
-        if (res.data == 'Slot Booked') {
+        alert('ok')
+        // if (res.data == 'Slot Booked') {
         
-          swal("Call Scheduled Successfully", "", "success");
-          setTimeout(function () { window.location.href = '/web/candidates' }, 1000);
-        }
-        if (res.data == 'Slot Not Available') {
-          $('#cancel_btn').prop("disabled", false);
-          $('#schedule_btn').prop("disabled", false);
+        //   // swal("Call Scheduled Successfully", "", "success");
+        //   // setTimeout(function () { window.location.href = '/web/candidates' }, 1000);
+        // }
+        // if (res.data == 'Slot Not Available') {
+        //   $('#cancel_btn').prop("disabled", false);
+        //   $('#schedule_btn').prop("disabled", false);
          
-          swal("Slot Not Available", "", "error");
-        }
-        if (res.data == 'No Applicant') {
-          $('#cancel_btn').prop("disabled", false);
-          $('#schedule_btn').prop("disabled", false);
-          Swal.fire({
-            icon: 'error',
-            title: 'No Applicant Details',
-            //                                          text: 'Please Add Applicant',
-            confirmButtonColor: '#e11e1e'
-          })
-        }
+        //   swal("Slot Not Available", "", "error");
+        // }
+        // if (res.data == 'No Applicant') {
+        //   $('#cancel_btn').prop("disabled", false);
+        //   $('#schedule_btn').prop("disabled", false);
+        //   Swal.fire({
+        //     icon: 'error',
+        //     title: 'No Applicant Details',
+        //     confirmButtonColor: '#e11e1e'
+        //   })
+        // }
       } else {
         $('#schedule_btn').prop("disabled", false);
         $('#cancel_btn').prop("disabled", false);
-        swal("Internal Server Error", "", "error");
+        // swal("Internal Server Error", "", "error");
       }
     })
-
-
   }
 })
 

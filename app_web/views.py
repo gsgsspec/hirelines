@@ -4,7 +4,8 @@ from django.db.models import Q
 from app_api.functions import constants
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import User, Role, JobDesc
-from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, candidateInterviewers
+from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, \
+    getInterviewerCandidates, getCandidateInterviewData
 
 # Create your views here.
 
@@ -301,10 +302,12 @@ def interviewCandidatesList(request):
 
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
+        
+        interview_candidates = getInterviewerCandidates(user_data.id)
 
         if menuItemObjList: 
 
-            return render(request, "portal_index.html", {"template_name": 'interview_candidates.html','menuItemList': menuItemList })
+            return render(request, "portal_index.html", {"template_name": 'interview_candidates.html','menuItemList': menuItemList,'interview_candidates':interview_candidates })
         
         else:
             return redirect('../')
@@ -313,7 +316,7 @@ def interviewCandidatesList(request):
         raise
 
 
-def candidateInterview(request):
+def candidateInterview(request,sch_id):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
@@ -321,8 +324,13 @@ def candidateInterview(request):
         return redirect('/trial-expired')
     try:
 
+        interview_data = getCandidateInterviewData(sch_id)
 
-        return render(request, "portal_index.html", {"template_name": 'candidate_interview.html' })
+        jd_data = interview_data['job_desc_data']
+        candidate_data = interview_data['candidate_data']
+
+        return render(request, "portal_index.html", {"template_name": 'candidate_interview.html','jd_data':jd_data,
+                                                     'candidate_data':candidate_data })
 
     except Exception as e:
         raise
@@ -342,9 +350,12 @@ def interviewSchedule(request,cid):
 
         menuItemList = get_functions_service(user_role)
 
-        interviewers = candidateInterviewers(cid)
+        call_schedule_details = getCallScheduleDetails(cid)
 
-        return render(request, "portal_index.html", {"template_name": 'interview_schedule.html','menuItemList':menuItemList,'interviewers':interviewers })
+        interviewers = call_schedule_details[0]
+        candidate_data = call_schedule_details[1]
+        
+        return render(request, "portal_index.html", {"template_name": 'interview_schedule.html','menuItemList':menuItemList,'interviewers':interviewers,'candidate_data':candidate_data })
     
     except Exception as e:
         raise

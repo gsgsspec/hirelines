@@ -1,20 +1,39 @@
 document.getElementById("save-data").onclick = function () {
-    // $('#candidate-data').unbind('submit').bind('submit', function (event) {
-    //     event.preventDefault(); 
-    // })
+    $('#candidate-data').unbind('submit').bind('submit', function (event) {
+        event.preventDefault(); 
+    })
 
-    // dataObjs = {
-    //     'firstname': $('#firstname').val(),
-    //     'lastname': $('#lastname').val(),
-    //     'email': $('#email').val(),
-    //     'mobile': $('#mobile').val(),
-    //     'jd': $('#jd').val(),
-    //     'begin-from': $('#begin-from').val(),
-    // }
+    dataObjs = {
+        'firstname': $('#firstname').val(),
+        'lastname': $('#lastname').val(),
+        'email': $('#email').val(),
+        'mobile': $('#mobile').val(),
+        'jd': $('#jd').val(),
+        'begin-from': $('#begin-from').val(),
+    }
 
-    // console.log('dataObjs',dataObjs);
+    var final_data = {
+        'data': JSON.stringify(dataObjs),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    }
 
-    window.location.href='/interview-schedule'
+    $.post(CONFIG['portal'] + "/api/add-candidate", final_data, function (res) {
+        if (res.statusCode == 0) {
+            var candidateData = res.data
+            console.log('candidateData',candidateData)
+            console.log('pid',candidateData['papertype'])
+            if(candidateData['papertype'] == 'I'){
+                window.location.href = '/interview-schedule/'+ candidateData['candidateid']
+            }
+            // swal("Questions saved as Draft", "", "success");
+            // setTimeout(function () {window.location.reload()}, 2000);
+        }
+        else{
+            // swal("Internal Server Error", "", "error");
+        }
+    })
+
+    // window.location.href='/interview-schedule'
     
     
 
@@ -27,14 +46,14 @@ $(document).ready(function () {
         $('#begin-from').html('');
         $.get(CONFIG['portal'] + "/api/get-jd-workflow?jid="+jobid, function (res) {
             if(res.statusCode==0){
-                var TOPICS = res.data
-                $("#question_topic").html('')
-                $("#question_topic").append('<option value="" disabled selected></option>')
-                for (var i = 0; i < TOPICS.length; i++) {
-                    $("#question_topic").append('<option value='+TOPICS[i]["id"]+'>' + TOPICS[i]["topic_code"] + ' - ' + TOPICS[i]["topic_name"] + '</option>')
+                var WORKFLOW = res.data
+                $("#begin-from").html('')
+                $("#begin-from").append('<option value="" disabled selected></option>')
+                for (var i = 0; i < WORKFLOW.length; i++) {
+                    $("#begin-from").append('<option value='+WORKFLOW[i]["paperid"]+'>' + WORKFLOW[i]["title"] + '</option>')
                 }
             }else{
-                alert("Internal server error")
+                alert("Cannot able to get JD Workflow")
             }
                 
         })

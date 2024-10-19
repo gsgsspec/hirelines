@@ -3,6 +3,7 @@ import requests
 import string
 import secrets
 import ast
+from django.db.models import Q
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.shortcuts import redirect
@@ -11,7 +12,8 @@ from rest_framework.authtoken.models import Token
 from .constants import public_email_domains
 from hirelines.metadata import getConfig
 from .mailing import sendRegistrainMail
-from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow
+from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
+    Vacation, WorkCal, ExtendedHours, HolidayCal
 
 
 
@@ -443,7 +445,7 @@ def getJdWorkflowService(jid,cid):
 
 
 
-def candidateInterviewers(cid):
+def getCallScheduleDetails(cid):
     try:
         candidate = Candidate.objects.get(id=cid)
 
@@ -458,7 +460,259 @@ def candidateInterviewers(cid):
             interviewer = User.objects.get(id=job_interviewer)
             job_interviewers.append({'id':interviewer.id,'name':interviewer.name})
 
-        return job_interviewers
+
+        candidate_data = {
+            'cid':candidate.id,
+            'c_name': f"{candidate.firstname} {candidate.lastname}",
+            'c_email': candidate.email,
+            'c_mobile': candidate.mobile
+        }
+
+        return job_interviewers, candidate_data
+
+    except Exception as e:
+        raise
+
+
+
+def interviewSchedulingService(aplid,int_id):
+    try:
+
+        call_scheduling_constraints = getConfig()['CALL_SCHEDULING_CONSTRAINTS']
+
+        WORK_HOURS = int(call_scheduling_constraints["work_hours"])
+        STARTING_HOUR = int(call_scheduling_constraints["starting_hour"])
+        BLOCK_HOURS = int(call_scheduling_constraints["block_hours"])
+        FREQUENCY = int(call_scheduling_constraints["frequency_mins"])
+        
+        basedt = datetime.today().replace(hour=STARTING_HOUR, minute=00, second=00, microsecond=00)
+
+        scheduling_data = []
+
+        scheduled_calls = list(CallSchedule.objects.filter(Q(status='S')|Q(status='R')).values_list('datentime', 'interviewerid'))
+        scheduled_calls_list = []
+        for scheduled_call in scheduled_calls:
+            if scheduled_call[0]:
+                scheduled_calls_list.append([scheduled_call[0].strftime("%Y-%m-%d %I:%M %p"), scheduled_call[1]])
+
+        vacation_data = Vacation.objects.filter(empid=int_id).values("empid", "fromdate", "todate")
+        workcal_data = WorkCal.objects.filter(empid=int_id).values()
+
+        alter_timings_data = ExtendedHours.objects.filter(empid=int_id,status="A").values()
+        alter_timings_dates_list = []
+        alter_timings_list = {}
+
+        for alter_timings in alter_timings_data:
+            
+            alter_dates_ = [[alter_timings["fromdate"] + timedelta(days=x),alter_timings["starttime"],alter_timings["workhours"],alter_timings["empid"]] for x in range((alter_timings["todate"]-alter_timings["fromdate"]).days + 1)]
+            for alter_date in alter_dates_:
+                formated_alter_date= alter_date[0].strftime("%a-%d-%b-%Y")
+                alter_timings_dates_list.append(formated_alter_date)
+                alter_timings_list[str(alter_date[0].strftime("%Y-%m-%d"))] = [alter_date[0],alter_date[1],alter_date[2],alter_date[3]]
+        
+        for x in range(0, 15): #days
+            hours_list = []
+            slots_list = []
+            status_list = []
+
+            telecallers = list(User.objects.filter(status='A', id=int_id).values_list('id', flat=True))
+
+            _date = (basedt + timedelta(days=x)).strftime("%Y-%m-%d")
+            _datetime = datetime.strptime(
+                (basedt.replace(hour=00, minute=00, second=00, microsecond=00) + timedelta(days=x)).strftime(
+                    "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+            date_formated = (basedt + timedelta(days=x)).strftime("%a-%d-%b-%Y")
+            for vacation in vacation_data:
+                from_date = datetime.strptime(str(vacation['fromdate']), "%Y-%m-%d")
+                to_date = datetime.strptime(str(vacation['todate']), "%Y-%m-%d")
+                if from_date <= _datetime <= to_date:
+                    if vacation['empid'] in telecallers: telecallers.remove(vacation['empid'])
+            # for alter_hours in 
+            for work_data in workcal_data:
+                # print("work_data['weekoff1']",work_data['weekoff1'],date_formated,alter_timings_dates_list)
+                if (work_data['weekoff1'] == date_formated.split("-")[0]) and (date_formated not in alter_timings_dates_list):
+                    if work_data['empid'] in telecallers: telecallers.remove(work_data['empid'])
+                if work_data['weekoff2'] == date_formated.split("-")[0] and (date_formated not in alter_timings_dates_list):
+                    if work_data['empid'] in telecallers: telecallers.remove(work_data['empid'])
+            for i in range(0, WORK_HOURS*2):  # (0,24) 24 means 12 Hours
+                slot_time = basedt + timedelta(minutes=30 * i)
+                curr_time = datetime.now().replace(second=00)# + datetime.timedelta(hours=4)
+                hours_list.append(slot_time.strftime("%I:%M %p"))
+                if (_date == datetime.today().strftime("%Y-%m-%d")) and (
+                        slot_time <= (curr_time + timedelta(hours=BLOCK_HOURS, minutes=30))):
+                    status_list.append("Blocked")
+                    slots_list.append([])
+                else:
+
+                    occupied_tc = []
+
+                    tc = telecallers
+                    telecallers_set = set(tc)
+                    for slot in scheduled_calls_list: 
+
+                        if slot[0] == _date + " " + slot_time.strftime("%I:%M %p"):
+                            
+                            if slot[1] in tc:
+                                occupied_tc.append(slot[1])
+
+                    available_tc_list = list(telecallers_set.difference(set(occupied_tc)))
+                    for work_data in workcal_data:
+                        
+                        slot_date = datetime.strptime(_date, "%Y-%m-%d").date()
+                        slot_date_str = str(slot_date.strftime("%Y-%m-%d"))
+                        
+                        if slot_date_str in alter_timings_list:
+                            alter_data = alter_timings_list[slot_date_str]
+                            start_datetime = datetime.combine(datetime.date.today(), alter_data[1])
+                            if len(str(alter_data[2]).split('.'))==2:
+                                work_hours = int(alter_data[2].split(".")[0])
+                                if work_hours-1 > ((WORK_HOURS*2)/2):
+                                    work_hours = ((WORK_HOURS*2)/2)-1
+                                work_mins = 30
+                            else:
+                                work_hours = int(alter_data[2])
+                                if work_hours > ((WORK_HOURS*2)/2):
+                                    work_hours = ((WORK_HOURS*2)/2)
+                                work_mins = 0
+                            
+                            end_datetime = start_datetime + timedelta(hours=work_hours,minutes=work_mins)
+                            end_time = end_datetime.time()
+                            
+                            if alter_data[1] > slot_time.time():
+                                
+                                if alter_data[3] in available_tc_list:
+                                    available_tc_list.remove(alter_data[3])
+
+                            if slot_time.time() >= end_time:
+                                if alter_data[3] in available_tc_list:
+                                    available_tc_list.remove(alter_data[3])
+                        
+                        else:
+                            start_datetime = datetime.combine(datetime.date.today(), work_data['starttime'])
+                            if len(work_data['workhours'].split('.'))==2:
+                                work_hours = int(work_data['workhours'].split(".")[0])
+                                if work_hours-1 > ((WORK_HOURS*2)/2):
+                                    work_hours = ((WORK_HOURS*2)/2)-1
+                                work_mins = 30
+                            else:
+                                work_hours = int(work_data['workhours'])
+                                if work_hours > ((WORK_HOURS*2)/2):
+                                    work_hours = ((WORK_HOURS*2)/2)
+                                work_mins = 0
+                            
+                            end_datetime = start_datetime + timedelta(hours=work_hours,minutes=work_mins)
+                            end_time = end_datetime.time()
+                            
+                            if work_data['starttime'] > slot_time.time():
+                                
+                                if work_data['empid'] in available_tc_list:
+                                    available_tc_list.remove(work_data['empid'])
+
+                            if slot_time.time() >= end_time:
+                                if work_data['empid'] in available_tc_list:
+                                    available_tc_list.remove(work_data['empid'])
+
+                    if not available_tc_list:
+                        status_list.append("No_Vacancy")
+                    else:
+                        status_list.append("Available")
+                    slots_list.append(available_tc_list)
+                if HolidayCal.objects.filter(holidaydt=_date).exists():
+                    status_list = []
+                    while len(status_list) <= WORK_HOURS * 2:
+                        status_list.append("Holiday")
+                        
+            ids = []
+            for slo in slots_list:
+                ids.append(list(slo))
+                
+            dataObj = {
+                "day": date_formated,
+                "hours_list": hours_list,
+                "slots_list": slots_list,
+                "status": status_list,
+                "ids": ids
+            }
+            scheduling_data.append(dataObj)
+
+        return scheduling_data
+
+    except Exception as e:
+        raise
+
+
+
+def getInterviewerCandidates(userid):
+    try:
+
+        call_details = CallSchedule.objects.filter(interviewerid=userid,status='S').order_by("-id")
+        candidates = []
+
+        for call_data in call_details:
+
+            candidate = Candidate.objects.get(id=call_data.candidateid)
+            jd = JobDesc.objects.get(id=candidate.jobid)
+
+            candidates.append({
+                'id': candidate.id,
+                'name': f"{candidate.firstname} {candidate.lastname}",
+                "scheduled_time" : call_data.datentime.strftime("%d-%b-%Y %I:%M %p"),
+                "email": candidate.email,
+                "c_code":candidate.candidateid,
+                "jd" : jd.title,
+                'scd_id':call_data.id
+            })
+
+        return candidates
+    except Exception as e:
+        raise
+
+
+def getCandidateInterviewData(scd_id):
+    try:
+
+        resp = {
+            'job_desc_data': None,
+            'candidate_data':None,
+        }
+
+        acert_domain = getConfig()['DOMAIN']['acert']
+        endpoint = '/api/candidate-interviewdata'
+
+        url = urljoin(acert_domain, endpoint)
+
+        call_details = CallSchedule.objects.get(id=scd_id)
+        candidate = Candidate.objects.get(id=call_details.candidateid)
+        candidate_data = {
+            'c_code' : candidate.candidateid,
+            'int_paperid': call_details.paper_id
+        }
+
+        send_candidate_data = requests.post(url, json = candidate_data)
+
+        job_desc = JobDesc.objects.get(id=candidate.jobid)
+
+        job_desc_data = {
+            'jd_title':job_desc.title,
+            'role': job_desc.role,
+            'location':job_desc.location,
+            'skills':job_desc.skillset,
+            'notes':job_desc.skillnotes
+        }
+
+        int_paper_title = Workflow.objects.filter(paperid=call_details.paper_id).last().papertitle
+
+        candidate_data = {
+            'name': f"{candidate.firstname} {candidate.lastname}" ,
+            'mobile': candidate.mobile,
+            'email': candidate.email,
+            'int_paper': int_paper_title if int_paper_title else 'N/A'
+        }
+
+        resp['job_desc_data'] = job_desc_data
+        resp['candidate_data'] = candidate_data
+
+        return resp
 
     except Exception as e:
         raise

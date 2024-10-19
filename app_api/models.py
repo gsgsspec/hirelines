@@ -202,3 +202,89 @@ class CallSchedule(models.Model):
 
     class Meta:
         db_table = 'callschedule'
+
+
+class Vacation(models.Model):
+    id = models.AutoField(primary_key=True)
+    empid = models.IntegerField(null=True)
+    fromdate = models.DateField(null=True)
+    todate = models.DateField(null=True)
+    hours = models.IntegerField(null=True)
+    purpose = models.CharField(max_length=30, null=True)
+    type = models.CharField(max_length=1, null=True)
+    companyid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'vacation'
+
+
+class WorkCal(models.Model):
+    id = models.AutoField(primary_key=True)
+    empid = models.IntegerField(null=True)
+    startday = models.CharField(max_length=3, null=True)
+    starttime = models.TimeField(max_length=20, null=True)
+    workhours = models.CharField(max_length=4,null=True)
+    weekoff1 = models.CharField(max_length=3, null=True)
+    weekoff2 = models.CharField(max_length=3, null=True)
+    companyid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'workcal'
+
+
+class ExtendedHours(models.Model):
+    id = models.AutoField(primary_key=True)
+    empid = models.IntegerField(null=True)
+    workcalid = models.IntegerField(null=True)
+    fromdate = models.DateField(null=True)
+    todate = models.DateField(null=True)
+    starttime = models.TimeField(max_length=20, null=True)
+    workhours = models.CharField(max_length=4,null=True)
+    status = models.CharField(max_length=1, null=True) # A - Active, I - Inactive/Removed 
+    companyid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'extendedhours'
+
+
+class HolidayCal(models.Model):
+    id = models.AutoField(primary_key=True)
+    holidaydt = models.DateField(null=True)
+    type = models.CharField(max_length=1, null=True)
+    description = models.CharField(max_length=100, null=True)
+    companyid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'holidaycal'
+
+
+class Email_template(models.Model):
+    id = models.AutoField(primary_key=True)
+    company_id = models.IntegerField(null=True, blank=True)
+    paper_type =  models.CharField(max_length=100, null=True)
+    email_subject = models.CharField(max_length=300, null=True, blank=True)
+    email_body = models.CharField(max_length=10000, null=True, blank=True)
+    template_name = models.CharField(max_length=120, null=True)
+    # email_attachment = models.CharField(max_length=250, null=True)
+    # email_attachment_path = models.FileField(upload_to="email_attachments/", null=True)
+    # email_attachment_name = models.CharField(max_length=120, null=True)
+    event = models.CharField(max_length=120, null=True)
+    template_heading = models.CharField(max_length=300, null=True)
+    sender_email = models.CharField(max_length=100, null=True)
+    sender_label = models.CharField(max_length=100, null=True)
+
+    
+    class Meta:
+        db_table = 'email_template'
+
+
+class Branding(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    logourl = models.FileField(upload_to="logos/", null=True)
+    content = models.TextField(null=True)
+    sociallinks = models.TextField(null=True)
+    status = models.CharField(max_length=1, null=True)
+
+    class Meta:
+        db_table = 'branding'

@@ -93,44 +93,20 @@
                             <h6>:</h6>
                           </th>
                           <th style="width:80% !important;">
-                            <h6 class="clear-text">{{jobDesc_data.job_title}}</h6>
+                            <h6 class="clear-text">{{jd_data.jd_title}}</h6>
                           </th>
                         </tr>
                         <tr>
                           <th>
-                            <h6 style="font-weight: 800;">Job Description</h6>
+                            <h6 style="font-weight: 800;">Role</h6>
                           </th>
                           <th>
                             <h6>:</h6>
                           </th>
                           <th style="width:80% !important;">
-                            <h6 class="clear-text">{{jobDesc_data.job_desc}}</h6>
+                            <h6 class="clear-text">{{jd_data.role}}</h6>
                           </th>
                         </tr>
-                        <tr>
-                          <th>
-                            <h6 style="font-weight: 800;">Department</h6>
-                          </th>
-                          <th>
-                            <h6>:</h6>
-                          </th>
-                          <th style="width:80% !important;">
-                            <h6 class="clear-text">{{jobDesc_data.department}}</h6>
-                          </th>
-                        </tr>
-
-                        <tr>
-                          <th>
-                            <h6 style="font-weight: 800;">Purpose Of Hiring</h6>
-                          </th>
-                          <th>
-                            <h6>:</h6>
-                          </th>
-                          <th style="width:80% !important;">
-                            <h6 class="clear-text">{{jobDesc_data.purpos}}</h6>
-                          </th>
-                        </tr>
-
                         <tr>
                           <th>
                             <h6 style="font-weight: 800;">Work Location</h6>
@@ -139,7 +115,7 @@
                             <h6>:</h6>
                           </th>
                           <th style="width:80% !important;">
-                            <h6 class="clear-text">{{jobDesc_data.work_loc}}</h6>
+                            <h6 class="clear-text">{{jd_data.location}}</h6>
                           </th>
                         </tr>
                         <tr>
@@ -150,7 +126,7 @@
                             <h6>:</h6>
                           </th>
                           <th>
-                            <h6 class="clear-text">{{jobDesc_data.skills}}</h6>
+                            <h6 class="clear-text">{{jd_data.skills}}</h6>
                           </th>
                         </tr>
                         <tr>
@@ -161,7 +137,7 @@
                             <h6>:</h6>
                           </th>
                           <th style="width:80% !important;">
-                            <h6 class="clear-text">{% if jobDesc_data.any_spec_note %} {{ jobDesc_data.any_spec_note }} {% else %} N/A {% endif %} </h6>
+                            <h6 class="clear-text">{% if jd_data.notes %} {{ jd_data.notes }} {% else %} N/A {% endif %} </h6>
                           </th>
                         </tr>
 
@@ -182,7 +158,7 @@
                             <h6>:</h6>
                           </th>
                           <th style="width:73% !important;">
-                            <h6>{{jobDesc_data.candidate_details.candid_name}}</h6>
+                            <h6>{{candidate_data.name}}</h6>
                           </th>
                         </tr>
                   
@@ -193,8 +169,8 @@
                           <th>
                             <h6>:</h6>
                           </th>
-                          <th>
-                            <div style="display:flex;">{{jobDesc_data.candidate_details.candid_num}}</div>
+                          <th style="width:73% !important;">
+                            <h6>{{candidate_data.mobile}}</h6>
                           </th>
                         </tr>
                         <tr>
@@ -204,8 +180,8 @@
                           <th>
                             <h6>:</h6>
                           </th>
-                          <th>
-                            <div style="display:flex;">{{jobDesc_data.candidate_details.candid_email_add}}</div>
+                          <th style="width:73% !important;">
+                            <h6>{{candidate_data.email}}</h6>
                           </th>
                         </tr>
                         <tr>
@@ -216,7 +192,7 @@
                             <h6>:</h6>
                           </th>
                           <th style="width:73% !important;">
-                            <h6>{{jobDesc_data.candidate_details.paper_title}}</h6>
+                            <h6>{{candidate_data.int_paper}}</h6>
                           </th>
                         </tr>
                       </table>

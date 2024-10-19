@@ -8,9 +8,9 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService
+from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService, interviewSchedulingService
 from .models import User_data
-from .functions.database import addCandidateDB
+from .functions.database import addCandidateDB, scheduleInterviewDB
 
 # Create your views here.
 
@@ -194,8 +194,9 @@ def addCandidate(request):
         if request.method == "POST":
             dataObjs = json.loads(request.POST.get('data'))
             user_email = request.user
+            user = auth_user(request.user)
             company_id = getCompanyId(user_email)
-            c_data = addCandidateDB(dataObjs,company_id)
+            c_data = addCandidateDB(dataObjs,company_id,user.id)
             response['data'] = c_data
             response['statusCode'] = 0
 
@@ -208,3 +209,53 @@ def addCandidate(request):
         raise
 
     return JsonResponse(response)
+
+
+
+@api_view(['GET'])
+def interviewScheduling(request,cid):
+
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+
+        user = auth_user(request.user)
+        if request.method == "GET":
+            int_id = request.GET.get('int_id')
+            interview_schedule_data = interviewSchedulingService(cid,int_id)
+            response['data'] = interview_schedule_data
+            response['statusCode'] = 0
+
+        else:
+            return HttpResponseForbidden('Request Blocked')
+
+    except Exception as e:
+        response['data'] = 'Error in Call Scheduling view'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def scheduleInterviewView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            res = scheduleInterviewDB(user.id, dataObjs)
+            response['data'] = res
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Scheduling Interview view'
+        response['error'] = str(e)
+    return JsonResponse(response)   

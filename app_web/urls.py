@@ -15,7 +15,7 @@ urlpatterns = [
     path("jd/<int:jid>",views.jdDataPage),
     path('trial-expired',views.trialExpired),
     path('interviews',views.interviewCandidatesList),
-    path('candidate-interview',views.candidateInterview),
+    path('candidate-interview/<int:sch_id>',views.candidateInterview),
     path('interview-schedule/<int:cid>',views.interviewSchedule),
     path('feedbacks',views.feedbacksPage),
     path('interviewer-feedback',views.interviewerFeedback),
