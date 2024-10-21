@@ -1,4 +1,6 @@
 document.getElementById("save-data").onclick = function () {
+
+
     $('#candidate-data').unbind('submit').bind('submit', function (event) {
         event.preventDefault(); 
     })
@@ -20,16 +22,15 @@ document.getElementById("save-data").onclick = function () {
     $.post(CONFIG['portal'] + "/api/add-candidate", final_data, function (res) {
         if (res.statusCode == 0) {
             var candidateData = res.data
-            console.log('candidateData',candidateData)
-            console.log('pid',candidateData['papertype'])
             if(candidateData['papertype'] == 'I'){
                 window.location.href = '/interview-schedule/'+ candidateData['candidateid']
+            } else {
+                showSuccessMessage('Candidate added successfully');
+                setTimeout(function () { window.location.href = '/candidates' }, 2000);
             }
-            // swal("Questions saved as Draft", "", "success");
-            // setTimeout(function () {window.location.reload()}, 2000);
         }
         else{
-            // swal("Internal Server Error", "", "error");
+            showFailureMessage('Error in saving the candidate details. Please try again after some time')
         }
     })
 

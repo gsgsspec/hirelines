@@ -112,13 +112,16 @@ def scheduleInterviewDB(user_id, dataObjs):
         call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
         if call_details:
             datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
-            datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p')  #+ timedelta(hours=5, minutes=30)
+            datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p') 
             interviewer = dataObjs['slot_id'].split('__')[2:]
             interviewer_id = interviewer[0]
 
             scheduled_check = CallSchedule.objects.filter(Q(interviewerid=interviewer_id), Q(datentime=datentime),
                                                               Q(status='S')|Q(status='R'))
             user = User.objects.get(id=user_id)
+
+            # Updating Not scheduled Call
+
             if not scheduled_check:
                 candidate = Candidate.objects.get(id=call_details.candidateid)
                 meeting_config = getConfig()['MEETING_CONFIG']['meeting_link']
@@ -135,15 +138,9 @@ def scheduleInterviewDB(user_id, dataObjs):
                 call_details.companyid = user.companyid
                 call_details.save()
                 
-                
-                # sendCallScheduleMail(call_details.id)
-                # position = Position.objects.get(id=candidate.position_id)
-                # paper = Paper.objects.get(id=candidate.paper_id)
+                # Mail Replacements
                 job_desc = JobDesc.objects.get(id=candidate.jobid)
                 company = Company.objects.get(id=candidate.companyid)
-                # hr = User.objects.get(id=call_details.hrid)
-                # interviewer_email = User.objects.get(id=call_details.interviewerid).auth_mail_id
-                # emails = f"{candidate.email}, {hr.auth_mail_id}, {interviewer_email}"
                 emails = f"{candidate.email}"
                 interview_time = call_details.datentime.strftime("%d-%b-%Y %I:%M %p") 
 
@@ -155,6 +152,8 @@ def scheduleInterviewDB(user_id, dataObjs):
                     "[date]": interview_time,
                     "[link]": call_details.meetinglink,
                 }
+
+                # Email Function
 
                 sendEmail(candidate.companyid,'I',call_details.paper_id,'Call_Schedule',replacements,emails,call_details.datentime)
 

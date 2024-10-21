@@ -8,7 +8,7 @@ $('#interviewer').on('change', function () {
   $.get(CONFIG['portal'] + "/api/interview-scheduling/" + candidate_id + "?int_id=" + int_id, function (res) {
 
     var DATA = res.data;
-    console.log('Data', DATA)
+
     $("#thead").append('<th class="text-uppercase text-xxs font-weight-bolder opacity-7 ps-2">Time</th>')
 
     for (var i = 0; i < DATA.length; i++) {
@@ -68,11 +68,12 @@ function selected(id) {
 
 
 $('#schedule_btn').on('click', function () {
-  console.log('sch',sch)
+  
   if (!sch) {
     alert("Please Select a Slot.");
   } else {
     $('#cancel_btn').prop("disabled", true);
+    $('#schedule_btn').prop("disabled", false);
     dataObj = {
       "candidate_id": $('#cid').html(),
       "slot_id": sch,
@@ -86,31 +87,12 @@ $('#schedule_btn').on('click', function () {
 
     $.post(CONFIG['portal'] + "/api/schedule-interview", final_data, function (res) {
       if (res.statusCode == 0) {
-        alert('ok')
-        // if (res.data == 'Slot Booked') {
-        
-        //   // swal("Call Scheduled Successfully", "", "success");
-        //   // setTimeout(function () { window.location.href = '/web/candidates' }, 1000);
-        // }
-        // if (res.data == 'Slot Not Available') {
-        //   $('#cancel_btn').prop("disabled", false);
-        //   $('#schedule_btn').prop("disabled", false);
-         
-        //   swal("Slot Not Available", "", "error");
-        // }
-        // if (res.data == 'No Applicant') {
-        //   $('#cancel_btn').prop("disabled", false);
-        //   $('#schedule_btn').prop("disabled", false);
-        //   Swal.fire({
-        //     icon: 'error',
-        //     title: 'No Applicant Details',
-        //     confirmButtonColor: '#e11e1e'
-        //   })
-        // }
+        showSuccessMessage('Interview scheduled successfully');
+        setTimeout(function () { window.location.href = '/candidates' }, 2000);
+       
       } else {
+        showFailureMessage('Error in saving the scheduling interview. Please try again after some time')
         $('#schedule_btn').prop("disabled", false);
-        $('#cancel_btn').prop("disabled", false);
-        // swal("Internal Server Error", "", "error");
       }
     })
   }
