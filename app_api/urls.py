@@ -15,4 +15,6 @@ urlpatterns = [
     path('schedule-interview',views.scheduleInterviewView),
     path('work-flow-data',views.workFlowData),
 
+    path('candidate-registration',views.candidateRegisteration),
+    path('candidate-registration/<str:script_id>/',views.candidateRegistrationForm)
 ]

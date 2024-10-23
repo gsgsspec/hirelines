@@ -27,7 +27,7 @@ def addCompanyData(request):
     try:
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
-            data_add_status = addCompanyDataService(dataObjs) 
+            data_add_status = addCompanyDataService(dataObjs)
             response['statusCode'] = int(data_add_status)
     except Exception as e:
         response['data'] = 'Error in adding company data'
@@ -71,7 +71,7 @@ def registerUser(request):
     try:
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
-            data_add_status = registerUserService(dataObjs) 
+            data_add_status = registerUserService(dataObjs)
             response['statusCode'] = int(data_add_status)
     except Exception as e:
         response['data'] = 'Error in adding company data'
@@ -94,7 +94,7 @@ def loginUser(request):
         if request.method == "POST":
             dataObjs = json.loads(request.POST.get('data'))
             auth_token = authentication_service(dataObjs)
-            
+           
             if auth_token[0] != None:
                 usr = User_data.objects.filter(usr_email=dataObjs['email']).first()
                 perform_login(request._request, usr, allauth_settings.EMAIL_VERIFICATION, signup=False,
@@ -124,7 +124,7 @@ def addCompanyData(request):
     try:
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
-            data_add_status = addCompanyDataService(dataObjs) 
+            data_add_status = addCompanyDataService(dataObjs)
             response['statusCode'] = int(data_add_status)
     except Exception as e:
         response['data'] = 'Error in adding company data'
@@ -237,7 +237,7 @@ def addCandidate(request):
             response['statusCode'] = 0
         else:
             return HttpResponseForbidden('Request Blocked')
-        
+       
     except Exception as e:
         response['data'] = 'Error in saving Job Description'
         response['error'] = str(e)
@@ -263,7 +263,7 @@ def workFlowData(request):
             response['statusCode'] = 0
         else:
             return HttpResponseForbidden('Request Blocked')
-        
+       
     except Exception as e:
         response['data'] = 'Error in saving Job Description'
         response['error'] = str(e)
@@ -319,4 +319,17 @@ def scheduleInterviewView(request):
     except Exception as e:
         response['data'] = 'Error in Scheduling Interview view'
         response['error'] = str(e)
-    return JsonResponse(response)   
+    return JsonResponse(response) 
+
+
+from django.http import HttpResponse
+
+
+def candidateRegistrationForm(request, script_id):
+    try:
+        pass
+        # script = JDCandidateRegistrationScripts.objects.get(script_id=script_id)
+        # return HttpResponse(script.script_content, content_type='application/javascript')
+    except:
+        return HttpResponse('console.error("Script not found");', content_type='application/javascript')
+

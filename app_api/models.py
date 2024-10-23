@@ -106,7 +106,7 @@ class Company(models.Model):
     city = models.CharField(max_length=100, null=True, blank=True)
     state = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
-    companydomain = models.CharField(max_length=4, null=True, blank=True)
+    companydomain = models.CharField(max_length=100, null=True, blank=True)
     status = models.CharField(max_length=1, null=True, blank=True) # A - Active, I - Inactive, T - Trail
     website = models.CharField(max_length=100, null=True, blank=True)
     phone1 = models.CharField(max_length=100, null=True, blank=True)
@@ -287,3 +287,17 @@ class Branding(models.Model):
 
     class Meta:
         db_table = 'branding'
+
+
+class Lookupmaster(models.Model):
+    id = models.AutoField(primary_key=True)
+    lookupid = models.IntegerField(null=True)
+    lookupmasterid = models.IntegerField(null=True)
+    lookupname = models.CharField(max_length=150, null=True)
+    lookupparam1 = models.TextField(null=True)
+    lookupparam2 = models.CharField(max_length=150, null=True)
+    status = models.CharField(max_length=1, null=True)
+    comments = models.CharField(max_length=300, null=True)
+
+    class Meta:
+        db_table = 'lookupmaster'
