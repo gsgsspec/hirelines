@@ -232,7 +232,7 @@ def update_jobdescription(request,update_jd_id):
         raise
 
 # this function render's inside html pages
-def jobDescriptionSetUp(request,jd_id):
+def jobDescriptionSetUp(request,jd_id): 
     if checkCompanyTrailPeriod(request.user):
         return redirect('/trial-expired')
     try:
