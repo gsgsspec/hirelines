@@ -5,7 +5,7 @@ from app_api.functions import constants
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import User, Role, JobDesc
 from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, \
-    candidateInterviewers,getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails
+    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails
 
 # Create your views here.
 def homePage(request):

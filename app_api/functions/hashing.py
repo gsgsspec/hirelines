@@ -1,11 +1,11 @@
 import base64 
-from Cryptodome.Cipher import AES
-from Cryptodome.Util.Padding import unpad, pad
-from Cryptodome.Random import get_random_bytes
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import unpad, pad
+from Crypto.Random import get_random_bytes
 
 
-key = "G2S0S2HIRE4LINES"
-iv =  '12HL56789G2S0S21'.encode('utf-8')
+key = "HIRELINES@GSSPEC"
+iv =  'GSSPEC2024HLINES'.encode('utf-8')
 
 
 def encrypt_code(data):

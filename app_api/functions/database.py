@@ -16,7 +16,7 @@ def addCompanyDataDB(dataObjs):
         raise
 
 
-def addCandidateDB(dataObjs, cid,user_id):
+def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
     try:
 
         candidate = Candidate(
@@ -29,7 +29,8 @@ def addCandidateDB(dataObjs, cid,user_id):
             registrationdate = datetime.now(),
             status = 'P'
         )
-
+        candidate.save()
+        company_data = Company.objects.get(id=cid)
         year = datetime.now().strftime("%y")
 
         refid_obj, refid_flag = ReferenceId.objects.get_or_create(type = "R", prefix1 = "{:03}".format(cid), prefix2 = year)
@@ -100,7 +101,18 @@ def addCandidateDB(dataObjs, cid,user_id):
                 'candidateid':candidate.id,
                 'papertype':c_registration.papertype
             }
-
+            replacements = {
+                "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
+                "[paper_name]": acert_data["paper_name"],
+                "[company_name]": company_data.name,
+                "[recruitment_email_address]": company_data.email,
+                "[exam_link]":acert_data["exam_url"],
+                "[deadline]": acert_data["deadline"]
+            }
+            if workflow_data.papertype == "I":
+                sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Call_Schedule',replacements,candidate.email)
+            else:
+                sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Registration',replacements,candidate.email)
             return c_data
     except Exception as e:
         raise

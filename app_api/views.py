@@ -1,5 +1,6 @@
 import json
 from django.http import JsonResponse
+from app_api.functions.hashing import decrypt_code, encrypt_code
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
@@ -9,7 +10,7 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdTestAdd, addJdServices, updateJdServices, workFlowDataService
-from .models import User_data
+from .models import Candidate, Lookupmaster, Registration, User_data, Workflow
 from .functions.database import addCandidateDB, scheduleInterviewDB
 
 # Create your views here.
@@ -232,7 +233,7 @@ def addCandidate(request):
             user_email = request.user
             user = auth_user(request.user)
             company_id = getCompanyId(user_email)
-            c_data = addCandidateDB(dataObjs,company_id,user.id)
+            c_data = addCandidateDB(dataObjs,company_id,None,user.id)
             response['data'] = c_data
             response['statusCode'] = 0
         else:
@@ -325,11 +326,49 @@ def scheduleInterviewView(request):
 from django.http import HttpResponse
 
 
-def candidateRegistrationForm(request, script_id):
+def candidateRegistrationForm(request):
     try:
-        pass
+        
+        enccode = encrypt_code(52)
+        print("enccode",enccode)
+        deccode =  decrypt_code(enccode)
+        print("deccode",deccode)
+        registration_script = Lookupmaster.objects.get(lookupid=1,lookupmasterid=1).lookupparam1
+        # print("registration_script",registration_script)
         # script = JDCandidateRegistrationScripts.objects.get(script_id=script_id)
-        # return HttpResponse(script.script_content, content_type='application/javascript')
+        return HttpResponse(registration_script, content_type='application/javascript')
     except:
         return HttpResponse('console.error("Script not found");', content_type='application/javascript')
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def registerCandidate(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.body)
+
+            jd_id = decrypt_code(dataObjs["encjdid"])
+            workflow_data = Workflow.objects.filter(jobid=jd_id,order=1).last()
+            if workflow_data:
+                company_id = workflow_data.companyid
+                dataObjs["jd"] = jd_id
+                dataObjs['begin-from'] = workflow_data.paperid
+                addCandidateDB(dataObjs,company_id,workflow_data)
+                response['data'] = 'Registration completed successfully'
+            else:
+                response['data'] = 'Workflow not defined'
+            response['statusCode'] = 0
+    except Exception as err:
+        response['data'] = 'Error in registerCandidate'
+        response['error'] = str(err)
+        raise
+    return JsonResponse(response)
 

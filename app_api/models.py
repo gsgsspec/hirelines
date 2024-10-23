@@ -260,17 +260,17 @@ class HolidayCal(models.Model):
 class Email_template(models.Model):
     id = models.AutoField(primary_key=True)
     company_id = models.IntegerField(null=True, blank=True)
+    template_name = models.CharField(max_length=120, null=True)
     paper_type =  models.CharField(max_length=100, null=True)
+    event = models.CharField(max_length=120, null=True)
+    sender_email = models.CharField(max_length=100, null=True)
+    sender_label = models.CharField(max_length=100, null=True)
     email_subject = models.CharField(max_length=300, null=True, blank=True)
     email_body = models.CharField(max_length=10000, null=True, blank=True)
-    template_name = models.CharField(max_length=120, null=True)
+    template_heading = models.CharField(max_length=300, null=True)
     # email_attachment = models.CharField(max_length=250, null=True)
     # email_attachment_path = models.FileField(upload_to="email_attachments/", null=True)
     # email_attachment_name = models.CharField(max_length=120, null=True)
-    event = models.CharField(max_length=120, null=True)
-    template_heading = models.CharField(max_length=300, null=True)
-    sender_email = models.CharField(max_length=100, null=True)
-    sender_label = models.CharField(max_length=100, null=True)
 
     
     class Meta:
@@ -301,3 +301,5 @@ class Lookupmaster(models.Model):
 
     class Meta:
         db_table = 'lookupmaster'
+
+
