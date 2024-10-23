@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 from django.db.models import Q
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
-from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company
+from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow
 
 
 
@@ -102,7 +102,6 @@ def addCandidateDB(dataObjs, cid,user_id):
             }
 
             return c_data
-
     except Exception as e:
         raise
 
@@ -163,3 +162,81 @@ def scheduleInterviewDB(user_id, dataObjs):
     except Exception as e:
         print(str(e))
         raise
+
+    
+def saveJdNewTest(dataObjs,compyId):
+    try:
+        testType = None
+        if 'testType' in dataObjs:
+            if dataObjs['testType'] == 'Screening':
+                testType = 'S'
+            if dataObjs['testType'] == 'Coding':
+                testType = 'C'
+            if dataObjs['testType'] == 'Interview':
+                testType = 'I'
+
+        savedWorkFlowDetails = Workflow(
+                companyid = compyId,
+                paperid = 1,
+                papertype = testType,
+                papertitle = dataObjs['testName'] if 'testName' in dataObjs else None,
+                jobid = dataObjs['jdId'] if 'jdId' in dataObjs else None
+                )
+        savedWorkFlowDetails.save()
+        
+    except Exception as e:
+        raise
+
+# Saving the Job descritption Deatils
+def saveAddJD(dataObjs,compyId,hrEmail):
+    try:
+        hrDeatils = User.objects.filter(email=hrEmail).last()
+        if hrDeatils is not None:
+            saveJd = JobDesc(
+                jdlibraryid = dataObjs['jdLibraryId'] if dataObjs['jdLibraryId'] else None,
+                title       = dataObjs['title'] if dataObjs['title'] else None,
+                description = dataObjs['jobDesc'] if dataObjs['jobDesc'] else None,
+                role        = dataObjs['role'] if dataObjs['role'] else None,
+                expmin      = dataObjs['minExp'] if dataObjs['minExp'] else None,
+                expmax      = dataObjs['maxExp'] if dataObjs['maxExp'] else None,
+                location    = dataObjs['workLocation'] if dataObjs['workLocation'] else None,
+                budget      = dataObjs['budget'] if dataObjs['budget'] else None,
+                positions   = dataObjs['noPositions'] if dataObjs['noPositions'] else None,
+                createdby   = hrDeatils.id if hrDeatils.id else None,
+                skillset    = dataObjs['skills'] if dataObjs['skills'] else None, 
+                skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None, 
+                companyid   = compyId if compyId else None,
+                status      = 'O'
+            )
+            saveJd.save()
+    except Exception as e:
+        raise
+
+# Updating the Job descriptions Details
+def saveUpdateJd(dataObjs, compyId, hrEmail):
+    try:
+        hrDetails = User.objects.filter(email=hrEmail).last()
+        if hrDetails is not None:
+            # Check if the JobDesc with the given jdLibraryId exists
+            jobDesc = JobDesc.objects.filter(id = dataObjs['JdID']).first()
+            if jobDesc:
+                # Update the fields only if the JobDesc exists
+                jobDesc.title       = dataObjs['title'] if dataObjs['title'] else None
+                jobDesc.description = dataObjs['jobDesc'] if dataObjs['jobDesc'] else None
+                jobDesc.role        = dataObjs['role'] if dataObjs['role'] else None
+                jobDesc.expmin      = dataObjs['minExp'] if dataObjs['minExp'] else None
+                jobDesc.expmax      = dataObjs['maxExp'] if dataObjs['maxExp'] else None
+                jobDesc.location    = dataObjs['workLocation'] if dataObjs['workLocation'] else None
+                jobDesc.budget      = dataObjs['budget'] if dataObjs['budget'] else None
+                jobDesc.positions   = dataObjs['noPositions'] if dataObjs['noPositions'] else None
+                jobDesc.skillset    = dataObjs['skills'] if dataObjs['skills'] else None
+                jobDesc.skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None
+                jobDesc.companyid   = compyId if compyId else None
+                jobDesc.createdby   = hrDetails.id if hrDetails.id else None
+                jobDesc.status      = 'O'  # 'O' is the open status for JD
+                # Save the updated JobDesc
+                jobDesc.save()
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        raise
+

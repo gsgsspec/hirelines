@@ -5,11 +5,9 @@ from app_api.functions import constants
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import User, Role, JobDesc
 from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, \
-    getInterviewerCandidates, getCandidateInterviewData
+    candidateInterviewers,getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails
 
 # Create your views here.
-
-
 def homePage(request):
     try:
 
@@ -178,7 +176,9 @@ def jobDescription(request):
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         if menuItemObjList:
-            return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList })
+            companyId = getCompanyId(user_mail)
+            allJds = getCompanyJDsList(companyId)
+            return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList,'allJds':allJds})
         else:
             return redirect('../')
 
@@ -188,6 +188,9 @@ def jobDescription(request):
 
 # this function render's inside html pages
 def Addjobdescription(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
     if checkCompanyTrailPeriod(request.user):
         return redirect('/trial-expired')
     try:
@@ -202,12 +205,13 @@ def Addjobdescription(request):
                         child['menuItemLink'] == currentPath]
         
         return render(request, "portal_index.html", {"template_name": 'add_job_description.html', 'menuItemList': menuItemList})
-
     except Exception as e:
         raise
 
-# this function render's inside html pages
-def AddjobdescriptionSetUp(request):
+def update_jobdescription(request,update_jd_id):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
     if checkCompanyTrailPeriod(request.user):
         return redirect('/trial-expired')
     try:
@@ -218,11 +222,32 @@ def AddjobdescriptionSetUp(request):
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
 
+        jd_details = jdDetails(update_jd_id)
+
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         
-        return render(request, "portal_index.html", {"template_name": 'jd_set_up.html', 'menuItemList': menuItemList})
+        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details})
+    except Exception as e:
+        raise
 
+# this function render's inside html pages
+def jobDescriptionSetUp(request,jd_id):
+    if checkCompanyTrailPeriod(request.user):
+        return redirect('/trial-expired')
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+        jd_details = jdDetails(jd_id)
+        
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+        
+        return render(request, "portal_index.html", {"template_name": 'jd_set_up.html', 'menuItemList': menuItemList,'jd_details':jd_details})
     except Exception as e:
         raise
 
@@ -230,12 +255,9 @@ def brandingPage(request):
     if checkCompanyTrailPeriod(request.user):
         return redirect('/trial-expired')
     try:
-
         return render(request, "portal_index.html", {"template_name": 'branding.html'})
-
     except Exception as e:
         raise
-
 
 
 def addCandidatePage(request):

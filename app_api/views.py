@@ -8,7 +8,7 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService, interviewSchedulingService
+from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdTestAdd, addJdServices, updateJdServices, workFlowDataService
 from .models import User_data
 from .functions.database import addCandidateDB, scheduleInterviewDB
 
@@ -25,20 +25,14 @@ def addCompanyData(request):
         'statusCode':11
     }
     try:
-
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
-            
             data_add_status = addCompanyDataService(dataObjs) 
-
             response['statusCode'] = int(data_add_status)
-
     except Exception as e:
         response['data'] = 'Error in adding company data'
         response['error'] = str(e)
-
     return JsonResponse(response)
-
 
 
 @csrf_exempt
@@ -51,23 +45,17 @@ def addJDCandidate(request):
         'error': None,
         'statusCode': 1
     }
-
     try:
         if request.method == "POST":
-
             dataObjs = json.loads(request.body)
-            
             candidateRegistrationService(dataObjs)
-
             response['data'] = "Details Saved Sucessfully"
             response['statusCode'] = 0
-
     except Exception as e:
         response['data'] = 'Error in Registration'
         response['error'] = str(e)
         raise
     return JsonResponse(response)
-
 
 
 @csrf_exempt
@@ -81,20 +69,15 @@ def registerUser(request):
         'statusCode':11
     }
     try:
-
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
-            
             data_add_status = registerUserService(dataObjs) 
-
             response['statusCode'] = int(data_add_status)
-
     except Exception as e:
         response['data'] = 'Error in adding company data'
         response['error'] = str(e)
 
     return JsonResponse(response)
-
 
 
 @csrf_exempt
@@ -108,9 +91,7 @@ def loginUser(request):
         'statusCode':1
     }
     try:
-
         if request.method == "POST":
-
             dataObjs = json.loads(request.POST.get('data'))
             auth_token = authentication_service(dataObjs)
             
@@ -119,17 +100,13 @@ def loginUser(request):
                 perform_login(request._request, usr, allauth_settings.EMAIL_VERIFICATION, signup=False,
                               redirect_url=None, signal_kwargs=None)
                 user = auth_user(usr)
-                
                 response['token'] = 'token_generated'
                 response['data'] = user.role
                 response['login_type'] = auth_token[1]
             else:
                 response['token'] = 'AnonymousUser'
                 response['data'] = 'login failed'
-            
             response['statusCode'] = 0
-
-
     except Exception as e:
         response['data'] = 'Error in Sign-in'
         response['error'] = str(e)
@@ -145,14 +122,74 @@ def addCompanyData(request):
         'statusCode':11
     }
     try:
-
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
-            
             data_add_status = addCompanyDataService(dataObjs) 
-
             response['statusCode'] = int(data_add_status)
+    except Exception as e:
+        response['data'] = 'Error in adding company data'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
 
+
+@api_view(['POST'])
+def jdAddTest(request):
+    response = {
+        'data':None,
+        'error': None,
+        'statusCode':1
+    }
+    try:
+        if request.method == 'POST':
+            dataObjs = json.loads(request.POST.get('data'))
+            print('====================')
+            print('user email',request.user)
+            print('========================')
+            print('dataObjs :: ',dataObjs)
+            companyID = getCompanyId(request.user)
+            jdTestAdd(dataObjs,companyID)
+            response['statusCode'] = 0
+    except Exception as e:
+        response['data'] = 'Error in adding company data'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def addJD(request):
+    response = {
+        'data':None,
+        'error': None,
+        'statusCode':1
+    }
+    try:
+        if request.method == 'POST':
+            dataObjs = json.loads(request.POST.get('data'))
+            companyID = getCompanyId(request.user)
+            addJdServices(dataObjs,companyID,request.user)
+            response['statusCode'] = 0
+    except Exception as e:
+        response['data'] = 'Error in adding company data'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateJD(request):
+    response = {
+        'data':None,
+        'error': None,
+        'statusCode':1
+    }
+    try:
+        if request.method == 'POST':
+            dataObjs = json.loads(request.POST.get('data'))
+            companyID = getCompanyId(request.user)
+            updateJdServices(dataObjs,companyID,request.user)
+            response['statusCode'] = 0
     except Exception as e:
         response['data'] = 'Error in adding company data'
         response['error'] = str(e)
@@ -190,7 +227,6 @@ def addCandidate(request):
         'statusCode': 1
     }
     try:
-       
         if request.method == "POST":
             dataObjs = json.loads(request.POST.get('data'))
             user_email = request.user
@@ -199,7 +235,32 @@ def addCandidate(request):
             c_data = addCandidateDB(dataObjs,company_id,user.id)
             response['data'] = c_data
             response['statusCode'] = 0
+        else:
+            return HttpResponseForbidden('Request Blocked')
+        
+    except Exception as e:
+        response['data'] = 'Error in saving Job Description'
+        response['error'] = str(e)
+        raise
 
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def workFlowData(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            user_email = request.user
+            company_id = getCompanyId(user_email)
+            workflowData = workFlowDataService(dataObjs,company_id)
+            response['data'] = workflowData
+            response['statusCode'] = 0
         else:
             return HttpResponseForbidden('Request Blocked')
         

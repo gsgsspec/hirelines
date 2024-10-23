@@ -14,7 +14,7 @@ from hirelines.metadata import getConfig
 from .mailing import sendRegistrainMail
 from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
     Vacation, WorkCal, ExtendedHours, HolidayCal
-
+from app_api.functions.database import saveJdNewTest, saveAddJD, saveUpdateJd
 
 
 def addCompanyDataService(dataObjs):
@@ -142,14 +142,32 @@ def getJobDescData(jid):
                 'interviews':interviews,
                 'offer_letters':offer_letters
             }
-
-
             return jd_data
-
 
     except Exception as e:
         raise
 
+
+def jdTestAdd(jdData,compyId):
+    try:
+        if jdData:  
+            saveJdNewTest(jdData,compyId)
+    except Exception as e:
+        raise
+
+
+def addJdServices(addjdData,companyID,hrEmail):
+    try:
+        saveAddJD(addjdData,companyID,hrEmail)
+    except Exception as e:
+        raise
+
+
+def updateJdServices(addjdData,companyID,hrEmail):
+    try:
+        saveUpdateJd(addjdData,companyID,hrEmail)
+    except Exception as e:
+        raise
 
 
 def candidateRegistrationService(dataObjs):
@@ -224,8 +242,6 @@ def candidateRegistrationService(dataObjs):
             )
 
             c_registration.save()
-
-    
     except Exception as e:
         raise
 
@@ -421,6 +437,29 @@ def getCompanyJdData(cid):
     except Exception as e:
         raise
 
+
+def getCompanyJDsList(companyId):
+    try:
+        company_jds = JobDesc.objects.filter(companyid=companyId, status='O').values()
+        return company_jds
+    except Exception as e:
+        raise
+
+
+def jdDetails(jdId):
+    try:
+        jdData = JobDesc.objects.filter(id=jdId).last()
+        return jdData
+    except Exception as e:
+        raise
+
+
+def workFlowDataService(data,cmpyId):
+    try:
+        papersDetails = Workflow.objects.filter(jobid = data).values()
+        return list(papersDetails)
+    except Exception as e:
+        raise
 
 def getJdWorkflowService(jid,cid):
     try:

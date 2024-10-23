@@ -21,7 +21,8 @@ urlpatterns = [
     path('interviewer-feedback',views.interviewerFeedback),
     path('job-descriptions',views.jobDescription),
     path('add-job-description',views.Addjobdescription),
-    path('job-description-set-up',views.AddjobdescriptionSetUp),
+    path('update-job-description/<int:update_jd_id>',views.update_jobdescription),
+    path('job-description-set-up/<int:jd_id>',views.jobDescriptionSetUp),
 
     # Company data page
     path("cmp-reg", views.homePage),

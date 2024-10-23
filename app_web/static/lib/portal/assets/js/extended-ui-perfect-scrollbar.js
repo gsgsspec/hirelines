@@ -5,7 +5,8 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   (function () {
-    const verticalExample = document.getElementById('vertical-example'),
+    var verticalExample = document.getElementById('sectionTitlesContainer')
+    var ques_container_verti_scroll = document.getElementById('question_container_vertical_scroll'),
       horizontalExample = document.getElementById('horizontal-example'),
       horizVertExample = document.getElementById('both-scrollbars-example');
 
@@ -13,6 +14,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // --------------------------------------------------------------------
     if (verticalExample) {
       new PerfectScrollbar(verticalExample, {
+        wheelPropagation: false
+      });
+    }
+
+    
+
+    if (ques_container_verti_scroll) {
+      new PerfectScrollbar(ques_container_verti_scroll, {
         wheelPropagation: false
       });
     }

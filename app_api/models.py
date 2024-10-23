@@ -60,14 +60,14 @@ class Candidate(models.Model):
             db_table = 'candidate'
 
 
-
 class JobDesc(models.Model):
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=100, null=True)
-    description = models.CharField(max_length=1024, null=True)
+    jdlibraryid = models.IntegerField(null=True)
+    title = models.CharField(max_length=300, null=True)
+    role = models.CharField(max_length=100,null=True)
+    description = models.CharField(max_length=3024, null=True)
     expmin = models.IntegerField(null=True)
     expmax = models.IntegerField(null=True)
-    role = models.CharField(max_length=100,null=True)
     department = models.CharField(max_length=100,null=True)
     location = models.CharField(max_length=512, null=True)
     budget = models.DecimalField(max_digits=13, decimal_places=2, null=True)
@@ -85,7 +85,6 @@ class JobDesc(models.Model):
 
 
 class Registration(models.Model):
-     
     id = models.AutoField(primary_key=True)
     candidateid = models.IntegerField(null=True)
     jobid = models.IntegerField(null=True)
@@ -174,11 +173,11 @@ class User(models.Model):
 
 class Workflow(models.Model):
     id = models.AutoField(primary_key=True)
+    jobid = models.IntegerField(null=True)
     companyid = models.IntegerField(null=True)
     paperid = models.IntegerField(null=True)
     papertype = models.CharField(max_length=1, null=True)
     order = models.IntegerField(null=True)
-    jobid = models.IntegerField(null=True)
     papertitle = models.CharField(max_length=120, null=True, blank=True)
 
     class Meta:

@@ -1,110 +1,11 @@
-var JDLibrarys
-// var interviewersList = [{'id':1,'name':'Srinivas'},{'id':2,'name':'Srikanth'},{'id':3,'name':'Balu'},{'id':4,'name':'Pratap'}]
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Call the fetch function when the page loads
-    fetchJdLibrarys(); // Remove the extra console.log and just call the function
-});
-
-// Function to fetch data from the Django API
-async function fetchJdLibrarys() {
-    try {
-        // Send a GET request to the API endpoint
-        const response = await fetch(CONFIG['acert']+"/api/jd-librarys", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // Check if the request was successful
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-
-        // Parse the JSON response
-        const data = await response.json();
-
-        // Call appendJdLibraryToHtml with the fetched data
-        appendJdLibraryToHtml(data.data);  // Assuming `data.data` holds the actual array of JD libraries
-
-    } catch (error) {
-        // Handle any errors that occurred during the fetch
-        console.error('Failed to fetch jd-librarys:', error);
-    }
-}
-
-
-// Function to append JD librarys to select element
-function appendJdLibraryToHtml(jdLibrarys) {
-    JDLibrarys = jdLibrarys
-    const selectElement = document.getElementById('jdLibrary'); // Assuming the <select> element has this ID
-
-    if (jdLibrarys.length > 0) {
-        for (var jd = 0; jd < jdLibrarys.length; jd++) {
-
-            // Check if the 'title' exists and is not null/undefined
-            if (jdLibrarys[jd].title){
-                const option = document.createElement('option');
-                option.value = jdLibrarys[jd].id;
-                option.textContent = jdLibrarys[jd].title ? jdLibrarys[jd].title : 'Untitled';
-                // Append the option to the select element
-                selectElement.appendChild(option);
-            }
-
-        }
-    }
-}
-
-
-function fillJdData(){
-    // hr selected value
-    var hrSelectedValue = document.getElementById('jdLibrary').value
-
-    if (hrSelectedValue){ // check hr value
-        if (JDLibrarys.length > 0){ // check jd library data
-            
-            for (var jd = 0; jd < JDLibrarys.length; jd++){
-                if(hrSelectedValue == JDLibrarys[jd].id){
-                    
-                    document.getElementById('JobDescription').innerText = JDLibrarys[jd].description ? JDLibrarys[jd].description : ""
-                    document.getElementById('min_experince').value      = JDLibrarys[jd].minexp      ? JDLibrarys[jd].minexp      : ""
-                    document.getElementById('max_experince').value      = JDLibrarys[jd].maxexp      ? JDLibrarys[jd].maxexp      : ""
-                    document.getElementById('jdSkills').innerText       = JDLibrarys[jd].skill       ? JDLibrarys[jd].skill       : ""
-
-                    // Get the role value from the JDLibrarys object
-                    const roleValue = JDLibrarys[jd].role ? JDLibrarys[jd].role : "";
-                    
-                    // Get the select element
-                    const roleSelect = document.getElementById('jdRole');
-
-                    // Iterate through all options in the select element
-                    for (let i = 0; i < roleSelect.options.length; i++) {
-                        // If the option value matches the roleValue, select it
-                        if (roleSelect.options[i].value === roleValue) {
-                            roleSelect.selectedIndex = i; // Set the selected index
-                            break; // Exit the loop once the matching option is found
-                        }
-                    }
-
-                }
-            }
-        }
-
-    }
-}
-
-
 document.getElementById('addJD').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
-
-    var select = document.getElementById("jdLibrary");
-    var selectedText = select.options[select.selectedIndex].text;
+    console.log('calleddd');
 
     // Gather data from the form
     const jdValues = {
-        jdLibraryId : document.getElementById('jdLibrary').value,
-        title       : selectedText,
+        JdID         : JdId,
+        title       : document.getElementById('JdTitle').value,
         jobDesc     : document.getElementById('JobDescription').value,
         role        : document.getElementById('jdRole').value,
         minExp      : document.getElementById('min_experince').value,
@@ -123,7 +24,7 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
     };
 
     try {
-        $.post(CONFIG['portal'] + "/api/add-jd", final_data, function (res) {
+        $.post(CONFIG['portal'] + "/api/update-jd", final_data, function (res) {
             if (res.statusCode == 0){   
                document.getElementById('validater').hidden = false;
                setInterval(1000)
@@ -134,16 +35,6 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
     } catch (error) {
         console.error('Failed to send data to backend:', error);
     }
-});
-
-
-
-// search for jd librarys
-$(document).ready(function () {
-    $('#jdLibrary').select2({
-      placeholder: "Please Select Job Description",
-      allowClear: true
-    });
 });
 
 

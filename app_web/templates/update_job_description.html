@@ -1,78 +1,4 @@
 {% load static %}
-<!-- 
-<div class="card">
-    <div class="card-title-table">
-        <h4 class="card-header">Add Job Description</h4>
-    </div>
-    <div class="row p-3">
-      <div class="col-md-6">
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="mb-3">
-              <label for="exampleFormControlSelect1" class="form-label">Select Job Description</label>
-              <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                <option value="1">Python Developer 0 - 2 years</option>
-                <option value="2">Python Developer 2 - 4 years</option>
-                <option value="3">Java Developer 0 - 2 years</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlSelect1" class="form-label">Role</label>
-              <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                <option value="1">Python Developer 0 - 2 years</option>
-                <option value="2">Python Developer 2 - 4 years</option>
-                <option value="3">Java Developer 0 - 2 years</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Description</label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Budget</label>
-              <div style="display: flex; justify-content: start; ">
-                <input
-                type="number"
-                class="form-control w-25 mr-2"
-                id="min_experince"
-                placeholder="LPA"
-                aria-describedby="defaultFormControlHelp"
-                style="margin-right: 1rem;"
-              />
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Experinces</label>
-              <div style="display: flex; justify-content: start; ">
-                <input
-                type="number"
-                class="form-control w-25 mr-2"
-                id="min_experince"
-                placeholder="Min - Exp"
-                aria-describedby="defaultFormControlHelp"
-                style="margin-right: 1rem;"
-              />
-              <input
-                type="number"
-                class="form-control w-25"
-                id="max_experince"
-                placeholder="Max - Exp"
-                aria-describedby="defaultFormControlHelp"
-              />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-</div>
-
-<style>
-  .jd_card_border{
-    border: 0.8px solid #b5b2b261;
-    border-radius: 10px;
-  }
-</style> -->
 
 <div class="content-wrapper">
   <!-- Content -->
@@ -94,18 +20,16 @@
               <form id="addJD">
 
                 <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label">Job Descriptions</label>
+                  <label class="col-sm-2 col-form-label" for="JdTitle">Title</label>
                   <div class="col-sm-9">
-                    <select class="form-select" id="jdLibrary" required onchange="fillJdData()">
-                      <option value="0" disabled selected>Please Select Job Description</option>
-                    </select>
+                    <input type="text" name="" class="form-control" id="JdTitle" value="{{ jd_details.title }}">
                   </div>
                 </div>
 
                 <div class="row mb-3 container-center">
                   <label for="JobDescription" class="col-sm-2 col-form-label">Description</label>
                   <div class="col-sm-9 ">
-                    <textarea class="form-control" id="JobDescription" rows="3"></textarea>
+                    <textarea class="form-control" id="JobDescription" rows="3">{{ jd_details.description }}</textarea>
                   </div>
                 </div>
 
@@ -114,9 +38,9 @@
                   <div class="col-sm-9">
                     <select class="form-select" id="jdRole" aria-label="Default select example">
                       <option value="0"></option>
-                      <option value="Development">Development</option>
-                      <option value="Testing">Testing</option>
-                      <option value="Deployment">Deployment</option>
+                      <option value="Development" {% if jd_details.role == 'Development' %} selected {% else %} {% endif %}>Development</option>
+                      <option value="Testing" {% if jd_details.role == 'Testing' %} selected {% else %} {% endif %}>Testing</option>
+                      <option value="Deployment" {% if jd_details.role == 'Deployment' %} selected {% else %} {% endif %}>Deployment</option>
                     </select>
                   </div>
                 </div>
@@ -131,6 +55,7 @@
                     placeholder=""
                     aria-describedby="defaultFormControlHelp"
                     style="margin-right: 1rem;"
+                    value="{{ jd_details.expmin }}"
                   />
                   <input
                     type="number"
@@ -138,6 +63,7 @@
                     id="max_experince"
                     placeholder=""
                     aria-describedby="defaultFormControlHelp"
+                    value="{{ jd_details.expmax }}"
                   />
                   </div>
                 </div>
@@ -152,6 +78,7 @@
                     placeholder=""
                     aria-describedby="defaultFormControlHelp"
                     style="margin-right: 1rem;"
+                    value="{{ jd_details.budget }}"
                   />
                   </div>
                 </div>
@@ -166,6 +93,7 @@
                     placeholder="Members count.."
                     aria-describedby="defaultFormControlHelp"
                     style="margin-right: 1rem;"
+                    value="{{ jd_details.positions }}"
                   />
                   </div>
                 </div>
@@ -178,6 +106,7 @@
                       class="form-control"
                       id="jdWorkLocation"
                       placeholder=""
+                      value="{{ jd_details.location }}"
                     />
                   </div>
                 </div>
@@ -185,34 +114,9 @@
                 <div class="row mb-3 container-center">
                   <label for="jdSkills" class="col-sm-2 col-form-label">Skill Set</label>
                   <div class="col-sm-9">
-                    <textarea class="form-control" id="jdSkills" rows="3"></textarea>
+                    <textarea class="form-control" id="jdSkills" rows="3">{{ jd_details.skillset }}</textarea>
                   </div>
                 </div>
-
-                <!-- <div class="row mb-1 container-center">
-                  <label class="col-sm-2 col-form-label">Interview Panel</label>
-                  <div id="interviewPanelContainer" class="col-sm-9">
-                    <div class="form-group row interview-panel" id="panel_1">
-                      <div class="col-sm-5">
-                          <select class="custom-select custom-select-sm interviewer-select form-select mb-2" required>
-                            <option value="None" selected>Select Interviewer</option>
-                            <option value="1">Srinivas</option>
-                            <option value="2">Srikanth</option>
-                            <option value="3">Balu</option>
-                            <option value="4">Pratap</option>
-                          </select>
-                      </div>
-                    </div>
-                  </div>
-                  
-                </div> -->
-
-                <!-- <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label"></label>
-                  <div class="col-sm-9">
-                    <button type="button" id="addInterviewerButton" class="btn btn-primary">Add Interviewer</button>
-                  </div>
-                </div> -->
 
                 <div class="row mb-3 container-center">
                   <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Any Special Notes <small>(optional)</small></label>
@@ -223,7 +127,7 @@
                       placeholder="Any Special instruction"
                       aria-describedby="basic-icon-default-message2"
                       rows="3"
-                    ></textarea>
+                    >{{ jd_details.skillnotes }}</textarea>
                   </div>
                 </div>
 
@@ -247,4 +151,7 @@
   </div>
   <!-- / Content -->
 </div>
-<script src="{% static 'js/add_job_description.js' %}"></script>
+<script>
+  var JdId = "{{ jd_details.id }}"
+</script>
+<script src="{% static 'js/update_job_description.js' %}"></script>

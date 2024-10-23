@@ -18,41 +18,41 @@
         </a>
       </div>
 
-      <div class="col-md-6 col-lg-4 c-card">
-        <div class="card mb-3 shadow jd_card_border">
-          <a href="/add-job-description">
-            <div class="card-body int-card-bd ">
-              <div>
-                <h5 class="card-title p-clr mb-1 text_size_custm">Python Developer 0 - 3 years</h5>
-                <div class="" style="color: gray;">Description : Lorem ipsum dolor sit, amet consectetur adipisicing Lorem, ipsum dolor. elit...</div>
-                <div class="row justify-content-between">
-                  <div style="color: gray; width: 50%;">Exp : 3 - 7 Yrs</div>
-                    <!-- <a href="/job-description-set-up" > -->
-                      <button style="width: 30%;" onclick="redirectToJobDetails()" type="button" class="btn btn-sm btn-primary">Details</button>
-                    <!-- </a> -->
-                </div>
-              </div>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <div class="col-md-6 col-lg-4 c-card">
+        <!-- <div class="col-md-6 col-lg-4 c-card">
           <div class="card mb-3 shadow jd_card_border">
-            <div onclick="window.location.href='/add-job-description'" style="cursor: pointer;">
+            <a href="/add-job-description">
               <div class="card-body int-card-bd ">
                 <div>
-                  <h5 class="card-title p-clr mb-1">Java Developer 3 - 7 years</h5>
-                  <div style="color: gray;">Description : Lorem ipsum dolor sit, amet consectetur adipisicing Lorem, ipsum dolor. elit...</div>
+                  <h5 class="card-title p-clr mb-1 text_size_custm"></h5>
+                  <div class="" style="color: gray;"></div>
                   <div class="row justify-content-between">
-                    <div style="color: gray; width: 50%;">Exp : 0 - 2 Yrs</div>
-                    <button style="width: 30%;" onclick="event.stopPropagation();redirectToJobDetails()" type="button" class="btn btn-sm btn-primary">Details</button>
+                    <div style="color: gray; width: 50%;">Exp : {{jd.expmin}} - {{jd.expmax}} Yrs</div>
+                      <button style="width: 30%;" onclick="redirectToJobDetails()" type="button" class="btn btn-sm btn-primary">Details</button>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div> -->
+      
+      {% for jd in allJds %}
+        <div class="col-md-6 col-lg-4 c-card">
+            <div class="card mb-3 shadow jd_card_border">
+              <div onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer;">
+                <div class="card-body int-card-bd ">
+                  <div>
+                    <h5 class="card-title p-clr mb-1">{{jd.title}}</h5>
+                    <div style="color: gray;">Description : {{jd.description}}</div>
+                    <div class="row justify-content-between">
+                      <div style="color: gray; width: 50%;">Exp : {{jd.expmin}} - {{jd.expmax}} Yrs</div>
+                      <button style="width: 30%;" onclick="event.stopPropagation();redirectToJobDetails('{{ jd.id }}')" type="button" class="btn btn-sm btn-primary">Details</button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-      </div>
+        </div>
+      {% endfor %}
 
     </div>
     
@@ -89,7 +89,7 @@
   } */
 </style>
 <script>
-  function redirectToJobDetails() {
-    window.location.href = '/job-description-set-up';
+  function redirectToJobDetails(redirectId) {
+    window.location.href = '/job-description-set-up/'+redirectId;
   }
 </script>
