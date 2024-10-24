@@ -14,7 +14,6 @@ urlpatterns = [
     path('interview-scheduling/<int:cid>',views.interviewScheduling),
     path('schedule-interview',views.scheduleInterviewView),
     path('work-flow-data',views.workFlowData),
-
     path('candidate-registration/<str:enc_jdid>/',views.candidateRegistrationForm),
-    path('register-candidate',views.registerCandidate)
+    path('register-candidate',views.registerCandidate),
 ]

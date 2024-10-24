@@ -151,7 +151,8 @@ def getJobDescData(jid):
 def jdTestAdd(jdData,compyId):
     try:
         if jdData:  
-            saveJdNewTest(jdData,compyId)
+            test_data = saveJdNewTest(jdData,compyId)
+            return test_data
     except Exception as e:
         raise
 

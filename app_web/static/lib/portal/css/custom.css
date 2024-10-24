@@ -9,6 +9,10 @@
   color: var(--primary-color);
 }
 
+.br-p-clr {
+  border-color: var(--primary-color);
+}
+
 .s-clr {
   color: var(--secondary-color);
 }

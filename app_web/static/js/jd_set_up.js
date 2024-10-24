@@ -1,4 +1,12 @@
 var perviousLibrary
+var perviousSelectedTest = null
+var screeningBackgroundColor = '#efebfd'
+var codingBackgroundColor = '#defaeb'
+var interviewBackgroundColor = '#e2ebfd'
+var screenMainColor = '#8763ee'
+var codingMainColor = '#00d462'
+var interviewMainColor = '#1f68f3'
+var testsList = []
 
 function getPapersLibrarys(){
     
@@ -36,8 +44,7 @@ function workFlowData(){
         
         if (res.statusCode == 0){
             if(res.data){
-                console.log('data :: ',res.data);
-                createTest(res.data)
+                createTest(res.data,'edit')
             }
         }
 
@@ -49,10 +56,11 @@ workFlowData()
 
 function createTest(data){
     //  create cards by calling this function 
-    // exctract the required data from data parameter
-    console.log('data::',data);
     for(var test = 0; test < data.length; test++){
-        addTestCardToShow(data[test]['papertitle'], 60)  
+        addTestCardToShow(data[test]['papertitle'], 60,data[test]['papertype'],data[test])  
+        var key_ = data[test]['id']
+        var tests = {[key_]: data[test]}
+        testsList.push(tests)
     }
 }
 
@@ -131,8 +139,6 @@ function AppendSectionsAndQuestions(data) {
 function showLibrary(element,libraryId){
 
     if(libraryId != perviousLibrary){
-
-        
 
         // library select active inactive 
         // active
@@ -220,8 +226,8 @@ function addTest(){
         dataObj = {
             'testName'        : testName,
             'promotPercentage': promotValue,
-            'testType'        :testType,
-            'jdId'            :jdId
+            'testType'        : testType,
+            'jdId'            : jdId
         }
 
         var final_data = {
@@ -232,29 +238,64 @@ function addTest(){
         $.post(CONFIG['portal'] + "/api/jd-add-test", final_data, function (res) {
         
             if (res.statusCode == 0){
-                
+                if(res.data){
+
+                    var data = res.data
+                    testType = testType
+                    addTestCardToShow(testName,promotValue,testType,data[0])
+
+                    var key_ = data[0]['id']
+                    addTestTolst = { [key_] : data[0]}
+                    testsList.push(addTestTolst)
+
+                    console.log('testsList :: ',testsList);
+
+                }
             }
 
         })
-
-        addTestCardToShow(testName,promotValue)
 
     }
 }
 
 
-function addTestCardToShow(testName, promotValue) {
+function addTestCardToShow(testName, promotValue,testType,data) {
+    
     var testCardsContainer = document.getElementById('testCards');
+    var testTypeColor
+    var testTitle
+    var testIcon
+
+    if(testType == 'S' || testType == 'Screening' ){
+        testTypeColor = screeningBackgroundColor
+        testTitle = 'Screening'
+        testIcon = '<i class="fas fa-clipboard-check" style="margin-right:5px;color:'+screenMainColor+';"></i>'
+    }
+    else if(testType == 'C' || testType == 'Coding'){
+        testTypeColor = codingBackgroundColor
+        testTitle = 'Coding'
+        testIcon = '<i class="fas fa-code" style="margin-right:5px;color:'+codingMainColor+';"></i>'
+    }
+    else if(testType == 'I' || testType == 'Interview'){
+        testTypeColor = interviewBackgroundColor
+        testTitle = 'Interview'
+        testIcon = '<i class="fas fa-chalkboard-teacher" style="margin-right:5px;color:'+interviewMainColor+';"></i>'
+    }
 
     testCardsContainer.insertAdjacentHTML('beforeend',
-        '<div class="col-sm-6 col-lg-4 mb-4 cust_cursor">' +
-            '<div class="card p-3">' +
+        '<div class="col-sm-6 col-lg-4 mb-4">' +
+            '<div class="card p-3 cust_cursor" style="background-color:'+testTypeColor+';" onclick="selectTest(this.id)" id="'+testTitle+'_'+data['id']+'">' +
                 '<figure class="p-3 mb-0">' +
                     '<blockquote class="blockquote">' +
-                        '<figcaption class="custm_blockquote-footer mb-0 text-muted">' +
-                            'Screening ( Promoted Value: '+ promotValue +' )' +
-                        '</figcaption>' +
-                        '<p>'+ testName +'</p>' +
+                        '<div>'+
+                            '<figcaption class="custm_blockquote-footer mb-0 text-muted" style="display:flex;justify-content: space-between;width: 100%; color: var(--primary-color) !important; font-weight: 600;">' +
+                                '<div>'+
+                                    '<span id="testTypeTitle">'+ testName +'</span> &nbsp; '+testIcon+'' +
+                                    '<p class="add-test-name-cust">'+testTitle+'( Promoted Value '+ promotValue +' )' +'</p>' +
+                                '</div>'+
+                                '<div> <i class="bx bx-edit custm-edit-icon" onclick="updateTest(event)"></i> </div>'  +
+                            '</figcaption>' +
+                        '</div>'+
                     '</blockquote>' +
                 '</figure>' +
             '</div>' +
@@ -262,3 +303,46 @@ function addTestCardToShow(testName, promotValue) {
     );
     
 }
+
+
+function selectTest(element_id){
+
+    if (element_id != perviousSelectedTest){
+
+        var test_type = element_id.split('_')[0]
+        var borderClr
+    
+        if(test_type == 'Screening'){
+            borderClr = screenMainColor
+        }
+        if(test_type == 'Coding'){
+            borderClr = codingMainColor
+        }
+        if(test_type == 'Interview'){
+            borderClr = interviewMainColor
+        }
+        
+        var testBox = document.getElementById(element_id)
+        testBox.style.border = '1px solid ' + borderClr
+        testBox.style.boxShadow = '0 2px 6px 0 rgba(79, 80, 82, 0.56)';
+
+        if (perviousSelectedTest){
+            var testBox = document.getElementById(perviousSelectedTest)
+            testBox.style.border = ''
+            testBox.style.boxShadow = '0 2px 6px 0 rgba(67, 89, 113, 0.12)';
+        }
+        
+    }
+    
+    perviousSelectedTest = element_id
+
+}
+
+
+function updateTest(event){
+    event.stopPropagation();
+    $('#modalCenter').modal('show')
+}
+
+
+console.log('testsList :: ',testsList);

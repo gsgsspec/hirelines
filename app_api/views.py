@@ -144,15 +144,12 @@ def jdAddTest(request):
     try:
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
-            print('====================')
-            print('user email',request.user)
-            print('========================')
-            print('dataObjs :: ',dataObjs)
             companyID = getCompanyId(request.user)
-            jdTestAdd(dataObjs,companyID)
+            testData = jdTestAdd(dataObjs,companyID)
+            response['data'] = testData
             response['statusCode'] = 0
     except Exception as e:
-        response['data'] = 'Error in adding company data'
+        response['data'] = 'Error in adding Test in Work flow'
         response['error'] = str(e)
         raise
     return JsonResponse(response)

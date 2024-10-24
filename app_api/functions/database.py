@@ -196,6 +196,8 @@ def saveJdNewTest(dataObjs,compyId):
                 )
         savedWorkFlowDetails.save()
         
+        workFlowDetails = Workflow.objects.filter(id = savedWorkFlowDetails.id).values()
+        return list(workFlowDetails)
     except Exception as e:
         raise
 
