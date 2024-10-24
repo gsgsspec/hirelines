@@ -67,7 +67,7 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
             'reference_id': candidate.candidateid
         }
 
-        send_candidate_data = requests.post(url, json = candidate_data)
+        send_candidate_data = requests.post(url, json = candidate_data, verify=False)
         response_content = send_candidate_data.content
 
         if response_content:

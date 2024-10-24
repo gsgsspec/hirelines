@@ -326,13 +326,17 @@ def scheduleInterviewView(request):
 from django.http import HttpResponse
 
 
-def candidateRegistrationForm(request):
+def candidateRegistrationForm(request,enc_jdid):
     try:
         
-        enccode = encrypt_code(52)
-        print("enccode",enccode)
-        deccode =  decrypt_code(enccode)
-        print("deccode",deccode)
+        # request_domain = request.META.get('HTTP_HOST', '')
+        # print("request_domain",request_domain)
+        # # enccode = encrypt_code(52)
+        # # print("enccode",enccode)
+        # if "local" in request_domain:
+        #     print("domain identified")
+        # deccode =  decrypt_code(enc_jdid)
+        # print("deccode",deccode)
         registration_script = Lookupmaster.objects.get(lookupid=1,lookupmasterid=1).lookupparam1
         # print("registration_script",registration_script)
         # script = JDCandidateRegistrationScripts.objects.get(script_id=script_id)

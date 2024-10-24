@@ -15,6 +15,6 @@ urlpatterns = [
     path('schedule-interview',views.scheduleInterviewView),
     path('work-flow-data',views.workFlowData),
 
-    path('candidate-registration-cdn/',views.candidateRegistrationForm),
+    path('candidate-registration/<str:enc_jdid>/',views.candidateRegistrationForm),
     path('register-candidate',views.registerCandidate)
 ]
