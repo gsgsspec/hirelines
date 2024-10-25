@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.db.models import Q
 from app_api.functions import constants
+from app_api.functions.hashing import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import User, Role, JobDesc
 from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails
+from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 # Create your views here.
 def homePage(request):
@@ -243,13 +245,18 @@ def jobDescriptionSetUp(request,jd_id):
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
         jd_details = jdDetails(jd_id)
-        
+        enc_jdid = encrypt_code(jd_id)
+        hirelines_integration_script_enc = hirelines_integration_script.replace("#enc_jdid#",enc_jdid)
+        hirelines_integration_function_enc = hirelines_integration_function.replace("#enc_jdid#",enc_jdid)
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         
-        return render(request, "portal_index.html", {"template_name": 'jd_set_up.html', 'menuItemList': menuItemList,'jd_details':jd_details})
+        return render(request, "portal_index.html", {"template_name": 'jd_setup.html', 'menuItemList': menuItemList,'jd_details':jd_details,
+                                                     "hirelines_integration_script_enc":hirelines_integration_script_enc,
+                                                     "hirelines_integration_function_enc":hirelines_integration_function_enc})
     except Exception as e:
         raise
+
 
 def brandingPage(request):
     if checkCompanyTrailPeriod(request.user):

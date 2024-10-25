@@ -303,3 +303,5 @@ class Lookupmaster(models.Model):
         db_table = 'lookupmaster'
 
 
+
+

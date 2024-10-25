@@ -449,6 +449,7 @@ def getCompanyJDsList(companyId):
 
 def jdDetails(jdId):
     try:
+        
         jdData = JobDesc.objects.filter(id=jdId).last()
         return jdData
     except Exception as e:

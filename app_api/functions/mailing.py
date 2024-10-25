@@ -128,8 +128,8 @@ def sendEmail(company,paper_type,participant_paper_id,event,replacements,to_emai
             email_template = Email_template.objects.get(event=event, company_id=company,paper_type=paper_type)
 
 
-        sender_label  = email_template.sender_label if email_template.sender_label else company_obj.company_name
-
+        sender_label  = email_template.sender_label if email_template.sender_label else company_obj.name
+        
         if event == "Call_Schedule":
             email_list = [email.strip() for email in to_email.split(",")]
             to_email = email_list[0]
@@ -137,13 +137,13 @@ def sendEmail(company,paper_type,participant_paper_id,event,replacements,to_emai
         else:
             to_email = to_email
 
-        # sender_email = email_config['sender']
+        sender_email = email_config['sender']
         # media_config = getConfig()['MEDIA']
         # media_path = media_config['media_path']
         receiver_email = to_email
         message = MIMEMultipart("mixed")
         message["Subject"] = email_template.email_subject if email_template else ''
-        message["From"] = f"{sender_label} "
+        message["From"] = f"{sender_label} <{sender_email}>"
         message["To"] = receiver_email
 
         if event == "Call_Schedule":

@@ -189,7 +189,7 @@ def saveJdNewTest(dataObjs,compyId):
 
         savedWorkFlowDetails = Workflow(
                 companyid = compyId,
-                paperid = 1,
+                paperid = 49,
                 papertype = testType,
                 papertitle = dataObjs['testName'] if 'testName' in dataObjs else None,
                 jobid = dataObjs['jdId'] if 'jdId' in dataObjs else None

@@ -7,7 +7,10 @@ var screenMainColor = '#8763ee'
 var codingMainColor = '#00d462'
 var interviewMainColor = '#1f68f3'
 var testsList = []
-
+$(document).ready(function () {
+    getPapersLibrarys();
+    workFlowData();
+})
 function getPapersLibrarys(){
     
     var jdlib = parseInt(jdlibraryid)
@@ -28,7 +31,7 @@ function getPapersLibrarys(){
 
 }
 
-getPapersLibrarys()
+
 
 
 
@@ -52,7 +55,7 @@ function workFlowData(){
 
 }
 
-workFlowData()
+
 
 function createTest(data){
     //  create cards by calling this function 
@@ -345,4 +348,31 @@ function updateTest(event){
 }
 
 
+
+
 console.log('testsList :: ',testsList);
+
+
+document.getElementById('script_copy_btn').addEventListener('click', function() {
+    const scriptValue = document.getElementById('scriptTextarea').value;
+    const functionValue = document.getElementById('functionTextarea').value;
+    const combinedText = `${scriptValue}\n${functionValue}`;
+    
+    navigator.clipboard.writeText(combinedText).then(() => {
+        const scriptTextarea = document.getElementById('scriptTextarea');
+        const functionTextarea = document.getElementById('functionTextarea');
+
+        scriptTextarea.classList.add('flash-border');
+        functionTextarea.classList.add('flash-border');
+
+        setTimeout(() => {
+            scriptTextarea.classList.remove('flash-border');
+            functionTextarea.classList.remove('flash-border');
+        }, 500);
+
+        console.log('Copied to clipboard!');
+    }).catch(err => {
+        // Optionally handle the error
+        console.error('Error copying text: ', err);
+    });
+});

@@ -12,7 +12,7 @@ from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdTestAdd, addJdServices, updateJdServices, workFlowDataService
 from .models import Candidate, Lookupmaster, Registration, User_data, Workflow
 from .functions.database import addCandidateDB, scheduleInterviewDB
-
+from app_api.functions.constants import hirelines_registration_script
 # Create your views here.
 
 @csrf_exempt
@@ -334,10 +334,9 @@ def candidateRegistrationForm(request,enc_jdid):
         #     print("domain identified")
         # deccode =  decrypt_code(enc_jdid)
         # print("deccode",deccode)
-        registration_script = Lookupmaster.objects.get(lookupid=1,lookupmasterid=1).lookupparam1
-        # print("registration_script",registration_script)
-        # script = JDCandidateRegistrationScripts.objects.get(script_id=script_id)
-        return HttpResponse(registration_script, content_type='application/javascript')
+        
+
+        return HttpResponse(hirelines_registration_script, content_type='application/javascript')
     except:
         return HttpResponse('console.error("Script not found");', content_type='application/javascript')
 
@@ -357,11 +356,12 @@ def registerCandidate(request):
             dataObjs = json.loads(request.body)
 
             jd_id = decrypt_code(dataObjs["encjdid"])
-            workflow_data = Workflow.objects.filter(jobid=jd_id,order=1).last()
+            workflow_data = Workflow.objects.filter(jobid=jd_id).first()
             if workflow_data:
                 company_id = workflow_data.companyid
                 dataObjs["jd"] = jd_id
                 dataObjs['begin-from'] = workflow_data.paperid
+                company_id = 3
                 addCandidateDB(dataObjs,company_id,workflow_data)
                 response['data'] = 'Registration completed successfully'
             else:

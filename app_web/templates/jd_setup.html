@@ -1,0 +1,261 @@
+{% load static %}
+
+<div class="content-wrapper">
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Icons -->
+    <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal"
+      data-bs-target="#jd_integration_modal">
+      <i class='bx bx-code-curly icons_custm_weight'></i>
+    </button>
+    <!-- Icons -->
+    <div class="row justify-content-end" style="width: 50%; float: right;">
+
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('screening')"
+        data-bs-toggle="modal" data-bs-target="#modalCenter">
+        <i class='bx bx-badge-check icons_custm_weight'></i>
+      </button>
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('coding')"
+        data-bs-toggle="modal" data-bs-target="#modalCenter">
+        <i class='bx bx-code-alt icons_custm_weight'></i>
+      </button>
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('interview')"
+        data-bs-toggle="modal" data-bs-target="#modalCenter">
+        <i class='bx bx-select-multiple icons_custm_weight'></i>
+      </button>
+
+    </div>
+
+    <!-- <div class="row" id="testCards">
+      <div class="col-sm-6 col-lg-4 mb-4">
+        <div class="card p-3">
+          <figure class="p-3 mb-0">
+            <blockquote class="blockquote">
+              <figcaption class="custm_blockquote-footer mb-0 text-muted">
+                Screening
+              </figcaption>
+              <p>A well-known quote, contained in a blockquote element.</p>
+            </blockquote>
+          </figure>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Jd Testes show here -->
+    <div class="row mt-3" id="testCards"></div>
+
+    <!-- Librarys container -->
+    <div class="row mt-3 bg-menu-theme custm_border_radius" id="">
+
+      <div class="py-3 library_sub_container">
+        <div class="Librarys_container overflow-hidden  ps ps--active-y" id="sectionTitlesContainer"></div>
+        <!-- Librarys container -->
+
+        <div class="questions container Librarys_questions_container"
+          style="padding-left: 1rem !important;padding-right: 0rem;">
+
+          <div class="mt-2 mb-3">
+            <h5 class="m-0 p-clr library_title" id="selectedLibrary"></h5>
+            <!-- Section Title show on library questions -->
+          </div>
+
+          <div class="questions container px-0 Librarys_questions_container overflow-hidden  ps ps--active-y"
+            id="question_container_vertical_scroll" style="padding-right: 20px !important;"></div>
+          <!-- each library questions -->
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Modals start -->
+<div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalCenterTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <div class="row">
+          <div class="col mb-3">
+            <label for="testType" class="form-label">Test Name</label> <span hidden id="test_name_validator"
+              class="validator_font_color mx-3">Please Enter Screening Test Name</span>
+            <input type="text" id="testType" class="form-control" placeholder="Test Name" value="Screening - 1"
+              data-test_type="hell" />
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col mb-0">
+            <label for="emailWithTitle" class="form-label">Promot</label>&nbsp;<small class="form-label">( percentage
+              )</small><span hidden id="promot_validator" class="validator_font_color mx-3">Please Enter Promot
+              level</span>
+            <input type="number" id="promot_level" class="form-control" placeholder="" value="60" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" onclick="addTest()" id="saveJdTest">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modals end -->
+
+<!-- JD integration script modal start -->
+<div class="modal fade" id="jd_integration_modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="jd_integration_modal_title">Careers-Hirelines Integration Script</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-2">        
+        <li class="form-label">Script tag to be added below `&lt;body&gt;&lt;/body&gt;` tag</li>
+        <textarea class="form-control" rows="4" id="scriptTextarea"  style="overflow: hidden;" disabled>
+          {{ hirelines_integration_script_enc }}
+        </textarea>
+        <br>
+        <li class="form-label">Add this function at posting candidate job application (under related .js or script tags)</li>
+        <textarea class="form-control" rows="4" id="functionTextarea" style="overflow: hidden;"  disabled>
+          {{ hirelines_integration_function_enc }}
+        </textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="script_copy_btn"><i class='bx bxs-copy icons_custm_weight'></i>&ensp;Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- JD integration script modal end -->
+<script>
+  
+  
+  var jdlibraryid = "{{jd_details.jdlibraryid}}";
+  var jdId = '{{jd_details.id}}';
+  
+</script>
+<style>
+  .icons_custm_weight {
+    font-weight: 500;
+  }
+
+  .custm_blockquote-footer {
+    font-size: 85%;
+    margin-top: -1rem;
+  }
+
+  .validator_font_color {
+    color: red;
+  }
+
+  .cust_cursor {
+    cursor: pointer;
+  }
+
+  .custm_border_radius {
+    border-radius: 10px;
+  }
+
+  .Librarys_container {
+    width: 370px;
+    height: 400px;
+    background-color: var(--light-primary-color);
+    border-radius: 10px;
+  }
+
+  .library_labeles_container {
+    display: flex;
+  }
+
+  .Librarys_label_container {
+    width: 293px;
+  }
+
+  .Librarys_questions_container {
+    height: 355px;
+  }
+
+  .library_sub_container {
+    display: flex;
+  }
+
+  .active_selected_library {
+    color: var(--primary-color) !important;
+    background-color: #fff !important;
+    border-radius: 0.375rem;
+    font-weight: 600;
+  }
+
+  .each_question_container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .library_seprator {
+    color: #000;
+    font-weight: 600;
+    border-bottom: 0.5px solid #fff;
+  }
+
+  .custm_margin_to_selected_library {
+    margin-right: 0.5rem !important;
+    margin-left: 0.5rem !important;
+  }
+
+  .library_title {
+    font-weight: 600;
+  }
+
+  .hrElement {
+    /* border-top: 1px solid #dbdbe1 !important; */
+    height: 0.5px !important;
+    border-color: #dbdbe1 !important;
+  }
+
+  .custm-edit-icon {
+    padding: 10px;
+    border-radius: 7px;
+    color: gray;
+    border: 0.8px solid lightgray;
+  }
+
+  .add-test-name-cust {
+    color: #79829a;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .flash-border {
+    border: 2px solid #adadae; /* Border color */
+    box-shadow: 0 0 10px #adadae, 0 0 20px #adadae; /* Glow effect */
+    animation: fadeGlow 0.5s ease; /* Animation for fading in */
+}
+
+@keyframes fadeGlow {
+    0% {
+        border-color: #adadae;
+        box-shadow: 0 0 10px #adadae, 0 0 20px #adadae;
+    }
+    50% {
+        border-color: transparent; /* Fade the border color */
+        box-shadow: 0 0 5px #adadae, 0 0 10px #adadae; /* Reduce glow */
+    }
+    100% {
+        border-color: #adadae; /* Bring back the border color */
+        box-shadow: 0 0 10px #adadae, 0 0 20px #adadae; /* Full glow */
+    }
+}
+</style>
+<script src="/static/config/config.js"></script>
+<script src="{% static 'js/jd_setup.js' %}"></script>
+<script src="{% static 'lib/portal/assets/js/extended-ui-perfect-scrollbar.js' %}"></script>
