@@ -83,7 +83,7 @@ def sendRegistrainMail(mail_data):
 
 
 def sendEmail(company,paper_type,participant_paper_id,event,replacements,to_email,calender_details=None):
-    # try:
+    try:
         CRLF = "\r\n"
         root_path  = getConfig()['DIR']['root_path']
         email_config = getConfig()['SEND_EMAIL_CONFIG']
@@ -246,6 +246,6 @@ def sendEmail(company,paper_type,participant_paper_id,event,replacements,to_emai
         
         service.users().messages().send(userId="me", body=create_draft_request_body).execute()
         
-    # except Exception as e:
-    #     print(str(e))
-    #     raise
+    except Exception as e:
+        print(str(e))
+        raise

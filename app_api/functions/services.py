@@ -13,8 +13,9 @@ from .constants import public_email_domains
 from hirelines.metadata import getConfig
 from .mailing import sendRegistrainMail
 from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
-    Vacation, WorkCal, ExtendedHours, HolidayCal
+    Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia
 from app_api.functions.database import saveJdNewTest, saveAddJD, saveUpdateJd
+from app_api.functions.mailing import sendEmail
 
 
 def addCompanyDataService(dataObjs):
@@ -299,11 +300,17 @@ def getCandidatesData():
 
         for candidate in candidates:
 
+            c_status =""
+
+            if candidate.status == 'P':
+                c_status = "Pending"
+
             candidates_list.append({
                 'candidate_id': candidate.candidateid,
                 'firstname': candidate.firstname,
                 'lastname': candidate.lastname,
-                'email' : candidate.email
+                'email' : candidate.email,
+                'status': c_status
             })
 
         return candidates_list
@@ -715,6 +722,9 @@ def getCandidateInterviewData(scd_id):
         resp = {
             'job_desc_data': None,
             'candidate_data':None,
+            'interview_data':None,
+            'screening_data': None,
+            'coding_data':None,
         }
 
         acert_domain = getConfig()['DOMAIN']['acert']
@@ -724,12 +734,25 @@ def getCandidateInterviewData(scd_id):
 
         call_details = CallSchedule.objects.get(id=scd_id)
         candidate = Candidate.objects.get(id=call_details.candidateid)
-        candidate_data = {
+        candidate_int_data = {
             'c_code' : candidate.candidateid,
             'int_paperid': call_details.paper_id
         }
 
-        send_candidate_data = requests.post(url, json = candidate_data)
+        send_candidate_data = requests.post(url, json=candidate_int_data)
+        response_content = send_candidate_data.content
+
+        if response_content:
+            json_data = json.loads(response_content.decode('utf-8'))
+
+            interview_data = json_data['data']['interviewdata']
+            screening_data = json_data['data']['screeningdata']
+            coding_data = json_data['data']['codingdata']
+
+            resp['interview_data'] = interview_data
+            resp['screening_data'] = screening_data
+            resp['coding_data'] = coding_data
+            
 
         job_desc = JobDesc.objects.get(id=candidate.jobid)
 
@@ -742,18 +765,243 @@ def getCandidateInterviewData(scd_id):
         }
 
         int_paper_title = Workflow.objects.filter(paperid=call_details.paper_id).last().papertitle
+        meeting_link = call_details.meetinglink.split("api")[1]
 
         candidate_data = {
+            'id':candidate.id,
             'name': f"{candidate.firstname} {candidate.lastname}" ,
             'mobile': candidate.mobile,
             'email': candidate.email,
-            'int_paper': int_paper_title if int_paper_title else 'N/A'
+            'code':candidate.candidateid,
+            'int_paper': int_paper_title if int_paper_title else 'N/A',
+            'meetinglink': meeting_link,
+            'schd_id':call_details.id,
         }
 
         resp['job_desc_data'] = job_desc_data
         resp['candidate_data'] = candidate_data
 
         return resp
+
+    except Exception as e:
+        raise
+
+
+
+def questionsResponseService(dataObjs):
+    try:
+        candidate_id = dataObjs['candid__id']
+        call_schedule_id = dataObjs['candid_call_sched_id']
+
+        call_schd_data = CallSchedule.objects.filter(id=call_schedule_id).last()
+
+        remark_note_data = ""
+
+        if call_schd_data:
+            remark_note_data = call_schd_data.intnotes
+        
+
+        ques_lst = QResponse.objects.filter( callscheduleid=call_schedule_id,candidateid=candidate_id)
+
+        questions_lst =[]
+
+        if ques_lst:
+            for ques in ques_lst:
+                questions_lst.append({'q_id':ques.qid,'q_res':ques.qrate})
+
+        return {'q_lst' : questions_lst,'remark_note' : remark_note_data}
+    
+    except Exception as e:
+        raise
+
+
+
+def getInterviewStatusService(dataObjs):
+    try:
+
+        call_schedule = CallSchedule.objects.get(id=dataObjs["schedule_id"],candidateid=dataObjs["candidate_id"])
+        
+        if call_schedule.callendflag == 'Y':
+            return "call_ended"
+        else:
+            return "call_active"
+        
+    except Exception as e:
+        raise
+
+
+def getCdnData():
+    try:
+
+        cdn = CdnData.objects.filter().last()
+
+        cdn_data = {
+            'auth_key':cdn.authkey,
+            'libraryid': cdn.libraryid
+        }
+
+        return cdn_data
+
+    except Exception as e:
+        raise
+
+
+def interviewCompletionService(dataObjs,user_id):
+    try:
+        call_sch_details = CallSchedule.objects.filter(id=dataObjs['sch_id']).last()
+        call_sch_details.status = "C"
+        call_sch_details.save()
+
+        try:
+            feedback = IvFeedback.objects.filter(candidateid=call_sch_details.candidateid,interviewerid=user_id).last()
+            feedback.gonogo = dataObjs['gonogo']
+            feedback.notes = dataObjs['notes']
+            feedback.companyid = call_sch_details.companyid,
+            feedback.save()
+
+        except:
+            feedback = IvFeedback(
+                candidateid = call_sch_details.candidateid,
+                interviewerid = user_id,
+                gonogo = dataObjs['gonogo'],
+                notes = dataObjs['notes'],
+                companyid = call_sch_details.companyid,
+            )
+
+            feedback.save()
+
+
+        candidate = Candidate.objects.get(id=call_sch_details.candidateid)
+
+        event = Email_template.objects.filter(company_id= candidate.companyid,event='Completion').last()
+       
+        if event:
+
+            # sendInterviewCompletionEmail(dataObjs["sch_id"])
+            call_details = CallSchedule.objects.get(id=dataObjs["sch_id"])
+            company = Company.objects.get(id=candidate.companyid)
+            job_desc = JobDesc.objects.get(id=candidate.jobid)
+            interviewers_data = ast.literal_eval(job_desc.interviewers)
+            interviewers = [int(item) for item in interviewers_data]
+
+            hr_email = User.objects.get(id=call_details.hrid).email
+
+            interviewers_email_list = []
+        
+            users = User.objects.filter(status='A',companyid=company.id)
+
+            interviewed_by = ""
+
+            for user in users:
+                if user.id in interviewers:
+                    interviewers_email_list.append(user.email)
+
+                    if user.id == call_details.interviewerid:
+                        interviewed_by = user.name
+
+            interviewers_emails = ", ".join(interviewers_email_list)
+
+            to_mail = f"{hr_email},{interviewers_emails}"
+
+            replacements = {
+                "[candidate_name]": f"{candidate.firstname} {candidate.lastname}",
+                "[position]": job_desc.title,
+                "[interviewer]": interviewed_by,
+                "company_name": company.name
+            }
+
+            sendEmail(company.id,'I',call_sch_details.paper_id,'Completion',replacements,to_mail,calender_details=None)
+
+
+    except Exception as e:
+        raise
+
+
+def getInterviewCandidates(userid):
+    try:
+
+        user = User.objects.get(id=userid)
+
+        job_desc_ids = list(JobDesc.objects.filter(companyid=user.companyid,interviewers__contains=user.id).values_list('id',flat=True))
+        candidate_ids = list(Candidate.objects.filter(companyid=user.companyid,jobid__in=job_desc_ids).values_list('id',flat=True))
+        completed_interviews = CallSchedule.objects.filter(status='C',companyid=user.companyid,candidateid__in=candidate_ids)
+
+        user_interviews = []
+
+        for interview in completed_interviews:
+
+            candidate = Candidate.objects.get(id=interview.candidateid)
+
+            hr = User.objects.get(id=interview.hrid)
+            interview = User.objects.get(id=interview.interviewerid)
+
+            feedback = ""
+
+            iv_feedback = IvFeedback.objects.filter(candidateid=candidate.id,interviewerid=user.id).last()
+            if iv_feedback:
+                feedback = iv_feedback.gonogo
+
+            user_interviews.append({
+                'cid': candidate.id,
+                'c_code': candidate.candidateid,
+                'c_name': f"{candidate.firstname} {candidate.lastname}",
+                'c_email': candidate.email,
+                'hr': hr.name,
+                'interviewby': interview.name,
+                'feedback': feedback
+            })
+
+        
+        return user_interviews
+
+        # print('job_desc',job_desc)
+        
+    except Exception as e:
+        raise
+
+
+def getInterviewFeedback(cid,user_id):
+    try:
+
+        candidate = Candidate.objects.filter(id=cid).last()
+
+        cdn_data = getCdnData()
+
+        library_id = cdn_data["libraryid"]
+        if candidate:
+
+            feedback_data = ""
+
+            interview_feedback = IvFeedback.objects.filter(candidateid=cid,interviewerid=user_id).last()
+
+            try:
+                interview_file = InterviewMedia.objects.filter(candidateid=candidate.id).last().recorded
+
+                video_path = f"https://iframe.mediadelivery.net/embed/{library_id}/{interview_file}"
+
+            except:
+                video_path = ""
+
+            if interview_feedback:
+
+                feedback_data = {
+                    "candidateid": interview_feedback.candidateid,
+                    "name" : f"{candidate.firstname} {candidate.lastname}",
+                    "gonogo": interview_feedback.gonogo,
+                    "notes" : interview_feedback.notes,
+                    "media_path": video_path
+                }
+
+            else:
+                feedback_data = {
+                    "candidateid": cid,
+                    "name" : f"{candidate.firstname} {candidate.lastname}",
+                    "gonogo": 'N',
+                    "notes" : '',
+                    "media_path": video_path
+                }
+            
+            return feedback_data
 
     except Exception as e:
         raise

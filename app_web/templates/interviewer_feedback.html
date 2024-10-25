@@ -6,13 +6,13 @@
 </div>
 <div class="card">
     <div class="card-title-table">
-        <h4 class="card-header">Srikanth G</h4>
+        <h4 class="card-header">{{ feedback_data.name }}</h4>
     </div>
     <div class="d-flex justify-content-center mt-4">
         <div class="col-md-9" style="border:2px solid var(--primary-color);border-radius: 5px;">
             <div style="text-align: center">
                 <div style="position: relative; padding-top: 56.25%;">
-                    <iframe src="https://iframe.mediadelivery.net/embed/310101/efcc31f7-e359-4026-bd47-70e77fc31ac8" 
+                    <iframe src="{{feedback_data.media_path}}" 
                         loading="lazy" style="border: none; position: absolute;z-index:1; top: 0;left: 0; height: 100%; width: 100%;" 
                         allow="accelerometer; gyroscope; encrypted-media; picture-in-picture;" allowfullscreen="true">
                     </iframe>
@@ -27,21 +27,25 @@
             <div class="toogler_div">
                 <label class="n_hire">Not Hire</label>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle">
+                    {% if feedback_data.gonogo == 'N' %}
+                        <input type="checkbox" id="toggle" />
+                    {% else %}
+                        <input type="checkbox" id="toggle" checked/>
+                    {% endif %}
                     <span class="slider"></span>
                 </label>
                 <label class="hire">Hire</label>
             </div><br>
             <h6>Remarks / Notes</h6>
-            <textarea class="form-control" id="notes" rows="12" maxlength="1000" name="question" style="height: 100px;" required></textarea><br>
-            <p id="candidateid" name="584" hidden></p>
+            <textarea class="form-control" id="notes" rows="12" maxlength="1000" style="height: 100px;" required>{{feedback_data.notes}}</textarea><br>
+            <p id="candidateid" name="{{feedback_data.candidateid}}" hidden></p>
             <div class="float-right">
                 <button class="mb-1 btn btn-primary btn_width ml-2" type="save" id="save">Submit Feedback</button>
             </div>
         </form>
     </div>
 </div>
-
+<script src="{% static 'js/iv_feedback.js' %}"></script>
 <style>
     .toogler_div {
         width: 230px;

@@ -44,12 +44,12 @@
             <div class="interview-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-primary shadow-primary border-radius-lg pt-3 pb-3">
                 <div class="text-white text-capitalize ps-3 page_heading hdng" style="display: flex; justify-content: space-evenly; align-items: center;">
-                  <span>Srikanth G</span>
+                  <!-- <span>Srikanth G</span>
                   <span style="font-size: 15px;">Python Fresher Questionnaire</span>
-                  <span style="font-size: 15px;" id="time_lapsed"></span>
-                  <!-- <span>{{jobDesc_data.candidate_details.candid_name}}</span>
-                  <span style="font-size: 15px;">{{jobDesc_data.candidate_details.paper_title}}</span>
                   <span style="font-size: 15px;" id="time_lapsed"></span> -->
+                  <span>{{candidate_data.name}}</span>
+                  <span style="font-size: 15px;">{{candidate_data.int_paper}}</span>
+                  <span style="font-size: 15px;" id="time_lapsed"></span>
                 </div>
               </div>
             </div>
@@ -58,7 +58,7 @@
                 
                 <div style="height: 522px;width: 60%;border: solid 1px #d2d6da; border-radius: 6px; border-top-left-radius: 0px; border-bottom-left-radius: 0px;">
                     <div>
-                        <p id="reg_code" hidden>{{jobDesc_data.candidate_details.user_reg_id}}_{{ jobDesc_data.call_shud_id }}</p>
+                        <p id="reg_code" hidden>{{candidate_data.code}}_{{ candidate_data.schd_id }}</p>
 
                         <div class="grid-container pb-2">
                         <div class="grid-item cursor-pointer sec_selected" name="ins" id="ins_sec" onclick="show_ins();" style="align-items: center;">
@@ -147,9 +147,20 @@
                     </div>
                   </div>
 
-                  <div class="apl_sec" style="overflow: auto; position: relative; padding:1%;height: 85%;" hidden>
+                  <div class="apl_sec" style="overflow: auto; position: relative; padding:1%;height: 75%;" hidden>
                     <div class="qol">
                       <table style="width:100%;">
+                        <tr>
+                          <th>
+                            <h6 style="font-weight: 800;">Candidate ID</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:73% !important;">
+                            <h6>{{candidate_data.code}}</h6>
+                          </th>
+                        </tr>
                         <tr>
                           <th>
                             <h6 style="font-weight: 800;">Name</h6>
@@ -196,114 +207,55 @@
                           </th>
                         </tr>
                       </table>
-                      <div class="screeing-bar">
-                        <span>Screening -  8/10(Promoted)</span>
-                        <span style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><u>view details</u></span>
-                      </div>
-                      <div class="collapse" id="collapseExample">
-                        <div class="d-grid d-sm-flex p-3 border">
-                          <table class="table table-bordered mb-0">
-                            <thead>
-                              <tr>
-                                <th><strong> #</strong></th>
-                                <th><strong>Question</strong></th>
-                                <th><strong>Response</strong></th>
-                                <th><strong>Marks</strong></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td>Do you have at least 5 years of Java Developer experience, working on
-                                  commercial applications</td>
-                                <td>Yes</td>
-                                <td>4</td>
-                              </tr>
-                              <tr>
-                                <td>2</td>
-                                <td>do you have at least 2 plus years of experience of developing applications
-                                  using MySQL</td>
-                                <td>Yes</td>
-                                <td>2</td>
-                              </tr>
-                              <tr>
-                                <td>3</td>
-                                <td>do you have at least 2 plus years of experience of developing applications
-                                  using MongoDB</td>
-                                <td>No</td>
-                                <td>4</td>
-                              </tr>
-                              <tr>
-                                <td>4</td>
-                                <td>Are you familiar with Apache Kafka, have you done any projects in Kafka</td>
-                                <td>Yes</td>
-                                <td>4</td>
-                              </tr>
-                              <tr>
-                                <td>5</td>
-                                <td>Are you familiar with Apache Kafka Architecture, if needed can you explain it</td>
-                                <td>No</td>
-                                <td>4</td>
-                              </tr>
-                              <tr>
-                                <td>6</td>
-                                <td>Do you have experience of working on Streaming Applications </td>
-                                <td>Yes</td>
-                                <td>3</td>
-                              </tr>
-                              <tr>
-                                <td>7</td>
-                                <td>Are you familiar with React or Angular frontend frameworks</td>
-                                <td>Yes</td>
-                                <td>5</td>
-                              </tr>
-                              <tr>
-                                <td>8</td>
-                                <td>Do you have LRU cache experience</td>
-                                <td>No</td>
-                                <td>4</td>
-                              </tr>
-                              <tr>
-                                <td>9</td>
-                                <td>Do you have sound knowledge and application of Oops concepts</td>
-                                <td>Yes</td>
-                                <td>5</td>
-                              </tr>
-                            </tbody>
-                          </table>
+                      {% for screening in screening_data %}
+                        <div class="mb-2">
+                          <div class="screeing-bar">
+                            <span>{{ screening.paper_title }}  ({{ screening.scored_marks }}/{{ screening.paper_marks }})</span>
+                            <span style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#screening_{{ screening.paper_id }}" aria-expanded="false" aria-controls="collapseExample"><u>view details</u></span>
+                          </div>
+                          <div class="collapse" id="screening_{{ screening.paper_id }}">
+                            <div class="d-grid d-sm-flex p-3 border">
+                              <table class="table table-bordered mb-0">
+                                <thead>
+                                  <tr>
+                                    <th><strong> #</strong></th>
+                                    <th><strong>Question</strong></th>
+                                    <th><strong>Response</strong></th>
+                                    <th><strong>Marks</strong></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for question in screening.paper_questions %}
+                                  <tr>
+                                    <td>{{ question.sno }}</td>
+                                    <td>{{ question.question }}</td>
+                                    <td>{{ question.response }}</td>
+                                    <td>{{ question.marks }}</td>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      {% endfor %}
+                      {% for coding in coding_data %}
+                        <div class="screeing-bar">
+                          <span>{{ coding.paper_title }} ({{ coding.scored_marks }}/{{ coding.paper_marks }})</span>
+                          <span style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#coding_{{ coding.paper_id }}" aria-expanded="false" aria-controls="codingExample"><u>view details</u></span>
+                        </div>
+                        <div class="collapse" id="coding_{{ coding.paper_id }}">
+                          <div class="d-grid d-sm-flex p-3 border" style="flex-direction: column;">
+                            {% for question in coding.paper_questions %}
+                              <p>{{ question.sno }}. {{ question.question }}</p>
+                              <p>Marks : {{ question.marks }}</p>
+                              <textarea class="form-control" rows="23" disabled="">{{ question.response }}</textarea>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      {% endfor %}
                     </div>
-                    <div class="screeing-bar mt-2">
-                      <span>Coding - 10/10(Promoted)</span>
-                      <span style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#codingExample" aria-expanded="false" aria-controls="codingExample"><u>view details</u></span>
-                    </div>
-                    <div class="collapse" id="codingExample">
-                      <div class="d-grid d-sm-flex p-3 border" style="flex-direction: column;">
-                        <p>1. Write a Program to Replace all 0’s with 1’s in a Number.  use this function name replace_zero_to_ones(int x)
-                        </p>
-                        <textarea class="form-control" rows="23" disabled="">int replace_zero_to_ones(int num) {
-                          int result = 0, place = 1;
-                          
-                          // Handle the case when the input number is 0
-                          if (num == 0) {
-                              return 1;
-                          }
-                          
-                          while (num &gt; 0) {
-                              int digit = num % 10;
-                              if (digit == 0) {
-                                  digit = 1;
-                              }
-                              result += digit * place;
-                              place *= 10;
-                              num /= 10;
-                          }
-                          
-                          return result;
-                      }</textarea>
-                      </div>
-                    </div>
+                    
                   </div>
 
                   <div hidden id="sec" class="sec_q" style="position: relative; height: 75%; padding:1%">
@@ -321,7 +273,7 @@
                             <span for="qr_{{ q.qus_id }}">Lowest(0)</span>
                             <input style="padding: 0px; width: 62%;" type="range" min="0" max="5" step="1" value="0"
                               name="q3" id="qr_{{ q.qus_id }}"
-                              onchange="answer({ 'question_id' : {{ q.qus_id }}, 'call_shud_id' : {{ jobDesc_data.call_shud_id }}, 'inpt_id' : this.id , 'candid_id' : {{ jobDesc_data.candidate_details.candid_id }}} );">
+                              onchange="answer({ 'question_id' : {{ q.qus_id }}, 'call_shud_id' : {{ candidate_data.schd_id }}, 'inpt_id' : this.id , 'candid_id' : {{ candidate_data.id }}} );">
                             <span for="qr_{{ q.qus_id }}" >Highest(5)</span>
                             <div style="padding-top: 10px;">Rating :<span id="qs_{{ q.qus_id }}">0</span></div>
                           </li>
@@ -340,7 +292,7 @@
                                 </td>
                                 <td>
                                   <div class="input-group input-group-outline mb-2">
-                                          <textarea class="form-control" rows="3" cols="50" style="border: 1px solid #d6d5d5; padding:0%;" id="interviewRemarkNote" name="{{applicant_details.call_sch_id}}" onchange="remarks()"></textarea>
+                                          <textarea class="form-control" rows="3" cols="50" style="border: 1px solid #d6d5d5; padding:1%;" id="interviewRemarkNote" name="{{applicant_details.call_sch_id}}" onchange="remarks()"></textarea>
                                       </div>
                                 </td>
                               </tr>
@@ -361,7 +313,7 @@
                 <div
                 style="padding: 0%;height: 522px;width: 40%;border: solid 1px #d2d6da;overflow:scroll;overflow-x:hidden;overflow-y:auto;border-radius: 6px; border-top-right-radius: 0px; border-bottom-right-radius: 0px;">
                   <iframe style="width:100% !important; " allow="autoplay;camera;microphone;"
-                    src="https://onecall.ae/vn/?room={{jobDesc_data.meeting_link}}&wc&q=2"></iframe>
+                    src="https://onecall.ae/vn/?room={{candidate_data.meetinglink}}&wc&q=2"></iframe>
 
                 </div>
               </div>
@@ -379,50 +331,18 @@
                     </div>
                   </div>
                   <div id="alertMessage"></div>
-
-                  <table style="width:90%;margin-top: 6%;">
-                    <tbody>
-                      <tr style="display: none;">
-                        <td><span style="width: 20%;">Interview Rate</span> </td>
-                        <td>
-                          <div class="input-group input-group-outline mb-2">
-                            <select class="form-control" id="impairment_code" onchange="fill_data();" required>
-                              <option disabled ></option>
-                              <option value="1">1</option>
-                              <option value="2">2</option>
-                              <option value="3">3</option>
-                              <option value="4">4</option>
-                              <option value="5" selected>5</option>
-                            </select>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="width: 30%;">
-                          <h6>Interview Status</h6>
-                        </td>
-                        <td>
-                          <div class="input-group input-group-outline mb-2">
-                            <select class="form-control" id="action_plan" onchange="fill_data();" required>
-                              <option disabled selected> Select status </option>
-                              <option value="C">Completed</option>
-                            </select>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table><br>
+                  <br>
                   <h6>Your Decision on Hiring the Candidate</h6>
                     <div class="toogler_div">
                       <label class="n_hire">Not Hire</label>
                       <label class="toggle-switch">
-                              <input type="checkbox" id="toggle" />
+                              <input type="checkbox" id="toggle" onchange="fill_data();"/>
                           <span class="slider"></span>
                       </label>
                       <label class="hire">Hire</label>
                   </div><br>
                   <h6>Remarks / Notes</h6>
-                            <textarea class="form-control" id="notes" rows="12" maxlength="1000" name="question"
+                            <textarea class="form-control" id="notes" rows="12" maxlength="1000" name="question" onkeyup="fill_data();"
                                 style="height: 100px;" required>{{feedback_data.notes}}</textarea>
 
                 </div>
@@ -445,12 +365,12 @@
   </main>
 
   <script src="{% static 'js/candidate_meeting.js' %}"></script>
-  <script src="{% static 'js/screen_recorder.js' %}"></script>
+  <!-- <script src="{% static 'js/screen_recorder.js' %}"></script> -->
   <script>
 
-    var candid__id = {{ jobDesc_data.candidate_details.candid_id }}
-    var candid_call_shed_id = {{ jobDesc_data.call_shud_id }}
-    var library_id = {{ cdn_data.libraryid }}
+    var candid__id = "{{ candidate_data.id }}"
+    var candid_call_shed_id = "{{ candidate_data.schd_id }}"
+    var library_id = "{{ cdn_data.libraryid }}"
     var auth_key = "{{ cdn_data.auth_key }}"
 
   </script>

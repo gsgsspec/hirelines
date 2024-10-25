@@ -64,8 +64,13 @@
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 
-    <!-- Sweet alert -->
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     
   </head>
 
@@ -144,6 +149,9 @@
     <!-- Project Js Files -->
     <script src="{% static 'config/config.js' %}"></script>
 
+    <script src="{% static 'js/portal_index.js' %}"></script>
+    
+
     <div class="bs-toast toast bg-success fade show toast-placement-ex m-3 top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1500" hidden>
       <div class="toast-body"></div>
       <div class="toast-timeout"></div>
@@ -156,9 +164,6 @@
       </div>
       <div class="toast-body"></div>
     </div>
-
-    <script src="{% static 'js/portal_index.js' %}"></script>
-    <script src="{% static 'config/config.js' %}"></script>
 
   </body>
 </html>

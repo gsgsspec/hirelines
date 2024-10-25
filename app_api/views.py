@@ -9,10 +9,12 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdTestAdd, addJdServices, updateJdServices, workFlowDataService
-from .models import Candidate, Lookupmaster, Registration, User_data, Workflow
-from .functions.database import addCandidateDB, scheduleInterviewDB
+from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
+        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService
+from .models import Candidate, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB
 from app_api.functions.constants import hirelines_registration_script
+
 # Create your views here.
 
 @csrf_exempt
@@ -288,9 +290,6 @@ def interviewScheduling(request,cid):
             response['data'] = interview_schedule_data
             response['statusCode'] = 0
 
-        else:
-            return HttpResponseForbidden('Request Blocked')
-
     except Exception as e:
         response['data'] = 'Error in Call Scheduling view'
         response['error'] = str(e)
@@ -320,10 +319,10 @@ def scheduleInterviewView(request):
     return JsonResponse(response) 
 
 
-from django.http import HttpResponse
 
 
 def candidateRegistrationForm(request,enc_jdid):
+
     try:
         
         # request_domain = request.META.get('HTTP_HOST', '')
@@ -339,6 +338,55 @@ def candidateRegistrationForm(request,enc_jdid):
         return HttpResponse(hirelines_registration_script, content_type='application/javascript')
     except:
         return HttpResponse('console.error("Script not found");', content_type='application/javascript')
+
+
+
+@api_view(['POST'])
+def interviewResponseView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+
+        if request.method == "POST":
+
+            dataObjs = json.loads(request.POST.get('data'))
+
+            res = interviewResponseDB(dataObjs)
+
+            response['data'] = res
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Meeting Response view'
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def questionsResponseView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            res = questionsResponseService(dataObjs)
+
+            response['data'] = res
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in questios Response view'
+        response['error'] = str(e)
+
+    return JsonResponse(response)
 
 
 @csrf_exempt
@@ -371,5 +419,96 @@ def registerCandidate(request):
         response['data'] = 'Error in registerCandidate'
         response['error'] = str(err)
         raise
+    return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def getInterviewStatusView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":            
+            dataObjs = json.loads(request.POST.get('data'))
+            res = getInterviewStatusService(dataObjs)
+            response['data'] = res
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getCallStatus'
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([])
+@permission_classes([])
+def interviewFile(request):
+
+    dataObjs = json.loads(request.POST.get('data'))
+
+    appid = str(dataObjs["reg_code"]).split("_")[1]
+    schid = str(dataObjs["reg_code"]).split("_")[2].split(".")[0]
+
+    candidate_details = Candidate.objects.filter(candidateid=appid).last()
+    
+    InterviewMedia(recorded=dataObjs["videoid"], candidateid=candidate_details.id).save()
+
+    call_details = CallSchedule.objects.filter(id=schid).last()
+    call_details.callendflag = 'Y'
+    call_details.save()
+
+    return JsonResponse({"response": "success"})
+
+
+@api_view(['POST'])
+def interviewCompletion(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            user = auth_user(request.user)
+
+            interviewCompletionService(dataObjs,user.id)
+
+            response['data'] = "Saved"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Saving Meeting Status view'
+        response['error'] = str(e)
+        
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def interviewFeedback(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            addInterviewFeedbackDB(user, dataObjs)
+            response['data'] = "Feedback given successfully"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in feedback view'
+        response['error'] = str(e)
     return JsonResponse(response)
 

@@ -5,8 +5,8 @@ from urllib.parse import urljoin
 from django.db.models import Q
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
-from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow
-
+from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
+    IvFeedback
 
 
 def addCompanyDataDB(dataObjs):
@@ -254,3 +254,53 @@ def saveUpdateJd(dataObjs, compyId, hrEmail):
         print(f"Error occurred: {e}")
         raise
 
+
+def interviewResponseDB(dataObjs):
+    try:
+        try:
+            res_check = QResponse.objects.get(qid=dataObjs["qid"],candidateid=dataObjs["candid_id"],callscheduleid=dataObjs["call_sch_id"])
+        except:
+            res_check = None
+
+        if res_check:
+
+            QResponse(id = res_check.id,
+                qid = dataObjs["qid"],
+                candidateid = dataObjs["candid_id"],
+                callscheduleid = dataObjs["call_sch_id"],
+                qrate = dataObjs["qrate"]
+            ).save()
+
+        else:
+            QResponse(qid = dataObjs["qid"],
+                candidateid = dataObjs["candid_id"],
+                callscheduleid = dataObjs["call_sch_id"],
+                qrate = dataObjs["qrate"]
+            ).save()  
+            
+    except Exception as e:
+        raise
+
+
+def addInterviewFeedbackDB(user,dataObjs):
+    try:
+        try:
+            feedback = IvFeedback.objects.filter(candidateid=dataObjs["candidateid"],interviewerid=user.id).last()
+            feedback.gonogo = dataObjs['gonogo']
+            feedback.notes = dataObjs['notes']
+            feedback.companyid = user.companyid
+            feedback.save()
+
+        except:
+            feedback = IvFeedback(
+                candidateid = dataObjs["candidateid"],
+                interviewerid = user.id,
+                gonogo = dataObjs['gonogo'],
+                notes = dataObjs['notes'],
+                companyid = user.companyid
+            )
+
+            feedback.save()
+
+    except Exception as e:
+        raise

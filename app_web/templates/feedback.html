@@ -17,22 +17,24 @@
                 </tr>
             </thead>
             <tbody class="table-border-bottom-0">
-                <tr onclick="window.location.href='/interviewer-feedback'">
-                    <td>PY24000005</td>
-                    <td>Srikanth G</td>
-                    <td>srikanth@gmail.com</td>
-                    <td>NA</td>
-                    <td>NA</td>
-                    <td><i class="fas fa-thumbs-up" style="color: green;"></i>&nbsp; Hire</td>
+                {% for int_candidate in interviewed_candidates %}
+                <tr onclick="window.location.href='/interviewer-feedback/{{int_candidate.cid}}'">
+                    <td>{{ int_candidate.c_code }}</td>
+                    <td>{{ int_candidate.c_name }}</td>
+                    <td>{{ int_candidate.c_email }}</td>
+                    <td>{{ int_candidate.hr }}</td>
+                    <td>{{ int_candidate.interviewby }}</td>
+                    <td>
+                        {% if int_candidate.feedback == "Y" %}
+                        <i class="fas fa-thumbs-up" style="color: green;"></i>&nbsp; <b>Hire</b>
+                        {% elif int_candidate.feedback == "N" %}
+                        <i class="fas fa-thumbs-up fa-flip-vertical" style="color: red;"></i>&nbsp; <b>Not Hire</b>
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
                 </tr>
-                <tr>
-                    <td>PY24000006</td>
-                    <td>Balu P</td>
-                    <td>balu@gmail.com</td>
-                    <td>NA</td>
-                    <td>NA</td>
-                    <td><i class="fas fa-thumbs-up fa-flip-vertical" style="color: red;"></i>&nbsp; Not Hire</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

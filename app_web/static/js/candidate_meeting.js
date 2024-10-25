@@ -63,7 +63,7 @@ function questions_resp() {
     csrfmiddlewaretoken: CSRF_TOKEN,
   }
 
-  $.post(CONFIG['domain'] + "/api/questions-response", final_data, function (res) {
+  $.post(CONFIG['portal'] + "/api/questions-response", final_data, function (res) {
 
     if (res.statusCode == 0) {
 
@@ -184,6 +184,8 @@ function show_section(sec_id) {  // it shows and hides the sections
 
 }
 
+
+
 function answer(quest_data) { // each question answer submites the after value updates. 
 
 
@@ -191,7 +193,7 @@ function answer(quest_data) { // each question answer submites the after value u
 
   dataObj = {
     "qid": quest_data['question_id'],
-    "appln_id": quest_data['candid_id'],
+    "candid_id": quest_data['candid_id'],
     "call_sch_id": quest_data['call_shud_id'],
     "qrate": input_val,
 
@@ -205,7 +207,7 @@ function answer(quest_data) { // each question answer submites the after value u
   }
 
 
-  $.post(CONFIG['domain'] + "/api/meeting-response", final_data, function (res) {
+  $.post(CONFIG['portal'] + "/api/interview-response", final_data, function (res) {
 
   })
 
@@ -214,7 +216,7 @@ function answer(quest_data) { // each question answer submites the after value u
 
 function fill_data() {
 
-  if ($("#impairment_code").val() == null || $("#action_plan").val() == null || $("#toggle").val() == null || $("#notes").val() == null) {
+  if ($("#toggle").val() == null || $("#notes").val() == null || $("#notes").val() == "") {
     $("#submit_btn").prop("disabled", true);
   } else {
     $("#submit_btn").prop("disabled", false);
@@ -224,19 +226,13 @@ function fill_data() {
 
 
 $("#submit_btn").click(function () {
-  $("#submit_btn").prop("disabled", true);
-  var end_today = new Date();
-  var end_date = end_today.getFullYear() + '-' + (end_today.getMonth() + 1) + '-' + end_today.getDate();
-  var end_time = end_today.getHours() + ":" + end_today.getMinutes() + ":" + end_today.getSeconds();
-  var end_dateTime = end_date + ' ' + end_time;
 
+  $("#submit_btn").prop("disabled", true);
 
   gonogo = document.getElementById('toggle').checked ? 'Y' : 'N';
 
   dataObj_ = {
     "sch_id": candid_call_shed_id,
-    "impairment_code": $("#impairment_code").val(),
-    "action_plan": $("#action_plan").val(),
     'notes': $('#notes').val(),
     'gonogo':gonogo
 
@@ -248,17 +244,17 @@ $("#submit_btn").click(function () {
   }
 
 
-  $.post(CONFIG['domain'] + "/api/meeting-status", final_data_, function (res_) {
+  $.post(CONFIG['portal'] + "/api/interview-completion", final_data_, function (res_) {
 
     if (res_.statusCode == 0) {
       Swal.fire({
         position: 'center',
         icon: 'success',
-        title: 'Details Saved Successfully',
+        title: 'Interview Completed',
         showConfirmButton: false,
         timer: 1500
       })
-      setTimeout(function () { window.location.href = '/web/interviews' }, 1000);
+      setTimeout(function () { window.location.href = '/interviews' }, 1000);
     } else {
       $("#submit_btn").prop("disabled", false);
     }

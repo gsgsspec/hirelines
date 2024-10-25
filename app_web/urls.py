@@ -18,12 +18,14 @@ urlpatterns = [
     path('candidate-interview/<int:sch_id>',views.candidateInterview),
     path('interview-schedule/<int:cid>',views.interviewSchedule),
     path('feedbacks',views.feedbacksPage),
-    path('interviewer-feedback',views.interviewerFeedback),
+    path('interviewer-feedback/<int:cid>',views.interviewerFeedback),
     path('job-descriptions',views.jobDescription),
     path('add-job-description',views.Addjobdescription),
     path('update-job-description/<int:update_jd_id>',views.update_jobdescription),
     path('job-description-set-up/<int:jd_id>',views.jobDescriptionSetUp),
+    path('candidate-call/<str:room_id>', views.candidateSideMeetingPage),
 
     # Company data page
     path("cmp-reg", views.homePage),
+    
 ]

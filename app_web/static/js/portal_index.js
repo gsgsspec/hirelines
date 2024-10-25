@@ -36,7 +36,7 @@ function showSuccessMessage(message) {
 
     setTimeout(function() {
         $('.bs-toast.toast.bg-success .toast-timeout').css('width', '');
-    }, 5200);
+    }, 1200);
 }
 
 function showFailureMessage(message) {

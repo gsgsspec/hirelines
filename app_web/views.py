@@ -4,9 +4,9 @@ from django.db.models import Q
 from app_api.functions import constants
 from app_api.functions.hashing import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
-from app_api.models import User, Role, JobDesc
+from app_api.models import User, Role, JobDesc, CallSchedule, Candidate, Company, Branding
 from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, \
-    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails
+    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 # Create your views here.
@@ -354,12 +354,17 @@ def candidateInterview(request,sch_id):
     try:
 
         interview_data = getCandidateInterviewData(sch_id)
+        cdn_data = getCdnData()
 
         jd_data = interview_data['job_desc_data']
         candidate_data = interview_data['candidate_data']
+        interv_sect_ques = interview_data['interview_data']
+        screening_data = interview_data['screening_data']
+        coding_data = interview_data['coding_data']
 
-        return render(request, "portal_index.html", {"template_name": 'candidate_interview.html','jd_data':jd_data,
-                                                     'candidate_data':candidate_data })
+        return render(request, "portal_index.html", {"template_name": 'candidate_interview.html','jd_data':jd_data,'cdn_data':cdn_data,
+            'sections_questions_lst' : interv_sect_ques["sections_questions_lst"],'interview_sections' : interv_sect_ques['sections_lst'],
+            'candidate_data':candidate_data,'screening_data':screening_data,'coding_data':coding_data })
 
     except Exception as e:
         raise
@@ -403,13 +408,15 @@ def feedbacksPage(request):
 
         menuItemList = get_functions_service(user_role)
 
-        return render(request, "portal_index.html", {"template_name": 'feedback.html','menuItemList':menuItemList })
+        interviewed_candidates = getInterviewCandidates(user_data.id)
+
+        return render(request, "portal_index.html", {"template_name": 'feedback.html','menuItemList':menuItemList,'interviewed_candidates':interviewed_candidates })
     
     except Exception as e:
         raise
 
 
-def interviewerFeedback(request):
+def interviewerFeedback(request,cid):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
@@ -422,7 +429,35 @@ def interviewerFeedback(request):
 
         menuItemList = get_functions_service(user_role)
 
-        return render(request, "portal_index.html", {"template_name": 'interviewer_feedback.html','menuItemList':menuItemList })
+        feedback_data = getInterviewFeedback(cid,user_data.id)
+
+        return render(request, "portal_index.html", {"template_name": 'interviewer_feedback.html','menuItemList':menuItemList,'feedback_data':feedback_data })
     
     except Exception as e:
+        raise
+
+
+def candidateSideMeetingPage(request, room_id):
+    try:
+
+        current_url = request.build_absolute_uri()
+
+        call = CallSchedule.objects.filter(meetinglink=current_url).last()
+
+        if call:
+            candidate = Candidate.objects.filter(id=call.candidateid).last()
+            company_details = Company.objects.filter(id=candidate.companyid).last()
+            branding_details = Branding.objects.filter(companyid=candidate.companyid).last()
+            
+            call_details = {
+                "candidate_id" : call.candidateid,
+                "schedule_id" : call.id,
+                "callend_status" : str(call.callendflag) if call.callendflag else "N",
+                'company_logo'   : branding_details.logourl,
+                'company_name'   : company_details.name
+            }
+
+        return render(request, "candidate_call.html",{'call_details':call_details})
+    except Exception as e:
+        print(str(e))
         raise

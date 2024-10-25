@@ -63,7 +63,7 @@ class Candidate(models.Model):
 class JobDesc(models.Model):
     id = models.AutoField(primary_key=True)
     jdlibraryid = models.IntegerField(null=True)
-    title = models.CharField(max_length=300, null=True)
+    title = models.CharField(max_length=350, null=True)
     role = models.CharField(max_length=100,null=True)
     description = models.CharField(max_length=3024, null=True)
     expmin = models.IntegerField(null=True)
@@ -303,5 +303,48 @@ class Lookupmaster(models.Model):
         db_table = 'lookupmaster'
 
 
+class QResponse(models.Model):
+    id = models.AutoField(primary_key=True)
+    qid = models.IntegerField(null=True)
+    candidateid = models.IntegerField(null=True)
+    callscheduleid = models.IntegerField(null=True)
+    response = models.CharField(max_length=256,null=True)
+    notes = models.CharField(max_length=256,null=True)
+    qrate = models.CharField(max_length=10,null=True)
+    companyid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'qresponse'
 
 
+class CdnData(models.Model):
+    id = models.AutoField(primary_key=True)
+    libraryid = models.CharField(max_length=50, null=True)
+    libraryname = models.CharField(max_length=100, null=True)
+    pullzoneid = models.CharField(max_length=100,null=True)
+    hostname = models.CharField(max_length=100,null=True)
+    authkey = models.CharField(max_length=100,null=True)
+
+    class Meta:
+        db_table = 'cdndata'
+
+
+class InterviewMedia(models.Model):
+    id = models.AutoField(primary_key=True)
+    recorded = models.CharField(max_length=200, null=True)
+    candidateid = models.CharField(max_length=40, null=True)
+    scheduleid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'interviewmedia'
+
+
+class IvFeedback(models.Model):
+    candidateid = models.IntegerField(null=True)
+    gonogo = models.CharField(max_length=1, null=True)
+    interviewerid = models.IntegerField(null=True)
+    notes = models.CharField(max_length=100,null=True)
+    companyid = models.IntegerField(null=True)
+    
+    class Meta:
+        db_table = 'ivfeedback'

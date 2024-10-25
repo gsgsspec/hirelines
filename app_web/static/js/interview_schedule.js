@@ -73,7 +73,7 @@ $('#schedule_btn').on('click', function () {
     alert("Please Select a Slot.");
   } else {
     $('#cancel_btn').prop("disabled", true);
-    $('#schedule_btn').prop("disabled", false);
+    $('#schedule_btn').prop("disabled", true);
     dataObj = {
       "candidate_id": $('#cid').html(),
       "slot_id": sch,
@@ -86,11 +86,14 @@ $('#schedule_btn').on('click', function () {
     }
 
     $.post(CONFIG['portal'] + "/api/schedule-interview", final_data, function (res) {
-      if (res.statusCode == 0) {
-        showSuccessMessage('Interview scheduled successfully');
-        setTimeout(function () { window.location.href = '/candidates' }, 2000);
-       
-      } else {
+        if (res.statusCode == 0) {
+          
+          $('#success').attr("hidden", false);
+          setTimeout(function () { 
+            window.location.href = '/candidates'
+          }, 3000);
+        
+        } else {
         showFailureMessage('Error in saving the scheduling interview. Please try again after some time')
         $('#schedule_btn').prop("disabled", false);
       }

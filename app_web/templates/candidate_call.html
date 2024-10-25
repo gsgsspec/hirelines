@@ -1,0 +1,91 @@
+
+<html>
+{% load static %}
+<head>
+<title>Interview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <!-- Sweet Alerts 2 -->
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.2.1/dist/sweetalert2.all.min.js"></script>
+<script>
+	var CSRF_TOKEN = '{{ csrf_token }}';
+</script>
+</head>
+<body>
+	<header class="header-container">
+		<div ><img class="company_logo_cls" src="{{call_details.company_logo}}" alt=""></div>
+	</header>
+<br><div id="interview-sec">
+	<marquee width="100%" direction="left" style="font-size: 18px !important; font-weight: 600 !important; color: #e01f26; font: menu;">Please avoid removing the headset and plugin back the headset during the course of the call. This call will be recorded for quality assurance.</marquee>
+	<div id="container">
+	</div>
+</div>
+
+<script>
+	var candidate_id = {{call_details.candidate_id}}
+	var schedule_id = {{call_details.schedule_id}}
+	var callend_status = "{{call_details.callend_status}}"
+
+</script>
+
+<script src="{% static 'js/candidate_call.js' %}"></script>
+<script src="{% static 'config/config.js'%}"></script>
+
+<div>
+	<div class="int-cmplt" hidden>
+		<h1>Your Interview Completed Successfully</h1>
+	  </div>
+</div>
+
+</body>
+
+<style>
+	iframe {
+		border:0;
+		margin:0;
+		padding:0;
+		display:block;
+		width:100%;
+		height:520px;
+	}
+	#viewlink {
+		width:400px;
+	}
+	#container {
+		display:block;
+		padding:0px;
+	}
+	input{
+		padding:5px;
+		margin:5px;
+	}
+	button{
+		padding:5px;
+		margin:5px;
+	}
+
+	.header-container{
+		display: flex;
+	}
+	
+	.int-cmplt {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 90vh;
+		text-align: center;
+	}
+	.company_logo_cls{
+		height: 70px;
+	}
+	.company-container{
+		display: flex;
+		align-items: center;
+		width: 100%;
+		justify-content: center;
+		font-size: 30px;
+	}
+	</style>
+</html>

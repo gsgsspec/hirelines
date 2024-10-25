@@ -5,7 +5,6 @@
         <h4 class="card-header">Schedule interview for {{candidate_data.c_name}}</h4>
     </div>
     <div class="card-body">
-        <form id="candidate-data">
             <div class="row mb-1">
                 <label class="col-sm-2 col-form-label">Interviewer</label>
                 <span id="cid" hidden>{{candidate_data.cid}}</span>
@@ -48,14 +47,14 @@
                     </tbody>
                 </table>
             </div>
-            <div class="button-row d-flex mb-3" style="justify-content: right;width: 75%;float:right;">
+            <div class="button-row d-flex mb-3" style="justify-content: right;width: 50%;float:right;">
                 <h6 class="mt-2 mr-2" id="sel_slot" style="margin-right: 13px;" hidden></h6>
                 <!-- <button class="btn bg-gradient-dark  mb-0 btn_width btn-cancel"
                     id="cancel_btn">Cancel</button>&ensp; -->
                 <button class="btn bg-gradient-dark  mb-0 js-btn-next btn-primary"
                     id="schedule_btn">Send Invite</button>
             </div>
-        </form>
+        <p id="success" hidden style="color: green;"><i class="fas fa-check-circle" style="color: green;"></i> &nbsp; Interview Scheduled & and Mail Sent to Candidate.</p>
     </div>
 </div>
 
