@@ -419,6 +419,7 @@ def registerCandidate(request):
         response['data'] = 'Error in registerCandidate'
         response['error'] = str(err)
         raise
+    print("response",response)
     return JsonResponse(response)
 
 

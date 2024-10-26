@@ -395,6 +395,37 @@ def interviewSchedule(request,cid):
         raise
 
 
+def evaluationPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    if checkCompanyTrailPeriod(request.user):
+        return redirect('/trial-expired')
+
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+        
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+
+        if menuItemObjList:
+            return render(request, "portal_index.html", {"template_name": "evaluation.html", 'menuItemList': menuItemList })
+    
+        else:
+            return redirect('../')
+
+    except Exception as e:
+        raise
+
+
 def feedbacksPage(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))

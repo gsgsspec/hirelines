@@ -2,14 +2,12 @@
 
 <div class="content-wrapper">
   <div class="container-xxl flex-grow-1 container-p-y">
-    <!-- Icons -->
-    <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal"
-      data-bs-target="#jd_integration_modal">
-      <i class='bx bx-code-curly icons_custm_weight'></i>
-    </button>
-    <!-- Icons -->
-    <div class="row justify-content-end" style="width: 50%; float: right;">
 
+    <div class="row justify-content-end">
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal"
+        data-bs-target="#jd_integration_modal">
+        <i class='bx bxs-cog icons_custm_weight'></i>
+      </button>
       <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('screening')"
         data-bs-toggle="modal" data-bs-target="#modalCenter">
         <i class='bx bx-badge-check icons_custm_weight'></i>
@@ -116,14 +114,15 @@
         <h5 class="modal-title" id="jd_integration_modal_title">Careers-Hirelines Integration Script</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body pt-2">        
-        <li class="form-label">Script tag to be added below `&lt;body&gt;&lt;/body&gt;` tag</li>
-        <textarea class="form-control" rows="4" id="scriptTextarea"  style="overflow: hidden;" disabled>
+      <div class="modal-body pt-2">
+        <li class="form-label">Script tag to be added under `&lt;head&gt;&lt;/head&gt;` tag</li>
+        <textarea class="form-control" rows="4" id="scriptTextarea" style="overflow: hidden;" disabled>
           {{ hirelines_integration_script_enc }}
         </textarea>
         <br>
-        <li class="form-label">Add this function at posting candidate job application (under related .js or script tags)</li>
-        <textarea class="form-control" rows="4" id="functionTextarea" style="overflow: hidden;"  disabled>
+        <li class="form-label">Add this function at posting candidate job application (under related .js or script tags)
+        </li>
+        <textarea class="form-control" rows="4" id="functionTextarea" style="overflow: hidden;" disabled>
           {{ hirelines_integration_function_enc }}
         </textarea>
       </div>
@@ -131,18 +130,19 @@
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
           Close
         </button>
-        <button type="button" class="btn btn-primary" id="script_copy_btn"><i class='bx bxs-copy icons_custm_weight'></i>&ensp;Copy</button>
+        <button type="button" class="btn btn-primary" id="script_copy_btn"><i
+            class='bx bxs-copy icons_custm_weight'></i>&ensp;Copy</button>
       </div>
     </div>
   </div>
 </div>
 <!-- JD integration script modal end -->
 <script>
-  
-  
+
+
   var jdlibraryid = "{{jd_details.jdlibraryid}}";
   var jdId = '{{jd_details.id}}';
-  
+
 </script>
 <style>
   .icons_custm_weight {
@@ -236,25 +236,34 @@
   }
 
   .flash-border {
-    border: 2px solid #adadae; /* Border color */
-    box-shadow: 0 0 10px #adadae, 0 0 20px #adadae; /* Glow effect */
-    animation: fadeGlow 0.5s ease; /* Animation for fading in */
-}
+    border: 2px solid #adadae;
+    /* Border color */
+    box-shadow: 0 0 10px #adadae, 0 0 20px #adadae;
+    /* Glow effect */
+    animation: fadeGlow 0.5s ease;
+    /* Animation for fading in */
+  }
 
-@keyframes fadeGlow {
+  @keyframes fadeGlow {
     0% {
-        border-color: #adadae;
-        box-shadow: 0 0 10px #adadae, 0 0 20px #adadae;
+      border-color: #adadae;
+      box-shadow: 0 0 10px #adadae, 0 0 20px #adadae;
     }
+
     50% {
-        border-color: transparent; /* Fade the border color */
-        box-shadow: 0 0 5px #adadae, 0 0 10px #adadae; /* Reduce glow */
+      border-color: transparent;
+      /* Fade the border color */
+      box-shadow: 0 0 5px #adadae, 0 0 10px #adadae;
+      /* Reduce glow */
     }
+
     100% {
-        border-color: #adadae; /* Bring back the border color */
-        box-shadow: 0 0 10px #adadae, 0 0 20px #adadae; /* Full glow */
+      border-color: #adadae;
+      /* Bring back the border color */
+      box-shadow: 0 0 10px #adadae, 0 0 20px #adadae;
+      /* Full glow */
     }
-}
+  }
 </style>
 <script src="/static/config/config.js"></script>
 <script src="{% static 'js/jd_setup.js' %}"></script>

@@ -71,6 +71,7 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
         response_content = send_candidate_data.content
 
         if response_content:
+            print("response_content",response_content)
             json_data = json.loads(response_content.decode('utf-8'))
 
             acert_data = json_data['data']
@@ -101,18 +102,19 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                 'candidateid':candidate.id,
                 'papertype':c_registration.papertype
             }
-            replacements = {
-                "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
-                "[paper_name]": acert_data["paper_name"],
-                "[company_name]": company_data.name,
-                "[recruitment_email_address]": company_data.email,
-                "[exam_link]":acert_data["exam_url"],
-                "[deadline]": acert_data["deadline"]
-            }
-            if workflow_data.papertype == "I":
-                sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Call_Schedule',replacements,candidate.email)
-            else:
-                sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Registration',replacements,candidate.email)
+            # acert_data["paper_name"]
+            # replacements = {
+            #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
+            #     "[paper_name]": "HL",
+            #     "[company_name]": company_data.name,
+            #     "[recruitment_email_address]": company_data.email,
+            #     "[exam_link]":acert_data["exam_url"],
+            #     "[deadline]": acert_data["deadline"]
+            # }
+            # if workflow_data.papertype == "I":
+            #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Call_Schedule',replacements,candidate.email)
+            # else:
+            #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Registration',replacements,candidate.email)
             return c_data
     except Exception as e:
         raise
