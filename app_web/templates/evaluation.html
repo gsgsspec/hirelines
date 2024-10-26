@@ -1,2 +1,75 @@
-{% load static  %}
+{% load static %}
 
+
+
+<div class="content-wrapper">
+    <!-- Content -->
+
+    <div class="container-xxl flex-grow-1 container-p-y pt-0">
+        <h4 class="fw-bold py-2">Evaluation</h4>
+
+        <!-- Basic Layout -->
+        <div class="row">
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0">Papers</h5>
+                        <!-- <small class="text-muted float-end">Default label</small> -->
+                    </div>
+                    <hr class="m-0">
+                    <div class="card-body pt-3" style="height: 200px; overflow-y:scroll;" id="papers">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0">Submissions</h5>
+                        <!-- <small class="text-muted float-end">Merged input group</small> -->
+                    </div>
+                    <hr class="m-0">
+                    <div class="card-body pt-3" id="participants" style="height: 200px; overflow-y:scroll;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <!-- DATATABLE DEMO 1-->
+        <div class="card">
+            <!-- <div class="card-header">
+                <div class="card-title" id="heading"></div>
+                <div class="evaluation-header-buttons">
+                <button class="btn btn-cancel btn_width ml-2 float-right"
+                        onclick="window.location.href=''" type="button">Exit</button>
+                        <button class="btn btn-cancel btn_width ml-2 float-right"
+                        type="button" id="next-participant-button" style="width:120px" onclick="showNextParticipant(PARTICIPANT)">Next Student</button>
+                        <button class="btn btn-cancel btn_width ml-4 float-right"  onclick="nextquestion()" type="button"style="width:120px">Next Question</button>
+                </div>
+            </div> -->
+          
+            <div class="card-body">
+                <table class="table table-hover w-100" id="questions_table">
+                    <tbody id="questions" style="cursor: pointer;">
+                        <div  id="questions">
+                        </div>
+                       </tbody>
+                      
+                   
+                </table>
+            </div>
+        </div>
+        <p id="p_flag" name="{{hide_reg_number}}" hidden></p>
+    </div>
+    <!-- / Content -->
+ 
+</div>
+
+<style>
+    .selection-item{
+        color: #f25c05 !important;
+    }
+</style>
+
+<script src="{% static 'js/evaluation.js' %}"></script>
+<!-- Content wrapper -->

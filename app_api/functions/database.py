@@ -102,10 +102,10 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                 'candidateid':candidate.id,
                 'papertype':c_registration.papertype
             }
-            # acert_data["paper_name"]
+            # 
             # replacements = {
             #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
-            #     "[paper_name]": "HL",
+            #     "[paper_name]": acert_data["paper_name"],
             #     "[company_name]": company_data.name,
             #     "[recruitment_email_address]": company_data.email,
             #     "[exam_link]":acert_data["exam_url"],

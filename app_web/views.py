@@ -412,12 +412,13 @@ def evaluationPage(request):
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
         
-
+        hide_reg_number = "Y"
+        
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
 
         if menuItemObjList:
-            return render(request, "portal_index.html", {"template_name": "evaluation.html", 'menuItemList': menuItemList })
+            return render(request, "portal_index.html", {"template_name": "evaluation.html", 'menuItemList': menuItemList,"hide_reg_number":hide_reg_number })
     
         else:
             return redirect('../')
