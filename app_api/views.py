@@ -322,7 +322,7 @@ def scheduleInterviewView(request):
 
 
 def candidateRegistrationForm(request,enc_jdid):
-
+    
     try:
         
         # request_domain = request.META.get('HTTP_HOST', '')
