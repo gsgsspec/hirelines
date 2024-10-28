@@ -314,31 +314,34 @@ function addTestCardToShow(testName, promotValue,testType,data) {
         testTypeColor = screeningBackgroundColor
         testTitle = 'S'
         testDesc  = 'Screening'
-        testIcon = '<i class="fas fa-clipboard-check" style="margin-right:5px;color:'+screenMainColor+';"></i>'
+        testIcon = '<i class="fas fa-clipboard-check" style="margin-right:12px;color:'+screenMainColor+';font-size:2rem;"></i>'
     }
     else if(testType == 'E' || testType == 'Coding'){
         testTypeColor = codingBackgroundColor
         testTitle = 'E'
         testDesc  = 'Coding'
-        testIcon = '<i class="fas fa-code" style="margin-right:5px;color:'+codingMainColor+';"></i>'
+        testIcon = '<i class="fas fa-code" style="margin-right:12px;color:'+codingMainColor+';font-size:2rem;"></i>'
     }
     else if(testType == 'I' || testType == 'Interview'){
         testTypeColor = interviewBackgroundColor
         testTitle = 'I'
         testDesc  = 'Interview'
-        testIcon = '<i class="fas fa-chalkboard-teacher" style="margin-right:5px;color:'+interviewMainColor+';"></i>'
+        testIcon = '<i class="fas fa-chalkboard-teacher" style="margin-right:12px;color:'+interviewMainColor+';font-size:2rem;"></i>'
     }
 
     testCardsContainer.insertAdjacentHTML('beforeend',
         '<div class="col-sm-6 col-lg-4 mb-4">' +
             '<div class="card p-3 cust_cursor" style="background-color:'+testTypeColor+';" onclick="selectTest(this.id)" id="'+testTitle+'_'+data['id']+'">' +
-                '<figure class="p-3 mb-0">' +
+                '<figure class="px-0 py-3 mb-0">' +
                     '<blockquote class="blockquote">' +
                         '<div>'+
                             '<figcaption class="custm_blockquote-footer mb-0 text-muted" style="display:flex;justify-content: space-between;width: 100%; color: var(--primary-color) !important; font-weight: 600;">' +
-                                '<div>'+
-                                    '<span id="testTypeTitle_'+data['id']+'">'+ testName +'</span> &nbsp; '+testIcon+'' +
-                                    '<p class="add-test-name-cust" id="testCardTestType_'+data['id']+'">'+testDesc+'( Promoted Value '+ promotValue +' )' +'</p>' +
+                                '<div style="display: flex; flex-direction: row;">'+
+                                    ''+testIcon+''+
+                                    '<div>'+
+                                        '<span id="testTypeTitle_'+data['id']+'">'+ testName +'</span> &nbsp; ' +
+                                        '<p class="add-test-name-cust" id="testCardTestType_'+data['id']+'">'+testDesc+'( Promoted Value '+ promotValue +' )' +'</p>' +
+                                    '</div>'+
                                 '</div>'+
                                 '<div> <i class="bx bx-edit custm-edit-icon" id="editTestCard_'+data['id']+'" onclick="updateTest(event,'+data['id']+')"></i> </div>'  +
                             '</figcaption>' +
