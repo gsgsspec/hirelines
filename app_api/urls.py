@@ -14,12 +14,16 @@ urlpatterns = [
     path('interview-scheduling/<int:cid>',views.interviewScheduling),
     path('schedule-interview',views.scheduleInterviewView),
     path('work-flow-data',views.workFlowData),
-    path('candidate-registration/<str:enc_jdid>/',views.candidateRegistrationForm),
+    path('candidate-registration-cdn/<str:enc_jdid>/',views.candidateRegistrationCDNForm),
     path('register-candidate',views.registerCandidate),
     path('interview-response',views.interviewResponseView),
     path('questions-response',views.questionsResponseView),
     path('get-interview-status',views.getInterviewStatusView),
     path('interview-file',views.interviewFile),
     path('interview-completion',views.interviewCompletion),
-    path('interview-feedback',views.interviewFeedback)
+    path('interview-feedback',views.interviewFeedback),
+
+
+
+    path('update-emailtemp',views.updateEmailtemp),
 ]

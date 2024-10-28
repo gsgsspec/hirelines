@@ -9,7 +9,13 @@ from app_api.functions.services import getJobDescData, getCandidatesData, getJdC
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
-# Create your views here.
+from hirelines.metadata import getConfig
+import json
+import requests
+
+domains = getConfig()['DOMAIN']
+acert_domain = domains['acert']
+
 def homePage(request):
     try:
 
@@ -85,11 +91,31 @@ def dashboardPage(request):
 
 
 def emailTemplatesPage(request):
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
-    try:
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
 
-        return render(request, "portal_index.html", {"template_name": 'email_templates.html'})
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        company_id = getCompanyId(user_mail)
+
+        payload = {'company_id':company_id}
+
+        url = f'{acert_domain}/api/emailtemp-list'
+        
+        api_res = requests.post(url, json=payload)
+        data = json.loads(api_res.text)
+        emailTemps = ''
+        if data['statusCode'] == 0:
+            emailTemps = data['data']
+
+        return render(request, "portal_index.html", {"template_name": 'email_templates.html','menuItemList': menuItemList,
+                                                     "emailTemps":emailTemps})
 
     except Exception as e:
         raise
@@ -259,10 +285,17 @@ def jobDescriptionSetUp(request,jd_id):
 
 
 def brandingPage(request):
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+
     try:
-        return render(request, "portal_index.html", {"template_name": 'branding.html'})
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        return render(request, "portal_index.html", {"template_name": 'branding.html','menuItemList': menuItemList})
     except Exception as e:
         raise
 
@@ -282,6 +315,36 @@ def addCandidatePage(request):
         jds_list = getCompanyJdData(company_id)
 
         return render(request, "portal_index.html", {"template_name": 'add_candidate.html','menuItemList': menuItemList,'jds_data':jds_list})
+
+    except Exception as e:
+        raise
+
+
+def updateEmailTempPage(request, eid):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        url = f'{acert_domain}/api/get-emailtemp-data'
+
+        payload = {'id':eid}
+        
+        api_res = requests.post(url, json=payload)
+        data = json.loads(api_res.text)
+        emailTemps = ''
+        if data['statusCode'] == 0:
+            emailTemps = data['data']
+        
+        company_id = getCompanyId(user_mail)
+        
+        return render(request, "portal_index.html", {"template_name": 'update_emailtemp.html','menuItemList': menuItemList,
+                                                     "emailTemps":emailTemps,"company_id":company_id})
 
     except Exception as e:
         raise

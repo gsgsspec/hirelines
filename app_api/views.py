@@ -12,7 +12,7 @@ from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService
 from .models import Candidate, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -321,9 +321,10 @@ def scheduleInterviewView(request):
 
 
 
-def candidateRegistrationForm(request,enc_jdid):
-
+def candidateRegistrationCDNForm(request,enc_jdid):
+    
     try:
+        # Restrict other company domains, commented due to testing.
         
         # request_domain = request.META.get('HTTP_HOST', '')
         # print("request_domain",request_domain)
@@ -334,7 +335,7 @@ def candidateRegistrationForm(request,enc_jdid):
         # deccode =  decrypt_code(enc_jdid)
         # print("deccode",deccode)
         
-
+        # hirelines_registration_script Reads registration cdn script from constants
         return HttpResponse(hirelines_registration_script, content_type='application/javascript')
     except:
         return HttpResponse('console.error("Script not found");', content_type='application/javascript')
@@ -402,8 +403,9 @@ def registerCandidate(request):
     try:
         if request.method == "POST":
             dataObjs = json.loads(request.body)
-
+            #decrypt encjdid
             jd_id = decrypt_code(dataObjs["encjdid"])
+            #Filter the first workflow obj to attend first paper $ order functionality not added $
             workflow_data = Workflow.objects.filter(jobid=jd_id).first()
             if workflow_data:
                 company_id = workflow_data.companyid
@@ -444,7 +446,6 @@ def getInterviewStatusView(request):
         response['data'] = 'Error in getCallStatus'
         response['error'] = str(e)
     return JsonResponse(response)
-
 
 
 @api_view(['GET', 'POST'])
@@ -510,6 +511,27 @@ def interviewFeedback(request):
 
     except Exception as e:
         response['data'] = 'Error in feedback view'
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateEmailtemp(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            updateEmailtempDB(user, dataObjs)
+            response['data'] = "Email Template updated successfully"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updateEmailtemp'
         response['error'] = str(e)
     return JsonResponse(response)
 

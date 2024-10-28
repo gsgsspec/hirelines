@@ -8,6 +8,7 @@ urlpatterns = [
     path("register",views.registerPage),
     path("dashboard",views.dashboardPage),
     path("email-templates",views.emailTemplatesPage),
+    path("update-emailtemp/<int:eid>",views.updateEmailTempPage),
     path("candidates",views.candidatesPage),
     path("add-candidate",views.addCandidatePage),
     path("reports",views.reportsPage),
