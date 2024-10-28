@@ -5,8 +5,7 @@ from urllib.parse import urljoin
 from django.db.models import Q
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
-from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
-    IvFeedback
+from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, Brules ,IvFeedback
 
 
 def addCompanyDataDB(dataObjs):
@@ -180,28 +179,85 @@ def scheduleInterviewDB(user_id, dataObjs):
     
 def saveJdNewTest(dataObjs,compyId):
     try:
-        testType = None
-        if 'testType' in dataObjs:
-            if dataObjs['testType'] == 'Screening':
-                testType = 'S'
-            if dataObjs['testType'] == 'Coding':
-                testType = 'C'
-            if dataObjs['testType'] == 'Interview':
-                testType = 'I'
 
-        savedWorkFlowDetails = Workflow(
-                companyid = compyId,
-                paperid = 49,
-                papertype = testType,
-                papertitle = dataObjs['testName'] if 'testName' in dataObjs else None,
-                jobid = dataObjs['jdId'] if 'jdId' in dataObjs else None
-                )
-        savedWorkFlowDetails.save()
-        
-        workFlowDetails = Workflow.objects.filter(id = savedWorkFlowDetails.id).values()
-        return list(workFlowDetails)
+        if dataObjs['createOrUpdate'] == 'create':
+            
+            print('--------')
+            print('SAve')
+            print(dataObjs)
+
+            testType = None
+            if 'testType' in dataObjs:
+                if dataObjs['testType'] == 'Screening':
+                    testType = 'S'
+                if dataObjs['testType'] == 'Coding':
+                    testType = 'E'
+                if dataObjs['testType'] == 'Interview':
+                    testType = 'I'
+
+            savedWorkFlowDetails = Workflow(
+                    companyid = compyId,
+                    jobid = dataObjs['jdId'] if 'jdId' in dataObjs else None,
+                    paperid = 49,
+                    papertype = testType,
+                    papertitle = dataObjs['testName'] if 'testName' in dataObjs else None,
+                    )
+            savedWorkFlowDetails.save()
+            
+            wrkflId = savedWorkFlowDetails.id
+            workFlowDetails = Workflow.objects.filter(id = wrkflId).values()
+
+            save_bruls = Brules(
+                    companyid = compyId,
+                    jobdescid = dataObjs['jdId'],
+                    workflowid = wrkflId,
+                    passscore = dataObjs['promotPercentage']
+                    )
+            save_bruls.save()
+
+            print('======================')
+            print('SAAVVED')
+
+            return list(workFlowDetails)
+
+        if dataObjs['createOrUpdate'] == 'update':
+
+            print('--------')
+            print('Update')
+            print(dataObjs)
+
+            if 'testId' in dataObjs:
+                currentTestId = dataObjs['testId']
+
+            if currentTestId:
+                savedWorkFlowDetails = Workflow.objects.filter(id = currentTestId, companyid = compyId, jobid = dataObjs['jdId']).last()
+                savedWorkFlowDetails.papertitle = dataObjs['testName']
+                savedWorkFlowDetails.save()
+
+                brulesDetails = Brules.objects.filter(companyid = compyId, jobdescid = dataObjs['jdId'], workflowid = currentTestId).last()
+                brulesDetails.passscore = dataObjs['promotPercentage']
+                brulesDetails.save()
+
+                print('======================')
+                print('UUPDATED')
+                
+                updatedData = {   
+                   'updateEvent': 'Y',
+                    'companyid' : compyId,
+                    'id'        : savedWorkFlowDetails.id,
+                    'jobid'     : savedWorkFlowDetails.jobid,
+                    'order'     : None,
+                    'paperid'   : None,
+                    'papertitle': savedWorkFlowDetails.papertitle,
+                    'papertype' : savedWorkFlowDetails.papertype,
+                    'promot'    : brulesDetails.passscore
+                }
+
+                return dict(updatedData)
+
     except Exception as e:
         raise
+
 
 # Saving the Job descritption Deatils
 def saveAddJD(dataObjs,compyId,hrEmail):

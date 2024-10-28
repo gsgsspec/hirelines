@@ -183,6 +183,19 @@ class Workflow(models.Model):
     class Meta:
         db_table = 'workflow'
 
+class Brules(models.Model):
+    id = models.AutoField(primary_key=True)
+    workflowid = models.IntegerField(null=True, blank=True)
+    companyid = models.IntegerField(null=True, blank=True)
+    jobdescid  = models.IntegerField(null=True, blank=True)
+    paperid = models.IntegerField(null=True, blank=True)
+    passscore = models.IntegerField(null=True, blank=True)
+    passevent = models.IntegerField(null=True, blank=True) # email template id
+    failevent = models.IntegerField(null=True, blank=True) # email template id
+
+    class Meta:
+        db_table = 'brules'
+
 
 class CallSchedule(models.Model):
     id = models.AutoField(primary_key=True)

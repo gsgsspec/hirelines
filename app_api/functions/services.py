@@ -13,7 +13,7 @@ from .constants import public_email_domains
 from hirelines.metadata import getConfig
 from .mailing import sendRegistrainMail
 from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
-    Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia
+    Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia, Brules
 from app_api.functions.database import saveJdNewTest, saveAddJD, saveUpdateJd
 from app_api.functions.mailing import sendEmail
 
@@ -466,6 +466,10 @@ def jdDetails(jdId):
 def workFlowDataService(data,cmpyId):
     try:
         papersDetails = Workflow.objects.filter(jobid = data).values()
+        for test in papersDetails:
+            brulesDetails = Brules.objects.filter(workflowid = test['id'], jobdescid = test['jobid'], companyid = test['companyid']).last()
+            test['promot'] = brulesDetails.passscore
+        print('::',list(papersDetails))
         return list(papersDetails)
     except Exception as e:
         raise

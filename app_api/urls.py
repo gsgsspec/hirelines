@@ -7,7 +7,7 @@ urlpatterns = [
     path('add-companydata', views.addCompanyData),
     path('add-jd-candidate', views.addJDCandidate),
     path('register-user',views.registerUser),
-    path('jd-add-test',views.jdAddTest),
+    path('jd-add-or-update-test',views.jdAddTest),
     path('login-user',views.loginUser),
     path('get-jd-workflow',views.getJdWorkflow),
     path('add-candidate',views.addCandidate),

@@ -8,15 +8,15 @@
         data-bs-target="#jd_integration_modal">
         <i class='bx bxs-cog icons_custm_weight'></i>
       </button>
-      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('screening')"
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTest('screening')"
         data-bs-toggle="modal" data-bs-target="#modalCenter">
         <i class='bx bx-badge-check icons_custm_weight'></i>
       </button>
-      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('coding')"
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTest('coding')"
         data-bs-toggle="modal" data-bs-target="#modalCenter">
         <i class='bx bx-code-alt icons_custm_weight'></i>
       </button>
-      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="testRequirements('interview')"
+      <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTest('interview')"
         data-bs-toggle="modal" data-bs-target="#modalCenter">
         <i class='bx bx-select-multiple icons_custm_weight'></i>
       </button>
@@ -42,7 +42,7 @@
     <div class="row mt-3" id="testCards"></div>
 
     <!-- Librarys container -->
-    <div class="row mt-3 bg-menu-theme custm_border_radius" id="">
+    <div class="row mt-3 bg-menu-theme custm_border_radius" id="librarysMainContainer" hidden>
 
       <div class="py-3 library_sub_container">
         <div class="Librarys_container overflow-hidden  ps ps--active-y" id="sectionTitlesContainer"></div>
@@ -99,7 +99,7 @@
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
           Close
         </button>
-        <button type="button" class="btn btn-primary" onclick="addTest()" id="saveJdTest">Save</button>
+        <button type="button" class="btn btn-primary" onclick="saveOrUpdateTest()" id="saveJdTest">Save</button>
       </div>
     </div>
   </div>
