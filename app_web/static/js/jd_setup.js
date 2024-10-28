@@ -431,26 +431,30 @@ function openUpdateTest(currentSelectedtestId){
 document.getElementById('script_copy_btn').addEventListener('click', function() {
     const scriptValue = document.getElementById('scriptTextarea').value;
     const functionValue = document.getElementById('functionTextarea').value;
-    const combinedText = `${scriptValue}\n${functionValue}`;
-    
-    navigator.clipboard.writeText(combinedText).then(() => {
-        const scriptTextarea = document.getElementById('scriptTextarea');
-        const functionTextarea = document.getElementById('functionTextarea');
+    const combinedText = `${scriptValue}\n${functionValue}`; // Corrected line
 
-        scriptTextarea.classList.add('flash-border');
-        functionTextarea.classList.add('flash-border');
+    if (navigator.clipboard) { // Check if clipboard API is available
+        navigator.clipboard.writeText(combinedText).then(() => {
+            const scriptTextarea = document.getElementById('scriptTextarea');
+            const functionTextarea = document.getElementById('functionTextarea');
 
-        setTimeout(() => {
-            scriptTextarea.classList.remove('flash-border');
-            functionTextarea.classList.remove('flash-border');
-        }, 500);
+            scriptTextarea.classList.add('flash-border');
+            functionTextarea.classList.add('flash-border');
 
-        console.log('Copied to clipboard!');
-    }).catch(err => {
-        // Optionally handle the error
-        console.error('Error copying text: ', err);
-    });
+            setTimeout(() => {
+                scriptTextarea.classList.remove('flash-border');
+                functionTextarea.classList.remove('flash-border');
+            }, 500);
+
+            console.log('Copied to clipboard!');
+        }).catch(err => {
+            console.error('Error copying text: ', err);
+        });
+    } else {
+        console.error('Clipboard API not available');
+    }
 });
+
 
 
 // get paper librarts with this api
