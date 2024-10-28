@@ -424,8 +424,8 @@ function openUpdateTestModel(currentSelectedtestId){
         $('#modalCenter').modal('show')
     }
     
-    
 }
+
 
 document.getElementById('script_copy_btn').addEventListener('click', function() {
     if (navigator.clipboard) {
