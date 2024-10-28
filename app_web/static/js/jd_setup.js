@@ -431,6 +431,9 @@ document.getElementById('script_copy_btn').addEventListener('click', function() 
     const scriptValue = document.getElementById('scriptTextarea').value;
     const functionValue = document.getElementById('functionTextarea').value;
     const combinedText = `${scriptValue}\n${functionValue}`;
+    
+    // Log combined text for debugging
+    console.log("Combined Text:", combinedText);
 
     // Use Clipboard API
     if (navigator.clipboard) {
