@@ -243,3 +243,11 @@ table.dataTable thead th, table.dataTable thead td {
 .select2-dropdown {
   border: 1px solid #ced4da !important;
 }
+
+.float-right{
+  float: right !important;
+}
+
+.float-left{
+  float: left !important;
+}

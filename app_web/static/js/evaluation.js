@@ -152,10 +152,10 @@ function filter_data(pid, ptid) {
                 }
                 if (QUESTIONS_LIST[n]['question_type_code'] == "P") {
                     question_options_div = '<p style="padding:13px">' + '<b>Answer :  </b>  ' + QUESTIONS_LIST[n]['question_answer'] + '</p>';
-                    question_expanswer_div = '<p style="padding:13px">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
+                    question_expanswer_div = '<p style="padding:13px" class="form-label">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
                     evaluation_btns = '<div class="float-right">' +
-                        '<button class="mb-1 btn btn-cancel btn_width" style="background-color: #73d973 !important" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i><b>Correct</b></button>' +
-                        '<button class="mb-1 btn btn-primary btn_width ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i><b>Incorrect</b></button>' +
+                        '<button class="mb-1 btn btn-cancel text-white btn_width" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
+                        '<button class="mb-1 btn btn-primary text-white btn_width ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
                 
@@ -178,16 +178,16 @@ function filter_data(pid, ptid) {
                 }
 
                 if (QUESTIONS_LIST[n]["question_type_code"] == "A") {
-                    question_expanswer_div = '<p style="padding:13px">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
+                    question_expanswer_div = '<p style="padding:13px" class="form-label">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
                     question_options_div = '<br/><audio id="play_audio" style="width:500px" controls><source  src="' + QUESTIONS_LIST[n]["response_media"] + '"/></audio><br/><br/>'
                     evaluation_btns = '<div class="float-right">' +
-                        '<button class="mb-1 btn btn-cancel btn_width" style="background-color: #73d973 !important" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i><b>Correct</b></button>' +
-                        '<button class="mb-1 btn btn-primary btn_width ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i><b>Incorrect</b></button>' +
+                        '<button class="mb-1 btn btn-cancel btn_width text-white" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
+                        '<button class="mb-1 btn btn-primary btn_width text-white ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
 
                 if (QUESTIONS_LIST[n]["question_type_code"] == "V") {
-                    question_expanswer_div = '<p style="padding:13px">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
+                    question_expanswer_div = '<p style="padding:13px"  class="form-label">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
                     if(QUESTIONS_LIST[n]["response_media"]){
                         question_options_div = '<br/>' +
                         '<h4>Response video</h4><video class="video-resp-window" controls><source  src="' + QUESTIONS_LIST[n]["response_media"] + '" width="200"/></video><br/>'
@@ -196,8 +196,8 @@ function filter_data(pid, ptid) {
                     }
                     
                     evaluation_btns = '<div class="float-right">' +
-                        '<button class="mb-1 btn btn-cancel btn_width" style="background-color: #73d973 !important" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i><b>Correct</b></button>' +
-                        '<button class="mb-1 btn btn-primary btn_width ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i><b>Incorrect</b></button>' +
+                        '<button class="mb-1 btn btn-cancel text-white btn_width" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
+                        '<button class="mb-1 btn btn-primary text-white btn_width ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
 
@@ -214,8 +214,10 @@ function filter_data(pid, ptid) {
 
                 $("#questions").append(
                     '<button class="accordion" id="questions">' + accord_style +
-                    '<div class="w-100p text-left " style="font-weight:600">' + question_sno + '.' + ' ' + QUESTIONS_LIST[n]["question"] + '</div>' +
-
+                    '<div class="w-100p text-left " style="font-weight:600">' + question_sno + '.' + ' ' + QUESTIONS_LIST[n]["question"] +
+                    '<i class="float-right bx bxs-chevron-right"></i>'+
+                    '</div>' +
+                    
                     '</button>' +
                     '<div class="panel" id="questions">' +
                     anser_skip_resp +
@@ -225,16 +227,16 @@ function filter_data(pid, ptid) {
                     question_options_div +
                     question_expanswer_div +
                     '<div class="form-group row" style="margin-left:11px">' +
-                    '<label class="marks-label">Total Marks:</label>' +
-                    '<div class="marks-display">' +
+                    '<label class="form-label marks-label">Total Marks:</label>' +
+                    '<div class="form-label marks-display">' +
                     '<input class="form-control" type="text" value="' + QUESTIONS_LIST[n]['question_mark'] + '" maxlength="100" id="marks' + question_sno + '" disabled>' +
                     '</div>' +
-                    '<label class="marks-label">Given Marks:</label>' +
-                    '<div class="marks-display">' +
+                    '<label class="form-label marks-label">Given Marks:</label>' +
+                    '<div class="form-label marks-display">' +
                     '<input oninput="myFunction(' + question_sno + ')" class="form-control given-marks" name="' + QUESTIONS_LIST[n]['answer_id'] + '" id="ans_mark' + question_sno + '" value="' + QUESTIONS_LIST[n]['answer_marks'] + '" required>' +
                     '</div>' +
                     '</div>' +
-                    '<div class="form-group row"  id="textareaContainer' + question_sno + '"  style="display:none;" >' + '<label class="marks-label" style="width: 13em;padding-left: 27px;">Reason for less Marks:</label>' +
+                    '<div class="form-group row"  id="textareaContainer' + question_sno + '"  style="display:none;" >' + '<label class="form-label marks-label" style="width: 13em;padding-left: 27px;">Reason for less Marks:</label>' +
                     '<textarea style="width: 400px;" class="form-control exp-ans-text"  id="reason' + question_sno + '"  rows="4" maxlength="256" required>'+ QUESTIONS_LIST[n]['reason'] +'</textarea>' +
                     '</div>' +
                     evaluation_btns +
@@ -263,9 +265,9 @@ function filter_data(pid, ptid) {
 
                         if (QUESTIONS_LIST[n]['question_answer'] == OPTIONS[opt]["option_name"]) {
                             var correctOptionText = letter + ') ' + OPTIONS[opt]["option_name"];
-                            var correctOptionHTML = '<div>' + correctOptionText + '&ensp;<i class="fas fa-times" style="color:#ff5e0e "></i></div>';
+                            var correctOptionHTML = '<div class="form-label">' + correctOptionText + '&ensp;<i class="fas fa-times" style="color:#ff5e0e "></i></div>';
                             if (OPTIONS[opt]["option_answer"] == "Y") {
-                                correctOptionHTML = '<div>' + correctOptionText + '&ensp;<i class="fas fa-check" style="color:#73d973"></i><i class="fas fa-check" style="color:#73d973 "></i></div>';
+                                correctOptionHTML = '<div class="form-label">' + correctOptionText + '&ensp;<i class="fas fa-check" style="color:#73d973"></i><i class="fas fa-check" style="color:#73d973 "></i></div>';
                             }
                             $("#question_options_" + QUESTIONS_LIST[n]['id']).append(correctOptionHTML);
                         } else {
@@ -274,7 +276,7 @@ function filter_data(pid, ptid) {
                                 tickMark = '<i class="fas fa-check" style="color:#73d973 "></i>';
                             }
                             var optionText = letter + ') ' + OPTIONS[opt]["option_name"];
-                            var optionHTML = '<div>' + optionText + '&ensp;' + tickMark;
+                            var optionHTML = '<div  class="form-label">' + optionText + '&ensp;' + tickMark;
                             if (QUESTIONS_LIST[n]['question_answer'] == OPTIONS[opt]["option_name"]) {
                                 optionHTML += '<i class="fas fa-check" style="color:#73d973 "></i>';
                             }
@@ -290,9 +292,9 @@ function filter_data(pid, ptid) {
                         var letter = String.fromCharCode(65 + opt);
                         if (QUESTIONS_LIST[n]['question_answer'] == OPTIONS[opt]["option_name"]) {
                             var correctOptionText = letter + ') ' + OPTIONS[opt]["option_name"];
-                            var correctOptionHTML = '<div>' + correctOptionText + '&ensp;<i class="fas fa-times" style="color:#ff5e0e "></i></div>';
+                            var correctOptionHTML = '<div  class="form-label">' + correctOptionText + '&ensp;<i class="fas fa-times" style="color:#ff5e0e "></i></div>';
                             if (OPTIONS[opt]["option_answer"] == "Y") {
-                                correctOptionHTML = '<div>' + correctOptionText + '&ensp;<i class="fas fa-check" style="color:#73d973"></i><i class="fas fa-check" style="color:#73d973 "></i></div>';
+                                correctOptionHTML = '<div  class="form-label">' + correctOptionText + '&ensp;<i class="fas fa-check" style="color:#73d973"></i><i class="fas fa-check" style="color:#73d973 "></i></div>';
                             }
                             $("#question_options_" + QUESTIONS_LIST[n]['id']).append(correctOptionHTML);
                         } else {
@@ -301,7 +303,7 @@ function filter_data(pid, ptid) {
                                 tickMark = '<i class="fas fa-check" style="color:#73d973 "></i>';
                             }
                             var optionText = letter + ') ' + OPTIONS[opt]["option_name"];
-                            var optionHTML = '<div>' + optionText + '&ensp;' + tickMark;
+                            var optionHTML = '<div  class="form-label">' + optionText + '&ensp;' + tickMark;
                             if (QUESTIONS_LIST[n]['question_answer'] == OPTIONS[opt]["option_name"]) {
                                 optionHTML += '<i class="fas fa-check" style="color:#73d973 "></i>';
                             }
@@ -324,6 +326,14 @@ function filter_data(pid, ptid) {
 
 function accord() {
     $(this).toggleClass("active");
+    const icon = $(this).find('i');
+        
+    // Toggle classes for the icon
+    if (icon.hasClass('bxs-chevron-right')) {
+        icon.removeClass('bxs-chevron-right').addClass('bxs-chevron-down');
+    } else {
+        icon.removeClass('bxs-chevron-down').addClass('bxs-chevron-right');
+    }
     var panel = $(this).next();
     if (panel.css("display") === "block") {
         panel.css("display", "none");

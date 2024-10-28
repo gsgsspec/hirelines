@@ -95,19 +95,22 @@
     .panel {
         padding: 0 18px;
         display: none;
-        background-color: white;
+        background-color: #f6f6f6;
         overflow: hidden;
     }
 
     .ans-color-line {
         width: 6px;
         height: 71%;
-        background-color: #48d0ca;
+        background-color: #274699;
         position: absolute;
         top: 6px;
         left: 0;
     }
-
+    .options-grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+}
     .col-form-label {
         text-align: left;
         padding-left: 1rem;
@@ -119,14 +122,15 @@
     }
 
     .marks-label {
-        width: 6em;
+        width: 8em;
         padding-top: 0.5em;
     }
 
     .marks-display {
-        width: 5em;
+        width: 8em;
         padding-right: 1em;
     }
+    
 </style>
 
 <script src="{% static 'js/evaluation.js' %}"></script>
