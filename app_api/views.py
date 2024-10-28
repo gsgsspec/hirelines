@@ -448,7 +448,6 @@ def getInterviewStatusView(request):
     return JsonResponse(response)
 
 
-
 @api_view(['GET', 'POST'])
 @authentication_classes([])
 @permission_classes([])
