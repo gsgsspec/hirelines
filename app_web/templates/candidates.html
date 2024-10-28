@@ -11,7 +11,7 @@
     <div class="table-responsive text-nowrap table-cls">
         <table class="table table-hover" id="candidates-table">
             <thead>
-                <tr>
+                <tr >
                     <th> <strong> Candidate ID </strong></th>
                     <th> <strong> Name </strong></th>
                     <th> <strong> Email </strong></th>
@@ -20,7 +20,7 @@
             </thead>
             <tbody class="table-border-bottom-0">
                 {% for candidate in candidates_data %}
-                <tr>
+                <tr onclick="window.location.href='/candidate-data/{{candidate.id}}'">
                     <td>{{ candidate.candidate_id }}</td>
                     <td>{{ candidate.firstname }} {{ candidate.lastname }}</td>
                     <td>{{ candidate.email }}</td>

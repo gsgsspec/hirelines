@@ -6,7 +6,7 @@ from app_api.functions.hashing import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import User, Role, JobDesc, CallSchedule, Candidate, Company, Branding
 from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, \
-    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback
+    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -555,4 +555,31 @@ def candidateSideMeetingPage(request, room_id):
         return render(request, "candidate_call.html",{'call_details':call_details})
     except Exception as e:
         print(str(e))
+        raise
+
+
+
+def candidateData(request,cid):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        candidatedata = getCandidateWorkflowData(cid)
+
+        candidate_info = candidatedata['candidate_info']
+        registrations_data = candidatedata['registrations_data']
+
+
+        return render(request, "portal_index.html", {"template_name": 'candidate_data.html','menuItemList':menuItemList,
+                                'candidate_info':candidate_info,'registrations_data':registrations_data})
+    
+    except Exception as e:
         raise

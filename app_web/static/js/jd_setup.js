@@ -427,30 +427,56 @@ function openUpdateTest(currentSelectedtestId){
     
 }
 
-
 document.getElementById('script_copy_btn').addEventListener('click', function() {
     const scriptValue = document.getElementById('scriptTextarea').value;
     const functionValue = document.getElementById('functionTextarea').value;
     const combinedText = `${scriptValue}\n${functionValue}`;
-    
-    navigator.clipboard.writeText(combinedText).then(() => {
-        const scriptTextarea = document.getElementById('scriptTextarea');
-        const functionTextarea = document.getElementById('functionTextarea');
 
-        scriptTextarea.classList.add('flash-border');
-        functionTextarea.classList.add('flash-border');
-
-        setTimeout(() => {
-            scriptTextarea.classList.remove('flash-border');
-            functionTextarea.classList.remove('flash-border');
-        }, 500);
-
-        console.log('Copied to clipboard!');
-    }).catch(err => {
-        // Optionally handle the error
-        console.error('Error copying text: ', err);
-    });
+    if (navigator.clipboard) { // Check if the Clipboard API is available
+        navigator.clipboard.writeText(combinedText).then(() => {
+            flashTextareas();
+            console.log('Copied to clipboard using Clipboard API!');
+        }).catch(err => {
+            console.error('Error copying text with Clipboard API: ', err);
+            fallbackCopy(combinedText);
+        });
+    } else {
+        fallbackCopy(combinedText); // Fallback if Clipboard API is not available
+    }
 });
+
+function fallbackCopy(text) {
+    const tempInput = document.createElement('textarea');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            flashTextareas();
+            console.log('Copied to clipboard using fallback!');
+        } else {
+            console.error('Fallback: Unable to copy text.');
+        }
+    } catch (err) {
+        console.error('Fallback: Unable to copy text: ', err);
+    } finally {
+        document.body.removeChild(tempInput);
+    }
+}
+
+function flashTextareas() {
+    const scriptTextarea = document.getElementById('scriptTextarea');
+    const functionTextarea = document.getElementById('functionTextarea');
+
+    scriptTextarea.classList.add('flash-border');
+    functionTextarea.classList.add('flash-border');
+
+    setTimeout(() => {
+        scriptTextarea.classList.remove('flash-border');
+        functionTextarea.classList.remove('flash-border');
+    }, 500);
+}
 
 
 // get paper librarts with this api
