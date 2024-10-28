@@ -7,7 +7,7 @@ var menuItemsUrls = {
     'candidates': ['/candidates', '/add-candidate','interview-schedule'],
     'branding': ['/branding'],
     'reports': ['/reports','/jd'],
-    'job-descriptions' : ['/job-descriptions','/add-job-description','/job-description-set-up'],
+    'job-descriptions' : ['/job-descriptions','/add-job-description','/job-description-set-up','/update-job-description'],
     'interviews': ['/interviews'],
     'evaluation': ['/evaluation'],
     'feedback': ['/feedbacks','/interviewer-feedback'],
