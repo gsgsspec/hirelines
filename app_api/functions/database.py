@@ -251,7 +251,7 @@ def saveJdNewTest(dataObjs,compyId):
                     'id'        : savedWorkFlowDetails.id,
                     'jobid'     : savedWorkFlowDetails.jobid,
                     'order'     : None,
-                    'paperid'   : None,
+                    'paperid'   : 49,
                     'papertitle': savedWorkFlowDetails.papertitle,
                     'papertype' : savedWorkFlowDetails.papertype,
                     'promot'    : brulesDetails.passscore
