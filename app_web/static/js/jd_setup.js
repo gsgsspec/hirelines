@@ -428,48 +428,37 @@ function openUpdateTestModel(currentSelectedtestId){
 
 
 document.getElementById('script_copy_btn').addEventListener('click', function() {
+    const scriptValue = document.getElementById('scriptTextarea').value;
+    const functionValue = document.getElementById('functionTextarea').value;
+    const combinedText = `${scriptValue}\n${functionValue}`;
+    
+    console.log("Combined Text:", combinedText); // Log combined text for debugging
+
+    // Try using Clipboard API first
     if (navigator.clipboard) {
-        navigator.clipboard.writeText("Simple test text")
+        navigator.clipboard.writeText(combinedText)
             .then(() => {
-                console.log('Test text copied to clipboard!');
+                flashTextareas();
+                console.log('Copied to clipboard using Clipboard API!');
             })
             .catch(err => {
-                console.error('Test copy failed: ', err);
+                console.error('Error with Clipboard API: ', err);
+                fallbackCopy(combinedText); // Fallback copy method
             });
     } else {
-        console.warn('Clipboard API not available for test.');
+        console.warn('Clipboard API not available, using fallback.');
+        fallbackCopy(combinedText); // Use fallback if API is unavailable
     }
-    // const scriptValue = document.getElementById('scriptTextarea').value;
-    // const functionValue = document.getElementById('functionTextarea').value;
-    // const combinedText = `${scriptValue}\n${functionValue}`;
-    
-    // // Log combined text for debugging
-    // console.log("Combined Text:", combinedText);
-
-    // // Use Clipboard API
-    // if (navigator.clipboard) {
-    //     navigator.clipboard.writeText(combinedText)
-    //         .then(() => {
-    //             flashTextareas();
-    //             console.log('Copied to clipboard using Clipboard API!');
-    //         })
-    //         .catch(err => {
-    //             console.error('Error with Clipboard API: ', err);
-    //             fallbackCopy(combinedText);
-    //         });
-    // } else {
-    //     fallbackCopy(combinedText); // Fallback if Clipboard API is unavailable
-    // }
 });
 
 function fallbackCopy(text) {
     const tempInput = document.createElement('textarea');
-    // Ensure the text fits within the viewport
-    tempInput.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge.
+    tempInput.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge
     tempInput.style.opacity = '0'; // Make the element invisible
     tempInput.value = text;
     document.body.appendChild(tempInput);
     tempInput.select();
+    
     try {
         const successful = document.execCommand('copy');
         if (successful) {
@@ -497,6 +486,8 @@ function flashTextareas() {
         functionTextarea.classList.remove('flash-border');
     }, 500);
 }
+
+
 // get paper librarts with this api
 function getPapersLibrarys(test_type){
 
