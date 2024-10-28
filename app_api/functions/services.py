@@ -306,6 +306,7 @@ def getCandidatesData():
                 c_status = "Pending"
 
             candidates_list.append({
+                'id':candidate.id,
                 'candidate_id': candidate.candidateid,
                 'firstname': candidate.firstname,
                 'lastname': candidate.lastname,
@@ -1006,6 +1007,72 @@ def getInterviewFeedback(cid,user_id):
                 }
             
             return feedback_data
+
+    except Exception as e:
+        raise
+
+
+def getCandidateWorkflowData(cid):
+    try:
+        
+        candidate = Candidate.objects.filter(id=cid).last()
+
+        candidate_data = {
+            'candidate_info': None,
+            'registrations_data':None
+        }
+
+        if candidate:
+
+            jd = JobDesc.objects.get(id=candidate.jobid)
+
+            candidate_info = {
+                'c_code': candidate.candidateid,
+                'name': f"{candidate.firstname} {candidate.lastname}",
+                'email': candidate.email,
+                'mobile': candidate.mobile,
+                'jd': jd.title,
+            }
+
+            candidate_data['candidate_info'] = candidate_info
+
+            registrations = Registration.objects.filter(candidateid=candidate.id,companyid=candidate.companyid)
+
+            registrations_data = []
+
+            if registrations:
+
+                for registration in registrations:
+
+                    workflow = Workflow.objects.get(jobid=registration.jobid,paperid=registration.paperid)
+
+                    paper_type = ""
+                    call_status = ""
+
+                    if workflow.papertype == "S":
+                        paper_type = "Screening"
+                    elif workflow.papertype == "E":
+                        paper_type = "Coding"
+                    elif workflow.papertype == "I":
+
+                        paper_type = "Interview"
+                        call_schedule = CallSchedule.objects.filter(candidateid=candidate.id,paper_id=registration.paperid).last()
+                        if call_schedule:
+                            call_status = call_schedule.status
+                    else:
+                        paper_type = ""
+
+                    registrations_data.append({
+                        'paper_title': workflow.papertitle,
+                        'paper_type':workflow.papertype,
+                        'type_title': paper_type,
+                        'call_status':call_status,
+                        'candidateid': candidate.id,
+                    })
+
+                candidate_data['registrations_data'] = registrations_data
+                    
+        return candidate_data
 
     except Exception as e:
         raise
