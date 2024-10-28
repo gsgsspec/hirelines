@@ -427,50 +427,68 @@ function openUpdateTestModel(currentSelectedtestId){
     
 }
 
-
 document.getElementById('script_copy_btn').addEventListener('click', function() {
     const scriptValue = document.getElementById('scriptTextarea').value;
-        const functionValue = document.getElementById('functionTextarea').value;
-        const combinedText = `${scriptValue}\n${functionValue}`;
-        
-        // Flash feedback after combining text
-        flashFeedback();
+    const functionValue = document.getElementById('functionTextarea').value;
+    const combinedText = `${scriptValue}\n${functionValue}`;
 
-        // Copy to clipboard
-        copyToClipboard(combinedText);
-    });
+    // Create a temporary textarea element
+    const tempTextarea = document.createElement('textarea');
+    tempTextarea.value = combinedText;
+    document.body.appendChild(tempTextarea);
 
-    function copyToClipboard(text) {
-        const tempInput = document.createElement('textarea');
-        tempInput.style.position = 'fixed';
-        tempInput.style.opacity = '0';
-        tempInput.value = text;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        
-        try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-                alert('Combined text copied to clipboard!');
-            } else {
-                alert('Failed to copy text.');
-            }
-        } catch (err) {
-            console.error('Error copying text: ', err);
-            alert('Error copying text. Please try manually.');
-        } finally {
-            document.body.removeChild(tempInput);
-        }
+    // Select the text
+    tempTextarea.select();
+    tempTextarea.setSelectionRange(0, 99999); // For mobile devices
+
+    // Copy the text
+    const successful = document.execCommand('copy');
+
+    // Remove the temporary textarea
+    document.body.removeChild(tempTextarea);
+
+    // Flashing effect for textareas
+    const scriptTextarea = document.getElementById('scriptTextarea');
+    const functionTextarea = document.getElementById('functionTextarea');
+
+    if (successful) {
+        console.log('Copied to clipboard!');
+        scriptTextarea.classList.add('flash-border');
+        functionTextarea.classList.add('flash-border');
+    } else {
+        console.error('Failed to copy text.');
     }
 
-    function flashFeedback() {
-        const button = document.getElementById('action_btn');
-        button.classList.add('flash-border');
+    setTimeout(() => {
+        scriptTextarea.classList.remove('flash-border');
+        functionTextarea.classList.remove('flash-border');
+    }, 500);
+});
+document.getElementById('script_copy_btn').addEventListener('click', async function() {
+    const scriptValue = document.getElementById('scriptTextarea').value;
+    const functionValue = document.getElementById('functionTextarea').value;
+    const combinedText = `${scriptValue}\n${functionValue}`;
+
+    try {
+        await navigator.clipboard.writeText(combinedText);
+        console.log('Copied to clipboard!');
+
+        // Flashing effect for textareas
+        const scriptTextarea = document.getElementById('scriptTextarea');
+        const functionTextarea = document.getElementById('functionTextarea');
+
+        scriptTextarea.classList.add('flash-border');
+        functionTextarea.classList.add('flash-border');
 
         setTimeout(() => {
-            button.classList.remove('flash-border');
-        }, 500); // Flash for 500 milliseconds
+            scriptTextarea.classList.remove('flash-border');
+            functionTextarea.classList.remove('flash-border');
+        }, 500);
+    } catch (err) {
+        console.error('Error copying text: ', err);
     }
+});
+
 
 // get paper librarts with this api
 function getPapersLibrarys(test_type){
