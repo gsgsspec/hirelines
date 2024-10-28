@@ -428,13 +428,17 @@ function openUpdateTestModel(currentSelectedtestId){
 }
 
 document.getElementById('script_copy_btn').addEventListener('click', function() {
-    navigator.clipboard.writeText("Simple test text")
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText("Simple test text")
             .then(() => {
                 console.log('Test text copied to clipboard!');
             })
             .catch(err => {
                 console.error('Test copy failed: ', err);
             });
+    } else {
+        console.warn('Clipboard API not available for test.');
+    }
     // const scriptValue = document.getElementById('scriptTextarea').value;
     // const functionValue = document.getElementById('functionTextarea').value;
     // const combinedText = `${scriptValue}\n${functionValue}`;
