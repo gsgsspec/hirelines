@@ -468,8 +468,8 @@ def workFlowDataService(data,cmpyId):
         papersDetails = Workflow.objects.filter(jobid = data).values()
         for test in papersDetails:
             brulesDetails = Brules.objects.filter(workflowid = test['id'], jobdescid = test['jobid'], companyid = test['companyid']).last()
-            test['promot'] = brulesDetails.passscore
-        print('::',list(papersDetails))
+            if brulesDetails:
+                test['promot'] = brulesDetails.passscore
         return list(papersDetails)
     except Exception as e:
         raise
