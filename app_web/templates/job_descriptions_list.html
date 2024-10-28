@@ -18,32 +18,15 @@
         </a>
       </div>
 
-        <!-- <div class="col-md-6 col-lg-4 c-card">
-          <div class="card mb-3 shadow jd_card_border">
-            <a href="/add-job-description">
-              <div class="card-body int-card-bd ">
-                <div>
-                  <h5 class="card-title p-clr mb-1 text_size_custm"></h5>
-                  <div class="" style="color: gray;"></div>
-                  <div class="row justify-content-between">
-                    <div style="color: gray; width: 50%;">Exp : {{jd.expmin}} - {{jd.expmax}} Yrs</div>
-                      <button style="width: 30%;" onclick="redirectToJobDetails()" type="button" class="btn btn-sm btn-primary">Details</button>
-                  </div>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div> -->
-      
       {% for jd in allJds %}
         <div class="col-md-6 col-lg-4 c-card">
-            <div class="card mb-3 shadow jd_card_border">
+            <div class="card mb-3 shadow jd_card_border jd_card_cust">
               <div onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer;">
                 <div class="card-body int-card-bd ">
                   <div>
                     <h5 class="card-title p-clr mb-1">{{jd.title}}</h5>
-                    <div style="color: gray;">Description : {{jd.description}}</div>
-                    <div class="row justify-content-between">
+                    <div class="jd_card_descrip_cust">Description : {{jd.description}}</div>
+                    <div class="row justify-content-between js_exp_details_conta">
                       <div style="color: gray; width: 50%;">Exp : {{jd.expmin}} - {{jd.expmax}} Yrs</div>
                       <button style="width: 30%;" onclick="event.stopPropagation();redirectToJobDetails('{{ jd.id }}')" type="button" class="btn btn-sm btn-primary">Details</button>
                     </div>
@@ -87,6 +70,17 @@
   /* .text_size_custm{
     font-size: clamp(lrem, 0.3043rem + 3.4783vw, 3rem);
   } */
+   .jd_card_cust{
+    height: 165px;
+   }
+   .jd_card_descrip_cust{
+    color: gray;
+    height: 4.6rem;
+    overflow: hidden;
+   }
+   .js_exp_details_conta{
+    width: 100%;
+   }
 </style>
 <script>
   function redirectToJobDetails(redirectId) {
