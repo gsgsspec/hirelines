@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 from django.db.models import Q
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
-from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
+from app_api.models import Brules, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template
 
 

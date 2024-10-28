@@ -183,6 +183,7 @@ class Workflow(models.Model):
     class Meta:
         db_table = 'workflow'
 
+
 class Brules(models.Model):
     id = models.AutoField(primary_key=True)
     workflowid = models.IntegerField(null=True, blank=True)
