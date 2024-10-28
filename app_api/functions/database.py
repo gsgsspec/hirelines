@@ -345,6 +345,7 @@ def interviewResponseDB(dataObjs):
 
 def addInterviewFeedbackDB(user,dataObjs):
     try:
+        
         try:
             feedback = IvFeedback.objects.filter(candidateid=dataObjs["candidateid"],interviewerid=user.id).last()
             feedback.gonogo = dataObjs['gonogo']
