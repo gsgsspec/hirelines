@@ -21,5 +21,9 @@ urlpatterns = [
     path('get-interview-status',views.getInterviewStatusView),
     path('interview-file',views.interviewFile),
     path('interview-completion',views.interviewCompletion),
-    path('interview-feedback',views.interviewFeedback)
+    path('interview-feedback',views.interviewFeedback),
+
+
+
+    path('update-emailtemp',views.updateEmailtemp),
 ]

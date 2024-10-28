@@ -5,7 +5,8 @@ from urllib.parse import urljoin
 from django.db.models import Q
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
-from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, Brules ,IvFeedback
+from app_api.models import ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
+    IvFeedback, Email_template
 
 
 def addCompanyDataDB(dataObjs):
@@ -345,6 +346,7 @@ def interviewResponseDB(dataObjs):
 
 def addInterviewFeedbackDB(user,dataObjs):
     try:
+        
         try:
             feedback = IvFeedback.objects.filter(candidateid=dataObjs["candidateid"],interviewerid=user.id).last()
             feedback.gonogo = dataObjs['gonogo']
@@ -365,3 +367,33 @@ def addInterviewFeedbackDB(user,dataObjs):
 
     except Exception as e:
         raise
+
+
+def updateEmailtempDB(user,dataObjs):
+    try:
+        paper_type = 'S' if dataObjs['paper_type'] == "Screening" else 'E' if dataObjs['paper_type'] == "Coding" else "I" if dataObjs['paper_type'] == "Interview" else ''
+        email_temp = Email_template.objects.filter(company_id=dataObjs['id'],event=dataObjs['event'],paper_type=paper_type).last()
+        if email_temp:
+            email_temp.email_subject = dataObjs['email_subject']
+            email_temp.email_body = dataObjs['email_body']
+            email_temp.template_name = dataObjs['template_name']
+            email_temp.template_heading = dataObjs['id']
+            email_temp.sender_label = dataObjs['sender_label']
+            email_temp.template_heading = dataObjs['template_heading']
+
+        else:
+            Email_template(
+                company_id = dataObjs['id'],
+                email_subject = dataObjs['email_subject'],
+                email_body = dataObjs['email_body'],
+                template_name = dataObjs['template_name'],
+                template_heading = dataObjs['template_heading'],
+                sender_label = dataObjs['sender_label'],
+                event = dataObjs['event'],
+                paper_type = paper_type
+            ).save()
+
+    except Exception as e:
+        raise
+
+

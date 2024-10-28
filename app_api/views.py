@@ -12,7 +12,7 @@ from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService
 from .models import Candidate, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -511,6 +511,27 @@ def interviewFeedback(request):
 
     except Exception as e:
         response['data'] = 'Error in feedback view'
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateEmailtemp(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            updateEmailtempDB(user, dataObjs)
+            response['data'] = "Email Template updated successfully"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updateEmailtemp'
         response['error'] = str(e)
     return JsonResponse(response)
 
