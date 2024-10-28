@@ -457,11 +457,36 @@ def getCompanyJDsList(companyId):
 
 def jdDetails(jdId):
     try:
-        
+        # Get the last JobDesc object for the provided jdId
         jdData = JobDesc.objects.filter(id=jdId).last()
-        return jdData
+        if jdData:
+            # Manually create the dictionary with conditions for None values
+            jdDataDict = {
+                'id': jdData.id,
+                'jdlibraryid': 0 if jdData.jdlibraryid is None else jdData.jdlibraryid,
+                'title': '' if jdData.title is None else jdData.title,
+                'role': '' if jdData.role is None else jdData.role,
+                'description': '' if jdData.description is None else jdData.description,
+                'expmin': '' if jdData.expmin is None else jdData.expmin,
+                'expmax': '' if jdData.expmax is None else jdData.expmax,
+                'department': '' if jdData.department is None else jdData.department,
+                'location': '' if jdData.location is None else jdData.location,
+                'budget': '' if jdData.budget is None else jdData.budget,
+                'skillset': '' if jdData.skillset is None else jdData.skillset,
+                'skillnotes': '' if jdData.skillnotes is None else jdData.skillnotes,
+                'interviewers': '' if jdData.interviewers is None else jdData.interviewers,
+                'expjoindate': '' if jdData.expjoindate is None else jdData.expjoindate,
+                'positions': '' if jdData.positions is None else jdData.positions,
+                'createdby': '' if jdData.createdby is None else jdData.createdby,
+                'status': '' if jdData.status is None else jdData.status,
+                'companyid': '' if jdData.companyid is None else jdData.companyid,
+            }
+            return jdDataDict
+        return None  # Return None if no data is found
     except Exception as e:
         raise
+
+
 
 
 def workFlowDataService(data,cmpyId):
