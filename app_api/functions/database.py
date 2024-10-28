@@ -52,6 +52,7 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
         candidate.save()
 
         acert_domain = getConfig()['DOMAIN']['acert']
+        # Adding candidate at acert via api
         endpoint = '/api/hirelines-add-candidate'
 
         url = urljoin(acert_domain, endpoint)
@@ -70,7 +71,7 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
         response_content = send_candidate_data.content
 
         if response_content:
-            print("response_content",response_content)
+            
             json_data = json.loads(response_content.decode('utf-8'))
 
             acert_data = json_data['data']
@@ -101,6 +102,8 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                 'candidateid':candidate.id,
                 'papertype':c_registration.papertype
             }
+            
+            # Removed, because the company 
             # 
             # replacements = {
             #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",

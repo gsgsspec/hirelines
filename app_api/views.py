@@ -321,9 +321,10 @@ def scheduleInterviewView(request):
 
 
 
-def candidateRegistrationForm(request,enc_jdid):
+def candidateRegistrationCDNForm(request,enc_jdid):
     
     try:
+        # Restrict other company domains, commented due to testing.
         
         # request_domain = request.META.get('HTTP_HOST', '')
         # print("request_domain",request_domain)
@@ -334,7 +335,7 @@ def candidateRegistrationForm(request,enc_jdid):
         # deccode =  decrypt_code(enc_jdid)
         # print("deccode",deccode)
         
-
+        # hirelines_registration_script Reads registration cdn script from constants
         return HttpResponse(hirelines_registration_script, content_type='application/javascript')
     except:
         return HttpResponse('console.error("Script not found");', content_type='application/javascript')
@@ -402,8 +403,9 @@ def registerCandidate(request):
     try:
         if request.method == "POST":
             dataObjs = json.loads(request.body)
-
+            #decrypt encjdid
             jd_id = decrypt_code(dataObjs["encjdid"])
+            #Filter the first workflow obj to attend first paper $ order functionality not added $
             workflow_data = Workflow.objects.filter(jobid=jd_id).first()
             if workflow_data:
                 company_id = workflow_data.companyid

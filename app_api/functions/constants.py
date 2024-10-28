@@ -15,7 +15,7 @@ hirelines_domain = getConfig()['DOMAIN']['hirelines']
 
 hirelines_integration_script = """<!-- hirelines registration script -->
 <!-- Script tag to be added under `<head></head>` tag -->
-<script src="#hirelines_domain#/api/candidate-registration/#enc_jdid#/"></script>
+<script src="#hirelines_domain#/api/candidate-registration-cdn/#enc_jdid#/"></script>
 """.replace("#hirelines_domain#", hirelines_domain)
 
 hirelines_integration_function = f"""/* function to be added while posting candidate job application (under related .js or script tags) */
