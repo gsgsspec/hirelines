@@ -432,16 +432,19 @@ document.getElementById('script_copy_btn').addEventListener('click', function() 
     const functionValue = document.getElementById('functionTextarea').value;
     const combinedText = `${scriptValue}\n${functionValue}`;
 
-    if (navigator.clipboard) { // Check if the Clipboard API is available
-        navigator.clipboard.writeText(combinedText).then(() => {
-            flashTextareas();
-            console.log('Copied to clipboard using Clipboard API!');
-        }).catch(err => {
-            console.error('Error copying text with Clipboard API: ', err);
-            fallbackCopy(combinedText);
-        });
+    // Use Clipboard API
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(combinedText)
+            .then(() => {
+                flashTextareas();
+                console.log('Copied to clipboard using Clipboard API!');
+            })
+            .catch(err => {
+                console.error('Error with Clipboard API: ', err);
+                fallbackCopy(combinedText);
+            });
     } else {
-        fallbackCopy(combinedText); // Fallback if Clipboard API is not available
+        fallbackCopy(combinedText); // Fallback if Clipboard API is unavailable
     }
 });
 
@@ -459,7 +462,7 @@ function fallbackCopy(text) {
             console.error('Fallback: Unable to copy text.');
         }
     } catch (err) {
-        console.error('Fallback: Unable to copy text: ', err);
+        console.error('Fallback: Error copying text: ', err);
     } finally {
         document.body.removeChild(tempInput);
     }
@@ -477,7 +480,6 @@ function flashTextareas() {
         functionTextarea.classList.remove('flash-border');
     }, 500);
 }
-
 
 // get paper librarts with this api
 function getPapersLibrarys(test_type){
