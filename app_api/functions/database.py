@@ -186,10 +186,6 @@ def saveJdNewTest(dataObjs,compyId):
 
         if dataObjs['createOrUpdate'] == 'create':
             
-            print('--------')
-            print('SAve')
-            print(dataObjs)
-
             testType = None
             if 'testType' in dataObjs:
                 if dataObjs['testType'] == 'Screening':
@@ -209,7 +205,9 @@ def saveJdNewTest(dataObjs,compyId):
             savedWorkFlowDetails.save()
             
             wrkflId = savedWorkFlowDetails.id
-            workFlowDetails = Workflow.objects.filter(id = wrkflId).values()
+            # workFlowDetails = Workflow.objects.filter(id = wrkflId).last()
+            # workFlowDetails.values()
+            workFlowDetails = Workflow.objects.filter(id=wrkflId).values().last()
 
             save_bruls = Brules(
                     companyid = compyId,
@@ -220,7 +218,7 @@ def saveJdNewTest(dataObjs,compyId):
             save_bruls.save()
             workFlowDetails['promot'] = save_bruls.passscore
 
-            return list(workFlowDetails)
+            return [workFlowDetails]
 
         if dataObjs['createOrUpdate'] == 'update':
 
