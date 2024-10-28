@@ -222,10 +222,6 @@ def saveJdNewTest(dataObjs,compyId):
 
         if dataObjs['createOrUpdate'] == 'update':
 
-            print('--------')
-            print('Update')
-            print(dataObjs)
-
             if 'testId' in dataObjs:
                 currentTestId = dataObjs['testId']
 
@@ -238,9 +234,6 @@ def saveJdNewTest(dataObjs,compyId):
                 brulesDetails.passscore = dataObjs['promotPercentage']
                 brulesDetails.save()
 
-                print('======================')
-                print('UUPDATED')
-                
                 updatedData = {   
                    'updateEvent': 'Y',
                     'companyid' : compyId,

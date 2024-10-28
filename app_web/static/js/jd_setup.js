@@ -161,7 +161,8 @@ function showLibrary(element,libraryId){
 }
 
 
-function createNewTest(testType){
+function createNewTestModalOpen(testType){
+
     testCreateOrUpdate = 'create'
     // Hidding validators
     document.getElementById('test_name_validator').hidden = true 
@@ -266,7 +267,7 @@ function saveOrUpdateTest(){
                         
                         var key_ = data[0]['id']
                         testsList[[key_]] =  data[0]
-
+                        
                         testType = testType
                         addTestCardToShow(testName,promotValue,testType,data[0])
 
@@ -353,12 +354,10 @@ function addTestCardToShow(testName, promotValue,testType,data) {
 
 function selectTest(element_id){
 
-    // if (element_id != perviousSelectedTest){
+    if (element_id != perviousSelectedTest){
 
-        
-        console.log('element_id :: ',element_id);
-        
         var test_type = element_id.split('_')[0]
+
         getPapersLibrarys(test_type);
 
         var borderClr
@@ -385,13 +384,11 @@ function selectTest(element_id){
             testBox.style.boxShadow = '0 2px 6px 0 rgba(67, 89, 113, 0.12)';
         }
         
-    // }
+    }
     
     perviousSelectedTest = element_id
 
     document.getElementById('librarysMainContainer').hidden = false
-
-    
 
 }
 
@@ -400,30 +397,33 @@ function updateTest(event,currentSelectedtestId){
     testCreateOrUpdate = 'update'
     cureentTestId = currentSelectedtestId
     event.stopPropagation();
-    openUpdateTest(currentSelectedtestId)
+    openUpdateTestModel(currentSelectedtestId)
     
 }
 
 
-function openUpdateTest(currentSelectedtestId){
+function openUpdateTestModel(currentSelectedtestId){
 
-    var testType = testsList[currentSelectedtestId]['papertype']
-    var testName
-    if (testType == 'screening' || testType == 'S'){ 
-        testName = 'Screening'
-    }
-    else if(testType == 'coding' || testType == 'E'){
-        testName = 'Coding'
-    }
-    else if(testType == 'interview' || testType == 'I'){
-        testName = 'Interview'
-    }
+    if(currentSelectedtestId){
+        var testType = testsList[currentSelectedtestId]['papertype']
+        var testName
+        if (testType == 'screening' || testType == 'S'){ 
+            testName = 'Screening'
+        }
+        else if(testType == 'coding' || testType == 'E'){
+            testName = 'Coding'
+        }
+        else if(testType == 'interview' || testType == 'I'){
+            testName = 'Interview'
+        }
 
-    document.getElementById('modalCenterTitle').innerText = testName
-    document.getElementById('testType').value = testsList[currentSelectedtestId]['papertitle'] // test title or test name
-    document.getElementById('promot_level').value = testsList[currentSelectedtestId]['promot']
-    document.getElementById('testType').dataset['test_type'] = testsList[currentSelectedtestId]['papertype']
-    $('#modalCenter').modal('show')
+        document.getElementById('modalCenterTitle').innerText = testName
+        document.getElementById('testType').value = testsList[currentSelectedtestId]['papertitle'] // test title or test name
+        document.getElementById('promot_level').value = testsList[currentSelectedtestId]['promot']
+        document.getElementById('testType').dataset['test_type'] = testsList[currentSelectedtestId]['papertype']
+        $('#modalCenter').modal('show')
+    }
+    
     
 }
 
