@@ -428,27 +428,34 @@ function openUpdateTestModel(currentSelectedtestId){
 }
 
 document.getElementById('script_copy_btn').addEventListener('click', function() {
-    const scriptValue = document.getElementById('scriptTextarea').value;
-    const functionValue = document.getElementById('functionTextarea').value;
-    const combinedText = `${scriptValue}\n${functionValue}`;
-    
-    // Log combined text for debugging
-    console.log("Combined Text:", combinedText);
-
-    // Use Clipboard API
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(combinedText)
+    navigator.clipboard.writeText("Simple test text")
             .then(() => {
-                flashTextareas();
-                console.log('Copied to clipboard using Clipboard API!');
+                console.log('Test text copied to clipboard!');
             })
             .catch(err => {
-                console.error('Error with Clipboard API: ', err);
-                fallbackCopy(combinedText);
+                console.error('Test copy failed: ', err);
             });
-    } else {
-        fallbackCopy(combinedText); // Fallback if Clipboard API is unavailable
-    }
+    // const scriptValue = document.getElementById('scriptTextarea').value;
+    // const functionValue = document.getElementById('functionTextarea').value;
+    // const combinedText = `${scriptValue}\n${functionValue}`;
+    
+    // // Log combined text for debugging
+    // console.log("Combined Text:", combinedText);
+
+    // // Use Clipboard API
+    // if (navigator.clipboard) {
+    //     navigator.clipboard.writeText(combinedText)
+    //         .then(() => {
+    //             flashTextareas();
+    //             console.log('Copied to clipboard using Clipboard API!');
+    //         })
+    //         .catch(err => {
+    //             console.error('Error with Clipboard API: ', err);
+    //             fallbackCopy(combinedText);
+    //         });
+    // } else {
+    //     fallbackCopy(combinedText); // Fallback if Clipboard API is unavailable
+    // }
 });
 
 function fallbackCopy(text) {
