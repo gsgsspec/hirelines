@@ -479,9 +479,6 @@ function flashTextareas() {
 }
 
 
-
-
-
 // get paper librarts with this api
 function getPapersLibrarys(test_type){
 
