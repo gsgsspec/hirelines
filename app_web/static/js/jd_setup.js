@@ -430,64 +430,47 @@ function openUpdateTestModel(currentSelectedtestId){
 
 document.getElementById('script_copy_btn').addEventListener('click', function() {
     const scriptValue = document.getElementById('scriptTextarea').value;
-    const functionValue = document.getElementById('functionTextarea').value;
-    const combinedText = `${scriptValue}\n${functionValue}`;
-    
-    console.log("Combined Text:", combinedText); // Log combined text for debugging
+        const functionValue = document.getElementById('functionTextarea').value;
+        const combinedText = `${scriptValue}\n${functionValue}`;
+        
+        // Flash feedback after combining text
+        flashFeedback();
 
-    // Try using Clipboard API first
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(combinedText)
-            .then(() => {
-                flashTextareas();
-                console.log('Copied to clipboard using Clipboard API!');
-            })
-            .catch(err => {
-                console.error('Error with Clipboard API: ', err);
-                fallbackCopy(combinedText); // Fallback copy method
-            });
-    } else {
-        console.warn('Clipboard API not available, using fallback.');
-        fallbackCopy(combinedText); // Use fallback if API is unavailable
-    }
-});
+        // Copy to clipboard
+        copyToClipboard(combinedText);
+    });
 
-function fallbackCopy(text) {
-    const tempInput = document.createElement('textarea');
-    tempInput.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge
-    tempInput.style.opacity = '0'; // Make the element invisible
-    tempInput.value = text;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            flashTextareas();
-            console.log('Copied to clipboard using fallback!');
-        } else {
-            console.error('Fallback: Unable to copy text.');
+    function copyToClipboard(text) {
+        const tempInput = document.createElement('textarea');
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                alert('Combined text copied to clipboard!');
+            } else {
+                alert('Failed to copy text.');
+            }
+        } catch (err) {
+            console.error('Error copying text: ', err);
+            alert('Error copying text. Please try manually.');
+        } finally {
+            document.body.removeChild(tempInput);
         }
-    } catch (err) {
-        console.error('Fallback: Error copying text: ', err);
-    } finally {
-        document.body.removeChild(tempInput);
     }
-}
 
-function flashTextareas() {
-    const scriptTextarea = document.getElementById('scriptTextarea');
-    const functionTextarea = document.getElementById('functionTextarea');
+    function flashFeedback() {
+        const button = document.getElementById('action_btn');
+        button.classList.add('flash-border');
 
-    scriptTextarea.classList.add('flash-border');
-    functionTextarea.classList.add('flash-border');
-
-    setTimeout(() => {
-        scriptTextarea.classList.remove('flash-border');
-        functionTextarea.classList.remove('flash-border');
-    }, 500);
-}
-
+        setTimeout(() => {
+            button.classList.remove('flash-border');
+        }, 500); // Flash for 500 milliseconds
+    }
 
 // get paper librarts with this api
 function getPapersLibrarys(test_type){
