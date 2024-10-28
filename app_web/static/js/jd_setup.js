@@ -453,6 +453,9 @@ document.getElementById('script_copy_btn').addEventListener('click', function() 
 
 function fallbackCopy(text) {
     const tempInput = document.createElement('textarea');
+    // Ensure the text fits within the viewport
+    tempInput.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge.
+    tempInput.style.opacity = '0'; // Make the element invisible
     tempInput.value = text;
     document.body.appendChild(tempInput);
     tempInput.select();
@@ -483,7 +486,6 @@ function flashTextareas() {
         functionTextarea.classList.remove('flash-border');
     }, 500);
 }
-
 // get paper librarts with this api
 function getPapersLibrarys(test_type){
 
