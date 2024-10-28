@@ -427,13 +427,12 @@ function openUpdateTest(currentSelectedtestId){
     
 }
 
-
 document.getElementById('script_copy_btn').addEventListener('click', function() {
     const scriptValue = document.getElementById('scriptTextarea').value;
     const functionValue = document.getElementById('functionTextarea').value;
     const combinedText = `${scriptValue}\n${functionValue}`;
 
-    if (navigator.clipboard) { // Use Clipboard API if available
+    if (navigator.clipboard) { // Check if the Clipboard API is available
         navigator.clipboard.writeText(combinedText).then(() => {
             flashTextareas();
             console.log('Copied to clipboard using Clipboard API!');
