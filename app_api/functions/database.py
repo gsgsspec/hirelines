@@ -218,9 +218,7 @@ def saveJdNewTest(dataObjs,compyId):
                     passscore = dataObjs['promotPercentage']
                     )
             save_bruls.save()
-
-            print('======================')
-            print('SAAVVED')
+            workFlowDetails['promot'] = save_bruls.passscore
 
             return list(workFlowDetails)
 
