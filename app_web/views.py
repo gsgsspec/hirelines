@@ -62,8 +62,8 @@ def dashboardPage(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
 
     try:
 
@@ -126,8 +126,8 @@ def candidatesPage(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
     
     try:
 
@@ -160,8 +160,8 @@ def reportsPage(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
 
     try:
 
@@ -190,8 +190,8 @@ def jobDescription(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
 
     try:
         user_mail = request.user
@@ -219,8 +219,8 @@ def Addjobdescription(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
     try:
         user_mail = request.user
         user_data = auth_user(user_mail)
@@ -240,8 +240,8 @@ def update_jobdescription(request,update_jd_id):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
     try:
         user_mail = request.user
         user_data = auth_user(user_mail)
@@ -261,8 +261,8 @@ def update_jobdescription(request,update_jd_id):
 
 # this function render's inside html pages
 def jobDescriptionSetUp(request,jd_id): 
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
     try:
         user_mail = request.user
         user_data = auth_user(user_mail)
@@ -301,8 +301,8 @@ def brandingPage(request):
 
 
 def addCandidatePage(request):
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
     try:
 
         user_mail = request.user
@@ -352,8 +352,8 @@ def updateEmailTempPage(request, eid):
 
 
 def jdDataPage(request, jid):
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
     try:
 
         jd_data = getJobDescData(jid)
@@ -380,8 +380,8 @@ def interviewCandidatesList(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
     try:
 
         user_mail = request.user
@@ -412,8 +412,8 @@ def candidateInterview(request,sch_id):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
     try:
 
         interview_data = getCandidateInterviewData(sch_id)
@@ -462,8 +462,8 @@ def evaluationPage(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    if checkCompanyTrailPeriod(request.user):
-        return redirect('/trial-expired')
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
 
     try:
 
