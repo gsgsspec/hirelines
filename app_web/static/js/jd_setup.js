@@ -433,30 +433,38 @@ document.getElementById('script_copy_btn').addEventListener('click', function() 
     const functionValue = document.getElementById('functionTextarea').value;
     const combinedText = `${scriptValue}\n${functionValue}`;
 
-    if (navigator.clipboard) { // Check if Clipboard API is available
+    if (navigator.clipboard) { // Use Clipboard API if available
         navigator.clipboard.writeText(combinedText).then(() => {
             flashTextareas();
-            console.log('Copied to clipboard!');
+            console.log('Copied to clipboard using Clipboard API!');
         }).catch(err => {
-            console.error('Error copying text: ', err);
+            console.error('Error copying text with Clipboard API: ', err);
+            fallbackCopy(combinedText);
         });
     } else {
-        // Fallback for browsers that do not support the Clipboard API
-        const tempInput = document.createElement('textarea');
-        tempInput.value = combinedText;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        try {
-            document.execCommand('copy');
-            flashTextareas();
-            console.log('Copied to clipboard using fallback!');
-        } catch (err) {
-            console.error('Fallback: Unable to copy text: ', err);
-        } finally {
-            document.body.removeChild(tempInput);
-        }
+        fallbackCopy(combinedText); // Fallback if Clipboard API is not available
     }
 });
+
+function fallbackCopy(text) {
+    const tempInput = document.createElement('textarea');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            flashTextareas();
+            console.log('Copied to clipboard using fallback!');
+        } else {
+            console.error('Fallback: Unable to copy text.');
+        }
+    } catch (err) {
+        console.error('Fallback: Unable to copy text: ', err);
+    } finally {
+        document.body.removeChild(tempInput);
+    }
+}
 
 function flashTextareas() {
     const scriptTextarea = document.getElementById('scriptTextarea');
@@ -470,6 +478,7 @@ function flashTextareas() {
         functionTextarea.classList.remove('flash-border');
     }, 500);
 }
+
 
 
 
