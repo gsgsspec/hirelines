@@ -431,29 +431,46 @@ function openUpdateTest(currentSelectedtestId){
 document.getElementById('script_copy_btn').addEventListener('click', function() {
     const scriptValue = document.getElementById('scriptTextarea').value;
     const functionValue = document.getElementById('functionTextarea').value;
-    const combinedText = `${scriptValue}\n${functionValue}`; // Corrected line
+    const combinedText = `${scriptValue}\n${functionValue}`;
 
-    if (navigator.clipboard) { // Check if clipboard API is available
+    if (navigator.clipboard) { // Check if Clipboard API is available
         navigator.clipboard.writeText(combinedText).then(() => {
-            const scriptTextarea = document.getElementById('scriptTextarea');
-            const functionTextarea = document.getElementById('functionTextarea');
-
-            scriptTextarea.classList.add('flash-border');
-            functionTextarea.classList.add('flash-border');
-
-            setTimeout(() => {
-                scriptTextarea.classList.remove('flash-border');
-                functionTextarea.classList.remove('flash-border');
-            }, 500);
-
+            flashTextareas();
             console.log('Copied to clipboard!');
         }).catch(err => {
             console.error('Error copying text: ', err);
         });
     } else {
-        console.error('Clipboard API not available');
+        // Fallback for browsers that do not support the Clipboard API
+        const tempInput = document.createElement('textarea');
+        tempInput.value = combinedText;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('copy');
+            flashTextareas();
+            console.log('Copied to clipboard using fallback!');
+        } catch (err) {
+            console.error('Fallback: Unable to copy text: ', err);
+        } finally {
+            document.body.removeChild(tempInput);
+        }
     }
 });
+
+function flashTextareas() {
+    const scriptTextarea = document.getElementById('scriptTextarea');
+    const functionTextarea = document.getElementById('functionTextarea');
+
+    scriptTextarea.classList.add('flash-border');
+    functionTextarea.classList.add('flash-border');
+
+    setTimeout(() => {
+        scriptTextarea.classList.remove('flash-border');
+        functionTextarea.classList.remove('flash-border');
+    }, 500);
+}
+
 
 
 
