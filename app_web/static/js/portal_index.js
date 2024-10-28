@@ -9,6 +9,7 @@ var menuItemsUrls = {
     'reports': ['/reports','/jd'],
     'job-descriptions' : ['/job-descriptions','/add-job-description','/job-description-set-up'],
     'interviews': ['/interviews'],
+    'evaluation': ['/evaluation'],
     'feedback': ['/feedbacks','/interviewer-feedback'],
     'logout': ['/']
 };

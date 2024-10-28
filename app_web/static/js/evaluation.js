@@ -9,7 +9,7 @@ $(document).ready(function () {
     
 })
 function get_papers_data() {
-    $.get("http://localhost:8001" + "/api/evaluation-papers", function (res) {
+    $.get("http://localhost:8001" + "/api/evaluation-papers/?cid="+user_company, function (res) {
         console.log("res",res);
         
         if (res.statusCode == 0){
@@ -52,7 +52,7 @@ function filter_data(pid, ptid) {
         'data': JSON.stringify(dataObj),
         csrfmiddlewaretoken: CSRF_TOKEN,
     }
-    $.post("http://localhost:8001" + "/api/evaluation-papers", final_data, function (res) {
+    $.post("http://localhost:8001" + "/api/evaluation-papers/", final_data, function (res) {
         console.log("res",res);
         
         if (res.statusCode == 0) {  
@@ -104,7 +104,13 @@ function filter_data(pid, ptid) {
             $("p[name='papers']").removeClass("selection-item")
             $("#paper_" + DATA["selected_papers"]).addClass("selection-item")
             $("p[name='participants']").removeClass("selection-item")
+            $("p[name='participants']").each(function() {
+                $(this).find('td').removeClass('selection-item');
+            });
             $("#participant_" + DATA["selected_participants"]).addClass("selection-item")
+            $("#participant_" + DATA["selected_participants"]).each(function() {
+                $(this).find('td').addClass('selection-item');
+            });
 
             participant_id = null;
 

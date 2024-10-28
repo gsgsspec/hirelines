@@ -408,7 +408,7 @@ def evaluationPage(request):
         user_data = auth_user(user_mail)
 
         user_role = user_data.role
-
+        user_company = user_data.companyid
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
         
@@ -418,7 +418,7 @@ def evaluationPage(request):
                         child['menuItemLink'] == currentPath]
 
         if menuItemObjList:
-            return render(request, "portal_index.html", {"template_name": "evaluation.html", 'menuItemList': menuItemList,"hide_reg_number":hide_reg_number })
+            return render(request, "portal_index.html", {"template_name": "evaluation.html", 'menuItemList': menuItemList,"user_company":user_company,"hide_reg_number":hide_reg_number })
     
         else:
             return redirect('../')

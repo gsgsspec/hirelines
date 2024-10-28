@@ -47,27 +47,85 @@
                         <button class="btn btn-cancel btn_width ml-4 float-right"  onclick="nextquestion()" type="button"style="width:120px">Next Question</button>
                 </div>
             </div> -->
-          
+
             <div class="card-body">
                 <table class="table table-hover w-100" id="questions_table">
                     <tbody id="questions" style="cursor: pointer;">
-                        <div  id="questions">
+                        <div id="questions">
                         </div>
-                       </tbody>
-                      
-                   
+                    </tbody>
+
+
                 </table>
             </div>
         </div>
         <p id="p_flag" name="{{hide_reg_number}}" hidden></p>
     </div>
     <!-- / Content -->
- 
-</div>
 
+</div>
+<script>
+    var user_company = "{{user_company}}"
+</script>
 <style>
-    .selection-item{
+    .selection-item {
         color: #f25c05 !important;
+    }
+
+
+    .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 14px;
+        transition: 0.4s;
+        position: relative;
+    }
+
+    .active,
+    .accordion:hover {
+        background-color: #ccc;
+    }
+
+    .panel {
+        padding: 0 18px;
+        display: none;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .ans-color-line {
+        width: 6px;
+        height: 71%;
+        background-color: #48d0ca;
+        position: absolute;
+        top: 6px;
+        left: 0;
+    }
+
+    .col-form-label {
+        text-align: left;
+        padding-left: 1rem;
+        padding-top: calc(0.375rem + 1px);
+        padding-bottom: calc(0.375rem + 1px);
+        margin-bottom: 0;
+        font-size: inherit;
+        line-height: 1.52857;
+    }
+
+    .marks-label {
+        width: 6em;
+        padding-top: 0.5em;
+    }
+
+    .marks-display {
+        width: 5em;
+        padding-right: 1em;
     }
 </style>
 
