@@ -394,6 +394,7 @@ function selectTest(element_id){
 
 
 function updateTest(event,currentSelectedtestId){
+
     testCreateOrUpdate = 'update'
     cureentTestId = currentSelectedtestId
     event.stopPropagation();
