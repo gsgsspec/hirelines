@@ -1,9 +1,11 @@
 document.getElementById("save-data").onclick = function () {
 
-
     $('#candidate-data').unbind('submit').bind('submit', function (event) {
         event.preventDefault(); 
     })
+
+    $("#save-data").prop("disabled", true);
+
 
     dataObjs = {
         'firstname': $('#firstname').val(),
@@ -25,19 +27,28 @@ document.getElementById("save-data").onclick = function () {
             if(candidateData['papertype'] == 'I'){
                 window.location.href = '/interview-schedule/'+ candidateData['candidateid']
             } else {
-                showSuccessMessage('Candidate added successfully');
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'andidate added successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
                 setTimeout(function () { window.location.href = '/candidates' }, 2000);
             }
         }
         else{
-            showFailureMessage('Error in saving the candidate details. Please try again after some time')
+            $("#save-data").prop("disabled", false);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Error in saving the candidate details',
+                text: 'Please try again after some time',
+                showConfirmButton: false,
+                timer: 1500
+            })
         }
     })
-
-    // window.location.href='/interview-schedule'
-    
-    
-
 }
 
 

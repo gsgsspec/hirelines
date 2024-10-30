@@ -1157,51 +1157,52 @@ def generateCandidateReport(cid):
             updated_report = updated_report.replace("{coding_section}", coding_data)
             updated_report = updated_report.replace("{interview_section}", interview_data)
 
-            call_schedule = CallSchedule.objects.get(candidateid=candidate.id)
-            jd = JobDesc.objects.get(id=candidate.jobid)
+            call_schedule = CallSchedule.objects.filter(candidateid=candidate.id).last()
+            if call_schedule:
+                jd = JobDesc.objects.get(id=candidate.jobid)
 
-            interviewer = call_schedule.interviewerid
+                interviewer = call_schedule.interviewerid
 
-            if interviewer:
-                interviewer_name = User.objects.get(id=interviewer).name
-            else:
-                interviewer_name = ''
+                if interviewer:
+                    interviewer_name = User.objects.get(id=interviewer).name
+                else:
+                    interviewer_name = ''
 
-            updated_report = updated_report.replace("#interviewer_name#", interviewer_name)
-            updated_report = updated_report.replace("{#jd_title#}", jd.title)
+                updated_report = updated_report.replace("#interviewer_name#", interviewer_name)
+                updated_report = updated_report.replace("{#jd_title#}", jd.title)
 
-            feedbacks = feedbacksData(candidate.id)
+                feedbacks = feedbacksData(candidate.id)
 
-            if feedbacks:
+                if feedbacks:
 
-                feedback_rows = ''
+                    feedback_rows = ''
 
-                for fd_data in feedbacks:
+                    for fd_data in feedbacks:
 
-                    fd_tr = f"""
-                        <tr>
-                            <td class="td_q"><p class="q_a">{fd_data['name']}</p></td>
-                            <td class="td_q"><p class="q_a">{fd_data['decision']}</p></td>
-                            <td class="td_q"><p class="q_a">{fd_data['notes']}</p></td>
-                        </tr>
-                    """
-                    feedback_rows = feedback_rows + fd_tr
-
-                feedback_data = f"""
-                    <span class="heading p-clr">Interviewer's Feedback:</span><br><br>
-                    <table cellpadding=0 cellspacing=0 class="t0">
-                        <thead>
-                            <tr style="background-color: #808080;color:#fff">
-                                <th class="td_fd">Interviewer</th>
-                                <th class="td_fd">Decision</th>
-                                <th class="td_fd">Notes</th>
+                        fd_tr = f"""
+                            <tr>
+                                <td class="td_q"><p class="q_a">{fd_data['name']}</p></td>
+                                <td class="td_q"><p class="q_a">{fd_data['decision']}</p></td>
+                                <td class="td_q"><p class="q_a">{fd_data['notes']}</p></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {feedback_rows}
-                        </tbody>
-                    </table><br><br>
-                """
+                        """
+                        feedback_rows = feedback_rows + fd_tr
+
+                    feedback_data = f"""
+                        <span class="heading p-clr">Interviewer's Feedback:</span><br><br>
+                        <table cellpadding=0 cellspacing=0 class="t0">
+                            <thead>
+                                <tr style="background-color: #808080;color:#fff">
+                                    <th class="td_fd">Interviewer</th>
+                                    <th class="td_fd">Decision</th>
+                                    <th class="td_fd">Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {feedback_rows}
+                            </tbody>
+                        </table><br><br>
+                    """
             updated_report = updated_report.replace("{#feedback_data#}", feedback_data)
 
             output_filepath = root_path+f"/media/reports/{candidate.candidateid}.pdf"
