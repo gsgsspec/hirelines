@@ -7,7 +7,7 @@ function done() {
 
   $("#done_btn").prop('hidden', true);
   $("#ini_div").prop('hidden', true);
-  $("#end_div").prop('hidden', false); z
+  $("#end_div").prop('hidden', false);
   $("#submit_btn").prop('hidden', false);
   $("#resch").prop('hidden', false);
   $("#fcs").focus();
@@ -243,7 +243,6 @@ $("#submit_btn").click(function () {
     csrfmiddlewaretoken: CSRF_TOKEN,
   }
 
-
   $.post(CONFIG['portal'] + "/api/interview-completion", final_data_, function (res_) {
 
     if (res_.statusCode == 0) {
@@ -283,11 +282,3 @@ function remarks() {
 
 }
 
-$('#done_btn').on('click', function() {
-  $("#ini_div").prop('hidden', true);
-  $("#end_div").prop('hidden', false);
-  $("#submit_btn").prop('hidden', false);
-  $("#resch").prop('hidden', false);
-  $("#fcs").focus();
-  $(this).hide();
-})

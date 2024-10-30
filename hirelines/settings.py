@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'hirelines.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-       	'NAME': 'hirelines',
+       	'NAME': 'hirelinesv1',
         'USER': 'root',
         'PASSWORD': 'pass123',
         'HOST': 'localhost',

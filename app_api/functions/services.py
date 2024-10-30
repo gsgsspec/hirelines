@@ -9,8 +9,10 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from urllib.parse import urljoin
 from rest_framework.authtoken.models import Token
+from xhtml2pdf import pisa
 from .constants import public_email_domains
 from hirelines.metadata import getConfig
+from hirelines.settings import BASE_DIR
 from .mailing import sendRegistrainMail
 from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
     Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia, Brules
@@ -71,18 +73,8 @@ def registerUserService(dataObjs):
         random_password = generate_random_password()
 
         if company_check:
-            user = User(
-                name =  dataObjs["reg-name"],
-                datentime = datetime.now(),
-                location = dataObjs['reg-location'],
-                companyid = company_check.id,
-                role = "HR",
-                password = random_password,
-                email = bussiness_email,
-                status = "A"
-            )
 
-            user.save()
+            return 3
 
         else:
 
@@ -92,7 +84,7 @@ def registerUserService(dataObjs):
                 email = bussiness_email,
                 companytype = dataObjs["reg-companytype"],
                 registrationdate = datetime.now(),
-                status = "T",
+                status = "A",
                 freetrail = 'I'
             )
 
@@ -111,11 +103,19 @@ def registerUserService(dataObjs):
 
             user.save()
 
-        hirelines_domain = getConfig()['DOMAIN']['hirelines']
+            acert_domain = getConfig()['DOMAIN']['acert']
+            endpoint = '/api/add-company'
 
-        mail_data = {'name':user.name,'email':user.email,'password':user.password,'url': f"{hirelines_domain}/login"}
+            url = urljoin(acert_domain, endpoint)
 
-        sendRegistrainMail(mail_data)
+            company_data = {'id' : company.id,'company_name': company.name}
+
+            send_company_data = requests.post(url, json = company_data)
+
+
+            hirelines_domain = getConfig()['DOMAIN']['hirelines']
+            mail_data = {'name':user.name,'email':user.email,'password':user.password,'url': f"{hirelines_domain}/login"}
+            sendRegistrainMail(mail_data)
 
         return 0
             
@@ -915,48 +915,43 @@ def interviewCompletionService(dataObjs,user_id):
 
             feedback.save()
 
-
         candidate = Candidate.objects.get(id=call_sch_details.candidateid)
+        jd = JobDesc.objects.get(id=candidate.jobid) 
+        interviewers_data = ast.literal_eval(jd.interviewers)
+        interviewers = [int(item) for item in interviewers_data]
+        hr_email = User.objects.get(id=call_sch_details.hrid).email
 
-        event = Email_template.objects.filter(company_id= candidate.companyid,event='Completion').last()
-       
-        if event:
-
-            # sendInterviewCompletionEmail(dataObjs["sch_id"])
-            call_details = CallSchedule.objects.get(id=dataObjs["sch_id"])
-            company = Company.objects.get(id=candidate.companyid)
-            job_desc = JobDesc.objects.get(id=candidate.jobid)
-            interviewers_data = ast.literal_eval(job_desc.interviewers)
-            interviewers = [int(item) for item in interviewers_data]
-
-            hr_email = User.objects.get(id=call_details.hrid).email
-
-            interviewers_email_list = []
+        interviewers_email_list = []
         
-            users = User.objects.filter(status='A',companyid=company.id)
+        users = User.objects.filter(status='A',companyid=candidate.companyid)
 
-            interviewed_by = ""
+        interviewed_by = ""
 
-            for user in users:
-                if user.id in interviewers:
-                    interviewers_email_list.append(user.email)
+        for user in users:
+            if user.id in interviewers:
+                interviewers_email_list.append(user.email)
 
-                    if user.id == call_details.interviewerid:
-                        interviewed_by = user.name
+                if user.id == call_sch_details.interviewerid:
+                    interviewed_by = user.name
 
-            interviewers_emails = ", ".join(interviewers_email_list)
+        interviewers_emails = ", ".join(interviewers_email_list)
 
-            to_mail = f"{hr_email},{interviewers_emails}"
+        to_mail = f"{hr_email},{interviewers_emails}"
 
-            replacements = {
-                "[candidate_name]": f"{candidate.firstname} {candidate.lastname}",
-                "[position]": job_desc.title,
-                "[interviewer]": interviewed_by,
-                "company_name": company.name
-            }
+        interview_data = {
+            'candidate_code': candidate.candidateid,
+            'jd_title': jd.title,
+            'interviewed_by': interviewed_by,
+            'to_mail':to_mail,
+            'paper_id': call_sch_details.paper_id
+        }
 
-            sendEmail(company.id,'I',call_sch_details.paper_id,'Completion',replacements,to_mail,calender_details=None)
+        acert_domain = getConfig()['DOMAIN']['acert']
+        endpoint = '/api/interview-completion'
 
+        url = urljoin(acert_domain, endpoint)
+
+        send_interview_data = requests.post(url, json = interview_data)
 
     except Exception as e:
         raise
@@ -1113,6 +1108,139 @@ def getCandidateWorkflowData(cid):
                 candidate_data['registrations_data'] = registrations_data
                     
         return candidate_data
+
+    except Exception as e:
+        raise
+
+
+def generateCandidateReport(cid):
+    try:
+        acert_domain = getConfig()['DOMAIN']['acert']
+        endpoint = '/api/hireline-candidate-report'
+
+        url = urljoin(acert_domain, endpoint)
+
+        candidate_data = {'candidate_code' : cid}
+
+        candidate = Candidate.objects.get(candidateid=cid)
+
+        send_candidate_data = requests.post(url, json = candidate_data)
+
+        response_content = send_candidate_data.content
+
+        if response_content:
+
+            screening_data = ''
+            coding_data = ''
+            interview_data = ''
+            feedback_data = ''
+            
+            json_data = json.loads(response_content.decode('utf-8'))
+
+            acert_data = json_data['data']
+
+            root_path = BASE_DIR
+
+            report_template_path = open(root_path + '/media/reports/candidate_report.html', 'r')
+            report_template = report_template_path.read()
+
+            screening_data = acert_data['screening_data']
+            coding_data = acert_data['coding_data']
+            interview_data = acert_data['interview_data']
+
+            updated_report = report_template.replace("{candidate_id}", candidate.candidateid)
+            updated_report = updated_report.replace("{candidate_name}", f"{candidate.firstname} {candidate.lastname}")
+            updated_report = updated_report.replace("{candidate_email}", candidate.email)
+            updated_report = updated_report.replace("{candidate_mobile}", candidate.mobile)
+
+            updated_report = updated_report.replace("{screening_section}", screening_data)
+            updated_report = updated_report.replace("{coding_section}", coding_data)
+            updated_report = updated_report.replace("{interview_section}", interview_data)
+
+            call_schedule = CallSchedule.objects.get(candidateid=candidate.id)
+            jd = JobDesc.objects.get(id=candidate.jobid)
+
+            interviewer = call_schedule.interviewerid
+
+            if interviewer:
+                interviewer_name = User.objects.get(id=interviewer).name
+            else:
+                interviewer_name = ''
+
+            updated_report = updated_report.replace("#interviewer_name#", interviewer_name)
+            updated_report = updated_report.replace("{#jd_title#}", jd.title)
+
+            feedbacks = feedbacksData(candidate.id)
+
+            if feedbacks:
+
+                feedback_rows = ''
+
+                for fd_data in feedbacks:
+
+                    fd_tr = f"""
+                        <tr>
+                            <td class="td_q"><p class="q_a">{fd_data['name']}</p></td>
+                            <td class="td_q"><p class="q_a">{fd_data['decision']}</p></td>
+                            <td class="td_q"><p class="q_a">{fd_data['notes']}</p></td>
+                        </tr>
+                    """
+                    feedback_rows = feedback_rows + fd_tr
+
+                feedback_data = f"""
+                    <span class="heading p-clr">Interviewer's Feedback:</span><br><br>
+                    <table cellpadding=0 cellspacing=0 class="t0">
+                        <thead>
+                            <tr style="background-color: #808080;color:#fff">
+                                <th class="td_fd">Interviewer</th>
+                                <th class="td_fd">Decision</th>
+                                <th class="td_fd">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {feedback_rows}
+                        </tbody>
+                    </table><br><br>
+                """
+            updated_report = updated_report.replace("{#feedback_data#}", feedback_data)
+
+            output_filepath = root_path+f"/media/reports/{candidate.candidateid}.pdf"
+            result_file = open(output_filepath, "w+b")
+
+            pisa_status = pisa.CreatePDF(
+                updated_report,
+                dest=result_file)
+            
+            result_file.close()
+
+            return {"file_path": output_filepath, "file_name": "report", "pisa_err": pisa_status.err}
+
+    except Exception as e:
+        print(str(e))
+        raise
+
+
+def feedbacksData(cid):
+    try:
+
+        feedback = IvFeedback.objects.filter(candidateid=cid)
+
+        int_feedbacks = []
+
+        for job_int in feedback:
+            
+            interviewer = User.objects.get(id=job_int.interviewerid)
+            notes = job_int.notes
+            decision = "Hire" if job_int.gonogo == "Y" else "Not Hire"
+            
+            int_feedbacks.append(
+                {
+                 "name" : interviewer.name,
+                 "notes": notes,
+                 "decision":decision
+                }
+            )
+        return int_feedbacks
 
     except Exception as e:
         raise

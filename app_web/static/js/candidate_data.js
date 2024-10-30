@@ -1,6 +1,6 @@
 async function getReportData(cid) {
     
-    var url = CONFIG['acert'] + "/api/hireline-candidate-report";
+    var url = CONFIG['portal'] + "/api/get-candidate-report";
 
     if (cid) {
         url += "?cid=" + cid;
@@ -23,7 +23,7 @@ async function getReportData(cid) {
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = downloadUrl;
-            a.download = 'report.pdf';
+            a.download = cid + '.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

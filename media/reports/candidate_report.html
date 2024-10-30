@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<style>
+    @page {
+        size: a4;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        margin-top: 3.5cm;
+        margin-bottom: 1.5cm;
+
+
+
+        @frame pg_no_footer {
+            -pdf-frame-content: pg_no_footer;
+            bottom: 0cm;
+            margin-top: 0.1cm;
+            margin-left: 18.6cm;
+            height: 1cm;
+
+        }
+
+
+        @frame footer_frame {
+            -pdf-frame-content: footer_frame;
+            bottom: 0.05cm;
+            height: 1cm;
+            margin-left: 1cm;
+            margin-right: 1cm;
+        }
+
+        @frame header_frame {
+            -pdf-frame-content: header_frame;
+            left: 1cm;
+            top: 1cm;
+            right: 1cm;
+        }
+
+    }
+</style>
+
+<body>
+    <div id="header_frame">
+        <table cellpadding=0 cellspacing=0 class="t0" style="width: 710px;">
+        <tr>
+            <td style="text-align: right;"><img src="https://hirelines.io/static/img/logos/logo-no-background.png"
+                    style="width:200px">
+            </td>
+        </tr>
+        </table>
+      <hr>
+    </div>
+
+    <div id="pg_no_footer"> Page <pdf:pagenumber>
+            of <pdf:pagecount>
+    </div>
+
+    <div id="footer_frame">
+        <hr>
+        <div class="website">
+        <b>hirelines.io</b>
+        </div>
+    </div>
+
+    <span class="jd-text p-clr">{#jd_title#}</span><br>
+    
+    <br><br>
+    <table cellpadding=0 cellspacing=0 class="t0">
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Candidate-ID</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">{candidate_id}</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Candidate Name</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">{candidate_name}</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Email</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">{candidate_email}</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Mobile</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">{candidate_mobile}</p>
+            </td>
+        </tr>
+    </table>
+    <br><br><br>
+    {screening_section}
+    {coding_section}
+    {interview_section}
+    {#feedback_data#}
+
+</body>
+<style>
+
+    
+    .sc_htxt {
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .q_sc {
+        width: 500px !important;
+    }
+
+    .response_sc {
+        width: 120px;
+    }
+
+    .td_sc {
+        color: #000000;
+        background-color: #f2f2f2;
+        font-size: 14px;
+        padding-top: 5px;
+        padding-bottom: 2px;
+        padding-right: 4px;
+        font-weight: 300;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid #274699;
+    }
+
+    .th_txt_sc {
+        padding-top: 10px;
+        padding-left: 5px;
+        font-size: 15px;
+        text-align: left;
+        vertical-align: center;
+        text-decoration: solid;
+    }
+
+    .th_sc {
+        color: #ffffff;
+        background-color: #274699;
+        height: 40px;
+    }
+
+    .heading-text {
+        font-size: 20px;
+        font-weight: 600;
+        text-decoration: underline;
+        color: #274699;
+    }
+
+    .p-clr {
+        color: #274699 !important;
+    }
+
+    .td_label {
+        padding: 0px;
+        margin: 0px;
+        width: 23%;
+        vertical-align: bottom;
+        background-color: #274699;
+        height: 28px;
+        border: 1px solid white;
+    }
+
+
+    .td_data {
+        padding: 0px;
+        margin: 0px;
+        width: 77%;
+        vertical-align: bottom;
+        background-color: #f2f2f2;
+        height: 28px;
+        border: 1px solid white;
+    }
+
+
+
+
+    .label_text {
+        font-size: 16px !important;
+        font-family: Calibri;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 20px;
+        text-align: right;
+        padding-right: 10px;
+        margin-top: 0px;
+        margin-right: 2%;
+        margin-bottom: 0px;
+        white-space: nowrap;
+    }
+
+
+    .data_text {
+        font-size: 16px !important;
+        font-family: Calibri;
+        font-weight: 800;
+        color: #000000;
+        line-height: 20px;
+        text-align: left;
+        padding-right: 9px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        white-space: nowrap;
+    }
+
+
+    .t0 {
+        width: 691px;
+        margin-left: 13px;
+        font-size: 18px;
+        font-family: Calibri;
+        font-weight: 600;
+    }
+
+    .td_sec {
+        padding: 0px;
+        margin: 0px;
+        width: 100% !important;
+        vertical-align: center;
+        background-color: #274699;
+        height: 40px;
+    }
+
+    .sec_text {
+        font-size: 18px !important;
+        font-family: Calibri;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 15px;
+        text-align: left;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        white-space: nowrap;
+    }
+
+    .td_a {
+        padding: 5px;
+        margin: 0px;
+        width: 23%;
+        vertical-align: center;
+        background-color: #f2f2f2;
+        border: 1px solid white;
+    }
+
+    .q_a {
+        font-size: 15px !important;
+        font-family: Calibri;
+        font-weight: 300;
+        color: #000000;
+        line-height: 15px;
+        text-align: left;
+        padding-right: 9px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        white-space: nowrap;
+    }
+
+    .td_q {
+        padding: 5px;
+        margin: 0px;
+        width: 77%;
+        vertical-align: center;
+        background-color: #f2f2f2;
+        border: 1px solid white;
+    }
+
+
+    .heading {
+        font-size: 18px;
+        font-weight: 600;
+        color: #274699;
+    }
+
+    .td_fd {
+        width: 100% !important;
+        vertical-align: center;
+        background-color: #274699;
+        padding-top: 5px;
+        height: 35px;
+        text-align: left;
+        border: 1px solid white;
+    }
+
+    .jd-text {
+        text-align: center;
+        font-size: 30px;
+        font-weight: 500;
+        width: 100%;
+    }
+
+    .q-code {
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+
+    pre {
+        font-size: 12px;
+        font-family: Calibri;
+        white-space: pre; 
+        width: 100%; 
+        box-sizing: border-box; 
+        padding: 10px; 
+        border: 1px solid #ccc; 
+        background-color: #f9f9f9; 
+        overflow-wrap: break-word; 
+        word-wrap: break-word; 
+    }
+
+    .website {
+      font-size: 15px;
+      text-align: center;
+      margin-top: 0.2cm;
+   }
+
+   .sec-color {
+        background-color: #f25c05;
+        padding: 0px;
+        margin: 0px;
+        width: 100% !important;
+        vertical-align: center;
+        height: 40px;
+    }
+
+</style>
+
+</html>

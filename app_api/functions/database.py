@@ -147,31 +147,49 @@ def scheduleInterviewDB(user_id, dataObjs):
                 meeting_link = meeting_config + hex_code
                 call_details.datentime = datentime
                 call_details.interviewerid = interviewer_id
-                call_details.intnotes = dataObjs['instructions']
+                call_details.instructions = dataObjs['instructions']
                 call_details.status = 'S'
                 call_details.meetinglink = meeting_link
                 call_details.hrid = user_id
                 call_details.companyid = user.companyid
                 call_details.save()
-                
+
                 # Mail Replacements
                 job_desc = JobDesc.objects.get(id=candidate.jobid)
-                company = Company.objects.get(id=candidate.companyid)
-                emails = f"{candidate.email}"
                 interview_time = call_details.datentime.strftime("%d-%b-%Y %I:%M %p") 
 
+                interviewer = User.objects.get(id=call_details.interviewerid)
+                to_mails = f"{candidate.email},{interviewer.email}"
 
-                replacements = {
-                    "[candidate_name]": f"{candidate.firstname} {candidate.lastname}",
-                    "[job_title]": job_desc.title,
-                    "[company_name]": company.name,
-                    "[date]": interview_time,
-                    "[link]": call_details.meetinglink,
+                interview_data = {
+                    'job_title':job_desc.title,
+                    'meetinglink':call_details.meetinglink,
+                    'int_paper': call_details.paper_id,
+                    'candidate_code': candidate.candidateid,
+                    'interviewer': call_details.interviewerid,
+                    'interview_time': interview_time,
+                    'to_emails': to_mails
                 }
+
+                acert_domain = getConfig()['DOMAIN']['acert']
+                endpoint = '/api/schedule-interview'
+
+                url = urljoin(acert_domain, endpoint)
+
+                send_interview_data = requests.post(url, json=interview_data)
+
+                # replacements = {
+                #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname}",
+                #     "[job_title]": job_desc.title,
+                #     "[company_name]": company.name,
+                #     "[date]": interview_time,
+                #     "[link]": call_details.meetinglink,
+                # }
+                
 
                 # Email Function
 
-                sendEmail(candidate.companyid,'I',call_details.paper_id,'Call_Schedule',replacements,emails,call_details.datentime)
+                # sendEmail(candidate.companyid,'I',call_details.paper_id,'Call_Schedule',replacements,emails,call_details.datentime)
 
                 return "Slot Booked"
         else:
@@ -328,6 +346,24 @@ def interviewResponseDB(dataObjs):
                 callscheduleid = dataObjs["call_sch_id"],
                 qrate = dataObjs["qrate"]
             ).save()  
+
+        candidate = Candidate.objects.get(id=dataObjs["candid_id"])
+
+        call_schedule = CallSchedule.objects.get(id=dataObjs["call_sch_id"]) 
+
+        response_data = {
+            'qid': dataObjs["qid"],
+            'qrate':dataObjs['qrate'],
+            'candidate_code': candidate.candidateid,   
+            'int_paper': call_schedule.paper_id  
+        }
+
+        acert_domain = getConfig()['DOMAIN']['acert']
+        endpoint = '/api/interview-response'
+
+        url = urljoin(acert_domain, endpoint)
+
+        send_response_data = requests.post(url, json=response_data)
             
     except Exception as e:
         raise

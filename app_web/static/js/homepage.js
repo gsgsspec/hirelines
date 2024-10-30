@@ -7,6 +7,8 @@ document.getElementById("register").onclick = function () {
         $('#reg-bemail').css('border-color', '');
         $('.domain-check').css('display', 'none');
         $('.existing-email').css('display', 'none');
+        $('.error-existing').css('display', 'none');
+
 
         
         dataObj = {
@@ -40,6 +42,14 @@ document.getElementById("register").onclick = function () {
 
                 $('#reg-bemail').css('border-color', 'red');
                 $('.existing-email').css('display', 'block');
+
+                $('#register').prop('disabled', false);
+                
+            }
+            else if (res.statusCode == 3){
+
+                $('#reg-bemail').css('border-color', 'red');
+                $('.error-existing').css('display', 'block');
 
                 $('#register').prop('disabled', false);
                 

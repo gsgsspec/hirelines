@@ -24,6 +24,7 @@ urlpatterns = [
     path('interview-completion',views.interviewCompletion),
     path('interview-feedback',views.interviewFeedback),
     path('check-test-has-paper',views.checkTestHasPaper),
+    path('get-candidate-report',views.candidateReport),
 
 
 

@@ -12,8 +12,8 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, checkTestHasPaperService, \
-        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService
+from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
+        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport
 from .models import Candidate, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
 from app_api.functions.constants import hirelines_registration_script
@@ -554,10 +554,10 @@ def interviewFile(request):
 
     dataObjs = json.loads(request.POST.get('data'))
 
-    appid = str(dataObjs["reg_code"]).split("_")[1]
+    c_code = str(dataObjs["reg_code"]).split("_")[1]
     schid = str(dataObjs["reg_code"]).split("_")[2].split(".")[0]
 
-    candidate_details = Candidate.objects.filter(candidateid=appid).last()
+    candidate_details = Candidate.objects.filter(candidateid=c_code).last()
     
     InterviewMedia(recorded=dataObjs["videoid"], candidateid=candidate_details.id).save()
 
@@ -653,5 +653,30 @@ def updateEmailtemp(request):
     except Exception as e:
         response['data'] = 'Error in updateEmailtemp'
         response['error'] = str(e)
+    return JsonResponse(response)
+
+
+
+@api_view(["GET"])
+@authentication_classes([])
+@permission_classes([])
+def candidateReport(request):
+    response = {"data": None, "error": None, "statusCode": 1}
+
+    try:
+
+        candidate_id = request.GET.get('cid')
+        pdf_path = generateCandidateReport(candidate_id)
+        
+        with open(pdf_path['file_path'], 'rb') as pdf_file:
+            response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{pdf_path["file_name"]}.pdf"'
+
+            return response
+        
+    except Exception as e:
+        response["data"] = "Error in downloading report"
+        response["error"] = str(e)
+
     return JsonResponse(response)
 

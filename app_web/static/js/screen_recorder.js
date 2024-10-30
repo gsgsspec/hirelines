@@ -6415,7 +6415,6 @@ btnStartRecording.onclick = function (event) {
 //$("#fcs").focus();
 //}
 
-console.log("here");
 $(document).ready(function () {
     $("#InsModal").modal('show');
     document.getElementById("call_flag").click();
@@ -6456,17 +6455,18 @@ $("#done_btn").click(function () {
             $("#sidenav-main").prop("hidden", false);
             $("#meeting_main").css({ "margin-left": "" });
 
-            $("#done_btn").prop('hidden', true);
             try {
                 $("#ask_sign_model").prop('hidden', true);
             } catch (error) {
-
+                
             }
+            
+            $("#done_btn").prop('hidden', true);
             $("#ini_div").prop('hidden', true);
             $("#end_div").prop('hidden', false);
             $("#submit_btn").prop('hidden', false);
             $("#resch").prop('hidden', false);
-            $("#fcs").focus();
+            $("#fcs").focus()
 
             var button = btnStartRecording;
             button.disabled = true;

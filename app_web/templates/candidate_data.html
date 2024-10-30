@@ -40,8 +40,10 @@
             <div class="card flow-card">
               <b><p>{{ registration.paper_title }}</p></b>
               <p>{{ registration.type_title }}</p>
-              {% if registration.paper_type == "I" and registration.call_status == "N" %}
+              {% if registration.paper_type == "I"%}
+                {%  if registration.call_status == "N"  %}
                 <button class="btn btn-primary" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
+                {% endif %}
               {% endif %}
             </div>
             {% if not forloop.last %}

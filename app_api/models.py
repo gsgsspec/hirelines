@@ -92,7 +92,7 @@ class Registration(models.Model):
     papertype = models.CharField(max_length=1, null=True, blank=True)
     companyid = models.IntegerField(null=True)
     registrationdate = models.DateTimeField(null=True)
-    status = models.CharField(max_length=1, null=True, blank=True) 
+    status = models.CharField(max_length=1, null=True, blank=True) # (For Interview : O - Offered, R - Rejected)
 
     class Meta:
         db_table = 'registration'
@@ -208,6 +208,7 @@ class CallSchedule(models.Model):
     status = models.CharField(max_length=1, null=True)
     callstarteddtt = models.DateTimeField(null=True)
     callendeddtt = models.DateTimeField(null=True)
+    instructions = models.CharField(max_length=1000, null=True)
     intnotes = models.CharField(max_length=1000, null=True)
     meetinglink = models.CharField(max_length=100, null=True)
     callendflag = models.CharField(max_length=1,null=True)
