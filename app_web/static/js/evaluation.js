@@ -239,7 +239,7 @@ function filter_data(pid, ptid) {
                     '</div>' +
                     
                     '</button>' +
-                    '<div class="panel" id="questions">' +
+                    '<div class="panel form-label" id="questions">' +
                     anser_skip_resp +
                     question_image +
                     question_audio +
