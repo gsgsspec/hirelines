@@ -1,6 +1,9 @@
 import json
+from urllib.parse import urljoin
+
+import requests
 from django.http import JsonResponse
-from app_api.functions.hashing import decrypt_code, encrypt_code
+from app_api.functions.enc_dec import decrypt_code, encrypt_code
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
@@ -422,6 +425,102 @@ def registerCandidate(request):
         response['error'] = str(err)
         raise
     print("response",response)
+    return JsonResponse(response)
+
+
+
+@api_view(['GET','POST'])
+def evaluationView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "GET":# and check_referrer(request):
+            # company_id = request.GET.get('cid', 0)
+            # print("company_id",company_id)
+            user = auth_user(request.user)
+            user_company = user.companyid
+            enc_company_id = encrypt_code(user_company)
+            
+            acert_domain = getConfig()['DOMAIN']['acert']
+            endpoint = '/api/evaluate-papers'
+            url = urljoin(acert_domain, endpoint)
+            
+            company_paper_ids = list(Workflow.objects.filter(companyid=user_company).values_list("paperid",flat=True))
+            company_papers={
+                "request_for":"get_evaluation_papers",
+                "enc_company_id":enc_company_id,
+                "company_paper_ids":company_paper_ids
+                } 
+            get_evaluation_papers = requests.post(url,json=company_papers, verify=False)
+            
+            response_content = get_evaluation_papers.content
+            # print("response_content",response_content)
+            if response_content:
+                
+                json_data = json.loads(response_content.decode('utf-8'))
+
+                acert_data = json_data['data']
+          
+                response['data'] = acert_data
+                response['statusCode'] = 0
+
+        if request.method == "POST":
+            user = auth_user(request.user)
+            user_company = user.companyid
+            enc_company_id = encrypt_code(user_company)
+            
+            acert_domain = getConfig()['DOMAIN']['acert']
+            endpoint = '/api/evaluate-papers'
+            url = urljoin(acert_domain, endpoint)
+            
+            company_paper_ids = list(Workflow.objects.filter(companyid=user_company).values_list("paperid",flat=True))
+            
+            dataObjs = json.loads(request.POST.get('data'))
+           
+            if dataObjs["request_for"] == "submissions":
+
+                dataObjs["enc_company_id"]=enc_company_id
+                dataObjs["company_paper_ids"]=company_paper_ids
+                
+                get_evaluation_submissions = requests.post(url, json = dataObjs, verify = False)
+                response_content = get_evaluation_submissions.content
+
+                if response_content:
+                    
+                    json_data = json.loads(response_content.decode('utf-8'))
+
+                    acert_data = json_data['data']
+                    evaluationquestions = acert_data
+                    response['data'] = evaluationquestions
+                    response['statusCode'] = 0
+            
+            if dataObjs["request_for"] == "update_marks":
+                
+                dataObjs["enc_company_id"]=enc_company_id
+                dataObjs["company_paper_ids"]=company_paper_ids
+                
+                update_marks = requests.post(url, json = dataObjs, verify = False)
+                response_content = update_marks.content
+
+                if response_content:
+                    
+                    json_data = json.loads(response_content.decode('utf-8'))
+
+                    acert_data = json_data['data']
+                    answer_data = json_data["answer_data"]
+                    response['data'] = "Marks Updated successfully"
+                    response['answer_data'] = answer_data
+                    response['statusCode'] = 0
+
+        
+    except Exception as e:
+        response['data'] = 'Error in evaluationquestionsView'
+        response['error'] = str(e)
+        raise
+        # logging.error("Error in evaluationquestionsView : ", str(e))
     return JsonResponse(response)
 
 

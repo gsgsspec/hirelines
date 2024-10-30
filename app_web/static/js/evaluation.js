@@ -4,12 +4,16 @@ var currentParticipantIndex = 0;
 var PARTICIPANT = [];
 var hide_reg_number_flag = $("#p_flag").attr('name');
 $(document).ready(function () {
+    $(".papers-card").addClass("loading");
+    $(".participants-card").addClass("loading");
     
     get_papers_data();
     
 })
 function get_papers_data() {
-    $.get("http://localhost:8001" + "/api/evaluation-papers/?cid="+user_company, function (res) {
+   
+    $.get(CONFIG['portal'] + "/api/evaluation", function (res) {
+    // $.get("http://localhost:8001" + "/api/evaluation-papers/?cid="+user_company, function (res) {
         console.log("res",res);
         
         if (res.statusCode == 0){
@@ -17,26 +21,39 @@ function get_papers_data() {
             console.log("papers_data",papers_data);
             papers_data.map((paper, index) => {
                 
-                $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class=" form-label cursor-pointer" >${paper.paper_code} - ${paper.paper_name}  (${paper.paper_count})</p>`)
+                $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class=" form-label" style="cursor:pointer;" >${paper.paper_code} - ${paper.paper_name}  (${paper.paper_count})</p>`)
             })
+            $(".papers-card").removeClass("loading");
             
             $("p[name='papers']:first").click();
+            // $("p[name='papers']").eq(3).click();
         }else{
             Swal.fire({
                 icon: 'error',
                 title: 'Could not process request',
                 text: 'Internal Server Error',
+                confirmButtonText: 'OK', 
+                confirmButtonColor: '#274699' ,
                 footer: 'Please contact administrator'
               })
+              $(".papers-card").removeClass("loading");
         }
         // 
     })
+    
 }
 
 
 
 
 function filter_data(pid, ptid) {
+    $('body').addClass('cursor-progress');
+    $('p[name="papers"]').addClass('cursor-progress')
+    $('tr[name="participants"]').addClass('cursor-progress')
+    $(".papers-card").addClass("loading");
+    $(".participants-card").addClass("loading");
+    $(".eval-question-div").html("");
+
     if (pid) {
         paper_id = pid;
     }
@@ -44,6 +61,7 @@ function filter_data(pid, ptid) {
         participant_id = ptid;
     }
     dataObj = {
+        "request_for":"submissions",
         "paper_id": paper_id,
         "participant_id": participant_id,
     }
@@ -52,12 +70,12 @@ function filter_data(pid, ptid) {
         'data': JSON.stringify(dataObj),
         csrfmiddlewaretoken: CSRF_TOKEN,
     }
-    $.post("http://localhost:8001" + "/api/evaluation-papers/", final_data, function (res) {
+    $.post(CONFIG['portal'] + "/api/evaluation", final_data, function (res) {
         console.log("res",res);
         
         if (res.statusCode == 0) {  
             var DATA = res.data;
-            // console.log('Data',DATA)
+            console.log('Data',DATA)
             PARTICIPANT = DATA.participants;
             // console.log('participants',PARTICIPANT)
             var QUESTIONS = DATA.questions;
@@ -67,7 +85,9 @@ function filter_data(pid, ptid) {
             var MARKS = DATA.total_marks;
 
 
-            $('#participants').html('');
+            $('#participants').html('<div class="loader-overlay">'+
+                            '<div class="loader"></div>'+
+                          '</div>');
             for (var n = 0; n < PARTICIPANT.length; n++) {
 
                 participant_status = ""
@@ -82,7 +102,7 @@ function filter_data(pid, ptid) {
                 var participantName = (hide_reg_number_flag === "N") ? "**********" : PARTICIPANT[n]["participant"];
 
                 $("#participants").append(
-                    '<tr onclick="filter_data(null,' + PARTICIPANT[n]["pid"] + ')" name="participants" id="participant_' + PARTICIPANT[n]["pid"] + '" class="top cursor-pointer" style="text-transform: capitalize">'
+                    '<tr onclick="filter_data(null,' + PARTICIPANT[n]["pid"] + ')" name="participants" id="participant_' + PARTICIPANT[n]["pid"] + '" class="top" style="text-transform: capitalize;cursor:pointer;">'
                     + '<td style="width:100px;" class="form-label">' + PARTICIPANT[n]["registration_code"] + '</td>'
                     + '<td style="width:150px;" class="form-label cust-participant-name">' + participantName + '</td>'
                     + '<td class="form-label cust-participant-date">' + PARTICIPANT[n]["submission_date"] + '</td>'
@@ -153,9 +173,9 @@ function filter_data(pid, ptid) {
                 if (QUESTIONS_LIST[n]['question_type_code'] == "P") {
                     question_options_div = '<p style="padding:13px">' + '<b>Answer :  </b>  ' + QUESTIONS_LIST[n]['question_answer'] + '</p>';
                     question_expanswer_div = '<p style="padding:13px" class="form-label">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
-                    evaluation_btns = '<div class="float-right">' +
-                        '<button class="mb-1 btn btn-cancel text-white btn_width" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
-                        '<button class="mb-1 btn btn-primary text-white btn_width ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
+                    evaluation_btns = '<div class="float-right mb-3">' +
+                        '<button class="mb-1 btn btn-cancel text-white btn_width "  name="update_marks_btns" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="updateMarks(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
+                        '<button class="mb-1 btn btn-primary text-white btn_width ml-2 "  name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
                 
@@ -180,9 +200,9 @@ function filter_data(pid, ptid) {
                 if (QUESTIONS_LIST[n]["question_type_code"] == "A") {
                     question_expanswer_div = '<p style="padding:13px" class="form-label">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
                     question_options_div = '<br/><audio id="play_audio" style="width:500px" controls><source  src="' + QUESTIONS_LIST[n]["response_media"] + '"/></audio><br/><br/>'
-                    evaluation_btns = '<div class="float-right">' +
-                        '<button class="mb-1 btn btn-cancel btn_width text-white" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
-                        '<button class="mb-1 btn btn-primary btn_width text-white ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
+                    evaluation_btns = '<div class="float-right mb-3">' +
+                        '<button class="mb-1 btn btn-cancel btn_width text-white "  name="update_marks_btns" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="updateMarks(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
+                        '<button class="mb-1 btn btn-primary btn_width text-white ml-2 "  name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
 
@@ -195,9 +215,9 @@ function filter_data(pid, ptid) {
                         question_options_div = '<br/>'
                     }
                     
-                    evaluation_btns = '<div class="float-right">' +
-                        '<button class="mb-1 btn btn-cancel text-white btn_width" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="DisplayValue(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
-                        '<button class="mb-1 btn btn-primary text-white btn_width ml-2" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); DisplayValue(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
+                    evaluation_btns = '<div class="float-right mb-3">' +
+                        '<button class="mb-1 btn btn-cancel text-white btn_width "  name="update_marks_btns" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="updateMarks(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
+                        '<button class="mb-1 btn btn-primary text-white btn_width ml-2 " name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
 
@@ -211,9 +231,9 @@ function filter_data(pid, ptid) {
                     accord_style = ''
                 }
                 
-
+                
                 $("#questions").append(
-                    '<button class="accordion" id="questions">' + accord_style +
+                    '<button class="accordion" id="questions" name="eval_ques_'+question_sno+'">' + accord_style +
                     '<div class="w-100p text-left " style="font-weight:600">' + question_sno + '.' + ' ' + QUESTIONS_LIST[n]["question"] +
                     '<i class="float-right bx bxs-chevron-right"></i>'+
                     '</div>' +
@@ -313,6 +333,27 @@ function filter_data(pid, ptid) {
                     }
                 }
             }
+            $('body').removeClass('cursor-progress');
+            $('p[name="papers"]').removeClass('cursor-progress')
+            $('tr[name="participants"]').removeClass('cursor-progress')
+            $(".papers-card").removeClass("loading");
+            $(".participants-card").removeClass("loading");
+
+            
+        }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Could not process request',
+                text: 'Internal Server Error',
+                footer: 'Please contact administrator',
+                confirmButtonText: 'OK', 
+                confirmButtonColor: '#274699' 
+              })
+            $('body').removeClass('cursor-progress');
+            $('p[name="papers"]').removeClass('cursor-progress')
+            $('tr[name="participants"]').removeClass('cursor-progress')
+            $(".papers-card").removeClass("loading");
+            $(".participants-card").removeClass("loading");
         }
     })
 }
@@ -325,7 +366,7 @@ function filter_data(pid, ptid) {
 
 
 function accord() {
-    $(this).toggleClass("active");
+    $(this).toggleClass("sel-eval-question");
     const icon = $(this).find('i');
         
     // Toggle classes for the icon
@@ -353,7 +394,9 @@ function myFunction(question_sno) {
 
 }
 
-function DisplayValue(q_no) {
+function updateMarks(q_no) {
+    
+    
     var marks = document.getElementById('ans_mark' + q_no).value
     var reason_for_less_marks = document.getElementById('reason' + q_no).value
     var totalMarks = parseInt(document.getElementById("marks" + q_no).value);
@@ -361,16 +404,29 @@ function DisplayValue(q_no) {
     var trimmedString = reason_for_less_marks.trim();
     
     if (!marks) {
-        swal("Please enter marks", "", "error");
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'Please enter marks',
+            confirmButtonText: 'OK', 
+            confirmButtonColor: '#274699' 
+          })
     }
 
    else if (marks < totalMarks && !trimmedString) {
-        swal("Enter reason for less marks", "", "error");
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'Enter reason for less marks',
+            confirmButtonText: 'OK', 
+            confirmButtonColor: '#274699' 
+          })
     } 
      
     
     else {
         dataObj = {
+            "request_for":"update_marks",
             'answer_marks': marks,
             'reason_for_less_marks': reason_for_less_marks,
             'answer_id': $('#ans_mark' + q_no).attr('name')
@@ -382,9 +438,17 @@ function DisplayValue(q_no) {
         };
     
         if (marks > totalMarks) {
-            swal("Please enter valid Marks", "", "error");
+            
+            Swal.fire({
+                icon: 'warning',
+                title: 'Please enter valid Marks',
+                confirmButtonText: 'OK', 
+                confirmButtonColor: '#274699' 
+              })
         } else {
-            $.post(CONFIG['domain'] + "/api/evaluationmarks", final_data, function (res) {
+            $('body').addClass('cursor-progress');
+            $('button[name="update_marks_btns"]').prop('disabled',true);
+            $.post(CONFIG['portal'] + "/api/evaluation", final_data, function (res) {
                 var marks = res.answer_data;
                 $('#total_marks').html('');
                 $('#total_marks').append(
@@ -393,8 +457,25 @@ function DisplayValue(q_no) {
     
                 if (res.statusCode == 0) {
                     notifyNow($('[data-notify]'));
+                    $('body').removeClass('cursor-progress');
+                    $('button[name="update_marks_btns"]').prop('disabled',false);
+                    $('button[name="update_marks_btns"]').prop('disabled',false);
+
+                    var $eval_ques_div_element = $('button[name="eval_ques_'+q_no+'"');
+                    var $ans_line = $('<div class="ans-color-line"></div>');
+                    $eval_ques_div_element.prepend($ans_line);
                 } else {
-                    swal("Internal Server Error", "", "error");
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Could not process request',
+                        text: 'Internal Server Error',
+                        confirmButtonText: 'OK', 
+                        confirmButtonColor: '#274699' ,
+                        footer: 'Please contact administrator'
+                      })
+                      $('body').removeClass('cursor-progress');
+                      $('button[name="update_marks_btns"]').prop('disabled',false);
                 }
             });
         }
@@ -457,11 +538,11 @@ function nextquestion() {
     }
     for (var i = 0; i < showing.length; i++) {
         if (showing[i] == 1) {
-            acc[i].classList.toggle("active");
+            acc[i].classList.toggle("sel-eval-question");
             acc[i].nextElementSibling.style.display = "none";
             showing[i] = 0;
             var nextIndex = (i + 1) % acc.length;
-            acc[nextIndex].classList.toggle("active");
+            acc[nextIndex].classList.toggle("sel-eval-question");
             acc[nextIndex].nextElementSibling.style.display = "block";
             showing[nextIndex] = 1;
             break;

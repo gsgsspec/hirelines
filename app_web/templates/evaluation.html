@@ -17,7 +17,10 @@
                         <!-- <small class="text-muted float-end">Default label</small> -->
                     </div>
                     <hr class="m-0">
-                    <div class="card-body pt-3" style="height: 200px; overflow-y:scroll;" id="papers">
+                    <div class="card-body papers-card pt-3" style="height: 200px; overflow-y:scroll;" id="papers">
+                        <div class="loader-overlay">
+                            <div class="loader"></div>
+                          </div>
                     </div>
                 </div>
             </div>
@@ -28,7 +31,10 @@
                         <!-- <small class="text-muted float-end">Merged input group</small> -->
                     </div>
                     <hr class="m-0">
-                    <div class="card-body pt-3" id="participants" style="height: 200px; overflow-y:scroll;">
+                    <div class="card-body participants-card pt-3" id="participants" style="height: 200px; overflow-y:scroll;">
+                        <div class="loader-overlay">
+                            <div class="loader"></div>
+                          </div>
                     </div>
                 </div>
             </div>
@@ -51,7 +57,7 @@
             <div class="card-body">
                 <table class="table table-hover w-100" id="questions_table">
                     <tbody id="questions" style="cursor: pointer;">
-                        <div id="questions">
+                        <div class="eval-question-div" id="questions">
                         </div>
                     </tbody>
 
@@ -87,7 +93,7 @@
         position: relative;
     }
 
-    .active,
+    .sel-eval-question,
     .accordion:hover {
         background-color: #ccc;
     }
@@ -130,7 +136,56 @@
         width: 8em;
         padding-right: 1em;
     }
+    .cursor-progress {
+            cursor: progress !important;
+        }
     
+/* Loader overlay to cover the card content */
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+/* Loader animation */
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 5px solid #ccc;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Show loader when active */
+.participants-card.loading .loader-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+.papers-card.loading .loader-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Spin animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>
 
 <script src="{% static 'js/evaluation.js' %}"></script>

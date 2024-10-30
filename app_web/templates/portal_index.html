@@ -44,7 +44,8 @@
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="{% static 'lib/portal/assets/js/config.js' %}"></script>
+    
+    
     <script>
       var CSRF_TOKEN = '{{ csrf_token }}';
     </script>
@@ -69,6 +70,7 @@
 
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{% static 'lib/portal/assets/js/config.js' %}"></script>
 
 
     
@@ -150,6 +152,8 @@
     <script src="{% static 'config/config.js' %}"></script>
 
     <script src="{% static 'js/portal_index.js' %}"></script>
+    <script src="{% static 'lib/js/app.js' %}"></script>
+
     
 
     <div class="bs-toast toast bg-success fade show toast-placement-ex m-3 top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1500" hidden>
