@@ -1148,6 +1148,8 @@ def generateCandidateReport(cid):
             coding_data = acert_data['coding_data']
             interview_data = acert_data['interview_data']
 
+            jd = JobDesc.objects.get(id=candidate.jobid)
+
             updated_report = report_template.replace("{candidate_id}", candidate.candidateid)
             updated_report = updated_report.replace("{candidate_name}", f"{candidate.firstname} {candidate.lastname}")
             updated_report = updated_report.replace("{candidate_email}", candidate.email)
@@ -1156,10 +1158,10 @@ def generateCandidateReport(cid):
             updated_report = updated_report.replace("{screening_section}", screening_data)
             updated_report = updated_report.replace("{coding_section}", coding_data)
             updated_report = updated_report.replace("{interview_section}", interview_data)
+            updated_report = updated_report.replace("{#jd_title#}", jd.title)
 
             call_schedule = CallSchedule.objects.filter(candidateid=candidate.id).last()
             if call_schedule:
-                jd = JobDesc.objects.get(id=candidate.jobid)
 
                 interviewer = call_schedule.interviewerid
 
@@ -1169,8 +1171,7 @@ def generateCandidateReport(cid):
                     interviewer_name = ''
 
                 updated_report = updated_report.replace("#interviewer_name#", interviewer_name)
-                updated_report = updated_report.replace("{#jd_title#}", jd.title)
-
+                
                 feedbacks = feedbacksData(candidate.id)
 
                 if feedbacks:
