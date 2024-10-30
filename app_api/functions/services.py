@@ -487,6 +487,21 @@ def jdDetails(jdId):
         raise
 
 
+def checkTestHasPaperService(user,dataObjs):
+    try:
+        if dataObjs['workFlowId']:
+            workFlowDetails = Workflow.objects.filter(id = dataObjs['workFlowId']).last()
+            if workFlowDetails:
+                if workFlowDetails.paperid:
+                    return {'paperId':workFlowDetails.paperid}
+                else:
+                    return {'paperId': 'N'}
+            else:
+                return {'paperId': 'N'}
+        else:
+            return {'paperId':'N'}
+    except Exception as e:
+        raise
 
 
 def workFlowDataService(data,cmpyId):
