@@ -22,8 +22,8 @@
         <div class="col-md-6 col-lg-4 c-card">
             <div class="card mb-3 shadow jd_card_border jd_card_cust">
               <div onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer;">
-                <div class="card-body int-card-bd ">
-                  <div>
+                <div class="card-body int-card-bd">
+                  <div class="jd_card_wdth_cust">
                     <h5 class="card-title p-clr mb-1">{{jd.title}}</h5>
                     <div class="jd_card_descrip_cust">Description : {{jd.description}}</div>
                     <div class="row justify-content-between js_exp_details_conta">
@@ -79,6 +79,9 @@
     overflow: hidden;
    }
    .js_exp_details_conta{
+    width: 100%;
+   }
+   .jd_card_wdth_cust{
     width: 100%;
    }
 </style>
