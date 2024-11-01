@@ -110,6 +110,9 @@ function filter_data(pid, ptid) {
                     + '</tr>'
                 );
             }
+            if(PARTICIPANT.length == 0){
+                $("#participants").append("<h5 class='form-label'>No Submissions</h5>")
+            }
             $('#heading').html('');
 
             var first_name = (hide_reg_number_flag === "N") ? "**********" : PARTICIPANT_NAME;
