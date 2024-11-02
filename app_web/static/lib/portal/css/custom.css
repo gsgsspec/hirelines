@@ -333,3 +333,27 @@ table.dataTable thead th, table.dataTable thead td {
   position: absolute;
   left: 80%;
 }
+
+
+.credits-display_div{
+  position: absolute; 
+  right: 5%; 
+  background: #fff;
+  border: .3px solid #dedede; 
+  /* border: unset !important; */
+  border-radius: 5px;
+}
+
+.blinking-text {
+  animation: blink-scale 2s infinite;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes blink-scale {
+  0%, 100% {
+    opacity: 1;
+}
+20% {
+    opacity: 0;
+}
+}

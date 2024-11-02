@@ -30,7 +30,7 @@ document.getElementById("save-data").onclick = function () {
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    title: 'andidate added successfully',
+                    title: 'Candidate added successfully',
                     showConfirmButton: false,
                     timer: 1500
                 })

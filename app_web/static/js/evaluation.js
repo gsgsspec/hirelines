@@ -3,46 +3,83 @@ var participant_id = null;
 var currentParticipantIndex = 0;
 var PARTICIPANT = [];
 var hide_reg_number_flag = $("#p_flag").attr('name');
+var papers_count = null
+var evaluated_papers = null
+var is_submission_evaluated = false
+
 $(document).ready(function () {
     $(".papers-card").addClass("loading");
-    $(".participants-card").addClass("loading");
-    
     get_papers_data();
-    
+
 })
+
 function get_papers_data() {
-   
+
     $.get(CONFIG['portal'] + "/api/evaluation", function (res) {
-    // $.get("http://localhost:8001" + "/api/evaluation-papers/?cid="+user_company, function (res) {
-        console.log("res",res);
-        
-        if (res.statusCode == 0){
+        $(".all_eval_label").remove();
+        if (res.statusCode == 0) {
             var papers_data = res.data;
-            console.log("papers_data",papers_data);
+            papers_count = papers_data.length
             papers_data.map((paper, index) => {
-                
-                $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class=" form-label" style="cursor:pointer;" >${paper.paper_code} - ${paper.paper_name}  (${paper.paper_count})</p>`)
+                if (paper.paper_count == 0) {
+                    $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class="form-label no_submissions_to_evaluate" style="cursor:pointer;display:none;" >${paper.paper_code} - ${paper.paper_name}  (${paper.paper_count})</p>`)
+                    evaluated_papers += 1
+                } else {
+                    $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class="form-label" style="cursor:pointer;" >${paper.paper_code} - ${paper.paper_name}  (${paper.paper_count})</p>`)
+                }
+
             })
+            if (papers_count == evaluated_papers) {
+                $('#show_all_papers').click();
+            } else {
+                $("p[name='papers']:first").click();
+            }
             $(".papers-card").removeClass("loading");
-            
-            $("p[name='papers']:first").click();
-            // $("p[name='papers']").eq(3).click();
-        }else{
+
+        } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Could not process request',
+                title: 'Could not process your request',
                 text: 'Internal Server Error',
-                confirmButtonText: 'OK', 
-                confirmButtonColor: '#274699' ,
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#274699',
                 footer: 'Please contact administrator'
-              })
-              $(".papers-card").removeClass("loading");
+            })
+            $(".papers-card").removeClass("loading");
         }
-        // 
     })
-    
+
 }
 
+$('#show_all_papers').click(function () {
+    var paper_status = "all"
+    $('.no_submissions_to_evaluate').each(function () {
+        if ($(this).css('display') === 'none') {
+            $(this).css('display', 'block');
+            paper_status = "all"
+        } else {
+            $(this).css('display', 'none');
+            paper_status = "to_be_evaluated"
+        }
+    })
+
+    if (paper_status == "to_be_evaluated") {
+        $('#show_all_papers').text('Show All');
+        if (papers_count == evaluated_papers) {
+            $(".papers-card").append("<h5 class='form-label all_eval_label'>All Papers Evaluated</h5>")
+            $('#participants').html('<div class="loader-overlay">' +
+                '<div class="loader"></div>' +
+                '</div>');
+        } else {
+            $(".all_eval_label").remove()
+            $("p[name='papers']:first").click();
+        }
+    } else {
+        $(".all_eval_label").remove()
+        $('#show_all_papers').text('Hide Evaluated');
+        $("p[name='papers']").eq(6).click();
+    }
+});
 
 
 
@@ -53,6 +90,8 @@ function filter_data(pid, ptid) {
     $(".papers-card").addClass("loading");
     $(".participants-card").addClass("loading");
     $(".eval-question-div").html("");
+    $("#questions").html('');
+    $('.send-result').remove();
 
     if (pid) {
         paper_id = pid;
@@ -61,7 +100,7 @@ function filter_data(pid, ptid) {
         participant_id = ptid;
     }
     dataObj = {
-        "request_for":"submissions",
+        "request_for": "submissions",
         "paper_id": paper_id,
         "participant_id": participant_id,
     }
@@ -71,13 +110,10 @@ function filter_data(pid, ptid) {
         csrfmiddlewaretoken: CSRF_TOKEN,
     }
     $.post(CONFIG['portal'] + "/api/evaluation", final_data, function (res) {
-        console.log("res",res);
-        
-        if (res.statusCode == 0) {  
+
+        if (res.statusCode == 0) {
             var DATA = res.data;
-            console.log('Data',DATA)
             PARTICIPANT = DATA.participants;
-            // console.log('participants',PARTICIPANT)
             var QUESTIONS = DATA.questions;
             var PAPER_NAME = DATA.paper_name;
             var PARTICIPANT_NAME = DATA.name;
@@ -85,9 +121,9 @@ function filter_data(pid, ptid) {
             var MARKS = DATA.total_marks;
 
 
-            $('#participants').html('<div class="loader-overlay">'+
-                            '<div class="loader"></div>'+
-                          '</div>');
+            $('#participants').html('<div class="loader-overlay">' +
+                '<div class="loader"></div>' +
+                '</div>');
             for (var n = 0; n < PARTICIPANT.length; n++) {
 
                 participant_status = ""
@@ -110,9 +146,7 @@ function filter_data(pid, ptid) {
                     + '</tr>'
                 );
             }
-            if(PARTICIPANT.length == 0){
-                $("#participants").append("<h5 class='form-label'>No Submissions</h5>")
-            }
+
             $('#heading').html('');
 
             var first_name = (hide_reg_number_flag === "N") ? "**********" : PARTICIPANT_NAME;
@@ -127,27 +161,34 @@ function filter_data(pid, ptid) {
             $("p[name='papers']").removeClass("selection-item")
             $("#paper_" + DATA["selected_papers"]).addClass("selection-item")
             $("p[name='participants']").removeClass("selection-item")
-            $("p[name='participants']").each(function() {
+            $("p[name='participants']").each(function () {
                 $(this).find('td').removeClass('selection-item');
             });
+
             $("#participant_" + DATA["selected_participants"]).addClass("selection-item")
-            $("#participant_" + DATA["selected_participants"]).each(function() {
+            $("#participant_" + DATA["selected_participants"]).each(function () {
                 $(this).find('td').addClass('selection-item');
             });
 
-            participant_id = null;
-
-            $("#questions").html('');
-            var QUESTIONS_LIST = DATA.questionlist
+            participant_id = null; 
 
 
+
+            var QUESTIONS_LIST = []
+
+            if (PARTICIPANT.length == 0) {
+                $("#participants").append("<h5 class='form-label'>No Submissions</h5>")
+                $("#questions").html('');
+            } else {
+                QUESTIONS_LIST = DATA.questionlist
+            }
             for (var n = 0; n < QUESTIONS_LIST.length; n++) {
 
                 var question_sno = n + 1;
-                
+
                 var OPTIONS = QUESTIONS_LIST[n]["question_options"]
                 var SKIP = QUESTIONS_LIST[n]["anser_skip_resp"]
-                
+
                 var question_options_div = ""
                 var question_expanswer_div = ""
                 var question_image = ""
@@ -178,24 +219,24 @@ function filter_data(pid, ptid) {
                     question_expanswer_div = '<p style="padding:13px" class="form-label">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
                     evaluation_btns = '<div class="float-right mb-3">' +
                         '<button class="mb-1 btn btn-cancel text-white btn_width "  name="update_marks_btns" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="updateMarks(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
-                        '<button class="mb-1 btn btn-primary text-white btn_width ml-2 "  name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
+                        '<button class="mb-1 btn btn-danger text-white btn_width ml-2 "  name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
-                
-                if (QUESTIONS_LIST[n]["question_type_code"] == "C" || QUESTIONS_LIST[n]["question_type_code"] == "R"  || QUESTIONS_LIST[n]["question_type_code"] == "O" ) {
+
+                if (QUESTIONS_LIST[n]["question_type_code"] == "C" || QUESTIONS_LIST[n]["question_type_code"] == "R" || QUESTIONS_LIST[n]["question_type_code"] == "O") {
 
                     answer = QUESTIONS_LIST[n]['question_answer']
 
-                    if(answer){
+                    if (answer) {
                         rows = getTextareaRows(QUESTIONS_LIST[n]['question_answer']);
-                    }else {
+                    } else {
                         rows = 2
                         answer = ""
                     }
 
-                    question_options_div = '<div style="display:flex;justify-content:space-between;width:700px"><p style="padding-top:13px"> <b>Question Type :</b>  '+ QUESTIONS_LIST[n]['question_type_name'] +' </p><p style="padding-top:13px"> <b>Time used :</b>  '+ QUESTIONS_LIST[n]['question_time_used'] +' </p></div>' +
-                        '<label>Code :</label><textarea style="width: 700px;" class="form-control" rows="'+ rows +'" disabled>' + 
-                        answer + 
+                    question_options_div = '<div style="display:flex;justify-content:space-between;width:700px"><p style="padding-top:13px"> <b>Question Type :</b>  ' + QUESTIONS_LIST[n]['question_type_name'] + ' </p><p style="padding-top:13px"> <b>Time used :</b>  ' + QUESTIONS_LIST[n]['question_time_used'] + ' </p></div>' +
+                        '<label>Code :</label><textarea style="width: 700px;" class="form-control" rows="' + rows + '" disabled>' +
+                        answer +
                         '</textarea> <br>';
 
                 }
@@ -205,22 +246,22 @@ function filter_data(pid, ptid) {
                     question_options_div = '<br/><audio id="play_audio" style="width:500px" controls><source  src="' + QUESTIONS_LIST[n]["response_media"] + '"/></audio><br/><br/>'
                     evaluation_btns = '<div class="float-right mb-3">' +
                         '<button class="mb-1 btn btn-cancel btn_width text-white "  name="update_marks_btns" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="updateMarks(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
-                        '<button class="mb-1 btn btn-primary btn_width text-white ml-2 "  name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
+                        '<button class="mb-1 btn btn-danger btn_width text-white ml-2 "  name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
 
                 if (QUESTIONS_LIST[n]["question_type_code"] == "V") {
                     question_expanswer_div = '<p style="padding:13px"  class="form-label">' + '<b>Expected Answer :  </b>  ' + QUESTIONS_LIST[n]['question_expected_answer'] + '</p>';
-                    if(QUESTIONS_LIST[n]["response_media"]){
+                    if (QUESTIONS_LIST[n]["response_media"]) {
                         question_options_div = '<br/>' +
-                        '<h4>Response video</h4><video class="video-resp-window" controls><source  src="' + QUESTIONS_LIST[n]["response_media"] + '" width="200"/></video><br/>'
-                    }else{
+                            '<h4>Response video</h4><video class="video-resp-window" controls><source  src="' + QUESTIONS_LIST[n]["response_media"] + '" width="200"/></video><br/>'
+                    } else {
                         question_options_div = '<br/>'
                     }
-                    
+
                     evaluation_btns = '<div class="float-right mb-3">' +
                         '<button class="mb-1 btn btn-cancel text-white btn_width "  name="update_marks_btns" style="background-color: #73d973 !important;margin-right:10px" id="save" onclick="updateMarks(' + question_sno + ')"><i style="padding-right:10px" class="fas fa-check"></i>Correct</button>' +
-                        '<button class="mb-1 btn btn-primary text-white btn_width ml-2 " name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
+                        '<button class="mb-1 btn btn-danger text-white btn_width ml-2 " name="update_marks_btns" style="background-color:#ff0000bd !important" onclick="Incorrect(' + question_sno + '); updateMarks(' + question_sno + ')" ><i style="padding-right:6px" class="fas fa-times"></i>Incorrect</button>' +
                         '</div>'
                 }
 
@@ -233,14 +274,14 @@ function filter_data(pid, ptid) {
                 else {
                     accord_style = ''
                 }
-                
-                
+
+
                 $("#questions").append(
-                    '<button class="accordion" id="questions" name="eval_ques_'+question_sno+'">' + accord_style +
+                    '<button class="accordion" id="questions" name="eval_ques_' + question_sno + '">' + accord_style +
                     '<div class="w-100p text-left " style="font-weight:600">' + question_sno + '.' + ' ' + QUESTIONS_LIST[n]["question"] +
-                    '<i class="float-right bx bxs-chevron-right"></i>'+
+                    '<i class="float-right bx bxs-chevron-right"></i>' +
                     '</div>' +
-                    
+
                     '</button>' +
                     '<div class="panel form-label" id="questions">' +
                     anser_skip_resp +
@@ -260,11 +301,11 @@ function filter_data(pid, ptid) {
                     '</div>' +
                     '</div>' +
                     '<div class="form-group row"  id="textareaContainer' + question_sno + '"  style="display:none;" >' + '<label class="form-label marks-label" style="width: 13em;padding-left: 27px;">Reason for less Marks:</label>' +
-                    '<textarea style="width: 400px;" class="form-control exp-ans-text"  id="reason' + question_sno + '"  rows="4" maxlength="256" required>'+ QUESTIONS_LIST[n]['reason'] +'</textarea>' +
+                    '<textarea style="width: 400px;" class="form-control exp-ans-text"  id="reason' + question_sno + '"  rows="4" maxlength="256" required>' + QUESTIONS_LIST[n]['reason'] + '</textarea>' +
                     '</div>' +
                     evaluation_btns +
                     '</div>'
-                    
+
                 )
 
                 if (parseInt(QUESTIONS_LIST[n]['question_mark']) > parseInt(QUESTIONS_LIST[n]['answer_marks'])) {
@@ -273,11 +314,11 @@ function filter_data(pid, ptid) {
                     $("#textareaContainer" + question_sno).hide();
                 }
 
-                if ((QUESTIONS_LIST[n]["question_type_code"] == "C") || (QUESTIONS_LIST[n]["question_type_code"] == "R") || (QUESTIONS_LIST[n]["question_type_code"] == "O")  ){
+                if ((QUESTIONS_LIST[n]["question_type_code"] == "C") || (QUESTIONS_LIST[n]["question_type_code"] == "R") || (QUESTIONS_LIST[n]["question_type_code"] == "O")) {
                     $("#textareaContainer" + question_sno).hide();
                 }
-                
-                
+
+
                 $('.accordion').last().click(accord);
 
                 if (QUESTIONS_LIST[n]["question_type_code"] == "M") {
@@ -336,22 +377,31 @@ function filter_data(pid, ptid) {
                     }
                 }
             }
+            if (QUESTIONS_LIST.length > 0) {
+
+                if (DATA['questions_tobe_evaluated'] == 0) {
+                    is_submission_evaluated = true
+                } else {
+                    is_submission_evaluated = false
+                }
+                $(".eval-question-section").append(`<button type="button" class="btn btn-primary mt-3 float-right send-result" id="send_result_pid_${DATA['selected_participants']}" onclick="send_evaluation_result(${DATA['selected_participants']})" ${DATA['questions_tobe_evaluated'] == 0 ? '' : 'disabled'}>Send Result</button>`)
+            }
             $('body').removeClass('cursor-progress');
             $('p[name="papers"]').removeClass('cursor-progress')
             $('tr[name="participants"]').removeClass('cursor-progress')
             $(".papers-card").removeClass("loading");
             $(".participants-card").removeClass("loading");
 
-            
-        }else{
+
+        } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Could not process request',
+                title: 'Could not process your request',
                 text: 'Internal Server Error',
                 footer: 'Please contact administrator',
-                confirmButtonText: 'OK', 
-                confirmButtonColor: '#274699' 
-              })
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#274699'
+            })
             $('body').removeClass('cursor-progress');
             $('p[name="papers"]').removeClass('cursor-progress')
             $('tr[name="participants"]').removeClass('cursor-progress')
@@ -363,6 +413,53 @@ function filter_data(pid, ptid) {
 
 
 
+function send_evaluation_result(pid_) {
+
+    if (is_submission_evaluated) {
+        $(".send-result").prop("disabled",true);
+        $("#send_result_pid_"+pid_).text("Please Wait...");
+
+        dataObj = {
+            "request_for": "send_evaluation_result",
+            "paper_id": paper_id,
+            "participant_id": pid_
+        }
+
+        var final_data = {
+            'data': JSON.stringify(dataObj),
+            csrfmiddlewaretoken: CSRF_TOKEN,
+        }
+        $.post(CONFIG['portal'] + "/api/evaluation", final_data, function (res) {
+
+            $(".send-result").prop("disabled",false);
+            $("#send_result_pid_"+pid_).text("Send Result");
+
+            if (res.statusCode == 0) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Result mail sent to candidate successfully',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#274699'
+                })
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Could not process your request',
+                    text: 'Internal Server Error',
+                    footer: 'Please contact administrator',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#274699'
+                })
+            }
+        })
+
+    }
+    else {
+        console.log("is_submission_evaluated:", is_submission_evaluated);
+    }
+}
+
+
 
 
 
@@ -371,7 +468,7 @@ function filter_data(pid, ptid) {
 function accord() {
     $(this).toggleClass("sel-eval-question");
     const icon = $(this).find('i');
-        
+
     // Toggle classes for the icon
     if (icon.hasClass('bxs-chevron-right')) {
         icon.removeClass('bxs-chevron-right').addClass('bxs-chevron-down');
@@ -387,98 +484,105 @@ function accord() {
 }
 
 function myFunction(question_sno) {
-    var givenMarks = document.getElementById('ans_mark'+question_sno).value
-    var totalMarks = document.getElementById("marks"+question_sno).value
+    var givenMarks = document.getElementById('ans_mark' + question_sno).value
+    var totalMarks = document.getElementById("marks" + question_sno).value
     if (parseInt(totalMarks) > parseInt(givenMarks)) {
-        $("#textareaContainer"+question_sno).show();
+        $("#textareaContainer" + question_sno).show();
     } else {
-        $("#textareaContainer"+question_sno).hide();
+        $("#textareaContainer" + question_sno).hide();
     }
 
 }
 
 function updateMarks(q_no) {
-    
-    
+
+
     var marks = document.getElementById('ans_mark' + q_no).value
     var reason_for_less_marks = document.getElementById('reason' + q_no).value
     var totalMarks = parseInt(document.getElementById("marks" + q_no).value);
 
     var trimmedString = reason_for_less_marks.trim();
-    
+
     if (!marks) {
-        
+
         Swal.fire({
             icon: 'warning',
             title: 'Please enter marks',
-            confirmButtonText: 'OK', 
-            confirmButtonColor: '#274699' 
-          })
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#274699'
+        })
     }
 
-   else if (marks < totalMarks && !trimmedString) {
-        
+    else if (marks < totalMarks && !trimmedString) {
+
         Swal.fire({
             icon: 'warning',
             title: 'Enter reason for less marks',
-            confirmButtonText: 'OK', 
-            confirmButtonColor: '#274699' 
-          })
-    } 
-     
-    
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#274699'
+        })
+    }
+
+
     else {
         dataObj = {
-            "request_for":"update_marks",
+            "request_for": "update_marks",
             'answer_marks': marks,
             'reason_for_less_marks': reason_for_less_marks,
             'answer_id': $('#ans_mark' + q_no).attr('name')
         };
-    
+
         var final_data = {
             'data': JSON.stringify(dataObj),
             csrfmiddlewaretoken: CSRF_TOKEN,
         };
-    
+
         if (marks > totalMarks) {
-            
+
             Swal.fire({
                 icon: 'warning',
                 title: 'Please enter valid Marks',
-                confirmButtonText: 'OK', 
-                confirmButtonColor: '#274699' 
-              })
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#274699'
+            })
         } else {
             $('body').addClass('cursor-progress');
-            $('button[name="update_marks_btns"]').prop('disabled',true);
+            $('button[name="update_marks_btns"]').prop('disabled', true);
             $.post(CONFIG['portal'] + "/api/evaluation", final_data, function (res) {
-                var marks = res.answer_data;
+                var marks = res.answer_data.secure_marks;
                 $('#total_marks').html('');
                 $('#total_marks').append(
                     '<label style="text-transform: capitalize;" id="total_marks">' + marks + '&ensp;&ensp;' + '</label>'
                 );
-    
+
                 if (res.statusCode == 0) {
                     notifyNow($('[data-notify]'));
                     $('body').removeClass('cursor-progress');
-                    $('button[name="update_marks_btns"]').prop('disabled',false);
-                    $('button[name="update_marks_btns"]').prop('disabled',false);
+                    $('button[name="update_marks_btns"]').prop('disabled', false);
+                    $('button[name="update_marks_btns"]').prop('disabled', false);
 
-                    var $eval_ques_div_element = $('button[name="eval_ques_'+q_no+'"');
+                    var $eval_ques_div_element = $('button[name="eval_ques_' + q_no + '"');
                     var $ans_line = $('<div class="ans-color-line"></div>');
                     $eval_ques_div_element.prepend($ans_line);
+                    if (res.answer_data.questions_tobe_evaluated == 0) {
+                        is_submission_evaluated = true
+                        $("#send_result_pid_" + res.answer_data.participant_id).prop("disabled", false);
+                    } else {
+                        is_submission_evaluated = false
+                        $("#send_result_pid_" + res.answer_data.participant_id).prop("disabled", true);
+                    }
                 } else {
-                    
+
                     Swal.fire({
                         icon: 'error',
-                        title: 'Could not process request',
+                        title: 'Could not process your request',
                         text: 'Internal Server Error',
-                        confirmButtonText: 'OK', 
-                        confirmButtonColor: '#274699' ,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#274699',
                         footer: 'Please contact administrator'
-                      })
-                      $('body').removeClass('cursor-progress');
-                      $('button[name="update_marks_btns"]').prop('disabled',false);
+                    })
+                    $('body').removeClass('cursor-progress');
+                    $('button[name="update_marks_btns"]').prop('disabled', false);
                 }
             });
         }
@@ -490,12 +594,12 @@ function notifyNow() {
     var message = 'Marks Saved';
     var options = $button.data('options') || {};
 
-    options = $.extend({}, options, { pos: 'center-right' , timeout: 1500});
+    options = $.extend({}, options, { pos: 'center-right', timeout: 1500 });
 
     $.notify(message, options);
 }
 
-    
+
 function Incorrect(s_no) {
     document.getElementById('ans_mark' + s_no).value = 0;
     $("#textareaContainer" + s_no).show();
@@ -564,6 +668,6 @@ function showNextParticipant() {
 
 function getTextareaRows(text) {
     const lines = text.split('\n').length;
-    const additionalRows = 2; 
+    const additionalRows = 2;
     return lines + additionalRows;
 }

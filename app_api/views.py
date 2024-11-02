@@ -514,6 +514,29 @@ def evaluationView(request):
                     response['data'] = "Marks Updated successfully"
                     response['answer_data'] = answer_data
                     response['statusCode'] = 0
+            
+            if dataObjs["request_for"] == "send_evaluation_result":
+                
+                dataObjs["enc_company_id"]=enc_company_id
+                dataObjs["company_paper_ids"]=company_paper_ids
+
+                if dataObjs["paper_id"] in company_paper_ids:
+                    update_marks = requests.post(url, json = dataObjs, verify = False)
+                    response_content = update_marks.content
+
+                    if response_content:
+                        
+                        resp = json.loads(response_content.decode('utf-8'))
+
+                        acert_data = resp['data']
+                        if resp["statusCode"] == 0:
+                            response['data'] = "Result Mail Sent to Candidate Successfully"
+                            response['statusCode'] = 0
+                else:
+                    print("not an company paper")
+                
+                    response['data'] = "Query Not Found"
+                    response['statusCode'] = 0
 
         
     except Exception as e:
