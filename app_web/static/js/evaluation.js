@@ -77,7 +77,7 @@ $('#show_all_papers').click(function () {
     } else {
         $(".all_eval_label").remove()
         $('#show_all_papers').text('Hide Evaluated');
-        $("p[name='papers']").eq(6).click();
+        $("p[name='papers']:first").click();
     }
 });
 
