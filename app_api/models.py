@@ -73,7 +73,7 @@ class JobDesc(models.Model):
     budget = models.DecimalField(max_digits=13, decimal_places=2, null=True)
     skillset = models.CharField(max_length=512, null=True)
     skillnotes = models.CharField(max_length=512, null=True)
-    interviewers = models.CharField(max_length=51,null=True)
+    interviewers = models.CharField(max_length=100,null=True)
     expjoindate = models.DateField(max_length=11,null=True)
     positions = models.IntegerField(null=True)
     createdby = models.IntegerField(null=True)
@@ -179,6 +179,7 @@ class Workflow(models.Model):
     papertype = models.CharField(max_length=1, null=True)
     order = models.IntegerField(null=True)
     papertitle = models.CharField(max_length=120, null=True, blank=True)
+    paperlibraryid = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'workflow'

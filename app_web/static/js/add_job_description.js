@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 async function fetchJdLibrarys() {
     try {
         // Send a GET request to the API endpoint
-        const response = await fetch(CONFIG['acert']+"/api/jd-librarys", {
+        const response = await fetch(CONFIG['acert']+"/api/all-jd-libraries", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -30,7 +30,7 @@ async function fetchJdLibrarys() {
 
     } catch (error) {
         // Handle any errors that occurred during the fetch
-        console.error('Failed to fetch jd-librarys:', error);
+        console.error('Failed to fetch jd-libraries:', error);
     }
 }
 

@@ -25,6 +25,8 @@ urlpatterns = [
     path('interview-feedback',views.interviewFeedback),
     path('check-test-has-paper',views.checkTestHasPaper),
     path('get-candidate-report',views.candidateReport),
+    path('delete-test-injd',views.deleteTestinJs),
+    path('save-interviewers-lst',views.saveInterviewersForJs),
 
 
 
