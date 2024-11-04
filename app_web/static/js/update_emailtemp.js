@@ -60,6 +60,8 @@ $(document).ready(function () {
 
 var remove_attachment = "no";
 $('#remove_attachment').on('click', function () {
+    $("#uploaded_filename").prop("hidden",true);
+    $("#email_attachment_name").val("")
     remove_attachment = "yes";
     $('#email_attachment_file').val('');
     $('#remove_attachment').prop("hidden", true);
@@ -70,6 +72,7 @@ $('#remove_attachment').on('click', function () {
 
 
 $('#email_attachment_file').on('change', function (e) {
+    $("#uploaded_filename").prop("hidden",true)
     if (this.files.length > 0) {
         attachment_name = this.files[0].name
         $('#remove_attachment').prop("hidden", false);
