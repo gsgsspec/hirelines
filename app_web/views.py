@@ -246,11 +246,11 @@ def update_jobdescription(request,update_jd_id):
         user_mail = request.user
         user_data = auth_user(user_mail)
         user_role = user_data.role
-
+        compyId = getCompanyId(user_role)
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
 
-        jd_details = jdDetails(update_jd_id)
+        jd_details = jdDetails(update_jd_id, compyId)
 
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
@@ -272,8 +272,6 @@ def jobDescriptionSetUp(request,jd_id):
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
         jd_details = jdDetails(jd_id, companyId)
-        print('==================')
-        print(jd_details)
         enc_jdid = encrypt_code(jd_id)
         hirelines_integration_script_enc = hirelines_integration_script.replace("#enc_jdid#",enc_jdid)
         hirelines_integration_function_enc = hirelines_integration_function.replace("#enc_jdid#",enc_jdid)

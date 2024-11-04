@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 async function fetchJdLibrarys() {
     try {
         // Send a GET request to the API endpoint
-        const response = await fetch(CONFIG['acert']+"/api/all-jd-libraries", {
+        const response = await fetch(CONFIG['acert']+"/api/jd-librarys", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

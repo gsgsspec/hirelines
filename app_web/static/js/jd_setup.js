@@ -283,12 +283,15 @@ function createNewTestModalOpen(testType){
     var testName
     if (testType == 'screening'){
         testName = 'Screening'
+        document.getElementById('promotLevelContainer').hidden = false;
     }
     else if(testType == 'coding'){
         testName = 'Coding'
+        document.getElementById('promotLevelContainer').hidden = false;
     }
     else if(testType == 'interview'){
         testName = 'Interview'
+        document.getElementById('promotLevelContainer').hidden = true;
     }
 
     if(testName){
@@ -414,16 +417,21 @@ function updateCardAfterSaveData(allTestsList,testId){
     var testName
     if (testType == 'S'){
         testName = 'Screening'
+        document.getElementById('testTitle_'+testId).innerText = allTestsList[testId]['papertitle']
+        document.getElementById('testCardTestType_'+testId).innerText = ""+testName+"( Promote % "+allTestsList[testId]['promot']+" )"
     }
     else if(testType == 'E'){
         testName = 'Coding'
+        document.getElementById('testTitle_'+testId).innerText = allTestsList[testId]['papertitle']
+        document.getElementById('testCardTestType_'+testId).innerText = ""+testName+"( Promote % "+allTestsList[testId]['promot']+" )"
     }
     else if(testType == 'I'){
         testName = 'Interview'
+        document.getElementById('testTitle_'+testId).innerText = allTestsList[testId]['papertitle']
+        document.getElementById('testCardTestType_'+testId).innerText = ""+testName
     }
 
-    document.getElementById('testTitle_'+testId).innerText = allTestsList[testId]['papertitle']
-    document.getElementById('testCardTestType_'+testId).innerText = ""+testName+"( Promote % "+allTestsList[testId]['promot']+" )"
+    
 
 }
 
@@ -440,16 +448,22 @@ function addTestCardToShow(testName, promotValue, testType, data) {
         testTitle = 'S';
         testDesc = 'Screening';
         testIcon = '<i class="fas fa-clipboard-check" style="margin-right:12px;color:' + screenMainColor + ';font-size:2rem;"></i>';
+        testLabel = `<p class="text-muted small mb-0" id="testCardTestType_${data['id']}">${testDesc} (Promote % ${promotValue})</p>`
+
     } else if (testType == 'E' || testType == 'Coding') {
         testTypeColor = codingBackgroundColor;
         testTitle = 'E';
         testDesc = 'Coding';
         testIcon = '<i class="fas fa-code" style="margin-right:12px;color:' + codingMainColor + ';font-size:2rem;"></i>';
+        testLabel = `<p class="text-muted small mb-0" id="testCardTestType_${data['id']}">${testDesc} (Promote % ${promotValue})</p>`
+
     } else if (testType == 'I' || testType == 'Interview') {
         testTypeColor = interviewBackgroundColor;
         testTitle = 'I';
         testDesc = 'Interview';
         testIcon = '<i class="fas fa-chalkboard-teacher" style="margin-right:12px;color:' + interviewMainColor + ';font-size:2rem;"></i>';
+        testLabel = `<p class="text-muted small mb-0" id="testCardTestType_${data['id']}">${testDesc}</p>`
+
     }
 
     // Create a new div for the card
@@ -464,7 +478,7 @@ function addTestCardToShow(testName, promotValue, testType, data) {
                             </div>
                             <div>
                                 <span id="testTitle_${data['id']}" class="fw-bold text-dark">${testName}</span>
-                                <p class="text-muted small mb-0" id="testCardTestType_${data['id']}">${testDesc} (Promote % ${promotValue})</p>
+                                ${testLabel}
                             </div>
                         </div>
                     </blockquote>
@@ -578,10 +592,13 @@ function openUpdateTestModel(currentSelectedtestId) {
 
         if (testType == 'screening' || testType == 'S') {
             testName = 'Screening';
+            document.getElementById('promotLevelContainer').hidden = false;
         } else if (testType == 'coding' || testType == 'E') {
             testName = 'Coding';
+            document.getElementById('promotLevelContainer').hidden = false;
         } else if (testType == 'interview' || testType == 'I') {
             testName = 'Interview';
+            document.getElementById('promotLevelContainer').hidden = true;
         }
 
         var modalTitle = document.getElementById('modalCenterTitle');
