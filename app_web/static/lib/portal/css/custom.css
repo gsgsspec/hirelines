@@ -335,16 +335,25 @@ table.dataTable thead th, table.dataTable thead td {
 }
 
 
+.credits-container{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
 .credits-display-div{
-  position: absolute; 
-  right: 1.75vw;
+  /* position: absolute;  */
+  /* right: 1.75vw; */
   background: #fff;
   border: .3px solid #dedede; 
   /* border: unset !important; */
   border-radius: 5px;
   z-index: 1001;
   cursor: default !important;
+  /* float:right; */
 }
+
 
 .blinking-text {
   animation: blink-scale 2s infinite;
