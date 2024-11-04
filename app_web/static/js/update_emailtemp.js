@@ -39,11 +39,11 @@ function clr_data() {
 }
 
 
-var attachment_name = null;
+
 $(document).ready(function () {
 
     var attachmentFileInput = $('#email_attachment_file');
-
+    var attachment_name = attachment;
     if (attachmentFileInput.get(0).files.length > 0) {
         $('#remove_attachment').prop("hidden", false);
         attachment_name = attachmentFileInput[0].files[0].name

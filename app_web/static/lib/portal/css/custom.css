@@ -335,9 +335,9 @@ table.dataTable thead th, table.dataTable thead td {
 }
 
 
-.credits-display_div{
+.credits-display-div{
   position: absolute; 
-  right: 5%; 
+  right: 1.75vw;
   background: #fff;
   border: .3px solid #dedede; 
   /* border: unset !important; */
