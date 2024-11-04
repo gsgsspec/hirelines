@@ -182,6 +182,24 @@
                       </div>
                   {% endif %}
               </div>
+          {% empty %}
+
+            <div id="interviewPanelContainer">
+              <div class="form-group row interview-panel align-items-center" id="panel_3">
+                      <div class="col-xl-3 col-form-label">Interview Panel</div>
+                  <div class="col-xl-6">
+                    <select class="custom-select custom-select-sm interviewer-select form-select my-2" required="">
+                      <option value="" disabled selected>Select Role</option>
+                      {% for interviewer in jd_details.interviewes_lst  %}
+                          <option value="{{ interviewer.id}}">{{ interviewer.name }}</option>
+                      {% endfor %}
+                  </select>
+                  </div>
+                      <div class="col-xl-1">
+                      </div>
+              </div>
+            </div>
+
           {% endfor %}
         </div>
 
