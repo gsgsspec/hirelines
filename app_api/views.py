@@ -677,7 +677,7 @@ def updateEmailtemp(request):
     except Exception as e:
         response['data'] = 'Error in updateEmailtemp'
         response['error'] = str(e)
-        raise
+    
     return JsonResponse(response)
 
 

@@ -413,7 +413,6 @@ def updateEmailtempDB(user,dataObjs,fileObjs):
                 email_temp.email_attachment_path = None
                 email_temp.save()
                 
-
         else:
             email_temp = Email_template(
                 company_id = decrypt_code(dataObjs['company_id']),

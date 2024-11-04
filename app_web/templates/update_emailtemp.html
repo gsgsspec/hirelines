@@ -84,15 +84,24 @@
                     <div class="row mb-3">
                         <label class="col-sm-3 col-form-label">Email Attachment</label>
                         <div class="col-sm-9">
-                            <div class="input-group input-group-merge">
+                            <div class="custom-file-display" onclick="document.getElementById('email_attachment_file').click()">
+                                {% if emailTemps.email_attachment %}
+                                Choose File |  &ensp;&ensp;&ensp;{{emailTemps.email_attachment}}
+                                {% else %}
+                                Choose a file
+                                {% endif %}
+                            </div>
+                            <input class="custom-file-input" type="file" name="email_attachment" id="email_attachment_file" accept=".pdf" onchange="updateFileDisplay()">
+                            
+                            <!-- <div class="input-group input-group-merge">
                                 
-                                    <input class="form-control" type="file" name="email_attachment" id="email_attachment_file" accept=".pdf" required>
+                                    <input class="form-control" type="file" name="email_attachment" id="email_attachment_file" accept=".pdf" >
                                 {% if emailTemps.email_attachment %}
                                     <span id="uploaded_filename" style="float: left; align-content: center; margin-right: 17vw;">Uploaded file: {{emailTemps.email_attachment}}</span>
                                 {% else %}
                                 <span id="uploaded_filename" hidden></span>
                                     {% endif %}
-                            </div>
+                            </div> -->
                             
                             <button type="button" class="btn-sm btn-light mt-2 float-right" style="width: fit-content;" id="remove_attachment" {% if not emailTemps.email_attachment %} hidden {% endif %}>Remove attachment</button>
 
@@ -101,9 +110,9 @@
 
                     <div class="row mb-3">
                         <label class="col-sm-3 col-form-label">Attachment Name</label>
-                        <div class="col-sm-9">
+                        <div class="col-sm-8">
                             <div class="input-group input-group-merge">
-                                <input class="form-control" type="text" id="email_attachment_name" value="{{emailTemps.email_attachment_name}}" required>
+                                <input class="form-control" type="text" id="email_attachment_name" value="{{emailTemps.email_attachment_name}}" >
                             </div>
                         </div>
                     </div>
@@ -120,7 +129,18 @@
         </div>
     </div>
 </div>
-
+<style>
+    .custom-file-input {
+    display: none;
+}
+.custom-file-display {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+    </style>
 <script src="{% static 'js/update_emailtemp.js' %}"></script>
 
 <script>
