@@ -364,3 +364,47 @@ class IvFeedback(models.Model):
     
     class Meta:
         db_table = 'ivfeedback'
+
+
+# holds one record per registered company
+class Account(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    type = models.CharField(max_length=1, null=True)
+    payment = models.DecimalField(max_digits=13, decimal_places=2, null=True) # total amount paid
+    creditamount = models.DecimalField(max_digits=13, decimal_places=2, null=True) # total added credits
+    lastpayment = models.DecimalField(max_digits=13, decimal_places=2, null=True)
+    lastpaymentdatetime = models.DateTimeField(null=True)
+    lastcredit = models.IntegerField(null=True) # last added credits
+    lastcreditdatetime = models.DateTimeField(null=True)
+    balance = models.IntegerField(null=True) # balance credits
+
+    class Meta:
+        db_table = 'account'
+
+
+# holds mutiple records ie. each payment
+class Payments(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    dateofpay = models.DateTimeField(null=True)
+    modeofpay = models.CharField(max_length=1, null=True)
+    amount = models.DecimalField(max_digits=13, decimal_places=2, null=True)
+    credits = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'payments'
+
+
+# holds mutiple records ie. each transaction
+class Credits(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    transdatetime = models.DateTimeField(null=True)
+    transtype = models.CharField(max_length=1, null=True) # papertype
+    points = models.IntegerField(null=True) # credits used
+    user = models.IntegerField(null=True) # hrid / interviewer
+    transid = models.IntegerField(null=True) # paperid/regid
+
+    class Meta:
+        db_table = 'credits'
