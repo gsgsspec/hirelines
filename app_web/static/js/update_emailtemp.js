@@ -172,6 +172,8 @@ window.submit_form = function (id, request_type = null) {
                             if (request_type == "testmail") {
                                 showSuccessMessage('Test mail sent successfully');
                                 $("#update_email_template_form :input").prop("disabled", false);
+                                $("#paper_type").prop("disabled",true);
+                                $("#event").prop("disabled",true);
                                 // setTimeout(function () { window.location.href = '/email-templates' }, 2000);
                             } else {
                                 showSuccessMessage('Email Template added successfully');
