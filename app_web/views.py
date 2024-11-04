@@ -328,7 +328,7 @@ def updateEmailTempPage(request, eid):
         user_mail = request.user
         user_data = auth_user(user_mail)
         user_role = user_data.role
-
+        user_email = user_data.email
         menuItemList = get_functions_service(user_role)
 
         url = f'{acert_domain}/api/get-emailtemp-data'
@@ -342,9 +342,9 @@ def updateEmailTempPage(request, eid):
             emailTemps = data['data']
         
         company_id = getCompanyId(user_mail)
-        
+        company_id = encrypt_code(company_id)
         return render(request, "portal_index.html", {"template_name": 'update_emailtemp.html','menuItemList': menuItemList,
-                                                     "emailTemps":emailTemps,"company_id":company_id})
+                                                     "emailTemps":emailTemps,"company_id":company_id,"user_email":user_email})
 
     except Exception as e:
         raise

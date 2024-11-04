@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 from urllib.parse import urljoin
 from django.db.models import Q
+from app_api.functions.enc_dec import decrypt_code
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Brules, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
@@ -394,29 +395,38 @@ def addInterviewFeedbackDB(user,dataObjs):
         raise
 
 
-def updateEmailtempDB(user,dataObjs):
+def updateEmailtempDB(user,dataObjs,fileObjs):
     try:
         paper_type = 'S' if dataObjs['paper_type'] == "Screening" else 'E' if dataObjs['paper_type'] == "Coding" else "I" if dataObjs['paper_type'] == "Interview" else ''
-        email_temp = Email_template.objects.filter(company_id=dataObjs['id'],event=dataObjs['event'],paper_type=paper_type).last()
+        email_temp = Email_template.objects.filter(company_id=decrypt_code(dataObjs['company_id']),event=dataObjs['event'],paper_type=paper_type).last()
         if email_temp:
+            email_temp.template_heading = dataObjs['template_heading']
             email_temp.email_subject = dataObjs['email_subject']
             email_temp.email_body = dataObjs['email_body']
             email_temp.template_name = dataObjs['template_name']
-            email_temp.template_heading = dataObjs['id']
-            email_temp.sender_label = dataObjs['sender_label']
             email_temp.template_heading = dataObjs['template_heading']
+            email_temp.sender_label = dataObjs['sender_label']
+            email_temp.email_attachment=dataObjs['attachment_name']
+            email_temp.email_attachment_name=dataObjs['file_name']
+            email_temp.save()
 
         else:
             Email_template(
-                company_id = dataObjs['id'],
+                company_id = decrypt_code(dataObjs['company_id']),
                 email_subject = dataObjs['email_subject'],
                 email_body = dataObjs['email_body'],
                 template_name = dataObjs['template_name'],
                 template_heading = dataObjs['template_heading'],
                 sender_label = dataObjs['sender_label'],
                 event = dataObjs['event'],
-                paper_type = paper_type
+                paper_type = paper_type,
+                email_attachment=dataObjs['attachment_name'],
+                email_attachment_name=dataObjs['file_name']
             ).save()
+        template = Email_template.objects.filter(event=dataObjs['event']).latest('id')
+        for file in fileObjs.items():
+                template.email_attachment_path = file[1]
+        template.save()
 
     except Exception as e:
         raise

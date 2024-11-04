@@ -669,13 +669,15 @@ def updateEmailtemp(request):
         if request.method == "POST":
             user = auth_user(request.user)
             dataObjs = json.loads(request.POST.get('data'))
-            updateEmailtempDB(user, dataObjs)
+            fileObjs = request.FILES
+            updateEmailtempDB(user, dataObjs,fileObjs)
             response['data'] = "Email Template updated successfully"
             response['statusCode'] = 0
 
     except Exception as e:
         response['data'] = 'Error in updateEmailtemp'
         response['error'] = str(e)
+        raise
     return JsonResponse(response)
 
 

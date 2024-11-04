@@ -283,9 +283,9 @@ class Email_template(models.Model):
     email_subject = models.CharField(max_length=300, null=True, blank=True)
     email_body = models.CharField(max_length=10000, null=True, blank=True)
     template_heading = models.CharField(max_length=300, null=True)
-    # email_attachment = models.CharField(max_length=250, null=True)
-    # email_attachment_path = models.FileField(upload_to="email_attachments/", null=True)
-    # email_attachment_name = models.CharField(max_length=120, null=True)
+    email_attachment = models.CharField(max_length=250, null=True)
+    email_attachment_path = models.FileField(upload_to="email_attachments/", null=True)
+    email_attachment_name = models.CharField(max_length=120, null=True)
 
     
     class Meta:
