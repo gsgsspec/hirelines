@@ -14,7 +14,9 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, \
-        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService
+        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
+
+        
 from .models import Candidate, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
 from app_api.functions.constants import hirelines_registration_script
