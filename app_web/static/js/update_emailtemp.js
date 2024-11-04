@@ -7,6 +7,8 @@ window.addEventListener("pageshow", function (event) {
         window.location.reload();
     }
 });
+var remove_attachment = "no";
+var update_remove_attachment = "no"
 
 $('#update_email_template_form').on('change keyup paste', ':input', function (e) {
     $('#test_mail').prop("disabled", true);
@@ -50,9 +52,9 @@ $(document).ready(function () {
         attachment_name = null;
     }
 
-    $('#email_attachment_file').change(function (e) {
-        attachment_name = e.target.files[0].name;
-    });
+    // $('#email_attachment_file').change(function (e) {
+    //     attachment_name = e.target.files[0].name;
+    // });
 
 
 });
@@ -60,10 +62,17 @@ $(document).ready(function () {
 function updateFileDisplay() {
     const input = document.getElementById('email_attachment_file');
     const display = document.querySelector('.custom-file-display');
-    display.textContent = input.files.length > 0 ? `Choose File | ${input.files[0].name}` : "Choose a file";
+    if(input.files.length > 0){
+        display.textContent = `Choose File | ${input.files[0].name}`;
+        update_remove_attachment = "update"
+    }else{
+        display.textContent = "Choose a file";
+        update_remove_attachment = "remove"
+    }
+    
 }
 
-var remove_attachment = "no";
+
 $('#remove_attachment').on('click', function () {
     const display = document.querySelector('.custom-file-display');
     display.textContent = "Choose a file";
@@ -73,9 +82,8 @@ $('#remove_attachment').on('click', function () {
     $('#email_attachment_file').val('');
     $('#remove_attachment').prop("hidden", true);
     attachment_name = null;
+    update_remove_attachment = "remove"
 })
-
-
 
 
 $('#email_attachment_file').on('change', function (e) {
@@ -83,10 +91,13 @@ $('#email_attachment_file').on('change', function (e) {
     if (this.files.length > 0) {
         attachment_name = this.files[0].name
         $('#remove_attachment').prop("hidden", false);
+        update_remove_attachment = "update"
     } else {
         $('#remove_attachment').prop("hidden", true);
         attachment_name = null
+        update_remove_attachment = "remove"
     }
+    
 })
 
 
@@ -108,7 +119,8 @@ window.submit_form = function (id, request_type = null) {
         'attachment_name': attachment_name,
         'file_name': $('#email_attachment_name').val(),
         'user_email': user_email,
-        'request_type': request_type
+        'request_type': request_type,
+        "update_remove_attachment":update_remove_attachment
     }
     console.log("dataObjs",dataObjs);
     
