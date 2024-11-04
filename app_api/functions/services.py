@@ -469,12 +469,13 @@ def jdDetails(jdId, companyId):
                     total_interviewers_lst.append({'id':interviewer['id'],'name':interviewer['name']})
                 
                 selectedInterviewerLst = []
-                jd_interviewers = ast.literal_eval(jdData.interviewers)
-                for selectedInterviewer in jd_interviewers:
-                    if selectedInterviewer:
-                        userData = list(User.objects.filter(id = selectedInterviewer).values('id','name'))
+                if jdData.interviewers:
+                    jd_interviewers = ast.literal_eval(jdData.interviewers)
+                    for selectedInterviewer in jd_interviewers:
                         if selectedInterviewer:
-                            selectedInterviewerLst.append({'id':userData[0]['id'],'name':userData[0]['name']})
+                            userData = list(User.objects.filter(id = selectedInterviewer).values('id','name'))
+                            if selectedInterviewer:
+                                selectedInterviewerLst.append({'id':userData[0]['id'],'name':userData[0]['name']})
             
             jdDataDict = {
                 'id': jdData.id,
