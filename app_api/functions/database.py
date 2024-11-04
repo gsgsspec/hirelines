@@ -203,7 +203,7 @@ def scheduleInterviewDB(user_id, dataObjs):
 def saveJdNewTest(dataObjs,compyId):
     try:
 
-        if dataObjs['createOrUpdate'] == 'create':
+        if dataObjs['createOrUpdate'] == 'create': # it create new Test.
             
             testType = None
             if 'testType' in dataObjs:
@@ -224,8 +224,7 @@ def saveJdNewTest(dataObjs,compyId):
             savedWorkFlowDetails.save()
             
             wrkflId = savedWorkFlowDetails.id
-            # workFlowDetails = Workflow.objects.filter(id = wrkflId).last()
-            # workFlowDetails.values()
+            
             workFlowDetails = Workflow.objects.filter(id=wrkflId).values().last()
 
             save_bruls = Brules(
@@ -239,19 +238,35 @@ def saveJdNewTest(dataObjs,compyId):
 
             return [workFlowDetails]
 
-        if dataObjs['createOrUpdate'] == 'update':
+        if dataObjs['createOrUpdate'] == 'update': # it will update the existing Test
 
             if 'testId' in dataObjs:
                 currentTestId = dataObjs['testId']
 
             if currentTestId:
                 savedWorkFlowDetails = Workflow.objects.filter(id = currentTestId, companyid = compyId, jobid = dataObjs['jdId']).last()
-                savedWorkFlowDetails.papertitle = dataObjs['testName']
+                
+                if 'testName' in dataObjs:
+                    if dataObjs['testName']:
+                        savedWorkFlowDetails.papertitle = dataObjs['testName']
+                
+                if 'createdPaperid' in dataObjs:
+                    if savedWorkFlowDetails.paperid == None:
+                        savedWorkFlowDetails.paperid = dataObjs['createdPaperid']
+                
+                if 'libraryId' in dataObjs:
+                    if dataObjs['libraryId']:
+                        savedWorkFlowDetails.paperlibraryid = dataObjs['libraryId']
+
                 savedWorkFlowDetails.save()
 
-                brulesDetails = Brules.objects.filter(companyid = compyId, jobdescid = dataObjs['jdId'], workflowid = currentTestId).last()
-                brulesDetails.passscore = dataObjs['promotPercentage']
-                brulesDetails.save()
+                passcore = ''
+                if 'promotPercentage' in dataObjs:
+                    if dataObjs['promotPercentage']:
+                        brulesDetails = Brules.objects.filter(companyid = compyId, jobdescid = dataObjs['jdId'], workflowid = currentTestId).last()
+                        brulesDetails.passscore = dataObjs['promotPercentage']
+                        passcore = brulesDetails.passscore
+                        brulesDetails.save()
 
                 updatedData = {   
                    'updateEvent': 'Y',
@@ -259,14 +274,75 @@ def saveJdNewTest(dataObjs,compyId):
                     'id'        : savedWorkFlowDetails.id,
                     'jobid'     : savedWorkFlowDetails.jobid,
                     'order'     : None,
-                    'paperid'   : 49,
+                    'paperid'   : savedWorkFlowDetails.paperid,
                     'papertitle': savedWorkFlowDetails.papertitle,
                     'papertype' : savedWorkFlowDetails.papertype,
-                    'promot'    : brulesDetails.passscore
+                    'promot'    : passcore
                 }
 
                 return dict(updatedData)
 
+    except Exception as e:
+        raise
+
+# delete test in jd
+def deleteTestInJdDB(dataObjs,):
+    try:
+        workflowDetails = Workflow.objects.filter(jobid=dataObjs['jdid'])
+        testIdList = list(workflowDetails.values_list('id', flat=True))
+        workflowDetails = list(workflowDetails.values())
+        
+        if workflowDetails:
+            for testInWorkFlow in range(0, len(workflowDetails)):
+
+                # If the ID matches, perform delete or other action
+                if workflowDetails[testInWorkFlow]['id'] == dataObjs['deleteTestId']:
+                    deleteTest = Workflow.objects.filter(id=workflowDetails[testInWorkFlow]['id']).last()
+                    deleteTest.delete()
+
+                    nextSelectedCard = 0
+                    if testInWorkFlow == 0:
+                        
+                        if(len(testIdList) >= 2):
+                            nextSelectedCard = testIdList[testInWorkFlow + 1] # return this if first card deleted
+                    else:
+                        if(testInWorkFlow + 1) == len(testIdList):
+                            if(testInWorkFlow + 1) <= len(testIdList):
+                                nextSelectedCard = testIdList[testInWorkFlow - 1] # return this if last card deleted and there is another in fornt of card
+
+                        if(testInWorkFlow + 1) <= len(testIdList) and len(testIdList) >= (testInWorkFlow + 1):
+                            nextSelectedCard = testIdList[testInWorkFlow - 1] # return this if last card deleted 
+
+                    return {'msg':'Deleted-successfully','testData':workflowDetails[testInWorkFlow],'nextSelectTestId':nextSelectedCard}
+
+
+        # if dataObjs['deleteTestId']:
+        #     getTestData = Workflow.objects.filter(id = dataObjs['deleteTestId']).last()
+        #     testData = {}
+        #     if getTestData:
+        #         testData['testid']= getTestData.id
+        #         testData['paperType'] = getTestData.papertype
+        #         # getTestData.delete()
+        #         print('Deleted Succssfully')
+
+        #         return {'msg':'Deleted-successfully','testData':testData}
+
+    except Exception as e:
+        raise
+
+
+
+# Saving the Job descritption Deatils
+def saveInterviewersJD(dataObjs):
+    try:
+        print('====================')
+        print('dataObjs :: ',dataObjs['interviwersLst'])
+        print('dataObjs :: ',dataObjs['jdId'])
+        if dataObjs['jdId']:
+            jdData = JobDesc.objects.filter(id = dataObjs['jdId']).last()
+            if dataObjs['interviwersLst']:
+                jdData.interviewers = dataObjs['interviwersLst']
+                jdData.save()
     except Exception as e:
         raise
 

@@ -16,7 +16,7 @@ from hirelines.settings import BASE_DIR
 from .mailing import sendRegistrainMail
 from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
     Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia, Brules
-from app_api.functions.database import saveJdNewTest, saveAddJD, saveUpdateJd
+from app_api.functions.database import saveJdNewTest, saveAddJD, saveUpdateJd,deleteTestInJdDB, saveInterviewersJD
 from app_api.functions.mailing import sendEmail
 
 
@@ -455,12 +455,27 @@ def getCompanyJDsList(companyId):
         raise
 
 
-def jdDetails(jdId):
+def jdDetails(jdId, companyId):
     try:
         # Get the last JobDesc object for the provided jdId
         jdData = JobDesc.objects.filter(id=jdId).last()
         if jdData:
             # Manually create the dictionary with conditions for None values
+            
+            total_interviewers_lst = [] 
+            interviewes_lst = User.objects.filter(status = 'A',role = 'Interviewer',companyid = companyId).values('id','name')
+            for interviewer in interviewes_lst:
+                if interviewer:
+                    total_interviewers_lst.append({'id':interviewer['id'],'name':interviewer['name']})
+                
+                selectedInterviewerLst = []
+                jd_interviewers = ast.literal_eval(jdData.interviewers)
+                for selectedInterviewer in jd_interviewers:
+                    if selectedInterviewer:
+                        userData = list(User.objects.filter(id = selectedInterviewer).values('id','name'))
+                        if selectedInterviewer:
+                            selectedInterviewerLst.append({'id':userData[0]['id'],'name':userData[0]['name']})
+            
             jdDataDict = {
                 'id': jdData.id,
                 'jdlibraryid': 0 if jdData.jdlibraryid is None else jdData.jdlibraryid,
@@ -480,6 +495,8 @@ def jdDetails(jdId):
                 'createdby': '' if jdData.createdby is None else jdData.createdby,
                 'status': '' if jdData.status is None else jdData.status,
                 'companyid': '' if jdData.companyid is None else jdData.companyid,
+                'interviewes_lst' : total_interviewers_lst,
+                'selectedInterviewerLst':selectedInterviewerLst
             }
             return jdDataDict
         return None  # Return None if no data is found
@@ -493,7 +510,7 @@ def checkTestHasPaperService(user,dataObjs):
             workFlowDetails = Workflow.objects.filter(id = dataObjs['workFlowId']).last()
             if workFlowDetails:
                 if workFlowDetails.paperid:
-                    return {'paperId':workFlowDetails.paperid}
+                    return {'paperId':workFlowDetails.paperid,'testid':workFlowDetails.id,'libraryId':workFlowDetails.paperlibraryid,'paperType':workFlowDetails.papertype}
                 else:
                     return {'paperId': 'N'}
             else:
@@ -504,14 +521,38 @@ def checkTestHasPaperService(user,dataObjs):
         raise
 
 
+def deleteTestInJdService(user,dataObjs):
+    try:
+        testDetails = deleteTestInJdDB(dataObjs)
+        return testDetails
+    except Exception as e:
+        raise
+
+
+def saveInterviewersService(user,dataObjs):
+    try:
+        testDetails = saveInterviewersJD(dataObjs)
+        return testDetails
+    except Exception as e:
+        raise
+
 def workFlowDataService(data,cmpyId):
     try:
+        intervierDeatils = User.objects.filter(status = 'A',role = 'Interviewer',companyid = cmpyId)
+        interviewersLst = []
+        for interviewer in intervierDeatils:
+            interviewerData = {}
+            interviewerData['userId'] = interviewer.id
+            interviewerData['name']   = interviewer.name
+            interviewersLst.append(interviewerData)
+        
+        papersDetails = []
         papersDetails = Workflow.objects.filter(jobid = data).values()
         for test in papersDetails:
             brulesDetails = Brules.objects.filter(workflowid = test['id'], jobdescid = test['jobid'], companyid = test['companyid']).last()
             if brulesDetails:
                 test['promot'] = brulesDetails.passscore
-        return list(papersDetails)
+        return {'workFlowData':list(papersDetails),'jdInterviewers':interviewersLst}
     except Exception as e:
         raise
 

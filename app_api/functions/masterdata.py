@@ -23,9 +23,7 @@ def get_current_path(path):
 
 def getCompanyId(user_email):
     try:
-
-        user = User.objects.get(email=user_email)
+        user = User.objects.filter(email=user_email).last()
         return user.companyid
-    
     except Exception as e:
         raise

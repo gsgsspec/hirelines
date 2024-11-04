@@ -8,22 +8,27 @@
         {{ jd_details.title }}
       </h4>
       <div style="width: max-content;">
-        <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal"
-        data-bs-target="#jd_integration_modal">
-        <i class='bx bxs-cog icons_custm_weight'></i>
+        
+        <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#InterviewPanel">
+          <i class='bx bx-shield-quarter'></i>
         </button>
-        <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('screening')"
-          data-bs-toggle="modal" data-bs-target="#modalCenter">
-          <i class='bx bx-badge-check icons_custm_weight'></i>
+
+        <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#jd_integration_modal">
+          <i class='bx bxs-cog'></i>
         </button>
-        <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('coding')"
-          data-bs-toggle="modal" data-bs-target="#modalCenter">
-          <i class='bx bx-code-alt icons_custm_weight'></i>
+
+        <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('screening')" data-bs-toggle="modal" data-bs-target="#modalCenter" title="Screening Test">
+          <i class="fas fa-clipboard-check"></i>
         </button>
-        <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('interview')"
-          data-bs-toggle="modal" data-bs-target="#modalCenter">
-          <i class='bx bx-select-multiple icons_custm_weight'></i>
+
+        <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('coding')" title="Coding Test"  data-bs-toggle="modal" data-bs-target="#modalCenter">
+          <i class='fas fa-code'></i>
         </button>
+
+        <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('interview')" title="interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
+          <i class='fas fa-chalkboard-teacher'></i>
+        </button>
+
       </div>
 
     </div>
@@ -108,11 +113,119 @@
   </div>
 </div>
 <!-- JD integration script modal end -->
+
+<!-- Test delete conformation modal start -->
+
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="modalToggle" aria-labelledby="conformationForDelete" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="conformationForDelete">Are you sure you want to delete?</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button onclick="deleteTest()" id="deleteTestConformation" data-deletetestid="" class="btn btn-primary">
+                      Delete
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Test delete conformation modal end -->
+
+<!-- Interview Panile start -->
+<div class="modal fade" id="InterviewPanel" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel3">Interview Panel</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body pb-2">
+
+        <div id="interviewPanelContainer">
+          {% for asgn_interviewer in jd_details.selectedInterviewerLst %}
+              <div class="form-group row interview-panel align-items-center" id="panel_{{ forloop.counter }}">
+                  {% if forloop.first %}
+                      <div class="col-xl-3 col-form-label">Interview Panel</div>
+                  {% else %}
+                      <div class="col-xl-3 col-form-label"></div>
+                  {% endif %}
+                  <div class="col-xl-6">
+                      <select class="custom-select custom-select-sm interviewer-select form-select my-2" required="">
+                          <option value="" disabled>Select Role</option>
+                          {% for interviewer in jd_details.interviewes_lst  %}
+                              {% if asgn_interviewer.id == interviewer.id %}
+                              <option value="{{ interviewer.id }}" selected>{{ interviewer.name }}</option>
+                              {% else %}
+                              <option value="{{ interviewer.id}}">{{ interviewer.name }}</option>
+                              {% endif %}
+                          {% endfor %}
+                      </select>
+                  </div>
+                  {% if forloop.first %}
+                  {% else %}
+                      <div class="col-xl-1">
+                          <button type="button" class="btn btn remove-panel-button border interviewDelBtnBorder" style="padding: 0.4375rem 1rem;">
+                            <i class="far fa-trash-alt text-danger"></i>
+                          </button>
+                      </div>
+                  {% endif %}
+              </div>
+          {% empty %}
+
+            <div id="interviewPanelContainer">
+              <div class="form-group row interview-panel align-items-center" id="panel_3">
+                      <div class="col-xl-3 col-form-label">Interview Panel</div>
+                  <div class="col-xl-6">
+                    <select class="custom-select custom-select-sm interviewer-select form-select my-2" required="">
+                      <option value="" disabled selected>Select Role</option>
+                      {% for interviewer in jd_details.interviewes_lst  %}
+                          <option value="{{ interviewer.id}}">{{ interviewer.name }}</option>
+                      {% endfor %}
+                  </select>
+                  </div>
+                      <div class="col-xl-1">
+                      </div>
+              </div>
+            </div>
+
+          {% endfor %}
+        </div>
+
+        <div class="form-group row cust-add-interview-container align-items-center justify-content-end pt-3">
+          <label class="col-xl-3 col-form-label"></label>
+          <button type="button" id="addInterviewerButton" class="btn btn-primary" style="margin-left:15px; width: max-content;">Add Interviewer</button>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" style="padding: 0.5rem 1.7rem !important;" onclick="saveInterviewers()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Interview Panile End -->
 <script>
 
 
   var jdlibraryid = "{{jd_details.jdlibraryid}}";
   var jdId = '{{jd_details.id}}';
+  var interviewersList = {{ jd_details.interviewes_lst|safe }};
 
 </script>
 <style>
@@ -170,6 +283,7 @@
   .each_question_container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
   .library_seprator {
@@ -191,6 +305,7 @@
     /* border-top: 1px solid #dbdbe1 !important; */
     height: 0.5px !important;
     border-color: #dbdbe1 !important;
+    margin: 0.3rem !important;
   }
 
   .custm-edit-icon {
@@ -241,7 +356,7 @@
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  .questions_container_selected_title{
+  .questions_container_selected_title{ 
     padding-left: 1rem !important;      /* Equivalent to style.paddingLeft = '1rem' */
     margin-bottom: 0rem !important; 
   }
@@ -261,7 +376,237 @@
     padding-top: 1rem;
     padding-right: 1rem;
     padding-bottom: 0.5rem;
+  }
+  .static_or_dynamic_text_container_headings{
+    width: max-content;
+    color: var(--secondary-color);
+    /* text-decoration: underline; */
+  }
+  .staticQuestionsContainer{
+    margin-bottom: 1.7rem;
+    padding-right: 1.5rem;
+  }
+  .dynamicQuestionsContainer{
+    margin-bottom: 1.7rem;
+    padding-right: 1.5rem;
+  }
+  .titleAndContainerDynamic{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .inputCustWidth{
+    width: 20%;
+  }
+  .titleInputContainer{
+    display: flex;
+    justify-content:flex-end;
+    align-items: center;
+  }
+  .deleteFontIcon{
+    color: #ff3e1dd9;
+    width: max-content;
+    padding: 8px;
+    border-radius: 7px;
+    border: 0.8px solid #ff3e1dd9;
+    margin-left: 5px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+.cust_cursor {
+    cursor: pointer;
 }
+
+.card {
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custm-edit-icon, .deleteFontIcon i {
+    font-size: 1.2rem;
+}
+
+.text-dark {
+    color: #333;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* New styling for bottom icons */
+.card .border-top {
+    border-top: 1px solid #e0e0e0;
+}
+
+.d-flex.justify-content-between {
+    padding-top: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card {
+        padding: 1rem;
+    }
+}
+
+/* AII Animations */
+
+/* Animation for fading in */
+.fade-in {
+    animation: fadeIn 0.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animation for fading out */
+.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Slide down animation */
+.slide-down {
+    animation: slideDown 0.5s ease-in forwards;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Slide up animation */
+.slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slide-down {
+    animation: slideDown 0.5s forwards;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.flash-border {
+    animation: flashBorder 0.5s forwards;
+}
+
+@keyframes flashBorder {
+    0% { border: 2px solid transparent; }
+    50% { border: 2px solid yellow; }
+    100% { border: 2px solid transparent; }
+}
+
+/* Animation for fading in elements */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation for sliding in elements */
+.slide-in {
+    animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+/*  test cards */
+.unActiveTestCard{
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+  border: none;
+}
+
+/* Style for screen tests */
+.activeTestCars-screen-test {
+    border: 1px solid #8763ee; /* screenMainColor */
+    box-shadow: 0 2px 6px 0 rgba(79, 80, 82, 0.56);
+}
+
+/* Style for coding tests */
+.activeTestCars-coding-test {
+    border: 1px solid #00d462; /* codingMainColor */
+    box-shadow: 0 2px 6px 0 rgba(79, 80, 82, 0.56);
+}
+
+/* Style for interview tests */
+.activeTestCars-interview-test {
+    border: 1px solid #1f68f3; /* interviewMainColor */
+    box-shadow: 0 2px 6px 0 rgba(79, 80, 82, 0.56);
+}
+.interviewDelBtnBorder{
+  border-color: #ff3e1dd9 !important;
+}
+.cust-add-interview-container{
+  width: 101%;
+}
+
 </style>
 <script src="/static/config/config.js"></script>
 <script src="{% static 'js/jd_setup.js' %}"></script>
