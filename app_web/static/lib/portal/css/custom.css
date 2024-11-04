@@ -342,6 +342,8 @@ table.dataTable thead th, table.dataTable thead td {
   border: .3px solid #dedede; 
   /* border: unset !important; */
   border-radius: 5px;
+  z-index: 1001;
+  cursor: default !important;
 }
 
 .blinking-text {
