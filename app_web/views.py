@@ -578,7 +578,6 @@ def candidateData(request,cid):
         candidate_info = candidatedata['candidate_info']
         registrations_data = candidatedata['registrations_data']
 
-
         return render(request, "portal_index.html", {"template_name": 'candidate_data.html','menuItemList':menuItemList,
                                 'candidate_info':candidate_info,'registrations_data':registrations_data})
     

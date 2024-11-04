@@ -12,8 +12,9 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, checkTestHasPaperService, deleteTestInJdService, saveInterviewersService, \
-        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService
+from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
+        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, \
+        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService
 from .models import Candidate, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
 from app_api.functions.constants import hirelines_registration_script
@@ -747,3 +748,24 @@ def candidateReport(request):
 
     return JsonResponse(response)
 
+
+
+@api_view(['POST'])
+def notifyCandidate(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            notifyCandidateService(dataObjs)
+            response['data'] = "Candidate Notified Successfully"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Candidate Notify view'
+        response['error'] = str(e)
+    return JsonResponse(response)

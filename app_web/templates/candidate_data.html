@@ -32,17 +32,28 @@
             </tbody>
           </table>
         </div>
-        <br>
+        <div class="mt-3 d-flex justify-content-end">
+          <button class="btn btn-primary"  onclick="getReportData('{{ candidate_info.c_code }}')">Download Candidate Report</button>
+        </div>
         <div>
-          <h5>Workflow</h5><br>
+          <h5>Workflow</h5>
           <div class="card-container">
             {% for registration in registrations_data %}
             <div class="card flow-card">
-              <b><p>{{ registration.paper_title }}</p></b>
-              <p>{{ registration.type_title }}</p>
+              <b><label class="p-clr mb-1">{{ registration.paper_title }}</label></b>
+              <label class="s-clr mb-1">{{ registration.type_title }}</label>
               {% if registration.paper_type == "I"%}
                 {%  if registration.call_status == "N"  %}
                 <button class="btn btn-primary" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
+                {% elif registration.call_status == "S" %}
+                <label>Interview scheduled</label>
+                {% elif registration.call_status == "N" %}
+                <label>Interview is completed</label>
+                {% endif %}
+                {% if registration.reg_status == "O" %}
+                <label>Offer Letter is Released</label>
+                {% elif registration.reg_status == "H" %}
+                <label>Offer is on Hold</label>
                 {% endif %}
               {% endif %}
             </div>
@@ -51,15 +62,35 @@
             {% endif %}
             {% endfor %}
           </div>
-          <div class="mt-3 d-flex justify-content-end">
-            <button class="btn btn-primary"  onclick="getReportData('{{ candidate_info.c_code }}')">Download Candidate Report</button>
-          </div>
+          {% if candidate_info.notify_check == "Y" %}
+          <form id="notify-candidate">
+            <div class="col-9">
+              <div class="mt-3">
+                <div class="row mb-3">
+                  <label class="col-form-label">Notify Candidate</label>
+                  <div class="col-sm-4">
+                    <select class="form-select" id="notify" required>
+                      <option selected="" disabled></option>
+                      <option value="S">Selected</option>
+                      <option value="H">Hold</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-4">
+                    <button class="btn btn-primary" id="notify" style="width: 200px;">Send Notification</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
 </div>
-
+<script>
+  candidate_code = '{{ candidate_info.c_code }}'
+</script>
 <script src="{% static 'js/candidate_data.js' %}"></script>
 <style>
   .card-container {
