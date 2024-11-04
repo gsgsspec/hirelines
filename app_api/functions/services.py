@@ -673,6 +673,10 @@ def interviewSchedulingService(aplid,int_id):
                 slot_time = basedt + timedelta(minutes=30 * i)
                 curr_time = datetime.now().replace(second=00)# + datetime.timedelta(hours=4)
                 hours_list.append(slot_time.strftime("%I:%M %p"))
+                # print('_date',_date)
+                # print('d_time',datetime.today().strftime("%Y-%m-%d"))
+                # print('slot_time',slot_time)
+                # print('slot_time ------- 2',(curr_time + timedelta(hours=BLOCK_HOURS, minutes=30)))
                 if (_date == datetime.today().strftime("%Y-%m-%d")) and (
                         slot_time <= (curr_time + timedelta(hours=BLOCK_HOURS, minutes=30))):
                     status_list.append("Blocked")
@@ -1114,6 +1118,7 @@ def getCandidateWorkflowData(cid):
             candidate_data['candidate_info'] = candidate_info
 
             registrations = Registration.objects.filter(candidateid=candidate.id,companyid=candidate.companyid)
+            notify_check = "N"
 
             registrations_data = []
 
@@ -1125,17 +1130,19 @@ def getCandidateWorkflowData(cid):
 
                     paper_type = ""
                     call_status = ""
+                    
 
                     if workflow.papertype == "S":
                         paper_type = "Screening"
                     elif workflow.papertype == "E":
                         paper_type = "Coding"
                     elif workflow.papertype == "I":
-
                         paper_type = "Interview"
                         call_schedule = CallSchedule.objects.filter(candidateid=candidate.id,paper_id=registration.paperid).last()
                         if call_schedule:
                             call_status = call_schedule.status
+                            if call_schedule.status == "C":
+                                notify_check = 'Y'
                     else:
                         paper_type = ""
 
@@ -1145,9 +1152,13 @@ def getCandidateWorkflowData(cid):
                         'type_title': paper_type,
                         'call_status':call_status,
                         'candidateid': candidate.id,
+                        'reg_status': registration.status,
+                        'notify_check':notify_check
                     })
 
                 candidate_data['registrations_data'] = registrations_data
+            
+            candidate_data['candidate_info']['notify_check'] = notify_check
                     
         return candidate_data
 
@@ -1286,5 +1297,46 @@ def feedbacksData(cid):
             )
         return int_feedbacks
 
+    except Exception as e:
+        raise
+
+
+def notifyCandidateService(dataObjs):
+    try:
+      
+        notify = dataObjs.get('notify')
+        cid = dataObjs.get('cid')
+
+        candidate = Candidate.objects.get(candidateid=cid)
+        jd = JobDesc.objects.get(id=candidate.jobid)
+        company = Company.objects.get(id=candidate.companyid)
+        workflow = Workflow.objects.filter(jobid=jd.id,papertype='I').last()
+
+        call_details = CallSchedule.objects.filter(candidateid=candidate.id).last()
+
+        hr_mail = ''
+
+        if call_details:
+            user = User.objects.get(id=call_details.hrid)
+            hr_mail = user.email
+
+        acert_domain = getConfig()['DOMAIN']['acert']
+        endpoint = '/api/candidate-notification'
+
+        url = urljoin(acert_domain, endpoint)
+
+        to_mails = f"{candidate.email}, {hr_mail}"
+
+        candidate_data = {'candidate_code' : cid,'notify':notify,'firstname':candidate.firstname,'lastname':candidate.lastname,
+            'job_title': jd.title, 'department':jd.department,'tomails':to_mails,'company_name': company.name,
+            'paperid':workflow.paperid
+        }
+
+        send_candidate_data = requests.post(url, json = candidate_data)
+
+        registration = Registration.objects.get(candidateid=candidate.id,paperid=workflow.paperid)
+        registration.status = 'O' if notify == "S" else "H"
+        registration.save()
+       
     except Exception as e:
         raise

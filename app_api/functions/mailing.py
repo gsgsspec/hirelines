@@ -202,7 +202,7 @@ def sendEmail(company,paper_type,participant_paper_id,event,replacements,to_emai
             dtend = examdtend.strftime("%Y%m%dT%H%M%S")
             description = "DESCRIPTION: exam invitation" + CRLF
 
-            organizer = "ORGANIZER;CN=Swarabharathi:mailto:first" + CRLF + " @gmail.com"
+            organizer = "ORGANIZER;CN="+ company.company_name +":mailto:first" + CRLF + " @gmail.com"
             attendee = "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;RSVP=TRUE" + CRLF + " ;CN=" + receiver_email + " mailto:" + receiver_email + CRLF
             ical = "BEGIN:VCALENDAR" + CRLF + "PRODID:pyICSParser" + CRLF + "VERSION:2.0" + CRLF + "CALSCALE:GREGORIAN" + CRLF
 

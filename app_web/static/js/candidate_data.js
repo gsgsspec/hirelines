@@ -37,3 +37,34 @@ async function getReportData(cid) {
         Swal.close();
     }
 }
+
+
+document.getElementById("notify").onclick = function () {
+    $('#notify-candidate').unbind('submit').bind('submit', function (event) {
+        event.preventDefault();
+
+        dataObj = {
+            'notify': $('#notify').val(),
+            'cid': candidate_code,
+        }
+
+        var final_data = {
+            'data': JSON.stringify(dataObj),
+            csrfmiddlewaretoken: CSRF_TOKEN,
+        }
+
+        $.post(CONFIG['portal'] + "/api/notify-candidate", final_data, function (res) {
+
+            // if (res.statusCode == 0) {
+
+            //     swal("Notification Sent to the Candidate","","success");
+
+            //     setTimeout(function () { window.location.href = '/web/candidates' }, 1000);
+
+            // } else {
+            //     swal("Error in sending notification","","error");
+            // }
+        })
+
+    })
+}
