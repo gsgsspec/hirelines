@@ -509,7 +509,7 @@ def updateEmailtempDB(user,dataObjs,fileObjs):
                 email_temp.email_attachment = None
                 email_temp.email_attachment_name = None
                 email_temp.save()
-        template = Email_template.objects.filter(event=dataObjs['event']).latest('id')
+        template = Email_template.objects.filter(company_id=decrypt_code(dataObjs['company_id']),event=dataObjs['event'],paper_type=paper_type).latest('id')
         for file in fileObjs.items():
             template.email_attachment_path = file[1]
         template.save()
