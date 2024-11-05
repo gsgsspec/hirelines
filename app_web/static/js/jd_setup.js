@@ -14,7 +14,7 @@ var instialLibrarySelection = {}
 var testsList_ = []
 var TestWithLibrariesAndQuestions = {}
 var createNewPaper = {}
-var tempCreatedPaper
+var tempPaper
 
 
 $(document).ready(function () {
@@ -35,7 +35,6 @@ function workFlowData(){
         
         if (res.statusCode == 0){
             if(res.data){
-                console.log('res.data :: ',res.data);
                 createTest(res.data['workFlowData'],'edit')
             }
         }
@@ -69,6 +68,7 @@ function createWorkFlowContainer(data){
 
             var workFlowContainer = document.createElement('div')
             workFlowContainer.id = 'workFlowContainer_'+data[containerCount]['id']
+            workFlowContainer.style.paddingBottom = '1rem'
             workFlowContainer.hidden = true
             mainContainer.append(workFlowContainer)
 
@@ -330,6 +330,13 @@ function saveOrUpdateTest(){
         promotValidator.hidden = true;     // Hide the validation message
     }
 
+    
+
+    var questionTitle = document.getElementById('questionPaperTitle_'+cureentTestId)
+    if(questionTitle){
+        questionTitle.innerText = testName
+    }
+
     if(saveTest){
         
         $('#modalCenter').modal('hide')
@@ -390,6 +397,7 @@ function saveOrUpdateTest(){
 
                             var workFlowContainer = document.createElement('div')
                             workFlowContainer.id = 'workFlowContainer_'+key_
+                            workFlowContainer.style.paddingBottom = '1rem'
                             workFlowContainer.hidden = false
                             mainContainer.append(workFlowContainer)
 
@@ -576,7 +584,6 @@ function selectTest(element_id){
 }
 
 
-
 function updateTest(event, currentSelectedtestId) {
     testCreateOrUpdate = 'update';
     cureentTestId = currentSelectedtestId;
@@ -668,6 +675,7 @@ function getPapersLibraries(test_type, workFlowId) {
             });
 
         } else {
+            // this code excuites after paper created
             var dataObj = {
                 'jdLibId': parseInt(jdlibraryid),
                 'LibType': testPaperData['paperType'],
@@ -681,8 +689,11 @@ function getPapersLibraries(test_type, workFlowId) {
 
             $.post(CONFIG['acert'] + "/api/libraries", final_data, function (res) {
                 if (res.statusCode == 0 && res.data) {
+
+                    tempPaper = res.data['paper']
                     TestWithLibrariesAndQuestions[workFlowId] = res.data['librariesList'];
-                    createQuestionsContainer(workFlowId, testPaperData['libraryId']);
+                    createQuestionsContainer(workFlowId, testPaperData['libraryId'], tempPaper);
+
                 }
             }).fail(function (error) {
                 console.error("API request failed:", error);
@@ -719,7 +730,7 @@ function checkTestHasPaper(workFlowId) {
 }
 
 
-function showQuestionConatainer(event) {
+function showQuestionConatainer(event) { // Where ever we click on the use Template button this function will call
     if (event == 'useTemplate') {
         for (let testCount = 0; testCount < testsList_.length; testCount++) {
             var testId = testsList_[testCount];
@@ -732,7 +743,7 @@ function showQuestionConatainer(event) {
                 selectedLibraryQuestionsContainer.hidden = false;
                 document.getElementById(`library_sub_container_${testId}`).hidden = true;
 
-                createQuestionsContainer(testId); // it will create HTML and show on webpage
+                createQuestionsContainer(testId); // it will create HTML and show on static and Dynamic Questions on webapge
 
                 var selectedLibrary__ = document.getElementById(`selectedLibrary_${testId}`).dataset['libraryid'];
                 createPaper(selectedLibrary__, testId, 'useTemplate'); // it will send data to acert and create paper
@@ -742,21 +753,21 @@ function showQuestionConatainer(event) {
 }
 
 
-function createQuestionsContainer(testId, librarieId) {
+function createQuestionsContainer(testId, librarieId, selectedPaper) { // it will create HTML and show on static and Dynamic Questions on webapge
     
-    console.log('TestWithLibrariesAndQuestions :: ',TestWithLibrariesAndQuestions);
-    console.log('testId :: ',testId);
-
     var selectedLibraryId;
     var buttonData = document.getElementById('selectedLibrary_' + testId);
-    if (buttonData) {
+
+    if (buttonData) { // when use template button  click 
         selectedLibraryId = buttonData.dataset['libraryid'];
-    } else {
+    } else { // this code will excuite after paper_ create
         selectedLibraryId = librarieId;
     }
+
     var testLibraries = TestWithLibrariesAndQuestions[testId];
 
     for (var lib = 0; lib < testLibraries.length; lib++) {
+
         var librariesQuestionsListContainer = document.createElement('div');
         librariesQuestionsListContainer.id = 'question_container_vertical_scroll';
         librariesQuestionsListContainer.dataset['TestCardId'] = testId;
@@ -765,7 +776,29 @@ function createQuestionsContainer(testId, librarieId) {
         librariesQuestionsListContainer.style.paddingRight = '0rem';
         librariesQuestionsListContainer.style.width = '100%';
 
-        if (testLibraries[lib]['id'] == selectedLibraryId) {
+        if (testLibraries[lib]['id'] == selectedLibraryId) { // libraries loop
+
+            var paperTitle_
+            var staticQuestionCountNum
+            var dynamicQuestionCountNum
+
+            if(selectedPaper){
+                paperTitle_ = selectedPaper['papertitle']
+                staticQuestionCountNum = selectedPaper['staticQuestionsCount']
+                dynamicQuestionCountNum = selectedPaper['dynamicQuestionsCount']
+
+                var testTitle = document.getElementById('testTitle_'+testId)
+                if(testTitle){
+                    paperTitle_ = testTitle.innerText
+                }
+
+            }
+            else{
+                paperTitle_ = testLibraries[lib]['title']
+                staticQuestionCountNum = testLibraries[lib]['questionsList'].length
+                dynamicQuestionCountNum = 0
+            }
+
             var staticQuestionsContainer = document.createElement('div');
             staticQuestionsContainer.classList.add('staticQuestionsContainer', 'fade-in'); // Added fade-in class
 
@@ -799,28 +832,36 @@ function createQuestionsContainer(testId, librarieId) {
             dynamicContainerHeading.innerText = 'Dynamic';
             dynamicContainerHeading.classList.add('static_or_dynamic_text_container_headings');
             titleAndInputContainer.append(dynamicContainerHeading);
-            titleAndInputContainer.append(labelInputContainer); // input here
+            titleAndInputContainer.append(labelInputContainer);
             dynamicQuestionsContainer.append(titleAndInputContainer);
 
             var questionContainerHeader = document.createElement('div');
             questionContainerHeader.classList.add('question_container_header');
 
             if (testLibraries[lib]['papertype'] == 'S' || testLibraries[lib]['papertype'] == "E" || testLibraries[lib]['papertype'] == "I") {
+
                 var selectedLibraryTitle = document.createElement('h4');
+                selectedLibraryTitle.id = 'questionPaperTitle_'+testId
                 selectedLibraryTitle.classList.add('py-2', 'm-0', 'p-clr');
-                selectedLibraryTitle.innerText = testLibraries[lib]['title'];
+                selectedLibraryTitle.innerText = paperTitle_;
                 selectedLibraryTitle.style.width = 'max-content';
 
-                var questionsCountContainer = document.createElement('div');
+                var questionsCountContainer = document.createElement('div'); // Static & Dynamic Questions count container
                 questionsCountContainer.style.display = 'flex';
+                questionsCountContainer.style.alignItems = 'center'; 
+                questionsCountContainer.id = 'questionsCountContainer';
+
 
                 var staticQuestionContainer = document.createElement('div');
                 staticQuestionContainer.style.display = 'flex';
 
                 var staticQuestionlabel = document.createElement('div');
                 staticQuestionlabel.innerText = 'Static Questions';
+                
                 var staticQuestionCounBox = document.createElement('div');
-                staticQuestionCounBox.innerText = '5';
+                staticQuestionCounBox.id = 'static_questions_count_'+testId;
+                staticQuestionCounBox.classList.add('mx-1')
+                staticQuestionCounBox.innerText = staticQuestionCountNum;
 
                 var dynQuestionContainer = document.createElement('div');
                 dynQuestionContainer.style.display = 'flex';
@@ -828,12 +869,26 @@ function createQuestionsContainer(testId, librarieId) {
 
                 var dynQuestionlabel = document.createElement('div');
                 dynQuestionlabel.innerText = 'Dynamic Questions';
+                
                 var dynQuestionCounBox = document.createElement('div');
-                dynQuestionCounBox.innerText = '12';
+                dynQuestionCounBox.classList.add('mx-1')
+                dynQuestionCounBox.innerText = dynamicQuestionCountNum;
+                dynQuestionCounBox.id = 'dynamic_questions_count_'+testId;
+
+                var saveButtonToContainer = document.createElement('button')
+                saveButtonToContainer.id = 'saveQuestions_'+testId;
+                saveButtonToContainer.innerText = 'Save';
+                saveButtonToContainer.classList.add('btn', 'btn-primary')
+                saveButtonToContainer.dataset.testid = testId
+                saveButtonToContainer.onclick = function() {
+                    return savePaper(this, this.id, testId, selectedPaper);
+                };
+
+                // saveButtonToContainer = '<button id="saveQuestions123" class="btn btn-primary" data-testid="123">Save</button>'
 
                 staticQuestionContainer.append(staticQuestionlabel, staticQuestionCounBox);
                 dynQuestionContainer.append(dynQuestionlabel, dynQuestionCounBox);
-                questionsCountContainer.append(staticQuestionContainer, dynQuestionContainer);
+                questionsCountContainer.append(staticQuestionContainer, dynQuestionContainer, saveButtonToContainer);
                 questionContainerHeader.append(selectedLibraryTitle, questionsCountContainer);
 
                 var questionsContainer = document.getElementById('selectedLibraryQuestionsContainer_' + testId);
@@ -847,7 +902,36 @@ function createQuestionsContainer(testId, librarieId) {
                 }
 
                 var libraryquestionsList = testLibraries[lib]['questionsList'];
-                for (var ques = 0; ques < libraryquestionsList.length; ques++) {
+
+                for (var ques = 0; ques < libraryquestionsList.length; ques++) { // Questions List 
+
+                    // console.log('selec Paper id ::--',selectedPaper['paperQuestionslst'][ques]['id'], 'Lib ::--',libraryquestionsList[ques]['question_id']);
+
+                    // var libraryQuesId = libraryquestionsList[ques]['question_id']
+                    // var selectedPaperQuesId
+                    var staticCheckbox__ = true
+                    var dynamicCheckbox__ = false
+
+                    // if(selectedPaper['paperQuestionslst'][ques]){
+                    //     console.log('++',selectedPaper['paperQuestionslst'][ques]);
+                    //     selectedPaperQuesId = selectedPaper['paperQuestionslst'][ques]['id']
+                    // }
+
+                    if(selectedPaper){
+
+                        staticCheckbox__ = false
+                        dynamicCheckbox__ = false
+
+                    }
+                    // else{
+
+                    //     var staticCheckbox__ = true
+                    //     var dynamicCheckbox__ = false
+
+                    // }
+
+                    
+
                     var questionContainer = document.createElement('div');
                     questionContainer.classList.add('each_question_container', 'my-2', 'slide-in'); // Added slide-in class
 
@@ -859,7 +943,7 @@ function createQuestionsContainer(testId, librarieId) {
                     questionText.innerText = (ques + 1) + ' . ' + cleanedQuestion;
 
                     var questionCheckBoxContainer = document.createElement('div');
-                    questionCheckBoxContainer.innerHTML = `<input type="checkbox" name="" id="questionCheckBox_${quesId}_${testId}" class="form-check-input" onclick="SelectQuestionOrUnSelectQuestion(this.id,${quesId},${testId})">`; // function parameter first parameter is questionId and second Parameter Testid 
+                    questionCheckBoxContainer.innerHTML = `<input type="checkbox" name="" id="questionCheckBox_${quesId}_${testId}" class="form-check-input questionSelect_${testId}" onclick="SelectQuestionOrUnSelectQuestion(this.id,${quesId},${testId})">`; // function parameter first parameter is questionId and second Parameter Testid 
 
                     questionContainer.append(questionText, questionCheckBoxContainer);
 
@@ -874,7 +958,7 @@ function createQuestionsContainer(testId, librarieId) {
                     // Modify dynamic clone checkbox to be unchecked
                     var staticCheckbox = staticClone.querySelector('input[type="checkbox"]');
                     if (staticCheckbox) {
-                        staticCheckbox.checked = true;
+                        staticCheckbox.checked = staticCheckbox__;
                         staticCheckbox.dataset['question_type'] = 'S'; // "S" Static type question
                         staticCheckbox.id = `staticQuestionCheckBox_${quesId}_${testId}`;
                     }
@@ -882,7 +966,7 @@ function createQuestionsContainer(testId, librarieId) {
                     // Modify dynamic clone checkbox to be unchecked
                     var dynamicCheckbox = dynamicClone.querySelector('input[type="checkbox"]');
                     if (dynamicCheckbox) {
-                        dynamicCheckbox.checked = false;
+                        dynamicCheckbox.checked = dynamicCheckbox__;
                         dynamicCheckbox.dataset['question_type'] = 'D'; // "D" Dynamic Type Question
                         dynamicCheckbox.id = `dynamicQuestionCheckBox_${quesId}_${testId}`;
                     }
@@ -901,6 +985,101 @@ function createQuestionsContainer(testId, librarieId) {
             }
         }
     }
+    if(selectedPaper){
+        selectedPaperQuestionsCheck(selectedPaper,testId)
+    }
+}
+
+function savePaper(element, element_id, testid_, selectedPaper) {
+    if (testid_) {
+        var testid = Number(testid_);
+        var questionsLst = document.getElementsByClassName('questionSelect_' + testid);
+
+        var staticQuesLst = [];
+        var dynamicQuesLst = [];
+
+        for (var ques = 0; ques < questionsLst.length; ques++) {
+            var questionElement = questionsLst[ques];
+            var quesType = questionElement.dataset['question_type'];
+            
+            if (questionElement.checked) {
+                var quesid = questionElement.id.split('_')[1];
+
+                if (quesType === 'S') {
+                    staticQuesLst.push(quesid);
+                } else if (quesType === 'D') {
+                    dynamicQuesLst.push(parseInt(quesid));
+                }
+            }
+        }
+
+        var dynCount = 0
+        var reqDynaminQuestionsCount = document.getElementById('dynamicQuestionsCount_'+testid)
+        if(reqDynaminQuestionsCount){
+            dynCount = reqDynaminQuestionsCount.value
+        }
+
+        var paper_Title
+        var paperTitle__ = document.getElementById('questionPaperTitle_'+testid)
+        if(paperTitle__){
+            paper_Title = paperTitle__.innerText
+        }
+
+        dataObj = {
+            'event'                : 'updatePaper',
+            'paperid'              : selectedPaper['paperid'],
+            'paperTitle'           : paper_Title,
+            'staticQuestionsList'  : staticQuesLst,
+            'dynamicQuestionsList' : dynamicQuesLst,
+            'dynamicQuestionsCount': dynCount
+        };
+
+        console.log('dataObj :: ',dataObj);
+
+        var final_data = {
+            "data":JSON.stringify(dataObj),
+            csrfmiddlewaretoken: CSRF_TOKEN,
+        };
+
+        $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
+
+
+        });
+
+
+    }
+}
+
+
+// it checks hr selected static and dynamic question 
+function selectedPaperQuestionsCheck(selectedPaper,testId){
+
+    var staticQuestionsLst = selectedPaper['paperQuestionslst']
+    var dynaminQuestionsLst = selectedPaper['dynamicQuestionIds']
+
+    if(staticQuestionsLst.length > 0){
+        for( var statQues = 0; statQues < staticQuestionsLst.length; statQues++){
+            var questionCheckInpt = document.getElementById('staticQuestionCheckBox_'+staticQuestionsLst[statQues]['id']+'_'+testId)
+            if(questionCheckInpt){
+                questionCheckInpt.checked = true
+            }
+        }
+    }
+
+    if(dynaminQuestionsLst.length > 0){
+        for( var dynQues = 0; dynQues < dynaminQuestionsLst.length; dynQues++){
+            var questionCheckInpt = document.getElementById('dynamicQuestionCheckBox_'+dynaminQuestionsLst[dynQues]+'_'+testId)
+            if(questionCheckInpt){
+                questionCheckInpt.checked = true
+            }
+        }
+    }
+
+    var dynamicCountElem = document.getElementById('dynamicQuestionsCount_'+testId)
+    if(dynamicCountElem){
+        dynamicCountElem.value = selectedPaper['dynamicQuestionsCount']
+    }
+
 }
 
 
@@ -911,7 +1090,6 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
     var testid = elementId.split('_')[2]
     var questionTypeDynamicOrStatic = question.dataset['question_type']
     
-    // if(question.checked){
         if(questionTypeDynamicOrStatic == "D"){
 
             var staticQuestion = document.getElementById(`staticQuestionCheckBox_${questionid}_${testid}`)
@@ -920,7 +1098,6 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
             }
 
         }
-    // }
 
     if(questionTypeDynamicOrStatic == "S"){
 
@@ -937,6 +1114,7 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
 function createPaper(libraryid, testid, event){
 
     createNewPaper['staticQuestions'] = []
+    createNewPaper['event'] = 'useTemplate'
     createNewPaper['paperDetails'] = testsList[testid]
     createNewPaper['paperLibraryId'] = libraryid
     createNewPaper['paperTitle'] = testsList[testid]['papertitle']
@@ -963,7 +1141,6 @@ function createPaper(libraryid, testid, event){
 
                         if(res.data){
                             
-                            tempCreatedPaper 
                             data = res.data
 
                             testCreateOrUpdate = 'update'
@@ -1049,10 +1226,6 @@ function deleteTest() {
                     removeQuestionsContainer.innerHTML = ""
                     removeQuestionsContainer.remove()
                 }
-                console.log('whole test data :: ',testsList);
-                console.log('delete this test id :: ',deleteTestid);
-                console.log('next text id i have to show',testCardDetails['nextSelectTestId']);
-                console.log('data from backend :: ',testCardDetails);
 
                 if(clickOnAnotherCard){
                     if(testCardDetails['nextSelectTestId'] != 0){   
@@ -1072,8 +1245,6 @@ function deleteTest() {
 }
 
 // Interview panel
-
-
 document.addEventListener('DOMContentLoaded', function () {
     function disableSelectedOptions() {
         var allSelects = document.getElementsByClassName('interviewer-select');
