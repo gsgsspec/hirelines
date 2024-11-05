@@ -112,7 +112,7 @@
                         <label class="col-sm-3 col-form-label">Attachment Name</label>
                         <div class="col-sm-8">
                             <div class="input-group input-group-merge">
-                                <input class="form-control" type="text" id="email_attachment_name" value="{{emailTemps.email_attachment_name}}" >
+                                <input class="form-control" type="text" id="email_attachment_name" name="" value="{{emailTemps.email_attachment_name}}" >
                             </div>
                         </div>
                     </div>
@@ -145,7 +145,6 @@
 
 <script>
     var usr_email = '{{user_email}}'
-    var attachment = '{{emailTemps.attachment_name}}'
     
     $(document).ready(function () {
         $('#jd').select2({

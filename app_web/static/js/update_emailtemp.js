@@ -38,12 +38,12 @@ function clr_data() {
     $("#save_template").prop("disabled", false).html("Save");
 }
 
-
+var attachment_name = ""
 
 $(document).ready(function () {
 
     var attachmentFileInput = $('#email_attachment_file');
-    var attachment_name = attachment;
+    attachment_name = $("#email_attachment_name").val();
     if (attachmentFileInput.get(0).files.length > 0) {
         $('#remove_attachment').prop("hidden", false);
         attachment_name = attachmentFileInput[0].files[0].name
