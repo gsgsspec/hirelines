@@ -249,10 +249,12 @@ def candidateRegistrationService(dataObjs):
 
 
 
-def getJdCandidatesData(jid):
+def getJdCandidatesData(jid,userid):
     try:   
 
-        candidates = Candidate.objects.filter(jobid=jid,companyid=1)
+        user = User.objects.get(id=userid)
+
+        candidates = Candidate.objects.filter(jobid=jid,companyid=user.companyid)
 
         candidates_data = []
 
@@ -560,7 +562,7 @@ def workFlowDataService(data,cmpyId):
 def getJdWorkflowService(jid,cid):
     try:
 
-        jd_workflows = Workflow.objects.filter(jobid=jid,companyid=cid).order_by('order')
+        jd_workflows = Workflow.objects.filter(jobid=jid,companyid=cid, paperid__isnull=False).order_by('order')
 
         workflow_data = []
 
