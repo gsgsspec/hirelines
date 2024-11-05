@@ -43,11 +43,13 @@ var attachment_name = ""
 $(document).ready(function () {
 
     var attachmentFileInput = $('#email_attachment_file');
-    attachment_name = $("#email_attachment_name").val();
+    attachment_name = $("#email_attachment_name").attr('name');
     if (attachmentFileInput.get(0).files.length > 0) {
         $('#remove_attachment').prop("hidden", false);
         attachment_name = attachmentFileInput[0].files[0].name
 
+    }else if($("#email_attachment_name").attr('name')){
+        attachment_name = $("#email_attachment_name").attr('name')
     } else {
         attachment_name = null;
     }
