@@ -1043,6 +1043,9 @@ function savePaper(element, element_id, testid_, selectedPaper) {
 
         $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
 
+            if(res.statusCode == 0){
+                showSuccessMessage('Test paper created');
+            }
 
         });
 
