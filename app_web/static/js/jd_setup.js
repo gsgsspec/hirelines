@@ -872,8 +872,8 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                 
                 var dynQuestionCounBox = document.createElement('div');
                 dynQuestionCounBox.classList.add('mx-1')
-                dynQuestionCounBox.innerText = dynamicQuestionCountNum;
                 dynQuestionCounBox.id = 'dynamic_questions_count_'+testId;
+                dynQuestionCounBox.innerText = dynamicQuestionCountNum;
 
                 var saveButtonToContainer = document.createElement('button')
                 saveButtonToContainer.id = 'saveQuestions_'+testId;
@@ -929,8 +929,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                     //     var dynamicCheckbox__ = false
 
                     // }
-
-                    
 
                     var questionContainer = document.createElement('div');
                     questionContainer.classList.add('each_question_container', 'my-2', 'slide-in'); // Added slide-in class
@@ -1074,13 +1072,16 @@ function selectedPaperQuestionsCheck(selectedPaper,testId){
             var questionCheckInpt = document.getElementById('dynamicQuestionCheckBox_'+dynaminQuestionsLst[dynQues]+'_'+testId)
             if(questionCheckInpt){
                 questionCheckInpt.checked = true
-            }
+                // var statquestionCheckInpt = document.getElementById('staticQuestionCheckBox_'+staticQuestionsLst[dynQues]['id']+'_'+testId)
+                // statquestionCheckInpt.disabled = true;
+                // statquestionCheckInpt.style.cursor = 'not-allowed'
+            }   
         }
     }
 
     var dynamicCountElem = document.getElementById('dynamicQuestionsCount_'+testId)
     if(dynamicCountElem){
-        dynamicCountElem.value = selectedPaper['dynamicQuestionsCount']
+        dynamicCountElem.value = selectedPaper['dynamicQuestionsInpt']
     }
 
 }
@@ -1098,18 +1099,70 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
             var staticQuestion = document.getElementById(`staticQuestionCheckBox_${questionid}_${testid}`)
             if(staticQuestion.checked){
                 staticQuestion.checked = false
+                // staticQuestion.disabled = true
             }
 
         }
 
     if(questionTypeDynamicOrStatic == "S"){
+        var staticQuestion_ = document.getElementById(`staticQuestionCheckBox_${questionid}_${testid}`)
 
-        var dynamicQuestion = document.getElementById(`staticQuestionCheckBox_${questionid}_${testid}`)
-        if(dynamicQuestion.checked){
-            dynamicQuestion.checked = false
+        if(staticQuestion_.checked){
+            
+            var dynamicQuestion = document.getElementById(`dynamicQuestionCheckBox_${questionid}_${testid}`)
+            if(dynamicQuestion.checked == false){
+                // dynamicQuestion.checked = true
+            }
+            else{
+                showSuccessMessage('This Question added in Dynamic Questions');
+                staticQuestion_.checked = false
+            }
+
         }
 
     }
+
+    questionCountChanger(TestId)
+
+}
+
+
+function questionCountChanger(TestId){
+
+    // console.log('--',TestId);
+    // console.log('::-',testsList[TestId]['paperlibraryid']);
+    // console.log(TestWithLibrariesAndQuestions[TestId]);
+
+    var statQuesCount = 0
+    var dynaQuesCount = 0
+
+    var librariesLst = TestWithLibrariesAndQuestions[TestId]
+    for(var library = 0; library < librariesLst.length; library++){
+        if(librariesLst[library]['id'] == testsList[TestId]['paperlibraryid']){
+            console.log('::',librariesLst[library]['questionsList']);
+            var questionLst = librariesLst[library]['questionsList']
+            for(var ques = 0; ques < questionLst.length; ques++){
+                
+                console.log(questionLst[ques]['question_id'], TestId);
+                // staticQuestionCheckBox_44_123
+                // dynamicQuestionCheckBox_46_123
+
+                var statcheckElement = document.getElementById(`staticQuestionCheckBox_${questionLst[ques]['question_id']}_${TestId}`)
+                if(statcheckElement.checked){
+                    statQuesCount+=1
+                }
+
+                var dynacheckElement = document.getElementById(`dynamicQuestionCheckBox_${questionLst[ques]['question_id']}_${TestId}`)
+                if(dynacheckElement.checked){
+                    dynaQuesCount+=1
+                }
+                
+            }
+        }
+    }
+
+    document.getElementById(`static_questions_count_${TestId}`).innerText = statQuesCount
+    document.getElementById(`dynamic_questions_count_${TestId}`).innerText = dynaQuesCount
 
 }
 
