@@ -246,7 +246,7 @@ def update_jobdescription(request,update_jd_id):
         user_mail = request.user
         user_data = auth_user(user_mail)
         user_role = user_data.role
-        compyId = getCompanyId(user_role)
+        compyId = getCompanyId(user_mail)
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
 
