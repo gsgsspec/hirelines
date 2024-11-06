@@ -1314,19 +1314,6 @@ def jdPublishService(dataObjs,companyId):
       if dataObjs['jobDescriptionId']:
 
             worflowData = Workflow.objects.filter(jobid = dataObjs['jobDescriptionId'])
-            
-            print('=====================')
-            # paperLst = list(worflowData.values())
-            # newPaperLst = []
-            # for paper in range(len(paperLst) - 1):  # Loop until the second-last item
-            #     tempLst = list(paperLst[paper], paperLst[paper + 1])
-            #     newPaperLst.append(tempLst)
-            # paperLst = list(worflowData.values())
-            # newPaperLst = []
-            # for paper in range(len(paperLst) - 1):  # Loop until the second-last item
-            #     tempLst = [paperLst[paper], paperLst[paper + 1]]  # Create a list with two items
-            #     newPaperLst.append(tempLst)
-
 
             for test in worflowData:
                 if test.paperid == None:
