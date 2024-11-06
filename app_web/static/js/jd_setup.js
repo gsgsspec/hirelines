@@ -1495,7 +1495,10 @@ function publishJd(){
                     csrfmiddlewaretoken: CSRF_TOKEN,
                 }
 
-                $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {});
+                $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {
+                    console.log('Status code -- ',res.statusCode);
+                    console.log('Data -- ',res.data);
+                });
                 showSuccessMessage('JD Published Successfully');
                 $('#JdPublishConformation').modal('hide')
 
