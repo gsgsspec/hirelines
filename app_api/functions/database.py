@@ -252,7 +252,8 @@ def saveJdNewTest(dataObjs,compyId):
             return [workFlowDetails]
 
         if dataObjs['createOrUpdate'] == 'update': # it will update the existing Test
-
+            print('=================')
+            print('UPDATEEES')
             if 'testId' in dataObjs:
                 currentTestId = dataObjs['testId']
 
@@ -277,9 +278,18 @@ def saveJdNewTest(dataObjs,compyId):
                 if 'promotPercentage' in dataObjs:
                     if dataObjs['promotPercentage']:
                         brulesDetails = Brules.objects.filter(companyid = compyId, jobdescid = dataObjs['jdId'], workflowid = currentTestId).last()
-                        brulesDetails.passscore = dataObjs['promotPercentage']
-                        passcore = brulesDetails.passscore
-                        brulesDetails.save()
+                        if brulesDetails:
+                            brulesDetails.passscore = dataObjs['promotPercentage']
+                            passcore = brulesDetails.passscore
+                            brulesDetails.save()
+                        else:
+                            save_bruls = Brules(
+                                companyid = compyId,
+                                jobdescid = dataObjs['jdId'],
+                                workflowid = currentTestId,
+                                passscore = dataObjs['promotPercentage']
+                            )
+                            save_bruls.save()
 
                 updatedData = {   
                    'updateEvent': 'Y',
@@ -348,9 +358,6 @@ def deleteTestInJdDB(dataObjs,):
 # Saving the Job descritption Deatils
 def saveInterviewersJD(dataObjs):
     try:
-        print('====================')
-        print('dataObjs :: ',dataObjs['interviwersLst'])
-        print('dataObjs :: ',dataObjs['jdId'])
         if dataObjs['jdId']:
             jdData = JobDesc.objects.filter(id = dataObjs['jdId']).last()
             if dataObjs['interviwersLst']:
@@ -379,7 +386,7 @@ def saveAddJD(dataObjs,compyId,hrEmail):
                 skillset    = dataObjs['skills'] if dataObjs['skills'] else None, 
                 skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None, 
                 companyid   = compyId if compyId else None,
-                status      = 'O'
+                status      = 'C'
             )
             saveJd.save()
     except Exception as e:

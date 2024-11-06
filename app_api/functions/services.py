@@ -18,6 +18,7 @@ from app_api.models import Account, CompanyCredits, CompanyData, Credits, JobDes
     Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia, Brules
 from app_api.functions.database import saveJdNewTest, saveAddJD, saveUpdateJd,deleteTestInJdDB, saveInterviewersJD
 from app_api.functions.mailing import sendEmail
+from django.forms.models import model_to_dict
 
 
 def addCompanyDataService(dataObjs):
@@ -543,6 +544,7 @@ def workFlowDataService(data,cmpyId):
     try:
         intervierDeatils = User.objects.filter(status = 'A',role = 'Interviewer',companyid = cmpyId)
         interviewersLst = []
+
         for interviewer in intervierDeatils:
             interviewerData = {}
             interviewerData['userId'] = interviewer.id
@@ -551,10 +553,12 @@ def workFlowDataService(data,cmpyId):
         
         papersDetails = []
         papersDetails = Workflow.objects.filter(jobid = data).values()
+
         for test in papersDetails:
             brulesDetails = Brules.objects.filter(workflowid = test['id'], jobdescid = test['jobid'], companyid = test['companyid']).last()
             if brulesDetails:
                 test['promot'] = brulesDetails.passscore
+
         return {'workFlowData':list(papersDetails),'jdInterviewers':interviewersLst}
     except Exception as e:
         raise
@@ -1299,6 +1303,36 @@ def feedbacksData(cid):
             )
         return int_feedbacks
 
+    except Exception as e:
+        raise
+
+
+
+def jdPublishService(dataObjs):
+    try:
+      paperData = []
+      if dataObjs['jobDescriptionId']:
+
+            worflowData = Workflow.objects.filter(jobid = dataObjs['jobDescriptionId'])
+
+            for test in worflowData:
+                if test.paperid == None:
+                    return {'noPaper':'Y','paperTitle':test.papertitle}
+                
+            JdData = JobDesc.objects.filter(id = dataObjs['jobDescriptionId']).last()
+            if JdData:
+                JdData.status = 'O'
+                JdData.save()
+            
+            orderCounter = 1
+            for test in worflowData:
+                test.order = orderCounter
+                orderCounter += 1
+                paperData.append(model_to_dict(test))
+                test.save()
+            
+            return paperData
+      
     except Exception as e:
         raise
 

@@ -15,6 +15,7 @@ var testsList_ = []
 var TestWithLibrariesAndQuestions = {}
 var createNewPaper = {}
 var tempPaper
+var selectedPaper = {}
 
 
 $(document).ready(function () {
@@ -477,7 +478,7 @@ function addTestCardToShow(testName, promotValue, testType, data) {
     // Create a new div for the card
     var cardHTML = `
         <div class="col-sm-6 col-lg-4 mb-4" id="testCardSubContainer_${data['id']}">
-            <div class="card p-3 cust_cursor shadow-sm fade-in" style="background-color: ${testTypeColor}; border-radius: 8px;" onclick="selectTest(this.id)" id="${testTitle}_${data['id']}">
+            <div class="card p-3 cust_cursor shadow-sm fade-in workFlowTestCards" style="background-color: ${testTypeColor}; border-radius: 8px;" onclick="selectTest(this.id)" id="${testTitle}_${data['id']}">
                 <figure class="m-0">
                     <blockquote class="blockquote m-0">
                         <div class="d-flex align-items-center mb-3">
@@ -731,22 +732,37 @@ function checkTestHasPaper(workFlowId) {
 
 
 function showQuestionConatainer(event) { // Where ever we click on the use Template button this function will call
+    
     if (event == 'useTemplate') {
+        
         for (let testCount = 0; testCount < testsList_.length; testCount++) {
             var testId = testsList_[testCount];
             var testElementId = `workFlowContainer_${testId}`;
             var workFLowContainer = document.getElementById(testElementId);
 
             if (workFLowContainer.hidden == false) {
+
+                var testIdStoreContainer = testId
+
                 var selectedLibraryQuestionsContainer = document.getElementById(`selectedLibraryQuestionsContainer_${testId}`);
                 selectedLibraryQuestionsContainer.classList.add('slide-down');
-                selectedLibraryQuestionsContainer.hidden = false;
+                selectedLibraryQuestionsContainer.hidden = false; // un hidding
+
                 document.getElementById(`library_sub_container_${testId}`).hidden = true;
-
-                createQuestionsContainer(testId); // it will create HTML and show on static and Dynamic Questions on webapge
-
+                
                 var selectedLibrary__ = document.getElementById(`selectedLibrary_${testId}`).dataset['libraryid'];
-                createPaper(selectedLibrary__, testId, 'useTemplate'); // it will send data to acert and create paper
+
+                var paperCreatedData = createPaper(selectedLibrary__, testId, 'useTemplate');
+                paperCreatedData.then(
+                    (responseData) => {
+                        createQuestionsContainer(testIdStoreContainer, selectedLibrary__, responseData); // it will create HTML and show on static and Dynamic Questions on webapge
+                    }
+                ).catch(
+                    (error) => {
+                        console.error('Error:', error);
+                    }
+                );
+
             }
         }
     }
@@ -754,6 +770,8 @@ function showQuestionConatainer(event) { // Where ever we click on the use Templ
 
 
 function createQuestionsContainer(testId, librarieId, selectedPaper) { // it will create HTML and show on static and Dynamic Questions on webapge
+    
+    testsList[testId]['paperlibraryid'] = librarieId
     
     var selectedLibraryId;
     var buttonData = document.getElementById('selectedLibrary_' + testId);
@@ -783,6 +801,7 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
             var dynamicQuestionCountNum
 
             if(selectedPaper){
+                
                 paperTitle_ = selectedPaper['papertitle']
                 staticQuestionCountNum = selectedPaper['staticQuestionsCount']
                 dynamicQuestionCountNum = selectedPaper['dynamicQuestionsCount']
@@ -794,9 +813,11 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
 
             }
             else{
-                paperTitle_ = testLibraries[lib]['title']
+                var testTitleInnerText = document.getElementById('testTitle_'+testId).innerText
+                paperTitle_ = testTitleInnerText
                 staticQuestionCountNum = testLibraries[lib]['questionsList'].length
                 dynamicQuestionCountNum = 0
+                
             }
 
             var staticQuestionsContainer = document.createElement('div');
@@ -850,7 +871,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                 questionsCountContainer.style.display = 'flex';
                 questionsCountContainer.style.alignItems = 'center'; 
                 questionsCountContainer.id = 'questionsCountContainer';
-
 
                 var staticQuestionContainer = document.createElement('div');
                 staticQuestionContainer.style.display = 'flex';
@@ -989,6 +1009,7 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
 }
 
 function savePaper(element, element_id, testid_, selectedPaper) {
+
     if (testid_) {
         var testid = Number(testid_);
         var questionsLst = document.getElementsByClassName('questionSelect_' + testid);
@@ -1026,13 +1047,12 @@ function savePaper(element, element_id, testid_, selectedPaper) {
         dataObj = {
             'event'                : 'updatePaper',
             'paperid'              : selectedPaper['paperid'],
+            'paperLibraryId'       : testsList[testid_]['paperlibraryid'],
             'paperTitle'           : paper_Title,
             'staticQuestionsList'  : staticQuesLst,
             'dynamicQuestionsList' : dynamicQuesLst,
             'dynamicQuestionsCount': dynCount
         };
-
-        console.log('dataObj :: ',dataObj);
 
         var final_data = {
             "data":JSON.stringify(dataObj),
@@ -1072,9 +1092,6 @@ function selectedPaperQuestionsCheck(selectedPaper,testId){
             var questionCheckInpt = document.getElementById('dynamicQuestionCheckBox_'+dynaminQuestionsLst[dynQues]+'_'+testId)
             if(questionCheckInpt){
                 questionCheckInpt.checked = true
-                // var statquestionCheckInpt = document.getElementById('staticQuestionCheckBox_'+staticQuestionsLst[dynQues]['id']+'_'+testId)
-                // statquestionCheckInpt.disabled = true;
-                // statquestionCheckInpt.style.cursor = 'not-allowed'
             }   
         }
     }
@@ -1129,35 +1146,38 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
 
 function questionCountChanger(TestId){
 
-    // console.log('--',TestId);
-    // console.log('::-',testsList[TestId]['paperlibraryid']);
-    // console.log(TestWithLibrariesAndQuestions[TestId]);
-
     var statQuesCount = 0
     var dynaQuesCount = 0
 
     var librariesLst = TestWithLibrariesAndQuestions[TestId]
+    
     for(var library = 0; library < librariesLst.length; library++){
+
         if(librariesLst[library]['id'] == testsList[TestId]['paperlibraryid']){
             console.log('::',librariesLst[library]['questionsList']);
             var questionLst = librariesLst[library]['questionsList']
             for(var ques = 0; ques < questionLst.length; ques++){
                 
-                console.log(questionLst[ques]['question_id'], TestId);
-                // staticQuestionCheckBox_44_123
-                // dynamicQuestionCheckBox_46_123
-
                 var statcheckElement = document.getElementById(`staticQuestionCheckBox_${questionLst[ques]['question_id']}_${TestId}`)
-                if(statcheckElement.checked){
-                    statQuesCount+=1
+                
+                if(statcheckElement){
+                    if(statcheckElement.checked){
+                        statQuesCount+=1
+                    }
                 }
 
                 var dynacheckElement = document.getElementById(`dynamicQuestionCheckBox_${questionLst[ques]['question_id']}_${TestId}`)
-                if(dynacheckElement.checked){
-                    dynaQuesCount+=1
+                
+                if(dynacheckElement){
+                    if(dynacheckElement.checked){
+                        dynaQuesCount+=1
+                    }
                 }
                 
             }
+        }
+        else{
+            console.log('lubrary NOt FIND');
         }
     }
 
@@ -1167,73 +1187,81 @@ function questionCountChanger(TestId){
 }
 
 
-function createPaper(libraryid, testid, event){
+function createPaper(libraryid, testid, event) {
+    return new Promise((resolve, reject) => {
 
-    createNewPaper['staticQuestions'] = []
-    createNewPaper['event'] = 'useTemplate'
-    createNewPaper['paperDetails'] = testsList[testid]
-    createNewPaper['paperLibraryId'] = libraryid
-    createNewPaper['paperTitle'] = testsList[testid]['papertitle']
+        createNewPaper['staticQuestions'] = [];
+        createNewPaper['event'] = 'useTemplate';
+        createNewPaper['paperDetails'] = testsList[testid];
+        createNewPaper['paperLibraryId'] = libraryid;
+        createNewPaper['paperTitle'] = testsList[testid]['papertitle'];
 
-    if(event == 'useTemplate'){
-
-        var selectedQuestionsLst = TestWithLibrariesAndQuestions[testid]
-        for(var ques = 0; ques < selectedQuestionsLst.length; ques++){
-            if(selectedQuestionsLst[ques]['id'] == libraryid){
-
-                var libraryQuestioneList_ = selectedQuestionsLst[ques]['questionsList']
-                for(var ques = 0; ques < libraryQuestioneList_.length; ques++){
-                    createNewPaper['staticQuestions'].push(libraryQuestioneList_[ques]['question_id'])
-                }
-                
-                var final_data = {
-                    "data":JSON.stringify(createNewPaper),
-                    csrfmiddlewaretoken: CSRF_TOKEN,
-                };
-
-                $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
+        if (event === 'useTemplate') {
+            var selectedQuestionsLst = TestWithLibrariesAndQuestions[testid];
+            
+            for (var ques = 0; ques < selectedQuestionsLst.length; ques++) {
+                if (selectedQuestionsLst[ques]['id'] == libraryid) {
+                    var libraryQuestioneList_ = selectedQuestionsLst[ques]['questionsList'];
                     
-                    if (res.statusCode == 0){
+                    for (var i = 0; i < libraryQuestioneList_.length; i++) {
+                        createNewPaper['staticQuestions'].push(libraryQuestioneList_[i]['question_id']);
+                    }
+                    
+                    var final_data = {
+                        "data": JSON.stringify(createNewPaper),
+                        csrfmiddlewaretoken: CSRF_TOKEN,
+                    };
 
-                        if(res.data){
-                            
-                            data = res.data
+                    // First AJAX call
+                    $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
 
-                            testCreateOrUpdate = 'update'
-                            cureentTestId = testid
-                            promotValue = null
-                            testName = null
+                        if (res.statusCode === 0 && res.data) {
+                            var data = res.data;
+                            selectedPaper = data;
 
-                            dataObj = {
-                                'createOrUpdate'  : testCreateOrUpdate,
-                                'createdPaperid'  : data['createdPaperid'],
-                                'testId'          : cureentTestId,
-                                'testName'        : testName,
-                                'promotPercentage': promotValue,
-                                'jdId'            : jdId,
-                                'libraryId'       : libraryid
-                            }
+                            var dataObj = {
+                                'createOrUpdate': 'update',
+                                'createdPaperid': data['createdPaperid'],
+                                'testId': testid,
+                                'testName': null,
+                                'promotPercentage': null,
+                                'jdId': jdId,
+                                'libraryId': libraryid
+                            };
 
-                            var final_data = {
+                            var final_data_jd = {
                                 'data': JSON.stringify(dataObj),
                                 csrfmiddlewaretoken: CSRF_TOKEN,
-                            }
+                            };
 
-                            // save paper id in jbdesc table 
-                            $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data, function (res) {
+                            // Second AJAX call
+                            $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data_jd, function (res) {
+                                resolve(data); // Resolve the promise with the data after both calls
+                            }).fail((error) => {
+                                console.error('Error in second API call:', error);
+                                reject(error); // Reject on second API call error
+                            });
 
-                            })
-                            
+                        } else {
+                            console.error('Error in first API call response:', res);
+                            reject(new Error("Failed to create paper")); // Reject on first API call error
                         }
-                    }
+                    }).fail((error) => {
+                        console.error('Error in first API call:', error);
+                        reject(error); // Reject on first API call error
+                    });
 
-                })
+                    // Exit loop once the matching library ID is found
+                    break;
+                }
             }
+        } else {
+            console.error('Invalid event:', event);
+            reject(new Error("Invalid event"));
         }
-
-    }
-
+    });
 }
+
 
 
 function deleteTestModalOpen(testid) {
@@ -1299,6 +1327,7 @@ function deleteTest() {
         $('#modalToggle').modal('hide');
     }
 }
+
 
 // Interview panel
 document.addEventListener('DOMContentLoaded', function () {
@@ -1434,4 +1463,47 @@ function saveInterviewers(){
 
         }
     }
+}
+
+
+function publishJd(){
+
+    // var testNameLst = document.getElementsByClassName('workFlowTestCards')
+    // for(var test = 0; test < testNameLst.length; test++){
+
+    // }
+
+    dataObj = {
+        'jobDescriptionId':jdId
+    }
+
+    var final_data = {
+        'data': JSON.stringify(dataObj),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    }
+
+    // save paper id in jbdesc table 
+    $.post(CONFIG['portal'] + "/api/jd-publish", final_data, function (res) {
+
+        if(res.statusCode == 0){
+            if(res.data['noPaper'] == 'Y'){
+                // Show Modal
+                document.getElementById('PublishValidators').innerText = res.data['paperTitle']+' '+'Does not Select any Library.'
+                $('#JdPublishConformation').modal('hide')
+                $('#publishValidationModal').modal('show')
+            }
+            else{
+                res.data
+                $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {});
+                showSuccessMessage('JD Published Successfully');
+
+            }
+        }
+
+    })
+
+}
+
+function closeModals(){
+    $('#publishValidationModal').modal('hide')
 }

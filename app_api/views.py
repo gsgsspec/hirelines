@@ -12,7 +12,7 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
+from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
 
@@ -750,6 +750,28 @@ def candidateReport(request):
 
     return JsonResponse(response)
 
+
+@api_view(['POST'])
+def jdPublish(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            jdData = jdPublishService(dataObjs)
+            response['data'] = jdData
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Jd Publish'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
 
 
 @api_view(['POST'])
