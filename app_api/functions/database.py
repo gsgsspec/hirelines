@@ -253,13 +253,13 @@ def saveJdNewTest(dataObjs,compyId):
             return [workFlowDetails]
 
         if dataObjs['createOrUpdate'] == 'update': # it will update the existing Test
-            print('=================')
-            print('UPDATEEES')
+
             if 'testId' in dataObjs:
                 currentTestId = dataObjs['testId']
 
             if currentTestId:
                 savedWorkFlowDetails = Workflow.objects.filter(id = currentTestId, companyid = compyId, jobid = dataObjs['jdId']).last()
+                brulesData = Brules.objects.filter(companyid = compyId,workflowid = savedWorkFlowDetails.id, jobdescid = dataObjs['jdId']).last()
                 
                 if 'testName' in dataObjs:
                     if dataObjs['testName']:
@@ -268,6 +268,8 @@ def saveJdNewTest(dataObjs,compyId):
                 if 'createdPaperid' in dataObjs:
                     if savedWorkFlowDetails.paperid == None:
                         savedWorkFlowDetails.paperid = dataObjs['createdPaperid']
+                        brulesData.paperid = dataObjs['createdPaperid']
+                        brulesData.save()
                 
                 if 'libraryId' in dataObjs:
                     if dataObjs['libraryId']:
@@ -387,7 +389,7 @@ def saveAddJD(dataObjs,compyId,hrEmail):
                 skillset    = dataObjs['skills'] if dataObjs['skills'] else None, 
                 skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None, 
                 companyid   = compyId if compyId else None,
-                status      = 'C'
+                status      = 'D'
             )
             saveJd.save()
     except Exception as e:

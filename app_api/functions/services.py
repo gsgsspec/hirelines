@@ -452,7 +452,7 @@ def getCompanyJdData(cid):
 
 def getCompanyJDsList(companyId):
     try:
-        company_jds = JobDesc.objects.filter(companyid=companyId, status='O').values()
+        company_jds = JobDesc.objects.filter(companyid=companyId, status='D').values()
         return company_jds
     except Exception as e:
         raise
@@ -1308,7 +1308,7 @@ def feedbacksData(cid):
 
 
 
-def jdPublishService(dataObjs):
+def jdPublishService(dataObjs,companyId):
     try:
       paperData = []
       if dataObjs['jobDescriptionId']:
@@ -1326,12 +1326,17 @@ def jdPublishService(dataObjs):
             
             orderCounter = 1
             for test in worflowData:
+                
                 test.order = orderCounter
                 orderCounter += 1
-                paperData.append(model_to_dict(test))
+                tempDct = model_to_dict(test)
+                brulesData = Brules.objects.filter(companyid = companyId, workflowid = test.id).last()
+                tempDct['promotPercentage'] = brulesData.passscore
+
+                paperData.append(tempDct)
                 test.save()
             
-            return paperData
+            return {'companyid':companyId, 'papersData':paperData}
       
     except Exception as e:
         raise

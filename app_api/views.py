@@ -762,7 +762,10 @@ def jdPublish(request):
         if request.method == "POST":
             user = auth_user(request.user)
             dataObjs = json.loads(request.POST.get('data'))
-            jdData = jdPublishService(dataObjs)
+            companyData = getCompanyId(request.user)
+            
+            jdData = jdPublishService(dataObjs,companyData)
+
             response['data'] = jdData
             response['statusCode'] = 0
 

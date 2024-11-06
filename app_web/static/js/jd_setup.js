@@ -494,8 +494,8 @@ function addTestCardToShow(testName, promotValue, testType, data) {
                 </figure>
                 <div class="d-flex justify-content-between mt-0 pt-0"> 
                     <i class="bx bx-edit custm-edit-icon" id="editTestCard_${data['id']}" onclick="updateTest(event, ${data['id']})" style="cursor: pointer;"></i>
-                    <div class="deleteFontIcon" data-bs-toggle="modal" onclick="deleteTestModalOpen(${data['id']})"  style="cursor: pointer;">
-                        <i class="far fa-trash-alt text-danger"></i>
+                    <div class="deleteFontIcon" data-bs-toggle="modal" onclick="deleteTestModalOpen(${data['id']})"  style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class='bx bx-trash' ></i>
                     </div>
                 </div>
             </div>
@@ -1468,11 +1468,6 @@ function saveInterviewers(){
 
 function publishJd(){
 
-    // var testNameLst = document.getElementsByClassName('workFlowTestCards')
-    // for(var test = 0; test < testNameLst.length; test++){
-
-    // }
-
     dataObj = {
         'jobDescriptionId':jdId
     }
@@ -1493,9 +1488,19 @@ function publishJd(){
                 $('#publishValidationModal').modal('show')
             }
             else{
-                res.data
+
+                dataObj = {
+                    'data':res.data
+                }
+            
+                var final_data = {
+                    'data': JSON.stringify(dataObj),
+                    csrfmiddlewaretoken: CSRF_TOKEN,
+                }
+
                 $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {});
                 showSuccessMessage('JD Published Successfully');
+                $('#JdPublishConformation').modal('hide')
 
             }
         }
