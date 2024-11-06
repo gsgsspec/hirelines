@@ -1314,6 +1314,10 @@ def jdPublishService(dataObjs,companyId):
       if dataObjs['jobDescriptionId']:
 
             worflowData = Workflow.objects.filter(jobid = dataObjs['jobDescriptionId'])
+            print('=====================')
+            print(list(worflowData.values()), len(list(worflowData.values())))
+
+            len(list(worflowData.values())) + 1
 
             for test in worflowData:
                 if test.paperid == None:

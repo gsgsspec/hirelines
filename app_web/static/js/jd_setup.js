@@ -477,7 +477,7 @@ function addTestCardToShow(testName, promotValue, testType, data) {
 
     // Create a new div for the card
     var cardHTML = `
-        <div class="col-sm-6 col-lg-4 mb-4" id="testCardSubContainer_${data['id']}">
+        <div class="col-sm-6 col-lg-4 mb-4" id="testCardSubContainer_${data['id']}" style="padding-left:0px !important; padding-right: calc(var(--bs-gutter-x)* 0.9);">
             <div class="card p-3 cust_cursor shadow-sm fade-in workFlowTestCards" style="background-color: ${testTypeColor}; border-radius: 8px;" onclick="selectTest(this.id)" id="${testTitle}_${data['id']}">
                 <figure class="m-0">
                     <blockquote class="blockquote m-0">
@@ -510,9 +510,6 @@ function addTestCardToShow(testName, promotValue, testType, data) {
         newCard.classList.add('visible'); // This will trigger the CSS animation
     });
 }
-
-
-
 
 
 function selectTest(element_id){
