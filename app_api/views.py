@@ -862,3 +862,10 @@ def getCreditsView(request):
         response['error'] = str(e)
         # raise
     return JsonResponse(response)
+
+
+def getUserName(request):
+    user = auth_user(request.user)
+    return JsonResponse({"name": user.name})
+
+    
