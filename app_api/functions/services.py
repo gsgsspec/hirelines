@@ -452,7 +452,7 @@ def getCompanyJdData(cid):
 
 def getCompanyJDsList(companyId):
     try:
-        company_jds = JobDesc.objects.filter(companyid=companyId, status='D').values()
+        company_jds = JobDesc.objects.filter(companyid=companyId).values()
         return company_jds
     except Exception as e:
         raise
