@@ -20,8 +20,8 @@
 
       {% for jd in allJds %}
       <div class="col-md-6 col-lg-4 c-card">
-        <div class="card mb-3 shadow jd_card_border jd_card_cust h-100 d-flex flex-column">
-          <div onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer; flex-grow: 1;">
+        <div class="card mb-3 shadow jd_card_border jd_card_cust">
+          <div onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer;">
             <div class="card-body int-card-bd">
               <div class="jd_card_wdth_cust">
                 <h5 class="card-title p-clr mb-1">{{ jd.title }}</h5>
