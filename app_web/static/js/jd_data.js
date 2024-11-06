@@ -21,7 +21,7 @@ $('#web-page').removeClass('layout-menu-fixed')
 
 
 async function getReportData(cid) {
-    var url = CONFIG['acert'] + "/api/hireline-candidate-report";
+    var url = CONFIG['portal'] + "/api/get-candidate-report";
 
     if (cid) {
         url += "?cid=" + cid;
@@ -44,7 +44,7 @@ async function getReportData(cid) {
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = downloadUrl;
-            a.download = 'report.pdf';
+            a.download = cid + '.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -58,3 +58,17 @@ async function getReportData(cid) {
         Swal.close();
     }
 }
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const positionedNumbers = document.querySelectorAll('.positioned-number');
+
+    positionedNumbers.forEach(span => {
+        const numberLength = span.textContent.length; // Get the length of the number
+
+        // Adjust the left position based on the number of digits
+        const leftPosition = 33 - (numberLength - 1); // Decrease left by 1% for each additional digit
+        span.style.left = leftPosition + '%'; // Set the calculated left position
+    });
+});
+

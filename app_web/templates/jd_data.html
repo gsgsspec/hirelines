@@ -15,13 +15,20 @@
 
 <div class="row">
     <div class="col-md-6 col-xl-6">
-        <img src="{% static 'lib/portal/assets/img/illustrations/trace.svg' %}" alt="funnel-icon" class="img-fluid">
-        <!-- <img src="{% static 'lib/portal/assets/img/illustrations/Untitled.svg' %}" alt="funnel-icon" class="img-fluid"> -->
+        <div class="mt-5">
+            <div class="image-container">
+                <span class="positioned-number">{{jd_data.screening_tests}}</span>
+                <span class="positioned-number">{{jd_data.coding_tests}}</span>
+                <span class="positioned-number">{{jd_data.interviews}}</span>
+                <span class="positioned-number">{{jd_data.offer_letters}}</span>
+                <img src="{% static 'lib/portal/assets/img/illustrations/funnel_no_icons.svg' %}" alt="funnel-icon" class="img-fluid">
+            </div>
+        </div>
     </div>
     <div class="col-md-6 col-xl-6">
         <div class="row mt-5 text-center">
             <div class="col-md-6 col-xl-6">
-                <div class="card text-white mb-3" style="background-color: blue;">
+                <div class="card text-white mb-3" style="background-color: #17b0e3;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Screened</h5>
                         <p class="card-text num-txt">{{jd_data.screening_tests}}</p>
@@ -29,7 +36,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-xl-6">
-                <div class="card text-white mb-3" style="background-color: #FFBF00;">
+                <div class="card text-white mb-3" style="background-color: #3bc482;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Coding</h5>
                         <p class="card-text num-txt">{{jd_data.coding_tests}}</p>
@@ -37,7 +44,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-xl-6">
-                <div class="card text-white mb-3" style="background-color: #f25c05;">
+                <div class="card text-white mb-3" style="background-color: #93c131;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Interview</h5>
                         <p class="card-text num-txt">{{jd_data.interviews}}</p>
@@ -45,7 +52,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-xl-6">
-                <div class="card text-white mb-3" style="background-color: green;">
+                <div class="card text-white mb-3" style="background-color: #e3cd09;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Offer Letter</h5>
                         <p class="card-text num-txt">{{jd_data.offer_letters}}</p>
@@ -60,7 +67,7 @@
 
 <div class="card">
     <div class="table-responsive text-nowrap table-cls">
-        <table class="table table-hover" id="position-report-table">
+        <table class="table table-hover" id="jd-candidate-data">
             <thead>
                 <tr>
                     <th> <strong> Candidate ID </strong></th>
@@ -149,6 +156,37 @@
         border-width: 1px 1px;
     }
 
+    .image-container {
+        position: relative; /* Create a positioning context */
+        display: inline-block; /* Allows the image and spans to be treated as one element */
+    }
+
+    .positioned-number {
+        position: absolute; /* Position elements absolutely within the container */
+        color: white; /* Change color as needed */
+        font-size: 20px; /* Adjust font size */
+    }
+
+    /* Example positions, adjust these values as needed */
+    .positioned-number:nth-of-type(1) {
+        top: 20%; /* Adjust the vertical position */
+        left: 33%; /* Adjust the horizontal position */
+    }
+
+    .positioned-number:nth-of-type(2) {
+        top: 40%;
+        left: 33%;
+    }
+
+    .positioned-number:nth-of-type(3) {
+        top: 60%;
+        left: 33%;
+    }
+
+    .positioned-number:nth-of-type(4) {
+        top: 80%;
+        left: 33%;
+    }
 </style>
 
 <script src="{% static 'js/jd_data.js' %}"></script>
@@ -156,7 +194,7 @@
 <script>
     $(document).ready(function() {
         $.noConflict();
-        $('#position-report-table').DataTable(
+        $('#jd-candidate-data').DataTable(
             {
                 "ordering": false
             }

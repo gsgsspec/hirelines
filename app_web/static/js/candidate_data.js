@@ -55,15 +55,28 @@ document.getElementById("notify").onclick = function () {
 
         $.post(CONFIG['portal'] + "/api/notify-candidate", final_data, function (res) {
 
-            // if (res.statusCode == 0) {
+            if (res.statusCode == 0) {
 
-            //     swal("Notification Sent to the Candidate","","success");
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Canididate Notified',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
 
-            //     setTimeout(function () { window.location.href = '/web/candidates' }, 1000);
+                setTimeout(function () { window.location.reload();}, 2000);
 
-            // } else {
-            //     swal("Error in sending notification","","error");
-            // }
+            } else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error in notifying the Canidate',
+                    text: 'Please try again after some time',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
         })
 
     })

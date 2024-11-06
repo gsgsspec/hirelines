@@ -367,15 +367,20 @@ def updateEmailTempPage(request, eid):
 
 
 def jdDataPage(request, jid):
-    # if checkCompanyTrailPeriod(request.user):
-    #     return redirect('/trial-expired')
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     try:
 
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        user_role = user_data.role
+        menuItemList = get_functions_service(user_role)
+
         jd_data = getJobDescData(jid)
+        candidates_data = getJdCandidatesData(jid,user_data.id)
 
-        candidates_data = getJdCandidatesData(jid)
-
-        return render(request, "portal_index.html", {"template_name": 'jd_data.html','jd_data':jd_data,'candidates_data':candidates_data})
+        return render(request, "portal_index.html", {"template_name": 'jd_data.html','menuItemList': menuItemList,
+                        'jd_data':jd_data,'candidates_data':candidates_data})
 
     except Exception as e:
         raise

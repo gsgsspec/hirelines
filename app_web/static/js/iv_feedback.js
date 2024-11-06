@@ -28,8 +28,15 @@ document.getElementById("save").onclick = function () {
                 setTimeout(function () { window.location.href = '/feedbacks' }, 2000);
 
             } else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error in submitting the feedback',
+                    text: 'Please try again after some time',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
                 
-                swal("Error in giving Feedback", "", "error");
             }
         })
 

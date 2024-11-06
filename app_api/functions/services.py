@@ -255,7 +255,7 @@ def getJdCandidatesData(jid,userid):
 
         user = User.objects.get(id=userid)
 
-        candidates = Candidate.objects.filter(jobid=jid,companyid=user.companyid)
+        candidates = Candidate.objects.filter(jobid=jid,companyid=user.companyid).order_by('-id')
 
         candidates_data = []
 
