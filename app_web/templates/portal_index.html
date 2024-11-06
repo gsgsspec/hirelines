@@ -99,11 +99,11 @@
 
         <div class="menu-inner-shadow"></div>
 
-        <ul class="menu-inner py-1">
+        <ul class="menu-inner py-1 mt-2">
 
-          <li class="menu-header small text-uppercase">
+          <!-- <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Menu</span>
-          </li>
+          </li> -->
 
           {% for menuItemObj in menuItemList%}
           {% if menuItemObj.child|length_is:"1" and not menuItemObj.child.0.menuItemName %}
