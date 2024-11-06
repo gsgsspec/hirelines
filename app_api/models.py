@@ -408,3 +408,14 @@ class Credits(models.Model):
 
     class Meta:
         db_table = 'credits'
+
+
+# holds mutiple records ie. each company each type
+class CompanyCredits(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    transtype = models.CharField(max_length=1, null=True) # papertype
+    credits = models.IntegerField(null=True) # credits charged
+
+    class Meta:
+        db_table = 'companycredits'

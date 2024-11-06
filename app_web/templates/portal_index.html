@@ -124,10 +124,12 @@
             <div class="credits-container">
 
               <button class="credits-display-div">
-                <h4 class="form-label mb-0 p-1" style="color: red;font-size: 1.125rem;">Avaliable Credits : 960</h4>
+                <!-- data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-refresh bx-xs' ></i> <span>Refresh Balance </span>"  -->
+                <h4 class="form-label mb-0 p-1" id="low_credits_display" style="font-size: 1.125rem;" hidden><span name="balance_credits_display" style="color: red;"></span>&ensp;<i class='bx bx-refresh cursor-pointer' title="Refresh balance" onclick="getCredits()"></i></h4>
+                <h4 class="form-label mb-0 p-1" id="credits_display" style="font-size: 1.125rem;" hidden><span name="balance_credits_display"></span>&ensp;<i class='bx bx-refresh cursor-pointer' title="Refresh balance" onclick="getCredits()"></i></h4>
               </button>
             </div>
-            <!-- <div class="credits-display-div"><h2 class="form-label mb-0 p-1" style="font-size: 1.125rem;">Avaliable Credits : 6750</h2></div> -->
+            
             {% include template_name %}
           </div>
         </div>

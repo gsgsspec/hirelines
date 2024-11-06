@@ -14,7 +14,7 @@ from .constants import public_email_domains
 from hirelines.metadata import getConfig
 from hirelines.settings import BASE_DIR
 from .mailing import sendRegistrainMail
-from app_api.models import CompanyData, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
+from app_api.models import Account, CompanyCredits, CompanyData, Credits, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
     Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia, Brules
 from app_api.functions.database import saveJdNewTest, saveAddJD, saveUpdateJd,deleteTestInJdDB, saveInterviewersJD
 from app_api.functions.mailing import sendEmail
@@ -354,7 +354,7 @@ def authentication_service(dataObjs):
 
 def get_functions_service(user_role):
     try:
-        functions = RolesPermissions.objects.filter(enable__contains=user_role)
+        functions = RolesPermissions.objects.filter(enable__contains=user_role).order_by('orderby')
         temp = []
 
         for function in functions:
@@ -1338,5 +1338,22 @@ def notifyCandidateService(dataObjs):
         registration.status = 'O' if notify == "S" else "H"
         registration.save()
        
+    except Exception as e:
+        raise
+
+
+
+def deductCreditsService(company_id,paper_type,paper_id=None):
+    try:
+        company_account = Account.objects.get(companyid=company_id)
+        company_credits = CompanyCredits.objects.get(companyid=company_id,transtype=paper_type)
+        company_account.balance = company_account.balance - company_credits.credits
+        company_account.save()  
+        workflow_data = Workflow.objects.filter(companyid=company_id,papertype=paper_type).last()
+        job_desc_data = JobDesc.objects.get(id=workflow_data.jobid)
+        transaction = Credits(companyid=company_id,transdatetime=datetime.now(),transtype=paper_type,
+                                  points=company_credits.credits,user=job_desc_data.createdby,
+                                  transid=paper_id)
+        transaction.save()
     except Exception as e:
         raise

@@ -5,7 +5,7 @@ urlpatterns = [
     path('add-jd', views.addJD),
     path('update-jd', views.updateJD),
     path('add-companydata', views.addCompanyData),
-    path('add-jd-candidate', views.addJDCandidate),
+    # path('add-jd-candidate', views.addJDCandidate),
     path('register-user',views.registerUser),
     path('jd-add-or-update-test',views.jdAddTest),
     path('login-user',views.loginUser),
@@ -28,6 +28,8 @@ urlpatterns = [
     path('delete-test-injd',views.deleteTestinJs),
     path('save-interviewers-lst',views.saveInterviewersForJs),
     path('notify-candidate',views.notifyCandidate),
+    path('get-update-company-credits',views.getUpdateCompanyCreditsView),
+    path('get-credits',views.getCreditsView),
 
 
 

@@ -1,0 +1,68 @@
+{% load static %}
+
+<div class="container-center">
+    <div class="col-9">
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between" style="align-self:center;">
+                <h5 class="mb-0">Branding</h5>
+            </div>
+            <div class="card-body">
+                <form id="update_email_template_form">
+                   
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Email Body</label>
+                        <div class="col-sm-9">
+                            <div class="input-group input-group-merge">
+                                <textarea id="email_body" rows="6" class="form-control" required> {{emailTemps.email_body}} </textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Email Attachment</label>
+                        <div class="col-sm-9">
+                            <div class="custom-file-display" onclick="document.getElementById('email_attachment_file').click()">
+                                {% if emailTemps.email_attachment %}
+                                Choose File |  &ensp;&ensp;&ensp;{{emailTemps.email_attachment}}
+                                {% else %}
+                                Choose a file
+                                {% endif %}
+                            </div>
+                            <input class="custom-file-input" type="file" name="email_attachment" id="email_attachment_file" accept=".pdf" onchange="updateFileDisplay()">
+                            
+                            <!-- <div class="input-group input-group-merge">
+                                
+                                    <input class="form-control" type="file" name="email_attachment" id="email_attachment_file" accept=".pdf" >
+                                {% if emailTemps.email_attachment %}
+                                    <span id="uploaded_filename" style="float: left; align-content: center; margin-right: 17vw;">Uploaded file: {{emailTemps.email_attachment}}</span>
+                                {% else %}
+                                <span id="uploaded_filename" hidden></span>
+                                    {% endif %}
+                            </div> -->
+                            
+                            <button type="button" class="btn-sm btn-light mt-2 float-right" style="width: fit-content;" id="remove_attachment" {% if not emailTemps.email_attachment %} hidden {% endif %}>Remove attachment</button>
+
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Attachment Name</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-merge">
+                                <input class="form-control" type="text" id="email_attachment_name" name="{{emailTemps.email_attachment}}" value="{{emailTemps.email_attachment_name}}" >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-end">
+                        <div class="text-end">
+                            <button id="test_mail" class="cust-btn btn btn-primary float-left" onclick="submit_form('{{ template_data.template_id }}', 'testmail')" disabled>Send Test Mail</button>
+                            <button type="reset" id="clr_data" onclick="clr_data()"; class="btn btn-danger btn_width">Cancel</button>
+                            <button  type="submit" class="btn btn-primary" id="save_template" onclick="submit_form('{{template_data.template_id}}','savetemplate')">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

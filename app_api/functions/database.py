@@ -4,9 +4,10 @@ from datetime import datetime
 from urllib.parse import urljoin
 from django.db.models import Q
 from app_api.functions.enc_dec import decrypt_code
+
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
-from app_api.models import Brules, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
+from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template
 
 
@@ -19,182 +20,194 @@ def addCompanyDataDB(dataObjs):
 
 def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
     try:
-
-        candidate = Candidate(
-            firstname = dataObjs["firstname"],
-            lastname = dataObjs["lastname"],
-            companyid = cid,
-            email = dataObjs["email"],
-            mobile = dataObjs["mobile"],
-            jobid = dataObjs["jd"],
-            registrationdate = datetime.now(),
-            status = 'P'
-        )
-        candidate.save()
-        company_data = Company.objects.get(id=cid)
-        year = datetime.now().strftime("%y")
-
-        refid_obj, refid_flag = ReferenceId.objects.get_or_create(type = "R", prefix1 = "{:03}".format(cid), prefix2 = year)
-            
-        if refid_flag == True:
-            lastid = 1
-            refid_obj.lastid = lastid
-            refid_obj.save()
-
-        if refid_flag == False:
-            lastid = refid_obj.lastid+1
-            refid_obj.lastid = lastid
-            refid_obj.save()
-
-        candidate_id_seq = str('{:05}'.format(int(refid_obj.lastid)))
-        candidate_code = f"{refid_obj.prefix1}{refid_obj.prefix2}{candidate_id_seq}"
-
-        candidate.candidateid = candidate_code
-
-        candidate.save()
-
-        acert_domain = getConfig()['DOMAIN']['acert']
-        # Adding candidate at acert via api
-        endpoint = '/api/hirelines-add-candidate'
-
-        url = urljoin(acert_domain, endpoint)
-
-        candidate_data = {
-            'firstname' : dataObjs["firstname"],
-            'lastname' : dataObjs["lastname"],
-            'email':dataObjs["email"],
-            'mobile': dataObjs["mobile"],
-            'paper_id': dataObjs['begin-from'], 
-            'company_id':cid,
-            'reference_id': candidate.candidateid
-        }
-
-        send_candidate_data = requests.post(url, json = candidate_data, verify=False)
-        response_content = send_candidate_data.content
-
-        if response_content:
-            
-            json_data = json.loads(response_content.decode('utf-8'))
-
-            acert_data = json_data['data']
-
-            c_registration = Registration(
-                candidateid = candidate.id,
-                paperid = dataObjs['begin-from'],
-                registrationdate = candidate.registrationdate,
-                companyid = candidate.companyid,
-                jobid = candidate.jobid,
-                status = 'P',
-                papertype = acert_data["papertype"],
+        from app_api.functions.services import deductCreditsService
+        company_account = Account.objects.get(companyid=cid)
+        company_credits = CompanyCredits.objects.get(companyid=cid,transtype=dataObjs['begin-from'])
+        if company_account.balance >= company_credits.credits:
+            candidate = Candidate(
+                firstname = dataObjs["firstname"],
+                lastname = dataObjs["lastname"],
+                companyid = cid,
+                email = dataObjs["email"],
+                mobile = dataObjs["mobile"],
+                jobid = dataObjs["jd"],
+                registrationdate = datetime.now(),
+                status = 'P'
             )
+            candidate.save()
+            company_data = Company.objects.get(id=cid)
+            year = datetime.now().strftime("%y")
 
-            c_registration.save()
+            refid_obj, refid_flag = ReferenceId.objects.get_or_create(type = "R", prefix1 = "{:03}".format(cid), prefix2 = year)
+                
+            if refid_flag == True:
+                lastid = 1
+                refid_obj.lastid = lastid
+                refid_obj.save()
 
-            if c_registration.papertype == 'I':
-                call_schedule = CallSchedule(
-                    candidateid = candidate.id,
-                    hrid = user_id,
-                    paper_id = dataObjs['begin-from'],
-                    status = 'N',
-                    companyid = candidate.companyid
-                )
-                call_schedule.save()
-            
-            c_data = {
-                'candidateid':candidate.id,
-                'papertype':c_registration.papertype
+            if refid_flag == False:
+                lastid = refid_obj.lastid+1
+                refid_obj.lastid = lastid
+                refid_obj.save()
+
+            candidate_id_seq = str('{:05}'.format(int(refid_obj.lastid)))
+            candidate_code = f"{refid_obj.prefix1}{refid_obj.prefix2}{candidate_id_seq}"
+
+            candidate.candidateid = candidate_code
+
+            candidate.save()
+
+            acert_domain = getConfig()['DOMAIN']['acert']
+            # Adding candidate at acert via api
+            endpoint = '/api/hirelines-add-candidate'
+
+            url = urljoin(acert_domain, endpoint)
+
+            candidate_data = {
+                'firstname' : dataObjs["firstname"],
+                'lastname' : dataObjs["lastname"],
+                'email':dataObjs["email"],
+                'mobile': dataObjs["mobile"],
+                'paper_id': dataObjs['begin-from'], 
+                'company_id':cid,
+                'reference_id': candidate.candidateid
             }
-            
-            # Removed, because the company 
-            # 
-            # replacements = {
-            #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
-            #     "[paper_name]": acert_data["paper_name"],
-            #     "[company_name]": company_data.name,
-            #     "[recruitment_email_address]": company_data.email,
-            #     "[exam_link]":acert_data["exam_url"],
-            #     "[deadline]": acert_data["deadline"]
-            # }
-            # if workflow_data.papertype == "I":
-            #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Call_Schedule',replacements,candidate.email)
-            # else:
-            #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Registration',replacements,candidate.email)
-            return c_data
+
+            send_candidate_data = requests.post(url, json = candidate_data, verify=False)
+            response_content = send_candidate_data.content
+
+            if response_content:
+                
+                json_data = json.loads(response_content.decode('utf-8'))
+
+                acert_data = json_data['data']
+
+                c_registration = Registration(
+                    candidateid = candidate.id,
+                    paperid = dataObjs['begin-from'],
+                    registrationdate = candidate.registrationdate,
+                    companyid = candidate.companyid,
+                    jobid = candidate.jobid,
+                    status = 'P',
+                    papertype = acert_data["papertype"],
+                )
+
+                c_registration.save()
+
+                if c_registration.papertype == 'I':
+                    call_schedule = CallSchedule(
+                        candidateid = candidate.id,
+                        hrid = user_id,
+                        paper_id = dataObjs['begin-from'],
+                        status = 'N',
+                        companyid = candidate.companyid
+                    )
+                    call_schedule.save()
+                
+                c_data = {
+                    'candidateid':candidate.id,
+                    'papertype':c_registration.papertype
+                }
+                
+                # Removed, because the this process has to handled by ACERT
+                # 
+                # replacements = {
+                #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
+                #     "[paper_name]": acert_data["paper_name"],
+                #     "[company_name]": company_data.name,
+                #     "[recruitment_email_address]": company_data.email,
+                #     "[exam_link]":acert_data["exam_url"],
+                #     "[deadline]": acert_data["deadline"]
+                # }
+                # if workflow_data.papertype == "I":
+                #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Call_Schedule',replacements,candidate.email)
+                # else:
+                #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Registration',replacements,candidate.email)
+                deductCreditsService(cid,acert_data["papertype"],dataObjs['begin-from'])
+                return c_data
+        else:
+            return "insufficient_credits"
     except Exception as e:
         raise
 
 
 def scheduleInterviewDB(user_id, dataObjs):
     try:
-        call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
-        if call_details:
-            datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
-            datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p') 
-            interviewer = dataObjs['slot_id'].split('__')[2:]
-            interviewer_id = interviewer[0]
+        user = User.objects.get(id=user_id)
+        company_account = Account.objects.get(companyid=user.companyid)
+        company_credits = CompanyCredits.objects.get(companyid=user.companyid,transtype="I")
+        if company_account.balance >= company_credits.credits:
+            call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
+            if call_details:
+                datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
+                datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p') 
+                interviewer = dataObjs['slot_id'].split('__')[2:]
+                interviewer_id = interviewer[0]
 
-            scheduled_check = CallSchedule.objects.filter(Q(interviewerid=interviewer_id), Q(datentime=datentime),
-                                                              Q(status='S')|Q(status='R'))
-            user = User.objects.get(id=user_id)
-
-            # Updating Not scheduled Call
-
-            if not scheduled_check:
-                candidate = Candidate.objects.get(id=call_details.candidateid)
-                meeting_config = getConfig()['MEETING_CONFIG']['meeting_link']
-                string_ = str(interviewer_id) + (str(candidate.candidateid).replace("-", "")) + str(call_details.id)
-                enc_st_ = string_.encode('utf-8')
-                hex_code = enc_st_.hex()
-                meeting_link = meeting_config + hex_code
-                call_details.datentime = datentime
-                call_details.interviewerid = interviewer_id
-                call_details.instructions = dataObjs['instructions']
-                call_details.status = 'S'
-                call_details.meetinglink = meeting_link
-                call_details.hrid = user_id
-                call_details.companyid = user.companyid
-                call_details.save()
-
-                # Mail Replacements
-                job_desc = JobDesc.objects.get(id=candidate.jobid)
-                interview_time = call_details.datentime.strftime("%d-%b-%Y %I:%M %p") 
-
-                interviewer = User.objects.get(id=call_details.interviewerid)
-                to_mails = f"{candidate.email},{interviewer.email}"
-
-                interview_data = {
-                    'job_title':job_desc.title,
-                    'meetinglink':call_details.meetinglink,
-                    'int_paper': call_details.paper_id,
-                    'candidate_code': candidate.candidateid,
-                    'interviewer': call_details.interviewerid,
-                    'interview_time': interview_time,
-                    'to_emails': to_mails
-                }
-
-                acert_domain = getConfig()['DOMAIN']['acert']
-                endpoint = '/api/schedule-interview'
-
-                url = urljoin(acert_domain, endpoint)
-
-                send_interview_data = requests.post(url, json=interview_data)
-
-                # replacements = {
-                #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname}",
-                #     "[job_title]": job_desc.title,
-                #     "[company_name]": company.name,
-                #     "[date]": interview_time,
-                #     "[link]": call_details.meetinglink,
-                # }
+                scheduled_check = CallSchedule.objects.filter(Q(interviewerid=interviewer_id), Q(datentime=datentime),
+                                                                Q(status='S')|Q(status='R'))
                 
 
-                # Email Function
+                # Updating Not scheduled Call
 
-                # sendEmail(candidate.companyid,'I',call_details.paper_id,'Call_Schedule',replacements,emails,call_details.datentime)
+                if not scheduled_check:
+                    candidate = Candidate.objects.get(id=call_details.candidateid)
+                    meeting_config = getConfig()['MEETING_CONFIG']['meeting_link']
+                    string_ = str(interviewer_id) + (str(candidate.candidateid).replace("-", "")) + str(call_details.id)
+                    enc_st_ = string_.encode('utf-8')
+                    hex_code = enc_st_.hex()
+                    meeting_link = meeting_config + hex_code
+                    call_details.datentime = datentime
+                    call_details.interviewerid = interviewer_id
+                    call_details.instructions = dataObjs['instructions']
+                    call_details.status = 'S'
+                    call_details.meetinglink = meeting_link
+                    call_details.hrid = user_id
+                    call_details.companyid = user.companyid
+                    call_details.save()
 
-                return "Slot Booked"
+                    # Mail Replacements
+                    job_desc = JobDesc.objects.get(id=candidate.jobid)
+                    interview_time = call_details.datentime.strftime("%d-%b-%Y %I:%M %p") 
+
+                    interviewer = User.objects.get(id=call_details.interviewerid)
+                    to_mails = f"{candidate.email},{interviewer.email}"
+
+                    interview_data = {
+                        'job_title':job_desc.title,
+                        'meetinglink':call_details.meetinglink,
+                        'int_paper': call_details.paper_id,
+                        'candidate_code': candidate.candidateid,
+                        'interviewer': call_details.interviewerid,
+                        'interview_time': interview_time,
+                        'to_emails': to_mails
+                    }
+
+                    acert_domain = getConfig()['DOMAIN']['acert']
+                    endpoint = '/api/schedule-interview'
+
+                    url = urljoin(acert_domain, endpoint)
+
+                    send_interview_data = requests.post(url, json=interview_data)
+
+                    # replacements = {
+                    #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname}",
+                    #     "[job_title]": job_desc.title,
+                    #     "[company_name]": company.name,
+                    #     "[date]": interview_time,
+                    #     "[link]": call_details.meetinglink,
+                    # }
+                    
+
+                    # Email Function
+
+                    # sendEmail(candidate.companyid,'I',call_details.paper_id,'Call_Schedule',replacements,emails,call_details.datentime)
+
+                    return "Slot Booked"
+            else:
+                return "No Candidate"
         else:
-            return "No Candidate"
+            return "insufficient_credits"
     except Exception as e:
         print(str(e))
         raise

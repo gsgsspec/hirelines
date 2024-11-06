@@ -12,12 +12,12 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
+from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
 
         
-from .models import Candidate, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
+from .models import Account, Candidate, CompanyCredits, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
 from app_api.functions.constants import hirelines_registration_script
 
@@ -770,4 +770,70 @@ def notifyCandidate(request):
     except Exception as e:
         response['data'] = 'Error in Candidate Notify view'
         response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def getUpdateCompanyCreditsView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = request.data
+            company_id = decrypt_code(dataObjs["company_id"])
+            if dataObjs["request_type"] == "check_credits":
+                paper_type = dataObjs["paper_type"]
+                company_account = Account.objects.get(companyid=company_id)
+                company_credits = CompanyCredits.objects.get(companyid=company_id,transtype=paper_type)
+                if company_account.balance >= company_credits.credits:
+                    response['data'] = "credits_available"
+                else:
+                    response['data'] = "insufficient_credits"
+            if dataObjs["request_type"] == "deduct_credits":
+                paper_type = dataObjs["paper_type"]
+                paper_id = dataObjs["paper_id"]
+                deductCreditsService(company_id,paper_type,paper_id)
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getUpdateCompanyCreditsView'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
+
+
+
+@api_view(['GET'])
+def getCreditsView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "GET":
+            user = auth_user(request.user)
+            user_company = user.companyid
+            company_account = Account.objects.get(companyid=user_company)
+            if company_account.balance<1000:
+                low_credits =  "Y"
+            else:
+                low_credits = "N"
+                
+            company_account_obj = {
+                "balance_credits":company_account.balance,
+                "low_credits":low_credits
+            }
+            response["data"] = company_account_obj
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getCreditsView'
+        response['error'] = str(e)
+        # raise
     return JsonResponse(response)
