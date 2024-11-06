@@ -377,7 +377,7 @@ def jdDataPage(request, jid):
         menuItemList = get_functions_service(user_role)
         company_id = getCompanyId(user_mail)
 
-        jd_data = getJobDescData(jid, company_id)
+        jd_data = getJobDescData(jid,company_id)
         candidates_data = getJdCandidatesData(jid,user_data.id)
 
         return render(request, "portal_index.html", {"template_name": 'jd_data.html','menuItemList': menuItemList,

@@ -125,17 +125,17 @@ def registerUserService(dataObjs):
         raise
 
 
-def getJobDescData(jid,companyid):
+def getJobDescData(jid,company_id):
     try:
 
         job_desc = JobDesc.objects.filter(id=jid).last()
-
+        
         if job_desc:
 
-            screening_tests = Registration.objects.filter(companyid=companyid,jobid=jid,papertype='S').count()
-            coding_tests = Registration.objects.filter(companyid=companyid,jobid=jid,papertype='E').count()
-            interviews = Registration.objects.filter(companyid=companyid,jobid=jid,papertype='I').count()
-            offer_letters = Registration.objects.filter(companyid=companyid,jobid=jid,papertype='I',status='O').count()
+            screening_tests = Registration.objects.filter(companyid=company_id,jobid=jid,papertype='S').count()
+            coding_tests = Registration.objects.filter(companyid=company_id,jobid=jid,papertype='E').count()
+            interviews = Registration.objects.filter(companyid=company_id,jobid=jid,papertype='I').count()
+            offer_letters = Registration.objects.filter(companyid=company_id,jobid=jid,papertype='I',status='O').count()
 
             jd_data = {
                 'title' : job_desc.title,
