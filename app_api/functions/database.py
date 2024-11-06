@@ -22,7 +22,8 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
     try:
         from app_api.functions.services import deductCreditsService
         company_account = Account.objects.get(companyid=cid)
-        company_credits = CompanyCredits.objects.get(companyid=cid,transtype=dataObjs['begin-from'])
+        workflow = Workflow.objects.filter(companyid= cid,paperid=dataObjs['begin-from']).last()
+        company_credits = CompanyCredits.objects.get(companyid=cid,transtype=workflow.papertype)
         if company_account.balance >= company_credits.credits:
             candidate = Candidate(
                 firstname = dataObjs["firstname"],
