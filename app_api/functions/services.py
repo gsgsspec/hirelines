@@ -469,10 +469,11 @@ def jdDetails(jdId, companyId):
     try:
         # Get the last JobDesc object for the provided jdId
         jdData = JobDesc.objects.filter(id=jdId).last()
+        selectedInterviewerLst = []
+        total_interviewers_lst = []
         if jdData:
             # Manually create the dictionary with conditions for None values
             
-            total_interviewers_lst = [] 
             interviewes_lst = User.objects.filter(status = 'A',role = 'Interviewer',companyid = companyId).values('id','name')
             for interviewer in interviewes_lst:
                 if interviewer:
