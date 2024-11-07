@@ -149,7 +149,7 @@ def candidatesPage(request):
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
 
-        candidates_data = getCandidatesData()
+        candidates_data = getCandidatesData(user_data.id)
 
         if menuItemObjList:
             return render(request, "portal_index.html", {"template_name": 'candidates.html','menuItemList': menuItemList,"candidates_data" : candidates_data})
