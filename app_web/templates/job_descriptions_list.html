@@ -2,38 +2,49 @@
 <div class="card">
     <div class="card-title-table">
         <h4 class="card-header">Job Descriptions</h4>
-        <div class="p-3 text-align-right d-flex">
+        <div class="p-3 text-align-right d-flex align-items-center justify-content-center">
             <input id="searchInput" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onkeyup="searchCandidate()" style="width: 300px;">
-            <!-- <a href="/add-job-description"><button class="btn btn-primary m-0"> <i class="fas fa-plus"></i> Add JD</button></a> -->
+            <a href="/add-job-description">
+              <button class="btn btn-primary m-0" style="padding: 0.3375rem 1rem;"> <i class="fas fa-plus"></i> &nbsp; New JD</button>
+            </a>
         </div>
     </div>
     <div class="row p-3">
 
-      <div class="c-card col-sm" style="max-width: max-content;">
+      <!-- <div class="c-card col-sm" style="max-width: max-content;">
         <a href="/add-job-description">
           <div class="card mb-3 new_jd_card_border">
             <i class="fas fa-plus custm_icon_new_jd" style="color: var(--primary-color);"></i> 
             <div class="new_jd_txt">New JD</div>
           </div>
         </a>
-      </div>
+      </div> -->
 
       {% for jd in allJds %}
       <div class="col-md-6 col-lg-4 c-card">
-        <div class="card mb-3 shadow jd_card_border jd_card_cust">
-          <div onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer;">
-            <div class="card-body int-card-bd">
+        <div class="card mb-3 shadow jd_card_border jd_card_cust"  onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer;">
+          <div>
+            <div class="card-body int-card-bd pb-0" style="padding: 0.8rem 1rem;">
               <div class="jd_card_wdth_cust">
-                <h5 class="card-title p-clr mb-1">{{ jd.title }}</h5>
-                <div style="color: gray; width: 50%;">Exp : {{ jd.expmin }} - {{ jd.expmax }} Yrs</div>
+                <h5 class="card-title p-clr mb-1" style="height: 3rem;">{{ jd.title }}</h5>
+                <div class="d-flex justify-content-between">
+                  <div class="custm_created_by_userName"> <i class='bx bx-user-circle'></i> {{ jd.createdbyUserName }}</div>
+                  <!-- <button type="button" class="btn btn-outline-info">Info</button> -->
+                  <div style="color: gray;">Exp : {{ jd.expmin }} - {{ jd.expmax }} Yrs</div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="card-footer d-flex justify-content-between mt-auto">
-            <button type="button" class="btn btn-icon btn-sm btn-primary" onclick="event.stopPropagation();redirectToJobDashboard('{{ jd.id }}')">
-              <i class="fas fa-chart-line"></i>
+          
+          <div class="card-footer d-flex justify-content-between mt-auto pt-0" style="padding: 0.8rem 1rem;
+">
+            <button type="button" class="btn btn-icon btn-sm btn-primary" onclick="event.stopPropagation();redirectToJobDashboard('{{ jd.id }}')" style="    width: calc(1.625rem + 10px);">
+              <!-- <i class="fas fa-chart-line"></i> -->
+              <!-- <i class='bx bx-bar-chart-alt'></i> -->
+              <!-- <i class='bx bx-bar-chart'></i> -->
+              <i class='bx bxs-bar-chart-alt-2' ></i>
             </button>
-            <button onclick="event.stopPropagation();redirectToJobDetails('{{ jd.id }}')" type="button" class="btn btn-sm btn-primary">
+            <button onclick="event.stopPropagation();redirectToJobDetails('{{ jd.id }}')" type="button" class="btn btn-sm btn-primary" style="font-weight: 700;letter-spacing: 0.4px;">
                 Setup
             </button>
           </div>
@@ -73,7 +84,7 @@
     font-size: clamp(lrem, 0.3043rem + 3.4783vw, 3rem);
   } */
    .jd_card_cust{
-    height: 165px;
+    height: 150px;
    }
    .jd_card_descrip_cust{
     color: gray;
@@ -85,6 +96,13 @@
    }
    .jd_card_wdth_cust{
     width: 100%;
+   }
+   .custm_created_by_userName{
+    border-radius: 5px;
+    border: 1px solid #b5b2b261;
+    width: 6rem;
+    padding-left: 5px;
+    color: gray;
    }
 </style>
 <script>

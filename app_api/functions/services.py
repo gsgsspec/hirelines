@@ -452,7 +452,14 @@ def getCompanyJdData(cid):
 
 def getCompanyJDsList(companyId):
     try:
-        company_jds = JobDesc.objects.filter(companyid=companyId).values()
+        company_jds = list(JobDesc.objects.filter(companyid=companyId).values())
+        for jd in company_jds:
+            userData = User.objects.filter(id = jd['createdby']).last()
+            userName = ''
+            if userData:
+                userName = userData.name
+            jd['createdbyUserName'] = userName
+        company_jds.reverse()
         return company_jds
     except Exception as e:
         raise

@@ -22,8 +22,7 @@
             <i class='bx bx-up-arrow-circle' style="margin-top: -4px;"></i> &nbsp; Publish
           </button>
         
-          <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#InterviewPanel">
-            <!-- <i class='bx bx-shield-quarter'></i> -->
+          <!-- <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#InterviewPanel">
             <i class='fas fa-users'></i>
           </button>
 
@@ -41,11 +40,45 @@
 
           <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('interview')" title="interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
             <i class='fas fa-chalkboard-teacher'></i>
-          </button>
+          </button> -->
+
+          <div class="btn-group" role="group" aria-label="First group">
+            
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('screening')" data-bs-toggle="modal" data-bs-target="#modalCenter" title="Screening Test">
+              <i class="fas fa-clipboard-check"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('coding')" title="Coding Test"  data-bs-toggle="modal" data-bs-target="#modalCenter">
+              <i class='fas fa-code'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('interview')" title="interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
+              <i class='fas fa-chalkboard-teacher'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#InterviewPanel">
+              <i class='fas fa-users'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#jd_integration_modal">
+              <i class='bx bxs-cog'></i>
+            </button>
+          </div>
 
       </div>
 
     </div>
+
+    <!-- <div class="btn-group" role="group" aria-label="First group">
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="tf-icons bx bx-bell"></i>
+      </button>
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="tf-icons bx bx-task"></i>
+      </button>
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="tf-icons bx bx-check-shield"></i>
+      </button>
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="tf-icons bx bx-comment-dots"></i>
+      </button>
+    </div> -->
 
     <!-- Jd Testes show here -->
     <div class="row mt-3" id="testCards"></div>
