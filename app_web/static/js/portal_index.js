@@ -75,3 +75,43 @@ function getCredits(){
     })
 }
 
+function signOut(){
+
+    Swal.fire({
+        title: "Do you want to Sign out?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#274699',
+        cancelButtonColor: '#f25c05',
+        confirmButtonText: 'Sign out'
+    }).then((result) => {
+        if (result.isConfirmed) {
+        window.location.href = '/sign-out'
+        }
+    })
+}
+
+function fetchUserName() {
+    fetch('/api/get-user-name')
+        .then(response => {
+            if (!response.ok) {
+                alert("User not authenticated");
+                throw new Error("User not authenticated");
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if the element exists before updating it
+            const userNameMenu = document.getElementById("user-name-menu");
+            if (userNameMenu) {
+                userNameMenu.innerHTML += data.name;
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching user data:", error);
+        });
+}
+    
+
+document.addEventListener("DOMContentLoaded", fetchUserName);
+

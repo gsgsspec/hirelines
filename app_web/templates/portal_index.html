@@ -99,11 +99,11 @@
 
         <div class="menu-inner-shadow"></div>
 
-        <ul class="menu-inner py-1">
+        <ul class="menu-inner py-1 mt-2">
 
-          <li class="menu-header small text-uppercase">
+          <!-- <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Menu</span>
-          </li>
+          </li> -->
 
           {% for menuItemObj in menuItemList%}
           {% if menuItemObj.child|length_is:"1" and not menuItemObj.child.0.menuItemName %}
@@ -117,6 +117,17 @@
           {% endif %}
           {% endfor %}
         </ul>
+        <div class="aside-footer">
+          <div class="footer-container">
+            <span class="user-name" id="user-name-menu">
+              <!-- <i class="fas fa-user"></i> -->
+              <i class="fas fa-user-circle"></i>
+               &nbsp;</span>
+            <div class="d-flex justify-content-start">
+              <button class="btn btn-primary btn-sm mt-2" onclick="signOut();">Sign out</button>
+            </div>
+          </div>
+        </div>
       </aside>
       <div class="layout-page">
         <div class="content-wrapper">

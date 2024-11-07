@@ -452,7 +452,14 @@ def getCompanyJdData(cid):
 
 def getCompanyJDsList(companyId):
     try:
-        company_jds = JobDesc.objects.filter(companyid=companyId, status='O').values()
+        company_jds = list(JobDesc.objects.filter(companyid=companyId).values())
+        for jd in company_jds:
+            userData = User.objects.filter(id = jd['createdby']).last()
+            userName = ''
+            if userData:
+                userName = userData.name
+            jd['createdbyUserName'] = userName
+        company_jds.reverse()
         return company_jds
     except Exception as e:
         raise
@@ -1308,7 +1315,7 @@ def feedbacksData(cid):
 
 
 
-def jdPublishService(dataObjs):
+def jdPublishService(dataObjs,companyId):
     try:
       paperData = []
       if dataObjs['jobDescriptionId']:
@@ -1326,12 +1333,23 @@ def jdPublishService(dataObjs):
             
             orderCounter = 1
             for test in worflowData:
+                
                 test.order = orderCounter
                 orderCounter += 1
-                paperData.append(model_to_dict(test))
+                tempDct = model_to_dict(test)
+                brulesData = Brules.objects.filter(companyid = companyId, workflowid = test.id).last()
+                tempDct['promotPercentage'] = brulesData.passscore
+
+                paperData.append(tempDct)
                 test.save()
             
-            return paperData
+            paperLst = paperData
+            newPaperLst = []
+            for paper in range(len(paperLst) - 1):  # Loop until the second-last item
+                tempLst = [paperLst[paper], paperLst[paper + 1]]  # Create a list with two items
+                newPaperLst.append(tempLst)
+            
+            return {'companyid':companyId, 'papersData':newPaperLst}
       
     except Exception as e:
         raise

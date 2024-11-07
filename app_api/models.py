@@ -77,7 +77,7 @@ class JobDesc(models.Model):
     expjoindate = models.DateField(max_length=11,null=True)
     positions = models.IntegerField(null=True)
     createdby = models.IntegerField(null=True)
-    status = models.CharField(max_length=1, null=True) # O - Open, C - Closed
+    status = models.CharField(max_length=1, null=True) # D - Draft , O - Open , C - Closed
     companyid = models.IntegerField(null=True)
 
     class Meta:

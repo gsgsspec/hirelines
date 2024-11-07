@@ -43,6 +43,8 @@ document.getElementById("notify").onclick = function () {
     $('#notify-candidate').unbind('submit').bind('submit', function (event) {
         event.preventDefault();
 
+        $("#notify").prop("disabled", true);
+
         dataObj = {
             'notify': $('#notify').val(),
             'cid': candidate_code,
@@ -67,6 +69,7 @@ document.getElementById("notify").onclick = function () {
 
                 setTimeout(function () { window.location.reload();}, 2000);
 
+
             } else {
                 Swal.fire({
                     position: 'center',
@@ -76,6 +79,8 @@ document.getElementById("notify").onclick = function () {
                     showConfirmButton: false,
                     timer: 1500
                 })
+
+                $("#notify").prop("disabled", false);
             }
         })
 

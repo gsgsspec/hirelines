@@ -477,7 +477,7 @@ function addTestCardToShow(testName, promotValue, testType, data) {
 
     // Create a new div for the card
     var cardHTML = `
-        <div class="col-sm-6 col-lg-4 mb-4" id="testCardSubContainer_${data['id']}">
+        <div class="col-sm-6 col-lg-4 mb-4" id="testCardSubContainer_${data['id']}" style="padding-left:0px !important; padding-right: calc(var(--bs-gutter-x)* 0.9);">
             <div class="card p-3 cust_cursor shadow-sm fade-in workFlowTestCards" style="background-color: ${testTypeColor}; border-radius: 8px;" onclick="selectTest(this.id)" id="${testTitle}_${data['id']}">
                 <figure class="m-0">
                     <blockquote class="blockquote m-0">
@@ -494,8 +494,8 @@ function addTestCardToShow(testName, promotValue, testType, data) {
                 </figure>
                 <div class="d-flex justify-content-between mt-0 pt-0"> 
                     <i class="bx bx-edit custm-edit-icon" id="editTestCard_${data['id']}" onclick="updateTest(event, ${data['id']})" style="cursor: pointer;"></i>
-                    <div class="deleteFontIcon" data-bs-toggle="modal" onclick="deleteTestModalOpen(${data['id']})"  style="cursor: pointer;">
-                        <i class="far fa-trash-alt text-danger"></i>
+                    <div class="deleteFontIcon" data-bs-toggle="modal" onclick="deleteTestModalOpen(${data['id']})"  style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class='bx bx-trash' ></i>
                     </div>
                 </div>
             </div>
@@ -510,9 +510,6 @@ function addTestCardToShow(testName, promotValue, testType, data) {
         newCard.classList.add('visible'); // This will trigger the CSS animation
     });
 }
-
-
-
 
 
 function selectTest(element_id){
@@ -1468,11 +1465,6 @@ function saveInterviewers(){
 
 function publishJd(){
 
-    // var testNameLst = document.getElementsByClassName('workFlowTestCards')
-    // for(var test = 0; test < testNameLst.length; test++){
-
-    // }
-
     dataObj = {
         'jobDescriptionId':jdId
     }
@@ -1493,9 +1485,22 @@ function publishJd(){
                 $('#publishValidationModal').modal('show')
             }
             else{
-                res.data
-                $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {});
+
+                dataObj = {
+                    'data':res.data
+                }
+            
+                var final_data = {
+                    'data': JSON.stringify(dataObj),
+                    csrfmiddlewaretoken: CSRF_TOKEN,
+                }
+
+                $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {
+                    console.log('Status code -- ',res.statusCode);
+                    console.log('Data -- ',res.data);
+                });
                 showSuccessMessage('JD Published Successfully');
+                $('#JdPublishConformation').modal('hide')
 
             }
         }

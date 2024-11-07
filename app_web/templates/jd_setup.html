@@ -11,18 +11,19 @@
       </button> -->
 
       <div class="d-flex align-items-center justify-content-center">
-          <button type="button" class="btn btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#JdPublishConformation">
-            <i class='bx bx-shield-quarter'></i> Publish
-          </button>
-    
           <h4 class="m-0" style="width: max-content;">
             {{ jd_details.title }}
           </h4>
       </div>
+
       <div style="width: max-content;">
+
+          <button type="button" class="btn btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#JdPublishConformation" style="">
+            <i class='bx bx-up-arrow-circle' style="margin-top: -4px;"></i> &nbsp; Publish
+          </button>
         
-          <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#InterviewPanel">
-            <i class='bx bx-shield-quarter'></i>
+          <!-- <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#InterviewPanel">
+            <i class='fas fa-users'></i>
           </button>
 
           <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#jd_integration_modal">
@@ -39,11 +40,45 @@
 
           <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('interview')" title="interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
             <i class='fas fa-chalkboard-teacher'></i>
-          </button>
+          </button> -->
+
+          <div class="btn-group" role="group" aria-label="First group">
+            
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('screening')" title="Screening Test" data-bs-toggle="modal" data-bs-target="#modalCenter">
+              <i class="fas fa-clipboard-check"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('coding')" title="Coding Test"  data-bs-toggle="modal" data-bs-target="#modalCenter">
+              <i class='fas fa-code'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('interview')" title="interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
+              <i class='fas fa-chalkboard-teacher'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#InterviewPanel" title="Add Interviewers">
+              <i class='fas fa-users'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#jd_integration_modal" title="Integration Script">
+              <i class='bx bxs-cog'></i>
+            </button>
+          </div>
 
       </div>
 
     </div>
+
+    <!-- <div class="btn-group" role="group" aria-label="First group">
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="tf-icons bx bx-bell"></i>
+      </button>
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="tf-icons bx bx-task"></i>
+      </button>
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="tf-icons bx bx-check-shield"></i>
+      </button>
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="tf-icons bx bx-comment-dots"></i>
+      </button>
+    </div> -->
 
     <!-- Jd Testes show here -->
     <div class="row mt-3" id="testCards"></div>
@@ -76,8 +111,8 @@
         </div>
         <div class="row g-2" id="promotLevelContainer">
           <div class="col mb-0">
-            <label for="emailWithTitle" class="form-label">Promot</label>&nbsp;<small class="form-label">( percentage
-              )</small><span hidden id="promot_validator" class="validator_font_color mx-3">Please Enter Promot
+            <label for="emailWithTitle" class="form-label">Promote</label>&nbsp;<small class="form-label">( percentage
+              )</small><span hidden id="promot_validator" class="validator_font_color mx-3">Please Enter Promote
               level</span>
             <input type="number" id="promot_level" class="form-control" placeholder="" value="60" />
           </div>
@@ -471,8 +506,8 @@
     border-radius: 7px;
     border: 0.8px solid #ff3e1dd9;
     margin-left: 5px;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 
 .cust_cursor {

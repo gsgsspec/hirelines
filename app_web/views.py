@@ -48,6 +48,13 @@ def loginPage(request):
         raise
 
 
+def logout_view(request):
+    
+    logout(request)  
+
+    return redirect('/login') 
+
+
 def registerPage(request):
     try:
 
