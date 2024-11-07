@@ -1,4 +1,6 @@
 import json
+import logging
+import time
 from urllib.parse import urljoin
 
 import requests
@@ -12,12 +14,12 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, \
+from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
 
         
-from .models import Account, Candidate, CompanyCredits, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
+from .models import Account, Branding, Candidate, CompanyCredits, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
 from app_api.functions.constants import hirelines_registration_script
 
@@ -431,7 +433,6 @@ def registerCandidate(request):
     return JsonResponse(response)
 
 
-
 @api_view(['GET','POST'])
 def evaluationView(request):
     response = {
@@ -466,9 +467,9 @@ def evaluationView(request):
                 json_data = json.loads(response_content.decode('utf-8'))
 
                 acert_data = json_data['data']
-          
-                response['data'] = acert_data
-                response['statusCode'] = 0
+                if json_data['statusCode'] == 0:
+                    response['data'] = acert_data
+                    response['statusCode'] = 0
 
         if request.method == "POST":
             user = auth_user(request.user)
@@ -497,8 +498,9 @@ def evaluationView(request):
 
                     acert_data = json_data['data']
                     evaluationquestions = acert_data
-                    response['data'] = evaluationquestions
-                    response['statusCode'] = 0
+                    if json_data['statusCode'] == 0:
+                        response['data'] = evaluationquestions
+                        response['statusCode'] = 0
             
             if dataObjs["request_for"] == "update_marks":
                 
@@ -515,8 +517,9 @@ def evaluationView(request):
                     acert_data = json_data['data']
                     answer_data = json_data["answer_data"]
                     response['data'] = "Marks Updated successfully"
-                    response['answer_data'] = answer_data
-                    response['statusCode'] = 0
+                    if response['statusCode'] == 0:
+                        response['answer_data'] = answer_data
+                        response['statusCode'] = 0
             
             if dataObjs["request_for"] == "send_evaluation_result":
                 
@@ -535,9 +538,7 @@ def evaluationView(request):
                         if resp["statusCode"] == 0:
                             response['data'] = "Result Mail Sent to Candidate Successfully"
                             response['statusCode'] = 0
-                else:
-                    print("not an company paper")
-                
+                else:                
                     response['data'] = "Query Not Found"
                     response['statusCode'] = 0
 
@@ -859,3 +860,62 @@ def getCreditsView(request):
         response['error'] = str(e)
         # raise
     return JsonResponse(response)
+
+
+@api_view(['GET','POST'])
+def updateCompanyBrandingView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        
+        if request.method == "POST":
+            user = auth_user(request.user)
+            user_company = user.companyid
+            enc_company_id = encrypt_code(user_company)
+            dataObjs = json.loads(request.POST.get('data'))
+            if dataObjs["request_type"] == "update_branding":
+                fileObjs = request.FILES
+                company_branding , company_branding_flag  = Branding.objects.get_or_create(companyid=user_company)
+                company_branding.content=dataObjs['css_content']
+                company_branding.sociallinks=dataObjs['social_links']
+                company_branding.status = dataObjs['status']
+                company_branding.save()
+                for file in fileObjs.items():
+                    company_branding.logourl = file[1]
+                    company_branding.save()
+                    
+                    logo_fullpath = f"{request.scheme}://{request.META['HTTP_HOST']}/media/{company_branding.logourl}"
+                    company_branding.logourl = logo_fullpath
+                    company_branding.save()
+                
+                files = {}
+                for field_name, file in fileObjs.items():
+                    files[field_name] = file
+                    
+                dataObjs["cid"] = enc_company_id
+                
+                acert_domain = getConfig()['DOMAIN']['acert']
+                endpoint = '/api/company-branding'
+                url = urljoin(acert_domain, endpoint)
+                
+                update_response = requests.post(url, data = dataObjs,files=files, verify = False)
+
+                response_content = update_response.content
+
+                if response_content:
+                    json_data = json.loads(response_content.decode('utf-8'))
+                    resp_status_code = json_data['statusCode']
+                    if resp_status_code == 0:
+                        response['data'] = "Branding updated successfully"
+                        response['statusCode'] = 0
+                        
+    except Exception as e:
+        response['data'] = 'Error in updateCompanyBrandingView'
+        response['error'] = str(e)
+        # raise
+        logging.error("Error in updateCompanyBrandingView : ", str(e))
+    return JsonResponse(response)
+

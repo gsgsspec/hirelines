@@ -88,9 +88,9 @@ WSGI_APPLICATION = 'hirelines.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-       	'NAME': 'hirelinesv1',
-        'USER': 'root',
-        'PASSWORD': 'pass123',
+       	'NAME': 'hirelines_stg',
+        'USER': 'user',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': 3306,
         'TIME_ZONE': 'Asia/Kolkata'
@@ -137,6 +137,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, '\webapp\static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -296,19 +296,20 @@ def brandingPage(request):
         user_companyid = user_data.companyid
         menuItemList = get_functions_service(user_role)
 
-        # url = f'{acert_domain}/api/get-company-branding'
+        url = f'{acert_domain}/api/company-branding'
 
-        # payload = {'cid':encrypt_code(user_companyid)}
+        payload = {
+            'request_type':"get_branding_data",
+            'cid':encrypt_code(user_companyid)
+            }
         
-        # api_res = requests.post(url, json=payload)
-        # data = json.loads(api_res.text)
-        # companyBranding = ''
-        # if data['statusCode'] == 0:
-        #     companyBranding = data['data']
-        #     # "companyBranding":companyBranding,"user_email":user_email
-
+        api_res = requests.post(url, data=payload)
+        data = json.loads(api_res.text)
+        companyBranding = ''
+        if data['statusCode'] == 0:
+            companyBranding = data['data']
         return render(request, "portal_index.html", {"template_name": 'branding.html','menuItemList': menuItemList,
-                                                     })
+                                                     "companyBranding":companyBranding})
 
     except Exception as e:
         raise
