@@ -72,3 +72,37 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+if (screening_count === 0 && coding_count === 0 && interview_count === 0 && offer_count === 0) {
+    // Show the "No candidates registered" message
+    document.getElementById('noCandidatesMessage').style.display = 'block';
+    document.getElementById('funnelChartContainer').style.display = 'none';
+} else {
+
+    window.onload = function () {
+        var chart = new CanvasJS.Chart("funnelChartContainer", {
+          animationEnabled: true,
+          theme: "light2",
+          backgroundColor: "#f4f6f9",  // Light background color for contrast
+          data: [{
+            type: "funnel",
+            indexLabelFontSize: 16,
+            toolTipContent: "<b>{label}</b>: {y} candidates",
+            indexLabel: "{y}",
+            indexLabelPlacement: "inside", // Centers labels
+            indexLabelFontColor: "white",  // White font for contrast in each layer
+            neckWidth: "20%",  // Narrow neck for the funnel shape
+            neckHeight: "30%", // Tall neck to emphasize the funnel shape
+            valueRepresents: "area",
+            // showInLegend: true,
+            // legendText: "{label}",
+            dataPoints: [
+              { y: screening_count, label: "Screening", color: "#17b0e3" },
+              { y: coding_count, label: "Coding", color: "#3bc482" },
+              { y: interview_count, label: "Interview", color: "#93c131" },
+              { y: offer_count, label: "Offer Letter", color: "#e3cd09" }
+            ]
+          }]
+        });
+        chart.render();
+    }
+}

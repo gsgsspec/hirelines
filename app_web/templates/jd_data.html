@@ -17,11 +17,15 @@
     <div class="col-md-6 col-xl-6">
         <div class="mt-5">
             <div class="image-container">
-                <span class="positioned-number">{{jd_data.screening_tests}}</span>
+                <div id="funnelChartContainer" style="height: 400px; width: 80%;"></div>
+                <!-- <span class="positioned-number">{{jd_data.screening_tests}}</span>
                 <span class="positioned-number">{{jd_data.coding_tests}}</span>
                 <span class="positioned-number">{{jd_data.interviews}}</span>
                 <span class="positioned-number">{{jd_data.offer_letters}}</span>
-                <img src="{% static 'lib/portal/assets/img/illustrations/funnel_no_icons.svg' %}" alt="funnel-icon" class="img-fluid">
+                <img src="{% static 'lib/portal/assets/img/illustrations/funnel_no_icons.svg' %}" alt="funnel-icon" class="img-fluid"> -->
+                <div id="noCandidatesMessage" class="no-candidates-message" style="display:none;">
+                    No Candidates Registered
+                </div>
             </div>
         </div>
     </div>
@@ -156,21 +160,21 @@
         border-width: 1px 1px;
     }
 
-    .image-container {
-        position: relative; /* Create a positioning context */
-        display: inline-block; /* Allows the image and spans to be treated as one element */
+    /* .image-container {
+        position: relative;
+        display: inline-block;
+    } */
+
+    /* .positioned-number {
+        position: absolute;
+        color: white;
+        font-size: 20px;
     }
 
-    .positioned-number {
-        position: absolute; /* Position elements absolutely within the container */
-        color: white; /* Change color as needed */
-        font-size: 20px; /* Adjust font size */
-    }
 
-    /* Example positions, adjust these values as needed */
     .positioned-number:nth-of-type(1) {
-        top: 20%; /* Adjust the vertical position */
-        left: 33%; /* Adjust the horizontal position */
+        top: 20%;
+        left: 33%;
     }
 
     .positioned-number:nth-of-type(2) {
@@ -186,9 +190,25 @@
     .positioned-number:nth-of-type(4) {
         top: 80%;
         left: 33%;
-    }
-</style>
+    } */
 
+    #funnelChartContainer .canvasjs-chart-credit {
+    display: none !important;
+    }
+    .no-candidates-message {
+      text-align: center;
+      font-size: 20px;
+      color: #333;
+      padding-top: 20px;
+    }
+
+</style>
+<script>
+screening_count = {{jd_data.screening_tests}};
+coding_count = {{jd_data.coding_tests}};
+interview_count = {{jd_data.interviews}};
+offer_count = {{jd_data.offer_letters}};
+</script>
 <script src="{% static 'js/jd_data.js' %}"></script>
 
 <script>

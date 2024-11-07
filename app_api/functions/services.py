@@ -15,7 +15,7 @@ from hirelines.metadata import getConfig
 from hirelines.settings import BASE_DIR
 from .mailing import sendRegistrainMail
 from app_api.models import Account, CompanyCredits, CompanyData, Credits, JobDesc, Candidate, Registration, ReferenceId, Company, User, User_data, RolesPermissions, Workflow, CallSchedule, \
-    Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia, Brules
+    Vacation, WorkCal, ExtendedHours, HolidayCal, QResponse, CdnData, IvFeedback, Email_template, InterviewMedia, Brules, Branding
 from app_api.functions.database import saveJdNewTest, saveAddJD, saveUpdateJd,deleteTestInJdDB, saveInterviewersJD
 from app_api.functions.mailing import sendEmail
 from django.forms.models import model_to_dict
@@ -103,6 +103,20 @@ def registerUserService(dataObjs):
             )
 
             user.save()
+
+            default_branding = Branding.objects.filter(companyid=0).last()
+
+            company_branding = Branding(
+                companyid = company.id,
+                status = 'A'
+            )
+
+            company_branding.save()
+
+            if default_branding:
+                company_branding.content = default_branding.content
+                company_branding.save()
+
 
             acert_domain = getConfig()['DOMAIN']['acert']
             endpoint = '/api/add-company'
@@ -294,12 +308,14 @@ def getJdCandidatesData(jid,userid):
 
 
 
-def getCandidatesData():
+def getCandidatesData(userid):
     try:
+        
+        user = User.objects.get(id=userid)
 
         candidates_list = []
 
-        candidates = Candidate.objects.all().order_by("-id")
+        candidates = Candidate.objects.filter(companyid=user.companyid).order_by("-id")
 
         for candidate in candidates:
 
