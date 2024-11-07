@@ -8,7 +8,6 @@
             </div>
             <div class="card-body">
                 <form id="brand_form">
-                   
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label text-end">CSS</label>
                         <div class="col-sm-9">
@@ -32,7 +31,7 @@
                         <div class="col-xl-4 drop-zone mt-2">
                             <label class="upload-label cursor-pointer" for="logo" style="width: 100%; height: 100%;">
                                 Upload Logo <br />
-                                <i class="fa fa-2x fa-image mt-5"></i>
+                                <i class="fa fa-2x fa-image mt-5" id="image_icon"></i>
                                 <input type="file" id="logo" onchange="loadFile(event)" style="display: none;" accept="image/*" />
                                 <br />
                                 <p id="output"></p>
@@ -69,6 +68,12 @@
         $("#output").html('<img id="img_output" style="width:85%;height:auto" />');
         var image = document.getElementById('img_output');
         image.src = "{{ companyBranding.logourl }}";
+        if ("{{ companyBranding.logourl }}"){
+            $("#image_icon").prop("hidden",true);
+        }else{
+            $("#image_icon").prop("hidden",false)
+        }
+
     });
 
 
@@ -76,6 +81,9 @@
         $("#output").html('<img id="img_output" style="width:85%;height:auto" />');
         var image = document.getElementById('img_output');
         image.src = URL.createObjectURL(event.target.files[0]);
+
+        $("#image_icon").prop("hidden",true);
+
     };
 </script>
 <script src="{% static 'js/branding.js' %}"></script>

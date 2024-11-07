@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 import requests
 from django.http import JsonResponse
 from app_api.functions.enc_dec import decrypt_code, encrypt_code
+from hirelines.settings import BASE_DIR
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
@@ -886,25 +887,23 @@ def updateCompanyBrandingView(request):
                 company_branding.sociallinks=dataObjs['social_links']
                 company_branding.status = dataObjs['status']
                 company_branding.save()
+                logo_file_path = ""
                 for file in fileObjs.items():
                     company_branding.logourl = file[1]
                     company_branding.save()
-                    
+                    logo_file_path = str(company_branding.logourl)
                     logo_fullpath = f"{request.scheme}://{request.META['HTTP_HOST']}/media/{company_branding.logourl}"
                     company_branding.logourl = logo_fullpath
                     company_branding.save()
-                
-                files = {}
-                for field_name, file in fileObjs.items():
-                    files[field_name] = file
-                    
+                logo_file_path = BASE_DIR+"/media/"+logo_file_path
+                logo_file = {"logo":open(logo_file_path, 'rb')}
                 dataObjs["cid"] = enc_company_id
                 
                 acert_domain = getConfig()['DOMAIN']['acert']
                 endpoint = '/api/company-branding'
                 url = urljoin(acert_domain, endpoint)
                 
-                update_response = requests.post(url, data = dataObjs,files=files, verify = False)
+                update_response = requests.post(url, data = dataObjs,files=logo_file, verify = False)
 
                 response_content = update_response.content
 
