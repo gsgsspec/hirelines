@@ -711,8 +711,14 @@ def workFlowDataService(data, cmpyId):
             ).last()
             if brulesDetails:
                 test["promot"] = brulesDetails.passscore
+        
+        jdData = list(JobDesc.objects.filter(id = data).values())
 
-        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst}
+        JdStatus = None
+        if len(jdData) > 0:
+            JdStatus = jdData[0]['status']
+            
+        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus}
     except Exception as e:
         raise
 
@@ -1569,7 +1575,7 @@ def jdPublishService(dataObjs, companyId):
 
             JdData = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
             if JdData:
-                JdData.status = "O"
+                JdData.status = "A"
                 JdData.save()
 
             orderCounter = 1
