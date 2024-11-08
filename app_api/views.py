@@ -947,7 +947,7 @@ def updateHirelinesData(request):
             dataObjs = request.data
             company_id = decrypt_code(dataObjs["company_id"])
             if dataObjs["update_type"] == "reg_status":
-                candidate = Candidate.object.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
+                candidate = Candidate.objects.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
                                                  companyid=company_id)
                 registration = Registration.objects.filter(companyid=company_id,
                                                            candidateid=candidate.id,
@@ -961,7 +961,7 @@ def updateHirelinesData(request):
                 response['statusCode'] = 0
                 
             if dataObjs["update_type"] == "candidate_status":
-                candidate = Candidate.object.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
+                candidate = Candidate.objects.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
                                                  companyid=company_id)
                 candidate.status = dataObjs["update_value"]
                 candidate.save()
@@ -970,7 +970,7 @@ def updateHirelinesData(request):
             
             if dataObjs["update_type"] == "add_registration":
                 
-                candidate = Candidate.object.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
+                candidate = Candidate.objects.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
                                                  companyid=company_id)
                 
                 paper_id = decrypt_code(dataObjs["paper_id"])
@@ -981,11 +981,11 @@ def updateHirelinesData(request):
                                                            papertype=dataObjs["paper_type"],
                                                            paperid=paper_id,
                                                            registrationdate=datetime.now(),
-                                                           status="P")
+                                                           status="I")
                 registration.save()
                 
                 if dataObjs["paper_type"] == 'I':
-                    job_desc = JobDesc.object.get(id=candidate.jobid)
+                    job_desc = JobDesc.objects.get(id=candidate.jobid)
                     call_schedule = CallSchedule(
                         candidateid = candidate.id,
                         hrid = job_desc.createdby,
@@ -1002,5 +1002,5 @@ def updateHirelinesData(request):
     except Exception as e:
         response['data'] = 'Error in getUpdateCompanyCreditsView'
         response['error'] = str(e)
-        # raise
+        raise
     return JsonResponse(response)

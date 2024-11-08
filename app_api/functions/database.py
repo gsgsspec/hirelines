@@ -89,7 +89,7 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                     registrationdate = candidate.registrationdate,
                     companyid = candidate.companyid,
                     jobid = candidate.jobid,
-                    status = 'P',
+                    status = 'I',
                     papertype = acert_data["papertype"],
                 )
 
