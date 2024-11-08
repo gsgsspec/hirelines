@@ -107,6 +107,15 @@
         padding-bottom: 0rem;
     }
 
+    .cards-2 .card {
+		height: auto !important;
+		margin-bottom: 2rem !important;
+	}
+
+    .basic-2 .image-container {
+        text-align: center;
+    }
+
 }
 
 
