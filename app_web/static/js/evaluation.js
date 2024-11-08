@@ -20,6 +20,9 @@ function get_papers_data() {
         if (res.statusCode == 0) {
             var papers_data = res.data;
             papers_count = papers_data.length
+            if(papers_count==0){
+                $(".papers-card").append("<h5 class='form-label all_eval_label'>No Papers</h5>")
+            }
             papers_data.map((paper, index) => {
                 if (paper.paper_count == 0) {
                     $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class="form-label no_submissions_to_evaluate" style="cursor:pointer;display:none;" >${paper.paper_code} - ${paper.paper_name}  (${paper.paper_count})</p>`)
