@@ -1578,10 +1578,12 @@ def jdPublishService(dataObjs, companyId):
                 test.order = orderCounter
                 orderCounter += 1
                 tempDct = model_to_dict(test)
-                brulesData = Brules.objects.filter(
-                    companyid=companyId, workflowid=test.id
-                ).last()
-                tempDct["promotPercentage"] = brulesData.passscore
+                brulesData = Brules.objects.filter(companyid = companyId, workflowid = test.id).last()
+
+                if brulesData:
+                    tempDct['promotPercentage'] = brulesData.passscore
+                else:
+                    tempDct['promotPercentage'] = None
 
                 paperData.append(tempDct)
                 test.save()
