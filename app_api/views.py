@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import logging
 import time
@@ -955,12 +956,48 @@ def updateHirelinesData(request):
                                                            paperid=decrypt_code(dataObjs["paper_id"])).last()
                 registration.status = dataObjs["update_value"]
                 registration.save()
+                
+                response['data'] = "Registration status updated successfully"
+                response['statusCode'] = 0
+                
             if dataObjs["update_type"] == "candidate_status":
                 candidate = Candidate.object.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
                                                  companyid=company_id)
                 candidate.status = dataObjs["update_value"]
                 candidate.save()
-            response['statusCode'] = 0
+                response['data'] = "candidate status updated successfully"
+                response['statusCode'] = 0
+            
+            if dataObjs["update_type"] == "add_registration":
+                
+                candidate = Candidate.object.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
+                                                 companyid=company_id)
+                
+                paper_id = decrypt_code(dataObjs["paper_id"])
+                
+                registration = Registration(companyid=company_id,
+                                                           candidateid=candidate.id,
+                                                           jobid=candidate.jobid,
+                                                           papertype=dataObjs["paper_type"],
+                                                           paperid=paper_id,
+                                                           registrationdate=datetime.now(),
+                                                           status="P")
+                registration.save()
+                
+                if dataObjs["paper_type"] == 'I':
+                    job_desc = JobDesc.object.get(id=candidate.jobid)
+                    call_schedule = CallSchedule(
+                        candidateid = candidate.id,
+                        hrid = job_desc.createdby,
+                        paper_id = paper_id,
+                        status = 'N',
+                        companyid = candidate.companyid
+                    )
+                    
+                    call_schedule.save()
+
+                response['data'] = "Registered successfully"
+                response['statusCode'] = 0
 
     except Exception as e:
         response['data'] = 'Error in getUpdateCompanyCreditsView'
