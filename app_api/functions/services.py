@@ -1573,10 +1573,27 @@ def jdPublishService(dataObjs, companyId):
                 if test.paperid == None:
                     return {"noPaper": "Y", "paperTitle": test.papertitle}
 
+            jdStatus = ''
+            jdstatusSave = 'A'
+
             JdData = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
             if JdData:
-                JdData.status = "A"
-                JdData.save()
+                # JdData.status = jdstatusSave
+
+                if JdData.status == 'A':
+                    JdData.status = "P" # JD Status Paused " P "
+                    print('TRUEE AAA ')
+                    JdData.save()
+
+                if JdData.status == 'P':
+                    JdData.status = "A" # JD Status Published " A "
+                    print('TRUEE PPP ')
+                    JdData.save()
+                
+                jdStatus = JdData.status
+                temp = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
+                print('+++++++++++++++++++++++')
+                print('::',temp.status)
 
             orderCounter = 1
             for test in worflowData:
@@ -1602,8 +1619,9 @@ def jdPublishService(dataObjs, companyId):
                     paperLst[paper + 1],
                 ]  # Create a list with two items
                 newPaperLst.append(tempLst)
+            
 
-            return {"companyid": companyId, "papersData": newPaperLst}
+            return {"companyid": companyId, "papersData": newPaperLst,'jdStatus_': jdStatus}
 
     except Exception as e:
         raise

@@ -16,7 +16,8 @@ var TestWithLibrariesAndQuestions = {}
 var createNewPaper = {}
 var tempPaper
 var selectedPaper = {}
-var createTestCard = true
+var JdStatus = ''
+// var createTestCard = true
 
 
 $(document).ready(function () {
@@ -38,6 +39,7 @@ function workFlowData(){
         if (res.statusCode == 0){
             if(res.data){
                 createTest(res.data['workFlowData'],'edit')
+                JdStatuCheck(res.data['jdStatus'])
             }
         }
 
@@ -45,6 +47,50 @@ function workFlowData(){
 
 }
 
+
+function openPublishstatus(){
+    
+    if(JdStatus == 'A'){
+        document.getElementById('conformationPublish').innerText = 'Do you want re Publish the JD again'
+        $('#JdPublishConformation').modal('show')
+    }
+    else if(JdStatus == 'A'){
+        document.getElementById('conformationPublish').innerText = 'Are you sure want to stop JD registerations'
+        $('#JdPublishConformation').modal('show')
+    }
+    else{
+        publishJd()
+    }
+
+}
+
+
+function JdStatuCheck(JDStatusData){
+
+    var JdStatus_ = JDStatusData
+    JdStatus = JDStatusData
+    if(JdStatus_ == 'A'){
+        JdStatus = 'A'
+        document.getElementById('JdStatusShowElement').innerText = 'Stop'
+        // changes styles here 
+    }
+    else if(JdStatus_ == 'P'){
+        document.getElementById('JdStatusShowElement').innerText = 'Publish'
+    }
+
+}
+
+function OpenIntegrationModal(){``
+    
+    if(JdStatus == 'A'){
+        $('#jd_integration_modal').modal('show')
+    }
+    else{
+        var jdTitle = document.getElementById('JDTitle').innerText
+        document.getElementById('carrersPageIntegrationValidation').innerText = jdTitle +' JD is not Published.'
+        $('#integrationValidationJd').modal('show')
+    }
+}
 
 //  create cards by calling this function 
 function createTest(data){
@@ -127,7 +173,7 @@ function AppendSectionsAndQuestions(data, TestCardId) {
 
     var useTemplateButton = document.createElement('button');
     useTemplateButton.classList.add('btn', 'btn-lg', 'btn-primary', 'use_template_cust_btn');
-    useTemplateButton.innerText = 'Use Template';
+    useTemplateButton.innerText = 'Use Library';
     useTemplateButton.id = 'selectedLibrary_' + TestCardId;
     useTemplateButton.dataset['libraryid'] = '';
     useTemplateButton.onclick = () => showQuestionConatainer('useTemplate');
@@ -863,7 +909,14 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
             var staticContainerHeading = document.createElement('h5');
             staticContainerHeading.innerText = 'Static';
             staticContainerHeading.classList.add('static_or_dynamic_text_container_headings');
-            staticQuestionsContainer.append(staticContainerHeading);
+
+            if(testLibraries[lib]['papertype'] == "I"){
+                
+            }
+            else{
+                staticQuestionsContainer.append(staticContainerHeading);
+            }
+
 
             var dynamicQuestionsContainer = document.createElement('div');
             dynamicQuestionsContainer.classList.add('dynamicQuestionsContainer', 'fade-in'); // Added fade-in class
@@ -1561,9 +1614,10 @@ function publishJd(){
 
     var testLst = Object.keys(testsList).length
 
-    if(testLst >= 2){
+    if(testLst >= 1){
 
         dataObj = {
+            'jdStatus__':JdStatus,
             'jobDescriptionId':jdId
         }
     
@@ -1576,6 +1630,14 @@ function publishJd(){
         $.post(CONFIG['portal'] + "/api/jd-publish", final_data, function (res) {
     
             if(res.statusCode == 0){
+
+                if(res.data['jdStatus_'] == 'A'){
+                    JdStatus = 'A'
+                }
+                else{
+                    JdStatus = res.data['jdStatus_']
+                }
+
                 if(res.data['noPaper'] == 'Y'){
                     // Show Modal
                     document.getElementById('PublishValidators').innerText = res.data['paperTitle']+' '+'Does not Select any Library.'
