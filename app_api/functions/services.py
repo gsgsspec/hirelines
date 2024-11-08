@@ -1185,6 +1185,8 @@ def interviewCompletionService(dataObjs, user_id):
             feedback.save()
 
         candidate = Candidate.objects.get(id=call_sch_details.candidateid)
+        candidate.status = 'I'
+        candidate.save()
         jd = JobDesc.objects.get(id=candidate.jobid)
         interviewers_data = ast.literal_eval(jd.interviewers)
         interviewers = [int(item) for item in interviewers_data]
