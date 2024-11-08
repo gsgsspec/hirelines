@@ -1579,7 +1579,7 @@ def jdPublishService(dataObjs, companyId):
             JdData = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
             if JdData:
                 # JdData.status = jdstatusSave
-                if JdData.status == 'O':
+                if JdData.status == 'D':
                     JdData.status = "A" # JD Status Published " A "
                     print('TRUEE PPP ')
                     JdData.save()
