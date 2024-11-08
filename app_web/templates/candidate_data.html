@@ -54,6 +54,8 @@
                 <label>Offer Letter is Released</label>
                 {% elif registration.reg_status == "H" %}
                 <label>Offer is on Hold</label>
+                {% elif registration.reg_status == "R" %}
+                <label>Rejected</label>
                 {% endif %}
               {% endif %}
             </div>
@@ -71,8 +73,9 @@
                   <div class="col-sm-4">
                     <select class="form-select" id="notify" required>
                       <option selected="" disabled></option>
-                      <option value="S">Selected</option>
+                      <option value="O">Selected</option>
                       <option value="H">Hold</option>
+                      <option value="R">Rejected</option>
                     </select>
                   </div>
                   <div class="col-sm-4">
