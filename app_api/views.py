@@ -835,7 +835,7 @@ def getUpdateCompanyCreditsView(request):
     except Exception as e:
         response['data'] = 'Error in getUpdateCompanyCreditsView'
         response['error'] = str(e)
-        raise
+        # raise
     return JsonResponse(response)
 
 
@@ -932,3 +932,38 @@ def getUserName(request):
     return JsonResponse({"name": user.name})
 
     
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def updateHirelinesData(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = request.data
+            company_id = decrypt_code(dataObjs["company_id"])
+            if dataObjs["update_type"] == "reg_status":
+                candidate = Candidate.object.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
+                                                 companyid=company_id)
+                registration = Registration.objects.filter(companyid=company_id,
+                                                           candidateid=candidate.id,
+                                                           jobid=candidate.jobid,
+                                                           papertype=dataObjs["paper_type"],
+                                                           paperid=decrypt_code(dataObjs["paper_id"])).last()
+                registration.status = dataObjs["update_value"]
+                registration.save()
+            if dataObjs["update_type"] == "candidate_status":
+                candidate = Candidate.object.get(candidateid=decrypt_code(dataObjs["participant_refid"]),
+                                                 companyid=company_id)
+                candidate.status = dataObjs["update_value"]
+                candidate.save()
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getUpdateCompanyCreditsView'
+        response['error'] = str(e)
+        # raise
+    return JsonResponse(response)

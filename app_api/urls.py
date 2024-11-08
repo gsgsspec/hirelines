@@ -33,7 +33,7 @@ urlpatterns = [
     path('jd-publish',views.jdPublish),
     path('update-company-branding',views.updateCompanyBrandingView),
     path('get-user-name',views.getUserName),
-
+    path('update-hirelines-data',views.updateHirelinesData),
 
 
     path('update-emailtemp',views.updateEmailtemp),
