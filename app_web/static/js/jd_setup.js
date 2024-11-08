@@ -16,7 +16,7 @@ var TestWithLibrariesAndQuestions = {}
 var createNewPaper = {}
 var tempPaper
 var selectedPaper = {}
-var createTestCard = false
+var createTestCard = true
 
 
 $(document).ready(function () {
@@ -322,25 +322,25 @@ function createNewTestModalOpen(testType){
 }
 
 
-function donotAllowInterviewFirst(testType){
+// function donotAllowInterviewFirst(testType){
+    
+//     var lstOfTest = Object.keys(testsList).length
 
-    var lstOfTest = Object.keys(testsList).length
+//     if (testType == 'Screening' || testType == 'Coding' || testType == 'S' || testType == 'E'){
+//         createTestCard = true
+//     }
+//     else if(testType == 'Interview' || testType == 'I'){
+//         if (lstOfTest > 0){
+//             createTestCard = true
+//         }
+//         else{
+//             $('#modalCenter').modal('hide') 
+//             $('#InterviewValidationModal').modal('show')
+//         }
 
-    if (testType == 'Screening' || testType == 'Coding'){
-        createTestCard = true
-    }
-    else if(testType == 'Interview'){
-        if (lstOfTest > 0){
-            createTestCard = true
-        }
-        else{
-            $('#modalCenter').modal('hide') 
-            $('#InterviewValidationModal').modal('show')
-        }
+//     }
 
-    }
-
-}
+// }
 
 
 // this function send hr selected test to backend
@@ -373,10 +373,10 @@ function saveOrUpdateTest(){
     if(questionTitle){
         questionTitle.innerText = testName
     }
-
-    donotAllowInterviewFirst(testType)
-
-    if(createTestCard){
+    
+    // donotAllowInterviewFirst(testType)
+    
+    // if(createTestCard){
 
         if(saveTest){
             
@@ -457,7 +457,7 @@ function saveOrUpdateTest(){
             })
     
         }
-    }
+    // }
 }
 
 

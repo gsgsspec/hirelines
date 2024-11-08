@@ -324,7 +324,13 @@ def deleteTestInJdDB(dataObjs,):
                 # If the ID matches, perform delete or other action
                 if workflowDetails[testInWorkFlow]['id'] == dataObjs['deleteTestId']:
                     deleteTest = Workflow.objects.filter(id=workflowDetails[testInWorkFlow]['id']).last()
+                    delBrules = Brules.objects.filter(workflowid = deleteTest.workflowid,jobdescid = deleteTest.jobid).last()
                     deleteTest.delete()
+                    if delBrules:
+                        delBrules.delete()
+                    else:
+                        ''
+                        # Brules Not Found
 
                     nextSelectedCard = 0
                     if testInWorkFlow == 0:
