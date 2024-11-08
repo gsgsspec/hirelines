@@ -50,6 +50,7 @@ from app_api.functions.database import (
 )
 from app_api.functions.mailing import sendEmail
 from django.forms.models import model_to_dict
+from .constants import const_candidate_status
 
 
 def addCompanyDataService(dataObjs):
@@ -394,10 +395,7 @@ def getCandidatesData(userid):
 
         for candidate in candidates:
 
-            c_status = ""
-
-            if candidate.status == "P":
-                c_status = "Pending"
+            c_status = const_candidate_status.get(candidate.status, "")
 
             candidates_list.append(
                 {
@@ -1675,8 +1673,12 @@ def notifyCandidateService(dataObjs):
         registration = Registration.objects.get(
             candidateid=candidate.id, paperid=workflow.paperid
         )
-        registration.status = "O" if notify == "S" else "H"
+        
+        registration.status = notify
         registration.save()
+
+        candidate.status = notify
+        candidate.save()
 
     except Exception as e:
         raise

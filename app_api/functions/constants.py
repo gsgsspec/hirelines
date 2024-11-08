@@ -11,6 +11,16 @@ company_types = [
     "Software Development Company", "HR Consultancy", "Software Product Company", "Enterprise", "Others"
 ]
 
+const_candidate_status = {
+    "O": 'Offered',
+    "H": 'Hold',
+    "R": 'Rejected',
+    "P": 'Initiated',
+    "S": 'Screened',
+    "E": 'Coding Done',
+    "I": 'Interviewed',
+}
+
 hirelines_domain = getConfig()['DOMAIN']['hirelines']
 
 hirelines_integration_script = """<!-- hirelines registration script -->
