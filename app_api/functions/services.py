@@ -1346,7 +1346,7 @@ def jdPublishService(dataObjs,companyId):
                 
             JdData = JobDesc.objects.filter(id = dataObjs['jobDescriptionId']).last()
             if JdData:
-                JdData.status = 'O'
+                JdData.status = 'A'
                 JdData.save()
             
             orderCounter = 1
