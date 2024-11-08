@@ -20,7 +20,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
 
         
-from .models import Account, Branding, Candidate, CompanyCredits, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
 from app_api.functions.constants import hirelines_registration_script
 
@@ -416,16 +416,20 @@ def registerCandidate(request):
             #decrypt encjdid
             jd_id = decrypt_code(dataObjs["encjdid"])
             #Filter the first workflow obj to attend first paper $ order functionality not added $
-            workflow_data = Workflow.objects.filter(jobid=jd_id).first()
-            if workflow_data:
-                company_id = workflow_data.companyid
-                dataObjs["jd"] = jd_id
-                dataObjs['begin-from'] = workflow_data.paperid
-                company_id = workflow_data.companyid
-                addCandidateDB(dataObjs,company_id,workflow_data)
-                response['data'] = 'Registration completed successfully'
+            job_description = JobDesc.objects.get(id=jd_id)
+            if job_description.status == "A":
+                workflow_data = Workflow.objects.filter(jobid=jd_id,order=1)
+                if workflow_data:
+                    company_id = workflow_data.companyid
+                    dataObjs["jd"] = jd_id
+                    dataObjs['begin-from'] = workflow_data.paperid
+                    company_id = workflow_data.companyid
+                    addCandidateDB(dataObjs,company_id,workflow_data)
+                    response['data'] = 'Registration completed successfully'
+                else:
+                    response['data'] = 'Workflow not defined'
             else:
-                response['data'] = 'Workflow not defined'
+                response['data'] = 'JD inactive'
             response['statusCode'] = 0
     except Exception as err:
         response['data'] = 'Error in registerCandidate'
