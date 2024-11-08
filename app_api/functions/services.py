@@ -161,20 +161,20 @@ def registerUserService(dataObjs):
 
             default_branding = Branding.objects.filter(companyid=0).last()
 
-            company_branding = Branding(companyid=company.id, status="A")
-
+            company_branding = Branding(
+                companyid=company.id,
+                content= default_branding.content,
+                status="A"
+            )
+            
             company_branding.save()
-
-            if default_branding:
-                company_branding.content = default_branding.content
-                company_branding.save()
 
             acert_domain = getConfig()["DOMAIN"]["acert"]
             endpoint = "/api/add-company"
 
             url = urljoin(acert_domain, endpoint)
 
-            company_data = {"id": company.id, "company_name": company.name}
+            company_data = {"id": company.id, "company_name": company.name, 'brand_content': company_branding.content}
 
             send_company_data = requests.post(url, json=company_data)
 
@@ -190,6 +190,7 @@ def registerUserService(dataObjs):
         return 0
 
     except Exception as e:
+        print(str(e))
         raise
 
 
