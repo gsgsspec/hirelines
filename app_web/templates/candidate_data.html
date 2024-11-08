@@ -56,16 +56,17 @@
                 {% elif registration.reg_status == "R" %}
                   <label>Rejected</label>
                 {% endif %}
-              {% endif %}
+              {% else %}
             
-              {% if registration.reg_status == "P" %}
-                <label>Promoted</label>
-              {% elif registration.reg_status == "F" %}
-                <label>Failed</label>
-              {% elif registration.reg_status == "E" %}
-                <label>Under Evaluation</label>
-              {% elif registration.reg_status == "I" %}
-                <label>Initiated</label>
+                {% if registration.reg_status == "P" %}
+                  <label>Promoted</label>
+                {% elif registration.reg_status == "F" %}
+                  <label>Failed</label>
+                {% elif registration.reg_status == "E" %}
+                  <label>Under Evaluation</label>
+                {% elif registration.reg_status == "I" %}
+                  <label>Initiated</label>
+                {% endif %}
               {% endif %}
             </div>
             {% if not forloop.last %}
