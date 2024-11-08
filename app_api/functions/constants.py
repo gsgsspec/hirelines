@@ -17,7 +17,7 @@ const_candidate_status = {
     "R": 'Rejected',
     "P": 'Initiated',
     "S": 'Screened',
-    "E": 'Coding Done',
+    "E": 'Test Done',
     "I": 'Interviewed',
 }
 

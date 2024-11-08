@@ -577,7 +577,7 @@ def candidateSideMeetingPage(request, room_id):
                 "candidate_id" : call.candidateid,
                 "schedule_id" : call.id,
                 "callend_status" : str(call.callendflag) if call.callendflag else "N",
-                'company_logo'   : branding_details.logourl,
+                'company_logo'   : branding_details.logourl if branding_details.logourl else "",
                 'company_name'   : company_details.name
             }
 
