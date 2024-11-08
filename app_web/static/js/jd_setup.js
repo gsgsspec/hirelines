@@ -323,13 +323,13 @@ function createNewTestModalOpen(testType){
 
 
 function donotAllowInterviewFirst(testType){
-
+    console.log('testType :: ',testType);
     var lstOfTest = Object.keys(testsList).length
 
-    if (testType == 'Screening' || testType == 'Coding'){
+    if (testType == 'Screening' || testType == 'Coding' || testType == 'S' || testType == 'E'){
         createTestCard = true
     }
-    else if(testType == 'Interview'){
+    else if(testType == 'Interview' || testType == 'I'){
         if (lstOfTest > 0){
             createTestCard = true
         }
@@ -373,9 +373,9 @@ function saveOrUpdateTest(){
     if(questionTitle){
         questionTitle.innerText = testName
     }
-
+    
     donotAllowInterviewFirst(testType)
-
+    
     if(createTestCard){
 
         if(saveTest){
