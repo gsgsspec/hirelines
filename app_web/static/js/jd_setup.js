@@ -16,6 +16,7 @@ var TestWithLibrariesAndQuestions = {}
 var createNewPaper = {}
 var tempPaper
 var selectedPaper = {}
+var createTestCard = false
 
 
 $(document).ready(function () {
@@ -47,16 +48,28 @@ function workFlowData(){
 
 //  create cards by calling this function 
 function createTest(data){
-    for(var test = 0; test < data.length; test++){
-        addTestCardToShow(data[test]['papertitle'], data[test]['promot'],data[test]['papertype'],data[test])  
-        
-        var key_ = data[test]['id']
-        testsList[[key_]] =  data[test]
-        testsList_.push(key_)
-
+    if(data.length > 0){
+        for(var test = 0; test < data.length; test++){
+            addTestCardToShow(data[test]['papertitle'], data[test]['promot'],data[test]['papertype'],data[test])  
+            
+            var key_ = data[test]['id']
+            testsList[[key_]] =  data[test]
+            testsList_.push(key_)
+    
+        }
+        createWorkFlowContainer(data)
     }
-    createWorkFlowContainer(data)
+    else{
+        console.log("NOO TEstss");
+        clickAnyWhereIn()
+    }
 }
+
+
+function clickAnyWhereIn(){
+    
+}
+
 
 // create a container that holds libraries container and Select paper container
 function createWorkFlowContainer(data){
@@ -76,8 +89,10 @@ function createWorkFlowContainer(data){
             if(containerCount == 0){
 
                 document.getElementById('workFlowContainer_'+data[containerCount]['id']).hidden = false
-                document.getElementById(data[containerCount]['papertype']+'_'+data[containerCount]['id']).click()
-
+                if(document.getElementById(data[containerCount]['papertype']+'_'+data[containerCount]['id'])){
+                    document.getElementById(data[containerCount]['papertype']+'_'+data[containerCount]['id']).click()
+                }
+                
             }
 
         }
@@ -93,7 +108,7 @@ function AppendSectionsAndQuestions(data, TestCardId) {
 
     var subLibraryConttainer = document.createElement('div');
     subLibraryConttainer.id = 'library_sub_container_' + TestCardId;
-    subLibraryConttainer.classList.add('py-3', 'library_sub_container', 'fade-in');
+    subLibraryConttainer.classList.add('py-3', 'library_sub_container', 'fade-in', 'pb-0');
 
     var sideLibraryTitlesContainer = document.createElement('div');
     sideLibraryTitlesContainer.id = 'sectionTitlesContainer';
@@ -227,12 +242,14 @@ function AppendSectionsAndQuestions(data, TestCardId) {
         librariesQuestionsListContainer.classList.add('fade-in-active');
 
         // Add slide-in effect to question containers
-        var questionContainers = questionLibraryContainer.querySelectorAll('.each_question_container');
-        questionContainers.forEach((container, index) => {
-            setTimeout(() => {
-                container.classList.add('slide-in-active');
-            }, index * 100); // Stagger animations
-        });
+        if(questionLibraryContainer){
+            var questionContainers = questionLibraryContainer.querySelectorAll('.each_question_container');
+            questionContainers.forEach((container, index) => {
+                setTimeout(() => {
+                    container.classList.add('slide-in-active');
+                }, index * 100); // Stagger animations
+            });
+        }
     }, 50); // Small delay to ensure elements are in the DOM before animating
 
 }
@@ -305,6 +322,27 @@ function createNewTestModalOpen(testType){
 }
 
 
+function donotAllowInterviewFirst(testType){
+
+    var lstOfTest = Object.keys(testsList).length
+
+    if (testType == 'Screening' || testType == 'Coding'){
+        createTestCard = true
+    }
+    else if(testType == 'Interview'){
+        if (lstOfTest > 0){
+            createTestCard = true
+        }
+        else{
+            $('#modalCenter').modal('hide') 
+            $('#InterviewValidationModal').modal('show')
+        }
+
+    }
+
+}
+
+
 // this function send hr selected test to backend
 function saveOrUpdateTest(){
     
@@ -331,91 +369,94 @@ function saveOrUpdateTest(){
         promotValidator.hidden = true;     // Hide the validation message
     }
 
-    
-
     var questionTitle = document.getElementById('questionPaperTitle_'+cureentTestId)
     if(questionTitle){
         questionTitle.innerText = testName
     }
 
-    if(saveTest){
-        
-        $('#modalCenter').modal('hide')
+    donotAllowInterviewFirst(testType)
 
-        if (testCreateOrUpdate == 'create'){
+    if(createTestCard){
 
-            dataObj = {
-                'createOrUpdate'  : testCreateOrUpdate,
-                'testName'        : testName,
-                'promotPercentage': promotValue,
-                'testType'        : testType,
-                'jdId'            : jdId
-            }
-
-        }
-
-        if (testCreateOrUpdate == 'update'){
-
-            dataObj = {
-                'createOrUpdate'  : testCreateOrUpdate,
-                'testId'          : cureentTestId,
-                'testName'        : testName,
-                'promotPercentage': promotValue,
-                'testType'        : testType,
-                'jdId'            : jdId
-            }
-
-        }
-
-        var final_data = {
-            'data': JSON.stringify(dataObj),
-            csrfmiddlewaretoken: CSRF_TOKEN,
-        }
-
-        $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data, function (res) {
-        
-            if (res.statusCode == 0){
-                if(res.data){
-                    var data = res.data
-
-                    // test is updated and update card data
-                    if ('updateEvent' in data && data['updateEvent'] == 'Y'){
-
-                        var key_ = data['id']
-                        testsList[[key_]] =  data
-                        updateCardAfterSaveData(testsList,data['id'])
-                    }
-                    else{
-                        // test is add and create card
-                        
-                        var key_ = data[0]['id'] // test card id
-                        testsList[[key_]] =  data[0]
-                        testsList_.push(key_)
-                        
-                        var mainContainer = document.getElementById('librarysMainContainer')
-
-                        if(data.length > 0){
-
-                            var workFlowContainer = document.createElement('div')
-                            workFlowContainer.id = 'workFlowContainer_'+key_
-                            workFlowContainer.style.paddingBottom = '1rem'
-                            workFlowContainer.hidden = false
-                            mainContainer.append(workFlowContainer)
-
-                        }
-
-                        testType = testType
-                        addTestCardToShow(testName,promotValue,testType,data[0])
-
-                        document.getElementById(data[0]['papertype']+'_'+data[0]['id']).click();
-
-                    }
-
+        if(saveTest){
+            
+            $('#modalCenter').modal('hide')
+    
+            if (testCreateOrUpdate == 'create'){
+    
+                dataObj = {
+                    'createOrUpdate'  : testCreateOrUpdate,
+                    'testName'        : testName,
+                    'promotPercentage': promotValue,
+                    'testType'        : testType,
+                    'jdId'            : jdId
                 }
+    
             }
-
-        })
-
+    
+            if (testCreateOrUpdate == 'update'){
+    
+                dataObj = {
+                    'createOrUpdate'  : testCreateOrUpdate,
+                    'testId'          : cureentTestId,
+                    'testName'        : testName,
+                    'promotPercentage': promotValue,
+                    'testType'        : testType,
+                    'jdId'            : jdId
+                }
+    
+            }
+    
+            var final_data = {
+                'data': JSON.stringify(dataObj),
+                csrfmiddlewaretoken: CSRF_TOKEN,
+            }
+    
+            $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data, function (res) {
+            
+                if (res.statusCode == 0){
+                    if(res.data){
+                        var data = res.data
+    
+                        // test is updated and update card data
+                        if ('updateEvent' in data && data['updateEvent'] == 'Y'){
+    
+                            var key_ = data['id']
+                            testsList[[key_]] =  data
+                            updateCardAfterSaveData(testsList,data['id'])
+                        }
+                        else{
+                            // test is add and create card
+                            
+                            var key_ = data[0]['id'] // test card id
+                            testsList[[key_]] =  data[0]
+                            testsList_.push(key_)
+                            
+                            var mainContainer = document.getElementById('librarysMainContainer')
+    
+                            if(data.length > 0){
+    
+                                var workFlowContainer = document.createElement('div')
+                                workFlowContainer.id = 'workFlowContainer_'+key_
+                                workFlowContainer.style.paddingBottom = '1rem'
+                                workFlowContainer.hidden = false
+                                mainContainer.append(workFlowContainer)
+    
+                            }
+    
+                            testType = testType
+                            addTestCardToShow(testName,promotValue,testType,data[0])
+    
+                            document.getElementById(data[0]['papertype']+'_'+data[0]['id']).click();
+    
+                        }
+    
+                    }
+                }
+    
+            })
+    
+        }
     }
 }
 
@@ -440,8 +481,6 @@ function updateCardAfterSaveData(allTestsList,testId){
         document.getElementById('testCardTestType_'+testId).innerText = ""+testName
     }
 
-    
-
 }
 
 
@@ -451,6 +490,7 @@ function addTestCardToShow(testName, promotValue, testType, data) {
     var testTitle;
     var testIcon;
     var testDesc;
+    var testLabel;
 
     if (testType == 'S' || testType == 'Screening') {
         testTypeColor = screeningBackgroundColor;
@@ -872,6 +912,11 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                 var staticQuestionContainer = document.createElement('div');
                 staticQuestionContainer.style.display = 'flex';
 
+                if(testLibraries[lib]['papertype'] == "I"){
+                    console.log('margin Right --');
+                    staticQuestionContainer.style.marginRight = '10px'
+                }
+
                 var staticQuestionlabel = document.createElement('div');
                 staticQuestionlabel.innerText = 'Static Questions';
                 
@@ -905,7 +950,15 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
 
                 staticQuestionContainer.append(staticQuestionlabel, staticQuestionCounBox);
                 dynQuestionContainer.append(dynQuestionlabel, dynQuestionCounBox);
-                questionsCountContainer.append(staticQuestionContainer, dynQuestionContainer, saveButtonToContainer);
+                
+                if(testLibraries[lib]['papertype'] == "I"){
+                    questionsCountContainer.append(staticQuestionContainer, saveButtonToContainer);    
+                }
+                else{
+                    questionsCountContainer.append(staticQuestionContainer, dynQuestionContainer, saveButtonToContainer);
+                }
+
+                
                 questionContainerHeader.append(selectedLibraryTitle, questionsCountContainer);
 
                 var questionsContainer = document.getElementById('selectedLibraryQuestionsContainer_' + testId);
@@ -990,7 +1043,13 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                     dynamicQuestionsContainer.append(dynamicClone, questionSeprator.cloneNode(true));
                 }
 
-                librariesQuestionsListContainer.append(staticQuestionsContainer, dynamicQuestionsContainer);
+                // Interview has only Static questions
+                if(testLibraries[lib]['papertype'] == "I"){
+                    librariesQuestionsListContainer.append(staticQuestionsContainer);
+                }
+                else{
+                    librariesQuestionsListContainer.append(staticQuestionsContainer, dynamicQuestionsContainer);
+                }
 
                 if (typeof PerfectScrollbar !== 'undefined') {
                     new PerfectScrollbar(librariesQuestionsListContainer);
@@ -1023,10 +1082,18 @@ function savePaper(element, element_id, testid_, selectedPaper) {
 
                 if (quesType === 'S') {
                     staticQuesLst.push(quesid);
-                } else if (quesType === 'D') {
+                } 
+                else if (quesType === 'D') {
                     dynamicQuesLst.push(parseInt(quesid));
                 }
             }
+        }
+
+        var dynamicQuestionValidation = true
+        if(dynamicQuesLst.length == 1) {
+            dynamicQuestionValidation =  false
+            $('#dynamicQuestionsValidators').modal('show')
+            document.getElementById('dynamicQuestionsValidator').innerText = "Dynamic Questions Can't be Single Question"
         }
 
         var dynCount = 0
@@ -1035,35 +1102,47 @@ function savePaper(element, element_id, testid_, selectedPaper) {
             dynCount = reqDynaminQuestionsCount.value
         }
 
+        // if(dynamicQuesLst.length > 0){
+        //     if (dynCount == 0){
+        //         dynamicQuestionValidation =  false
+        //         $('#dynamicQuestionsValidators').modal('show')
+        //         document.getElementById('DynquestionsCount').hidden = false
+        //         document.getElementById('dynamicQuestionsValidator').innerText = "Dynamic Questions Count have to Less than total dynamic questions"
+        //     }
+        // }
+
         var paper_Title
         var paperTitle__ = document.getElementById('questionPaperTitle_'+testid)
         if(paperTitle__){
             paper_Title = paperTitle__.innerText
         }
 
-        dataObj = {
-            'event'                : 'updatePaper',
-            'paperid'              : selectedPaper['paperid'],
-            'paperLibraryId'       : testsList[testid_]['paperlibraryid'],
-            'paperTitle'           : paper_Title,
-            'staticQuestionsList'  : staticQuesLst,
-            'dynamicQuestionsList' : dynamicQuesLst,
-            'dynamicQuestionsCount': dynCount
-        };
+        if(dynamicQuestionValidation){
 
-        var final_data = {
-            "data":JSON.stringify(dataObj),
-            csrfmiddlewaretoken: CSRF_TOKEN,
-        };
+            dataObj = {
+                'event'                : 'updatePaper',
+                'paperid'              : selectedPaper['paperid'],
+                'paperLibraryId'       : testsList[testid_]['paperlibraryid'],
+                'paperTitle'           : paper_Title,
+                'staticQuestionsList'  : staticQuesLst,
+                'dynamicQuestionsList' : dynamicQuesLst,
+                'dynamicQuestionsCount': dynCount
+            };
+    
+            var final_data = {
+                "data":JSON.stringify(dataObj),
+                csrfmiddlewaretoken: CSRF_TOKEN,
+            };
+    
+            $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
+    
+                if(res.statusCode == 0){
+                    showSuccessMessage('Test paper created');
+                }
+    
+            });
 
-        $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
-
-            if(res.statusCode == 0){
-                showSuccessMessage('Test paper created');
-            }
-
-        });
-
+        }
 
     }
 }
@@ -1145,13 +1224,15 @@ function questionCountChanger(TestId){
 
     var statQuesCount = 0
     var dynaQuesCount = 0
-
+    
     var librariesLst = TestWithLibrariesAndQuestions[TestId]
     
     for(var library = 0; library < librariesLst.length; library++){
 
         if(librariesLst[library]['id'] == testsList[TestId]['paperlibraryid']){
-            console.log('::',librariesLst[library]['questionsList']);
+
+            console.log('librariesLst :: ',librariesLst[library]);
+            librariesLst[library]['papertype'] = ''
             var questionLst = librariesLst[library]['questionsList']
             for(var ques = 0; ques < questionLst.length; ques++){
                 
@@ -1172,14 +1253,26 @@ function questionCountChanger(TestId){
                 }
                 
             }
+
+            break
+
         }
         else{
             console.log('lubrary NOt FIND');
         }
     }
 
-    document.getElementById(`static_questions_count_${TestId}`).innerText = statQuesCount
-    document.getElementById(`dynamic_questions_count_${TestId}`).innerText = dynaQuesCount
+    var elementStat = document.getElementById(`static_questions_count_${TestId}`)
+    if(elementStat){
+        elementStat.innerText = statQuesCount
+    }
+
+
+    var elementDyn = document.getElementById(`dynamic_questions_count_${TestId}`)
+    if(elementDyn){
+        elementDyn.innerText = dynaQuesCount
+    }
+    // document.getElementById(`dynamic_questions_count_${TestId}`).innerText = dynaQuesCount
 
 }
 
@@ -1267,6 +1360,7 @@ function deleteTestModalOpen(testid) {
     document.getElementById('deleteTestConformation').dataset['deletetestid'] = testid
     $('#modalToggle').modal('show')
     event.stopPropagation();
+    TestWithLibrariesAndQuestions
 }
 
 
@@ -1465,47 +1559,55 @@ function saveInterviewers(){
 
 function publishJd(){
 
-    dataObj = {
-        'jobDescriptionId':jdId
-    }
+    var testLst = Object.keys(testsList).length
 
-    var final_data = {
-        'data': JSON.stringify(dataObj),
-        csrfmiddlewaretoken: CSRF_TOKEN,
-    }
+    if(testLst >= 2){
 
-    // save paper id in jbdesc table 
-    $.post(CONFIG['portal'] + "/api/jd-publish", final_data, function (res) {
-
-        if(res.statusCode == 0){
-            if(res.data['noPaper'] == 'Y'){
-                // Show Modal
-                document.getElementById('PublishValidators').innerText = res.data['paperTitle']+' '+'Does not Select any Library.'
-                $('#JdPublishConformation').modal('hide')
-                $('#publishValidationModal').modal('show')
-            }
-            else{
-
-                dataObj = {
-                    'data':res.data
-                }
-            
-                var final_data = {
-                    'data': JSON.stringify(dataObj),
-                    csrfmiddlewaretoken: CSRF_TOKEN,
-                }
-
-                $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {
-                    console.log('Status code -- ',res.statusCode);
-                    console.log('Data -- ',res.data);
-                });
-                showSuccessMessage('JD Published Successfully');
-                $('#JdPublishConformation').modal('hide')
-
-            }
+        dataObj = {
+            'jobDescriptionId':jdId
         }
-
-    })
+    
+        var final_data = {
+            'data': JSON.stringify(dataObj),
+            csrfmiddlewaretoken: CSRF_TOKEN,
+        }
+    
+        // save paper id in jbdesc table 
+        $.post(CONFIG['portal'] + "/api/jd-publish", final_data, function (res) {
+    
+            if(res.statusCode == 0){
+                if(res.data['noPaper'] == 'Y'){
+                    // Show Modal
+                    document.getElementById('PublishValidators').innerText = res.data['paperTitle']+' '+'Does not Select any Library.'
+                    $('#JdPublishConformation').modal('hide')
+                    $('#publishValidationModal').modal('show')
+                }
+                else{
+    
+                    dataObj = {
+                        'data':res.data
+                    }
+                
+                    var final_data = {
+                        'data': JSON.stringify(dataObj),
+                        csrfmiddlewaretoken: CSRF_TOKEN,
+                    }
+    
+                    $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {
+                    
+                    });
+                    showSuccessMessage('JD Published Successfully');
+                    $('#JdPublishConformation').modal('hide')
+    
+                }
+            }
+    
+        })
+    }
+    else{
+        $('#JdPublishConformation').modal('hide')
+        $('#jdPublishValidators').modal('show')
+    }
 
 }
 

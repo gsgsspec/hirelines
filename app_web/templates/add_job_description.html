@@ -74,21 +74,14 @@
   }
 </style> -->
 
-<div class="content-wrapper">
-  <!-- Content -->
-
+<!-- <div class="content-wrapper">
   <div class="container-xxl flex-grow-1 container-p-y">
-    <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Horizontal Layouts</h4> -->
-
-    <!-- Basic Layout & Basic with Icons -->
     <div class="row">
-      <!-- Basic Layout -->
       <div class="col-xxl">
         <div class="container-center">
           <div class="card mb-4 w-75">
             <div class="card-header d-flex align-items-center justify-content-between">
               <h5 class="mb-0">Add Job Description</h5>
-              <!-- <small class="text-muted float-end">Default label</small> -->
             </div>
             <div class="card-body">
               <form id="addJD">
@@ -189,31 +182,6 @@
                   </div>
                 </div>
 
-                <!-- <div class="row mb-1 container-center">
-                  <label class="col-sm-2 col-form-label">Interview Panel</label>
-                  <div id="interviewPanelContainer" class="col-sm-9">
-                    <div class="form-group row interview-panel" id="panel_1">
-                      <div class="col-sm-5">
-                          <select class="custom-select custom-select-sm interviewer-select form-select mb-2" required>
-                            <option value="None" selected>Select Interviewer</option>
-                            <option value="1">Srinivas</option>
-                            <option value="2">Srikanth</option>
-                            <option value="3">Balu</option>
-                            <option value="4">Pratap</option>
-                          </select>
-                      </div>
-                    </div>
-                  </div>
-                  
-                </div> -->
-
-                <!-- <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label"></label>
-                  <div class="col-sm-9">
-                    <button type="button" id="addInterviewerButton" class="btn btn-primary">Add Interviewer</button>
-                  </div>
-                </div> -->
-
                 <div class="row mb-3 container-center">
                   <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Any Special Notes <small>(optional)</small></label>
                   <div class="col-sm-9">
@@ -245,6 +213,162 @@
    
     </div>
   </div>
-  <!-- / Content -->
 </div>
+<script src="{% static 'js/add_job_description.js' %}"></script> -->
+
+
+<div class="content-wrapper">
+  <!-- Content -->
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+      <div class="col-xxl">
+        <div class="container-center">
+          <div class="card mb-4 w-75">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h5 class="mb-0">Add Job Description</h5>
+            </div>
+            <div class="card-body">
+              <form id="addJD">
+                
+                <!-- Search Job Description with Suggestions -->
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="searchJobDescription">Search JD</label>
+                  <div class="col-sm-9 position-relative">
+                    <input type="form-control" id="searchJobDescription" class="form-control" placeholder="Search Job Description" autocomplete="off">
+                    <!-- <input class="form-control" type="search" id="searchJobDescription"> -->
+                    <div class="prompt-message text-muted" id="promptMessage" style="font-size: 12px; margin-top: 5px;">Please enter at least 3 characters to search for a JD requirement.</div>
+                    <div class="suggestions-box border" id="suggestionsBox" style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;"></div>
+                  </div>
+
+                  <!-- <div class="col-md-10"> -->
+                    <!-- <input class="form-control" type="search" id="searchJobDescription"> -->
+                  <!-- </div> -->
+
+                </div>
+
+                <!-- Job Description Dropdown -->
+                <!-- <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label">Job Descriptions</label>
+                  <div class="col-sm-9">
+                    <select class="form-select" id="jdLibrary" required onchange="fillJdData()">
+                      <option value="0" disabled selected>Please Select Job Description</option>
+                    </select>
+                  </div>
+                </div> -->
+
+                <!-- Your Existing Form Fields -->
+                <div class="row mb-3 container-center">
+                  <label for="JobDescription" class="col-sm-2 col-form-label">Description</label>
+                  <div class="col-sm-9 ">
+                    <textarea class="form-control" id="JobDescription" rows="3"></textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="jdRole">Role</label>
+                  <div class="col-sm-9">
+                    <select class="form-select" id="jdRole" aria-label="Default select example">
+                      <option value="0"></option>
+                      <option value="Development">Development</option>
+                      <option value="Testing">Testing</option>
+                      <option value="Deployment">Deployment</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="min_experince" class="col-sm-2 col-form-label">Experiences</label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input type="number" class="form-control w-25 mr-2" id="min_experince" placeholder="" style="margin-right: 1rem; height: max-content;" />
+                    <input type="number" class="form-control w-25" id="max_experince" placeholder="" style="height: max-content;" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="jdBudget" class="col-sm-2 col-form-label">Budget <small>(LPA)</small></label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input type="number" class="form-control w-25 mr-2" id="jdBudget" placeholder="" style="margin-right: 1rem; height: max-content;"  />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="jdNoPositions" class="col-sm-2 col-form-label">No of Positions</label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input type="number" class="form-control w-25 mr-2" id="jdNoPositions" placeholder="Members count.." style="margin-right: 1rem; height: max-content;" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="jdWorkLocation">Work Location</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="jdWorkLocation" placeholder="" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="jdSkills" class="col-sm-2 col-form-label">Skill Set</label>
+                  <div class="col-sm-9">
+                    <textarea class="form-control" id="jdSkills" rows="3"></textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Any Special Notes <small>(optional)</small></label>
+                  <div class="col-sm-9">
+                    <textarea id="JdanySpecialNotes" class="form-control" placeholder="Any Special instruction" rows="3"></textarea>
+                  </div>
+                </div>
+
+                <!-- <div class="row mb-3 container-center">
+                  <div class="col-sm-9 row align-items-center px-0">
+                    <div class="px-0 success" id="validater" style="color: green;"> <i class="fas fa-check-circle"></i> &nbsp; Job Description created redirecting to jd setup</div>
+                  </div>
+                </div> -->
+                <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
+                  <div class="px-0 my-0" style="display: flex;justify-content: end; width: max-content; padding-right: 2.5rem !important;">
+                    <button type="button" id="restJdForm" class="btn btn-secondary" style="margin-right: 10px;  padding: 0.2625rem 1rem;" onclick="resetJd()">Reset</button>
+                    <button type="submit" id="submitJd" class="btn btn-primary" style="padding: 0.2625rem 1rem;">Create</button>
+                  </div>
+                </div>
+
+                <div class="row mb-2 container-center" style="display: flex;justify-content: space-between; align-items: center;">
+                  <div class="px-0 success" id="validater" hidden style="color: green; width: max-content;  margin-left: 3rem;">
+                    <i class="fas fa-check-circle"></i>
+                    &nbsp;
+                      Job Description created redirecting to jd setup
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #suggestionsBox{
+    width: 96% !important;
+    border-radius: 7px;
+    margin-top: 5px;
+  }
+  .search_item:hover{
+    background-color: var(--light-primary-color);
+  }
+  #searchJobDescription {
+    text-align: left; /* Ensure text is aligned to the left */
+}
+#searchJobDescription {
+    text-align: left;  /* Ensures the text is always aligned left */
+    padding-left: 5px; /* Optional: Adds a little space from the left edge */
+}
+
+
+</style>
 <script src="{% static 'js/add_job_description.js' %}"></script>
+<!-- Include JavaScript for Search and Suggestions -->
+<script>
+
+</script>

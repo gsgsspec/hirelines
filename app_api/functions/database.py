@@ -389,9 +389,12 @@ def saveAddJD(dataObjs,compyId,hrEmail):
                 skillset    = dataObjs['skills'] if dataObjs['skills'] else None, 
                 skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None, 
                 companyid   = compyId if compyId else None,
-                status      = 'D'
+                status      = 'D',
+                createdon = datetime.now()
             )
             saveJd.save()
+
+            return {'newJdId':saveJd.id}
     except Exception as e:
         raise
 

@@ -18,7 +18,7 @@
 
       <div style="width: max-content;">
 
-          <button type="button" class="btn btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#JdPublishConformation" style="">
+          <button type="button" class="btn btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#JdPublishConformation">
             <i class='bx bx-up-arrow-circle' style="margin-top: -4px;"></i> &nbsp; Publish
           </button>
         
@@ -300,7 +300,7 @@
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title" id="PublishValidators">One's Publish you can not edit or delete the any test</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -3.25rem!important;"></button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -1.25rem!important;"></button>
               </div>
               <div class="modal-body" style="padding: 0.5rem;"></div>
               <div class="modal-footer">
@@ -315,6 +315,81 @@
 </div>
 
 <!-- Validation Modal end -->
+
+<!-- Interview Validation Modal start -->
+  
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="InterviewValidationModal" aria-labelledby="InterviewValidators" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="InterviewValidators">Can't add Interview as a first Test</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2.25rem !important;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> -->
+                  <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal">
+                      Close
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Interview Validation Modal end -->
+
+
+<!-- Jd Publish Validation Modal start -->
+  
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="jdPublishValidators" aria-labelledby="jdPublishValidators" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="InterviewValidators">Minimum Two roundes of tests is required to Publish the JD</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2.25rem !important;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> -->
+                  <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal">
+                      Close
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Jd Publish Validation Modal end -->
+
+
+<!-- Dynamic QUestions Validation Modal start -->
+  
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="dynamicQuestionsValidators" aria-labelledby="dynamicQuestionsValidators" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header" style="flex-direction: column;">
+                  <h5 class="modal-title" id="dynamicQuestionsValidator"></h5>
+                  <input type="text" class="form-control" name="" id="DynquestionsCount" hidden style="width: 100px;">
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2.25rem !important;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> -->
+                  <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal">
+                      Save
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Dynamic QUestions Validation Modal end -->
 
 <script>
 

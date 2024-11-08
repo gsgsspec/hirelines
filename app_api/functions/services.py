@@ -175,7 +175,8 @@ def jdTestAdd(jdData,compyId):
 
 def addJdServices(addjdData,companyID,hrEmail):
     try:
-        saveAddJD(addjdData,companyID,hrEmail)
+        jdData = saveAddJD(addjdData,companyID,hrEmail)
+        return jdData
     except Exception as e:
         raise
 

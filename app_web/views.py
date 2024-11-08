@@ -268,8 +268,6 @@ def update_jobdescription(request,update_jd_id):
 
 # this function render's inside html pages
 def jobDescriptionSetUp(request,jd_id): 
-    # if checkCompanyTrailPeriod(request.user):
-    #     return redirect('/trial-expired')
     try:
         user_mail = request.user
         user_data = auth_user(user_mail)

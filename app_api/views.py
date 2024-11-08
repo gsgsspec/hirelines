@@ -177,7 +177,8 @@ def addJD(request):
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
             companyID = getCompanyId(request.user)
-            addJdServices(dataObjs,companyID,request.user)
+            jdData = addJdServices(dataObjs,companyID,request.user)
+            response['data'] = jdData
             response['statusCode'] = 0
     except Exception as e:
         response['data'] = 'Error in adding company data'

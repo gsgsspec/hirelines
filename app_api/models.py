@@ -78,6 +78,7 @@ class JobDesc(models.Model):
     positions = models.IntegerField(null=True)
     createdby = models.IntegerField(null=True)
     status = models.CharField(max_length=1, null=True) # D - Draft , O - Open , C - Closed
+    createdon = models.DateTimeField(null=True)
     companyid = models.IntegerField(null=True)
 
     class Meta:
