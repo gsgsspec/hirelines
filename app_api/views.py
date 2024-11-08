@@ -421,7 +421,7 @@ def registerCandidate(request):
                 company_id = workflow_data.companyid
                 dataObjs["jd"] = jd_id
                 dataObjs['begin-from'] = workflow_data.paperid
-                company_id = 3
+                company_id = workflow_data.companyid
                 addCandidateDB(dataObjs,company_id,workflow_data)
                 response['data'] = 'Registration completed successfully'
             else:
