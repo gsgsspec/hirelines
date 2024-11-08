@@ -49,7 +49,8 @@
                   <label>Interview scheduled</label>
                 {% elif registration.call_status == "C" %}
                   <label>Interview is completed</label>
-                {% elif registration.reg_status == "O" %}
+                {% endif %}
+                {% if registration.reg_status == "O" %}
                   <label>Offer Letter is Released</label>
                 {% elif registration.reg_status == "H" %}
                   <label>Offer is on Hold</label>
