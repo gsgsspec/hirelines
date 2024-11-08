@@ -518,7 +518,7 @@ def evaluationView(request):
                     acert_data = json_data['data']
                     answer_data = json_data["answer_data"]
                     response['data'] = "Marks Updated successfully"
-                    if response['statusCode'] == 0:
+                    if json_data['statusCode'] == 0:
                         response['answer_data'] = answer_data
                         response['statusCode'] = 0
             

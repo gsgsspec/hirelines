@@ -30,7 +30,8 @@ function get_papers_data() {
 
             })
             if (papers_count == evaluated_papers) {
-                $('#show_all_papers').click();
+                // $('#show_all_papers').click();
+                $(".papers-card").append("<h5 class='form-label all_eval_label'>All Papers Evaluated</h5>")
             } else {
                 $("p[name='papers']:first").click();
             }
