@@ -5,43 +5,18 @@
 
     <div class="d-flex justify-content-between align-items-center">
 
-      <!-- <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#JdPublishConformation">
-
-        <i class='bx bx-shield-quarter'></i> Publish
-      </button> -->
-
       <div class="d-flex align-items-center justify-content-center">
-          <h4 class="m-0" style="width: max-content;">
+          <h4 class="m-0" style="width: max-content;" id="JDTitle">
             {{ jd_details.title }}
           </h4>
       </div>
 
       <div style="width: max-content;">
 
-          <button type="button" class="btn btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#JdPublishConformation">
-            <i class='bx bx-up-arrow-circle' style="margin-top: -4px;"></i> &nbsp; Publish
+          <button type="button" class="btn btn-outline-primary mx-2" onclick="openPublishstatus()">
+            <i class='bx bx-up-arrow-circle' style="margin-top: -4px;"></i> &nbsp; <span id="JdStatusShowElement">Publish</span>
           </button>
         
-          <!-- <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#InterviewPanel">
-            <i class='fas fa-users'></i>
-          </button>
-
-          <button type="button" class="btn btn-icon btn-outline-primary mx-2" data-bs-toggle="modal" data-bs-target="#jd_integration_modal">
-            <i class='bx bxs-cog'></i>
-          </button>
-
-          <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('screening')" data-bs-toggle="modal" data-bs-target="#modalCenter" title="Screening Test">
-            <i class="fas fa-clipboard-check"></i>
-          </button>
-
-          <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('coding')" title="Coding Test"  data-bs-toggle="modal" data-bs-target="#modalCenter">
-            <i class='fas fa-code'></i>
-          </button>
-
-          <button type="button" class="btn btn-icon btn-outline-primary mx-2" onclick="createNewTestModalOpen('interview')" title="interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
-            <i class='fas fa-chalkboard-teacher'></i>
-          </button> -->
-
           <div class="btn-group" role="group" aria-label="First group">
             
             <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('screening')" title="Screening Test" data-bs-toggle="modal" data-bs-target="#modalCenter">
@@ -56,7 +31,7 @@
             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#InterviewPanel" title="Add Interviewers">
               <i class='fas fa-users'></i>
             </button>
-            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#jd_integration_modal" title="Integration Script">
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" onclick="OpenIntegrationModal()" title="Integration Script">
               <i class='bx bxs-cog'></i>
             </button>
           </div>
@@ -64,21 +39,6 @@
       </div>
 
     </div>
-
-    <!-- <div class="btn-group" role="group" aria-label="First group">
-      <button type="button" class="btn btn-outline-secondary">
-        <i class="tf-icons bx bx-bell"></i>
-      </button>
-      <button type="button" class="btn btn-outline-secondary">
-        <i class="tf-icons bx bx-task"></i>
-      </button>
-      <button type="button" class="btn btn-outline-secondary">
-        <i class="tf-icons bx bx-check-shield"></i>
-      </button>
-      <button type="button" class="btn btn-outline-secondary">
-        <i class="tf-icons bx bx-comment-dots"></i>
-      </button>
-    </div> -->
 
     <!-- Jd Testes show here -->
     <div class="row mt-3" id="testCards"></div>
@@ -185,6 +145,30 @@
 
 <!-- Test delete conformation modal end -->
 
+<!-- Test delete conformation modal start -->
+
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="integrationValidationJd" aria-labelledby="carrersPageIntegrationValidation" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="carrersPageIntegrationValidation"></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -3.25rem;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button id="" class="btn btn-primary" data-bs-dismiss="modal">
+                      Ok
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Test delete conformation modal end -->
+
 <!-- Interview Panile start -->
 <div class="modal fade" id="InterviewPanel" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -275,7 +259,7 @@
       <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
           <div class="modal-content">
               <div class="modal-header">
-                  <h5 class="modal-title" id="conformationForDelete">One's Publish you can not edit or delete the any test</h5>
+                  <h5 class="modal-title" id="conformationPublish">One's Publish you can not edit or delete the any test</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -3.25rem!important;"></button>
               </div>
               <div class="modal-body" style="padding: 0.5rem;"></div>
@@ -348,12 +332,11 @@
       <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
           <div class="modal-content">
               <div class="modal-header">
-                  <h5 class="modal-title" id="InterviewValidators">Minimum Two roundes of tests is required to Publish the JD</h5>
+                  <h5 class="modal-title" id="InterviewValidators">Alteast One test has to be add to Publish JD</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2.25rem !important;"></button>
               </div>
               <div class="modal-body" style="padding: 0.5rem;"></div>
               <div class="modal-footer">
-                  <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> -->
                   <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal">
                       Close
                   </button>

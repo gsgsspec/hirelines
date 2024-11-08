@@ -418,7 +418,7 @@ def registerCandidate(request):
             #Filter the first workflow obj to attend first paper $ order functionality not added $
             job_description = JobDesc.objects.get(id=jd_id)
             if job_description.status == "A":
-                workflow_data = Workflow.objects.filter(jobid=jd_id,order=1)
+                workflow_data = Workflow.objects.filter(jobid=jd_id,order=1).last()
                 if workflow_data:
                     company_id = workflow_data.companyid
                     dataObjs["jd"] = jd_id

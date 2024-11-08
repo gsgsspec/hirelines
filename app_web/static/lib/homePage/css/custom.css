@@ -107,6 +107,15 @@
         padding-bottom: 0rem;
     }
 
+    .cards-2 .card {
+		height: auto !important;
+		margin-bottom: 2rem !important;
+	}
+
+    .basic-2 .image-container {
+        text-align: center;
+    }
+
 }
 
 
@@ -178,3 +187,56 @@
 .login-header {
     height: 100vh;
 }
+
+
+.hero {
+    /* background: linear-gradient(135deg, #3498db, #8e44ad); */
+    background: linear-gradient(135deg, #274699, #5b8cd0);
+
+    color: white;
+    text-align: center;
+    padding: 4rem 2rem;
+}
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.get-start-btn {
+    color: #fff;
+    border-color: #fff;
+}
+
+.get-start-btn:hover {
+    background-color: #fff !important;
+    color: #274699;
+}
+
+
+.htw-icons {
+    font-size: 36px;
+    color: #274699;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+
+.step-number {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background-color: #274699;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 2rem;
+    line-height: 50px;
+    text-align: center;
+    /* margin-bottom: 1.5rem; */
+    font-weight: bold;
+  }
