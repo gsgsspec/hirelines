@@ -17,6 +17,7 @@ var createNewPaper = {}
 var tempPaper
 var selectedPaper = {}
 var JdStatus = ''
+var nextStatus
 // var createTestCard = true
 
 
@@ -39,7 +40,8 @@ function workFlowData(){
         if (res.statusCode == 0){
             if(res.data){
                 createTest(res.data['workFlowData'],'edit')
-                JdStatuCheck(res.data['jdStatus'])
+                JdStatus = res.data['jdStatus']
+                changeStatusInHtml(res.data['jdStatus'])
             }
         }
 
@@ -47,40 +49,59 @@ function workFlowData(){
 
 }
 
-
-function openPublishstatus(){
+function changeStatusInHtml(changeStatus){
     
-    if(JdStatus == 'A'){
-        document.getElementById('conformationPublish').innerText = 'Do you want re Publish the JD again'
-        $('#JdPublishConformation').modal('show')
+    if(changeStatus == 'D'){
+        document.getElementById('JdStatusShowElement').innerText = 'Publish'
     }
-    else if(JdStatus == 'A'){
-        document.getElementById('conformationPublish').innerText = 'Are you sure want to stop JD registerations'
-        $('#JdPublishConformation').modal('show')
-    }
-    else{
-        publishJd()
-    }
-
-}
-
-
-function JdStatuCheck(JDStatusData){
-
-    var JdStatus_ = JDStatusData
-    JdStatus = JDStatusData
-    if(JdStatus_ == 'A'){
-        JdStatus = 'A'
+    
+    if(changeStatus == 'A'){
         document.getElementById('JdStatusShowElement').innerText = 'Stop'
-        // changes styles here 
     }
-    else if(JdStatus_ == 'P'){
+
+    if(changeStatus == 'P'){ // Paused JD
         document.getElementById('JdStatusShowElement').innerText = 'Publish'
     }
 
 }
 
-function OpenIntegrationModal(){``
+
+function openPublishJd(){
+
+    console.log('calling');
+
+    var totalTestLst = Object.keys(testsList).length
+
+    if(totalTestLst == 0){
+        $('#jdPublishValidators').modal('show')
+    }
+    console.log('::',JdStatus);
+    if(JdStatus == 'D'){
+        changeStatusInHtml('D')
+        nextStatus = 'A'
+        document.getElementById('conformationPublish').innerHTML = "One's Publish you can not edit or delete the any test"
+        $('#JdPublishConformation').modal('show')
+    }
+    
+    if(JdStatus == 'A'){
+        changeStatusInHtml('A')
+        nextStatus = 'P'
+        document.getElementById('conformationPublish').innerHTML = "Do you want to stop registration to this JD"
+        $('#JdPublishConformation').modal('show')
+    }
+
+    if(JdStatus == 'P'){ // Paused JD
+        changeStatusInHtml('P')
+        nextStatus = 'A'
+        document.getElementById('conformationPublish').innerHTML = "Do you want to publish JD again"
+        $('#JdPublishConformation').modal('show')
+    }
+
+}
+
+
+// this function call when click on client career page integrations script button
+function OpenIntegrationModal(){
     
     if(JdStatus == 'A'){
         $('#jd_integration_modal').modal('show')
@@ -91,6 +112,7 @@ function OpenIntegrationModal(){``
         $('#integrationValidationJd').modal('show')
     }
 }
+
 
 //  create cards by calling this function 
 function createTest(data){
@@ -106,15 +128,12 @@ function createTest(data){
         createWorkFlowContainer(data)
     }
     else{
-        console.log("NOO TEstss");
         clickAnyWhereIn()
     }
 }
 
 
-function clickAnyWhereIn(){
-    
-}
+function clickAnyWhereIn(){}
 
 
 // create a container that holds libraries container and Select paper container
@@ -1243,9 +1262,10 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
         if(questionTypeDynamicOrStatic == "D"){
 
             var staticQuestion = document.getElementById(`staticQuestionCheckBox_${questionid}_${testid}`)
-            if(staticQuestion.checked){
-                staticQuestion.checked = false
-                // staticQuestion.disabled = true
+            if(staticQuestion){
+                if(staticQuestion.checked){
+                    staticQuestion.checked = false
+                }
             }
 
         }
@@ -1256,12 +1276,13 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
         if(staticQuestion_.checked){
             
             var dynamicQuestion = document.getElementById(`dynamicQuestionCheckBox_${questionid}_${testid}`)
-            if(dynamicQuestion.checked == false){
-                // dynamicQuestion.checked = true
-            }
-            else{
-                showSuccessMessage('This Question added in Dynamic Questions');
-                staticQuestion_.checked = false
+            if(dynamicQuestion){
+                
+                if(dynamicQuestion.checked == false){}
+                else{
+                    showSuccessMessage('This Question added in Dynamic Questions');
+                    staticQuestion_.checked = false
+                }
             }
 
         }
@@ -1284,7 +1305,6 @@ function questionCountChanger(TestId){
 
         if(librariesLst[library]['id'] == testsList[TestId]['paperlibraryid']){
 
-            console.log('librariesLst :: ',librariesLst[library]);
             librariesLst[library]['papertype'] = ''
             var questionLst = librariesLst[library]['questionsList']
             for(var ques = 0; ques < questionLst.length; ques++){
@@ -1325,7 +1345,6 @@ function questionCountChanger(TestId){
     if(elementDyn){
         elementDyn.innerText = dynaQuesCount
     }
-    // document.getElementById(`dynamic_questions_count_${TestId}`).innerText = dynaQuesCount
 
 }
 
@@ -1617,10 +1636,10 @@ function publishJd(){
     if(testLst >= 1){
 
         dataObj = {
-            'jdStatus__':JdStatus,
-            'jobDescriptionId':jdId
+            'jobDescriptionId' : jdId,
+            'nextStatus_' : nextStatus
         }
-    
+        
         var final_data = {
             'data': JSON.stringify(dataObj),
             csrfmiddlewaretoken: CSRF_TOKEN,
@@ -1631,12 +1650,9 @@ function publishJd(){
     
             if(res.statusCode == 0){
 
-                if(res.data['jdStatus_'] == 'A'){
-                    JdStatus = 'A'
-                }
-                else{
-                    JdStatus = res.data['jdStatus_']
-                }
+                changeStatusInHtml(res.data['jdStatus_'])
+
+                JdStatus = res.data['jdStatus_']
 
                 if(res.data['noPaper'] == 'Y'){
                     // Show Modal

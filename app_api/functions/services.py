@@ -1568,37 +1568,19 @@ def jdPublishService(dataObjs, companyId):
         paperData = []
         if dataObjs["jobDescriptionId"]:
 
+            JdData = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
+
             worflowData = Workflow.objects.filter(jobid=dataObjs["jobDescriptionId"])
 
             for test in worflowData:
                 if test.paperid == None:
-                    return {"noPaper": "Y", "paperTitle": test.papertitle}
+                    return {"noPaper": "Y", "paperTitle": test.papertitle,'jdStatus_':JdData.status}
 
-            jdStatus = ''
-            jdstatusSave = 'A'
-
-            JdData = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
             if JdData:
-                # JdData.status = jdstatusSave
-                if JdData.status == 'D':
-                    JdData.status = "A" # JD Status Published " A "
-                    print('TRUEE PPP ')
-                    JdData.save()
-
-                if JdData.status == 'A':
-                    JdData.status = "P" # JD Status Paused " P "
-                    print('TRUEE AAA ')
-                    JdData.save()
-
-                if JdData.status == 'P':
-                    JdData.status = "A" # JD Status Published " A "
-                    print('TRUEE PPP ')
-                    JdData.save()
-                
-                jdStatus = JdData.status
-                temp = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
-                print('+++++++++++++++++++++++')
-                print('::',temp.status)
+                JdData.status = dataObjs['nextStatus_']
+                JdData.save()
+                    
+            latestJD = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
 
             orderCounter = 1
             for test in worflowData:
@@ -1619,14 +1601,10 @@ def jdPublishService(dataObjs, companyId):
             paperLst = paperData
             newPaperLst = []
             for paper in range(len(paperLst) - 1):  # Loop until the second-last item
-                tempLst = [
-                    paperLst[paper],
-                    paperLst[paper + 1],
-                ]  # Create a list with two items
+                tempLst = [ paperLst[paper],  paperLst[paper + 1] ]   # Create a list with two items
                 newPaperLst.append(tempLst)
             
-
-            return {"companyid": companyId, "papersData": newPaperLst,'jdStatus_': jdStatus}
+            return {"companyid": companyId, "papersData": newPaperLst,'jdStatus_': latestJD.status}
 
     except Exception as e:
         raise
