@@ -32,7 +32,8 @@ document.getElementById("save-data").onclick = function () {
                     icon: 'error',
                     title: 'Insufficient Credits',
                     showConfirmButton: true,
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#274699'
                 })
 
                 return 
@@ -46,7 +47,8 @@ document.getElementById("save-data").onclick = function () {
                     icon: 'error',
                     title: 'Candidate already registered for this jd',
                     showConfirmButton: true,
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#274699'
                 })
 
                 return 
@@ -63,7 +65,7 @@ document.getElementById("save-data").onclick = function () {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                // setTimeout(function () { window.location.href = '/candidates' }, 2000);
+                setTimeout(function () { window.location.href = '/candidates' }, 2000);
             }
         }
         else{
