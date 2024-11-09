@@ -679,6 +679,7 @@ def deleteTestinJs(request):
     except Exception as e:
         response['data'] = 'Error in Deleting Test from workflow'
         response['error'] = str(e)
+        raise
     return JsonResponse(response)
 
 @api_view(['POST'])

@@ -17,6 +17,7 @@ var createNewPaper = {}
 var tempPaper
 var selectedPaper = {}
 var JdStatus = ''
+var nextStatus
 // var createTestCard = true
 
 
@@ -39,7 +40,9 @@ function workFlowData(){
         if (res.statusCode == 0){
             if(res.data){
                 createTest(res.data['workFlowData'],'edit')
-                JdStatuCheck(res.data['jdStatus'])
+                JdStatus = res.data['jdStatus']
+                changeStatusInHtml(res.data['jdStatus'])
+                // deleteTestValidation(res.data['jdStatus'])
             }
         }
 
@@ -47,40 +50,62 @@ function workFlowData(){
 
 }
 
-
-function openPublishstatus(){
+function changeStatusInHtml(changeStatus){
     
-    if(JdStatus == 'A'){
-        document.getElementById('conformationPublish').innerText = 'Do you want re Publish the JD again'
-        $('#JdPublishConformation').modal('show')
+    if(changeStatus == 'D'){
+        document.getElementById('JdStatusShowElement').innerText = 'Publish'
     }
-    else if(JdStatus == 'A'){
-        document.getElementById('conformationPublish').innerText = 'Are you sure want to stop JD registerations'
-        $('#JdPublishConformation').modal('show')
-    }
-    else{
-        publishJd()
-    }
-
-}
-
-
-function JdStatuCheck(JDStatusData){
-
-    var JdStatus_ = JDStatusData
-    JdStatus = JDStatusData
-    if(JdStatus_ == 'A'){
-        JdStatus = 'A'
+    
+    if(changeStatus == 'A'){
         document.getElementById('JdStatusShowElement').innerText = 'Stop'
-        // changes styles here 
     }
-    else if(JdStatus_ == 'P'){
+
+    if(changeStatus == 'P'){ // Paused JD
         document.getElementById('JdStatusShowElement').innerText = 'Publish'
     }
 
 }
 
-function OpenIntegrationModal(){``
+
+function openPublishJd(){
+
+    console.log('calling',JdStatus);
+
+    var totalTestLst = Object.keys(testsList).length
+
+    if(totalTestLst == 0){
+        $('#jdPublishValidators').modal('show')
+    }
+    
+    if(JdStatus == 'D'){
+        changeStatusInHtml('D')
+        nextStatus = 'A'
+        document.getElementById('conformationPublish').innerHTML = "One's Publish you can not delete any of the tests"
+        document.getElementById('publishJdConform').innerText = 'Publish'
+        $('#JdPublishConformation').modal('show')
+    }
+    
+    if(JdStatus == 'A'){
+        changeStatusInHtml('A')
+        nextStatus = 'P'
+        document.getElementById('conformationPublish').innerHTML = "Do you want to stop registering candidates to this JD"
+        document.getElementById('publishJdConform').innerText = 'Confirm'
+        $('#JdPublishConformation').modal('show')
+    }
+
+    if(JdStatus == 'P'){ // Paused JD
+        changeStatusInHtml('P')
+        nextStatus = 'A'
+        document.getElementById('conformationPublish').innerHTML = "Do you want to publish this JD again"
+        document.getElementById('publishJdConform').innerText = 'Publish'
+        $('#JdPublishConformation').modal('show')
+    }
+
+}
+
+
+// this function call when click on client career page integrations script button
+function OpenIntegrationModal(){
     
     if(JdStatus == 'A'){
         $('#jd_integration_modal').modal('show')
@@ -91,6 +116,7 @@ function OpenIntegrationModal(){``
         $('#integrationValidationJd').modal('show')
     }
 }
+
 
 //  create cards by calling this function 
 function createTest(data){
@@ -106,15 +132,12 @@ function createTest(data){
         createWorkFlowContainer(data)
     }
     else{
-        console.log("NOO TEstss");
         clickAnyWhereIn()
     }
 }
 
 
-function clickAnyWhereIn(){
-    
-}
+function clickAnyWhereIn(){}
 
 
 // create a container that holds libraries container and Select paper container
@@ -299,8 +322,6 @@ function AppendSectionsAndQuestions(data, TestCardId) {
     }, 50); // Small delay to ensure elements are in the DOM before animating
 
 }
-
-
 
 
 function selectLibrary(element,libraryId,SelectedTestId){
@@ -580,9 +601,9 @@ function addTestCardToShow(testName, promotValue, testType, data) {
                 </figure>
                 <div class="d-flex justify-content-between mt-0 pt-0"> 
                     <i class="bx bx-edit custm-edit-icon" id="editTestCard_${data['id']}" onclick="updateTest(event, ${data['id']})" style="cursor: pointer;"></i>
-                    <div class="deleteFontIcon" data-bs-toggle="modal" onclick="deleteTestModalOpen(${data['id']})"  style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <button class="deleteFontIcon perventDeleteBtn" data-bs-toggle="modal" onclick="deleteTestModalOpen(${data['id']})"  style="cursor: pointer; display: flex; align-items: center; justify-content: center; background-color: transparent;">
                         <i class='bx bx-trash' ></i>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>`;
@@ -966,7 +987,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                 staticQuestionContainer.style.display = 'flex';
 
                 if(testLibraries[lib]['papertype'] == "I"){
-                    console.log('margin Right --');
                     staticQuestionContainer.style.marginRight = '10px'
                 }
 
@@ -1243,9 +1263,10 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
         if(questionTypeDynamicOrStatic == "D"){
 
             var staticQuestion = document.getElementById(`staticQuestionCheckBox_${questionid}_${testid}`)
-            if(staticQuestion.checked){
-                staticQuestion.checked = false
-                // staticQuestion.disabled = true
+            if(staticQuestion){
+                if(staticQuestion.checked){
+                    staticQuestion.checked = false
+                }
             }
 
         }
@@ -1256,12 +1277,13 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
         if(staticQuestion_.checked){
             
             var dynamicQuestion = document.getElementById(`dynamicQuestionCheckBox_${questionid}_${testid}`)
-            if(dynamicQuestion.checked == false){
-                // dynamicQuestion.checked = true
-            }
-            else{
-                showSuccessMessage('This Question added in Dynamic Questions');
-                staticQuestion_.checked = false
+            if(dynamicQuestion){
+                
+                if(dynamicQuestion.checked == false){}
+                else{
+                    showSuccessMessage('This Question added in Dynamic Questions');
+                    staticQuestion_.checked = false
+                }
             }
 
         }
@@ -1284,7 +1306,6 @@ function questionCountChanger(TestId){
 
         if(librariesLst[library]['id'] == testsList[TestId]['paperlibraryid']){
 
-            console.log('librariesLst :: ',librariesLst[library]);
             librariesLst[library]['papertype'] = ''
             var questionLst = librariesLst[library]['questionsList']
             for(var ques = 0; ques < questionLst.length; ques++){
@@ -1325,7 +1346,6 @@ function questionCountChanger(TestId){
     if(elementDyn){
         elementDyn.innerText = dynaQuesCount
     }
-    // document.getElementById(`dynamic_questions_count_${TestId}`).innerText = dynaQuesCount
 
 }
 
@@ -1408,12 +1428,25 @@ function createPaper(libraryid, testid, event) {
 
 
 function deleteTestModalOpen(testid) {
-    var testTilt =  document.getElementById('testTitle_'+testid).innerText
-    document.getElementById('conformationForDelete').innerText =  'Are sure want to delete '+testTilt
-    document.getElementById('deleteTestConformation').dataset['deletetestid'] = testid
-    $('#modalToggle').modal('show')
-    event.stopPropagation();
-    TestWithLibrariesAndQuestions
+
+    if(JdStatus == 'D'){
+        var testTilt =  document.getElementById('testTitle_'+testid).innerText
+        document.getElementById('delectCancelBtn').hidden = false
+        document.getElementById('deleteTestConformation').hidden = false
+        document.getElementById('conformationForDelete').innerText =  'Are sure want to delete '+testTilt
+        document.getElementById('deleteTestConformation').dataset['deletetestid'] = testid
+        $('#modalToggle').modal('show')
+        event.stopPropagation();
+        TestWithLibrariesAndQuestions
+    }
+    else{
+        document.getElementById('delectCancelBtn').hidden = true
+        document.getElementById('deleteTestConformation').hidden = true
+        document.getElementById('deleteCloseBtn').hidden = false
+        document.getElementById('conformationForDelete').innerText =  "Can't delete any of this test"
+        $('#modalToggle').modal('show')
+    }
+    
 }
 
 
@@ -1617,10 +1650,10 @@ function publishJd(){
     if(testLst >= 1){
 
         dataObj = {
-            'jdStatus__':JdStatus,
-            'jobDescriptionId':jdId
+            'jobDescriptionId' : jdId,
+            'nextStatus_' : nextStatus
         }
-    
+        
         var final_data = {
             'data': JSON.stringify(dataObj),
             csrfmiddlewaretoken: CSRF_TOKEN,
@@ -1631,12 +1664,9 @@ function publishJd(){
     
             if(res.statusCode == 0){
 
-                if(res.data['jdStatus_'] == 'A'){
-                    JdStatus = 'A'
-                }
-                else{
-                    JdStatus = res.data['jdStatus_']
-                }
+                changeStatusInHtml(res.data['jdStatus_'])
+
+                JdStatus = res.data['jdStatus_']
 
                 if(res.data['noPaper'] == 'Y'){
                     // Show Modal
@@ -1658,7 +1688,20 @@ function publishJd(){
                     $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {
                     
                     });
-                    showSuccessMessage('JD Published Successfully');
+
+                    if(JdStatus == 'A'){
+                        showSuccessMessage('JD Published Successfully');
+                    }
+                    if(JdStatus == 'P'){
+                        showSuccessMessage('JD Stopped Successfully');
+                    }
+
+                    // deleteTestValidation(JdStatus)
+ 
+                    // if(JdStatus == 'A'){
+                    //     showFailureMessage('JD ') 
+                    // }
+
                     $('#JdPublishConformation').modal('hide')
     
                 }
@@ -1676,3 +1719,16 @@ function publishJd(){
 function closeModals(){
     $('#publishValidationModal').modal('hide')
 }
+
+
+// only allow when JD status "D"
+// function deleteTestValidation(JdStatus__){
+//     console.log(':::',JdStatus__);
+
+//     document.getElementsByClassName('')
+
+//     if(JdStatus__ == 'A'){
+
+//     }
+
+// }

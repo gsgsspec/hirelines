@@ -44,18 +44,29 @@
               <label class="s-clr mb-1">{{ registration.type_title }}</label>
               {% if registration.paper_type == "I"%}
                 {%  if registration.call_status == "N"  %}
-                <button class="btn btn-primary" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
+                  <button class="btn btn-primary" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
                 {% elif registration.call_status == "S" %}
-                <label>Interview scheduled</label>
-                {% elif registration.call_status == "N" %}
-                <label>Interview is completed</label>
+                  <label>Interview scheduled</label>
+                {% elif registration.call_status == "C" %}
+                  <label>Interview is completed</label>
                 {% endif %}
                 {% if registration.reg_status == "O" %}
-                <label>Offer Letter is Released</label>
+                  <label>Offer Letter is Released</label>
                 {% elif registration.reg_status == "H" %}
-                <label>Offer is on Hold</label>
+                  <label>Offer is on Hold</label>
                 {% elif registration.reg_status == "R" %}
-                <label>Rejected</label>
+                  <label>Rejected</label>
+                {% endif %}
+              {% else %}
+            
+                {% if registration.reg_status == "P" %}
+                  <label>Promoted</label>
+                {% elif registration.reg_status == "F" %}
+                  <label>Failed</label>
+                {% elif registration.reg_status == "E" %}
+                  <label>Under Evaluation</label>
+                {% elif registration.reg_status == "I" %}
+                  <label>Initiated</label>
                 {% endif %}
               {% endif %}
             </div>

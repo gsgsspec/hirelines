@@ -7,13 +7,14 @@
 
       <div class="d-flex align-items-center justify-content-center">
           <h4 class="m-0" style="width: max-content;" id="JDTitle">
-            {{ jd_details.title }}
+            {{ jd_details.title }} 
+            <!-- <div class="avatar avatar-online mx-3"></div>  -->
           </h4>
       </div>
 
       <div style="width: max-content;">
 
-          <button type="button" class="btn btn-outline-primary mx-2" onclick="openPublishstatus()">
+          <button type="button" class="btn btn-outline-primary mx-2" onclick="openPublishJd()">
             <i class='bx bx-up-arrow-circle' style="margin-top: -4px;"></i> &nbsp; <span id="JdStatusShowElement">Publish</span>
           </button>
         
@@ -133,10 +134,13 @@
               </div>
               <div class="modal-body" style="padding: 0.5rem;"></div>
               <div class="modal-footer">
-                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button class="btn btn-secondary" data-bs-dismiss="modal" id="delectCancelBtn">Cancel</button>
                   <button onclick="deleteTest()" id="deleteTestConformation" data-deletetestid="" class="btn btn-primary">
                       Delete
                   </button>
+                  <button id="deleteCloseBtn" data-deletetestid="" data-bs-dismiss="modal" class="btn btn-primary" hidden>
+                    Close
+                </button>
               </div>
           </div>
       </div>
@@ -145,7 +149,7 @@
 
 <!-- Test delete conformation modal end -->
 
-<!-- Test delete conformation modal start -->
+<!-- carrer page integration modal start -->
 
 <div class="col-lg-4 col-md-6">
   <div class="modal fade" id="integrationValidationJd" aria-labelledby="carrersPageIntegrationValidation" tabindex="-1" aria-hidden="true">
@@ -167,7 +171,7 @@
   </div>
 </div>
 
-<!-- Test delete conformation modal end -->
+<!-- carrer page integration modal end -->
 
 <!-- Interview Panile start -->
 <div class="modal fade" id="InterviewPanel" tabindex="-1" aria-hidden="true">

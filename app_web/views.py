@@ -5,7 +5,7 @@ from app_api.functions import constants
 from app_api.functions.enc_dec import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import User, Role, JobDesc, CallSchedule, Candidate, Company, Branding
-from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, \
+from app_api.functions.services import getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
@@ -577,7 +577,7 @@ def candidateSideMeetingPage(request, room_id):
                 "candidate_id" : call.candidateid,
                 "schedule_id" : call.id,
                 "callend_status" : str(call.callendflag) if call.callendflag else "N",
-                'company_logo'   : branding_details.logourl,
+                'company_logo'   : branding_details.logourl if branding_details.logourl else "",
                 'company_name'   : company_details.name
             }
 
@@ -608,6 +608,32 @@ def candidateData(request,cid):
 
         return render(request, "portal_index.html", {"template_name": 'candidate_data.html','menuItemList':menuItemList,
                                 'candidate_info':candidate_info,'registrations_data':registrations_data})
+    
+    except Exception as e:
+        raise
+
+
+def userLst(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        companyId = getCompanyId(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        usersData = companyUserLst(companyId)
+        print('======================')
+        print('usersData :: ',usersData)
+
+        return render(request, "portal_index.html", {"template_name": 'usersLst.html','menuItemList':menuItemList
+                                                     , 'usersDataLst':usersData})
     
     except Exception as e:
         raise

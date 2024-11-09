@@ -245,6 +245,21 @@ def addJdServices(addjdData, companyID, hrEmail):
         raise
 
 
+def companyUserLst(companyID):
+    try:
+        print('===============')
+        print(':: ',companyID)
+        usersDataLst = []
+        userLst = User.objects.filter(companyid = companyID)
+        print('userLst :: ',userLst)
+        for user in userLst:
+            userData = model_to_dict(user)
+            usersDataLst.append(userData)
+        return usersDataLst
+    except Exception as e:
+        raise
+
+
 def updateJdServices(addjdData, companyID, hrEmail):
     try:
         saveUpdateJd(addjdData, companyID, hrEmail)
@@ -551,7 +566,7 @@ def generate_random_password(length=15):
 
 def getCompanyJdData(cid):
     try:
-        company_jds = JobDesc.objects.filter(companyid=cid, status="O")
+        company_jds = JobDesc.objects.filter(companyid=cid, status="A")
 
         jds_list = []
 
@@ -1185,6 +1200,8 @@ def interviewCompletionService(dataObjs, user_id):
             feedback.save()
 
         candidate = Candidate.objects.get(id=call_sch_details.candidateid)
+        candidate.status = 'I'
+        candidate.save()
         jd = JobDesc.objects.get(id=candidate.jobid)
         interviewers_data = ast.literal_eval(jd.interviewers)
         interviewers = [int(item) for item in interviewers_data]
@@ -1566,37 +1583,19 @@ def jdPublishService(dataObjs, companyId):
         paperData = []
         if dataObjs["jobDescriptionId"]:
 
+            JdData = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
+
             worflowData = Workflow.objects.filter(jobid=dataObjs["jobDescriptionId"])
 
             for test in worflowData:
                 if test.paperid == None:
-                    return {"noPaper": "Y", "paperTitle": test.papertitle}
+                    return {"noPaper": "Y", "paperTitle": test.papertitle,'jdStatus_':JdData.status}
 
-            jdStatus = ''
-            jdstatusSave = 'A'
-
-            JdData = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
             if JdData:
-                # JdData.status = jdstatusSave
-                if JdData.status == 'D':
-                    JdData.status = "A" # JD Status Published " A "
-                    print('TRUEE PPP ')
-                    JdData.save()
-
-                if JdData.status == 'A':
-                    JdData.status = "P" # JD Status Paused " P "
-                    print('TRUEE AAA ')
-                    JdData.save()
-
-                if JdData.status == 'P':
-                    JdData.status = "A" # JD Status Published " A "
-                    print('TRUEE PPP ')
-                    JdData.save()
-                
-                jdStatus = JdData.status
-                temp = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
-                print('+++++++++++++++++++++++')
-                print('::',temp.status)
+                JdData.status = dataObjs['nextStatus_']
+                JdData.save()
+                    
+            latestJD = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
 
             orderCounter = 1
             for test in worflowData:
@@ -1617,14 +1616,10 @@ def jdPublishService(dataObjs, companyId):
             paperLst = paperData
             newPaperLst = []
             for paper in range(len(paperLst) - 1):  # Loop until the second-last item
-                tempLst = [
-                    paperLst[paper],
-                    paperLst[paper + 1],
-                ]  # Create a list with two items
+                tempLst = [ paperLst[paper],  paperLst[paper + 1] ]   # Create a list with two items
                 newPaperLst.append(tempLst)
             
-
-            return {"companyid": companyId, "papersData": newPaperLst,'jdStatus_': jdStatus}
+            return {"companyid": companyId, "papersData": newPaperLst,'jdStatus_': latestJD.status}
 
     except Exception as e:
         raise
@@ -1681,6 +1676,7 @@ def notifyCandidateService(dataObjs):
         candidate.save()
 
     except Exception as e:
+        print(str(e))
         raise
 
 

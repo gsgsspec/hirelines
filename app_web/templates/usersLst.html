@@ -1,0 +1,262 @@
+{% load static  %}
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+  <!-- Vertically Centered Modal -->
+  <div class="col-lg-4 col-md-6">
+    <div class="mt-3">
+      <!-- Modal -->
+      <div class="modal fade" id="AddNewUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalCenterTitle">New User</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body pt-2 pb-2">
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Name <span hidden>User name is required</span></label>
+                  <input
+                    type="text"
+                    id="newUserName"
+                    class="form-control"
+                    placeholder="Enter Name"
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Password <span hidden>Password is required</span></label>
+                  <input
+                    type="text"
+                    id="newUserPassword"
+                    class="form-control"
+                    placeholder="Password..."
+                  />
+                </div>
+              </div>
+              <div class="row g-2">
+                <div class="col mb-0">
+                  <label for="emailWithTitle" class="form-label">Email <span hidden>Email address is required</span></label>
+                  <input
+                    type="text"
+                    id="newUserEmail"
+                    class="form-control"
+                    placeholder="xxxx@xxx.xx"
+                  />
+                </div>
+                <div class="col mb-0">
+                  <label for="dobWithTitle" class="form-label">Role <span hidden>Role is required</span></label>
+                  <div class="row mb-3 mx-1">
+                      <select class="form-select" id="newUserRole" required>
+                        <option selected="" disabled>Select Role</option>
+                        <option value="HR">HR</option>
+                        <option value="Interviewer">Interviewer</option>
+                      </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                Cancel
+              </button>
+              <button type="button" class="btn btn-primary" onclick="addNewUser()">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-lg-4 col-md-6">
+    <div class="mt-3">
+      <!-- Modal -->
+      <div class="modal fade" id="editExistingUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Name</label>
+                  <input
+                    type="text"
+                    id="nameWithTitle"
+                    class="form-control"
+                    placeholder="Enter Name"
+                  />
+                </div>
+              </div>
+              <div class="row g-2">
+                <div class="col mb-0">
+                  <label for="emailWithTitle" class="form-label">Email</label>
+                  <input
+                    type="text"
+                    id="emailWithTitle"
+                    class="form-control"
+                    placeholder="xxxx@xxx.xx"
+                  />
+                </div>
+                <div class="col mb-0">
+                  <label for="dobWithTitle" class="form-label">DOB</label>
+                  <input
+                    type="text"
+                    id="dobWithTitle"
+                    class="form-control"
+                    placeholder="DD / MM / YY"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                Close
+              </button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Users</h4>
+        <h4 class="header-btn">
+            <button class="btn btn-primary" type="button" onclick="openNewUserModal()"><i class="fas fa-user-plus"></i>&ensp; 
+                New User
+            </button>
+        </h4>
+    </div>
+    <div class="table-responsive text-nowrap table-cls">
+        <table class="table table-hover" id="candidates-table">
+            <thead>
+                <tr>
+                    <th> <strong> Name </strong></th>
+                    <th> <strong> Role </strong></th>
+                    <th> <strong> Location </strong></th>
+                    <th> <strong> Status </strong></th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+              {% for user in usersDataLst %}
+                <tr onclick="window.location.href='/candidate-data/{{candidate.id}}'">
+                    <td><strong>{{user.name}}</strong></td>
+                    <td>{{user.role}}</td>
+                    <td>{{ user.location }}</td>
+                    <td>
+                      {% if user.status == 'A' %}
+                      <span class="badge bg-label-success me-1">
+                        Active 
+                      </span>
+                      {% else %} 
+                      <span class="badge bg-label-danger me-1">
+                        Inactive 
+                      </span>
+                      {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<style>
+    tbody tr:hover {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+
+$(document).ready(function() {
+    $.noConflict();
+    $('#candidates-table').DataTable({
+        "order": [],
+        "ordering": false,
+        language: { search: "",searchPlaceholder: "Search..." } ,
+        pagingType: 'simple_numbers'
+    });
+});
+
+
+function addNewUser(){
+
+  var newUserName_ = document.getElementById('')
+  var newUserPassword_
+  var newUserEmail_
+  var newUserRole_
+
+
+}
+
+
+function openNewUserModal() {
+  
+  var passwordInpt = document.getElementById('newUserPassword')
+
+  if(passwordInpt.value == ""){
+    document.getElementById('newUserPassword').value = generateStrongPassword()
+  }
+
+
+
+  const modalElement = document.getElementById('AddNewUserModal');
+  const modal = new bootstrap.Modal(modalElement);
+  modal.show();
+}
+
+
+
+
+function generateStrongPassword() {
+  length = 12
+  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&*()_+[]{}|;:,.<>?";
+
+  const allCharacters = upperCase + lowerCase + numbers + symbols;
+
+  let password = "";
+  
+  // Ensure the password contains at least one character from each set
+  password += upperCase[Math.floor(Math.random() * upperCase.length)];
+  password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
+  password += numbers[Math.floor(Math.random() * numbers.length)];
+  password += symbols[Math.floor(Math.random() * symbols.length)];
+
+  // Fill the rest of the password length with random characters
+  for (let i = password.length; i < length; i++) {
+      password += allCharacters[Math.floor(Math.random() * allCharacters.length)];
+  }
+
+  // Shuffle the password to avoid a predictable pattern
+  password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+  return password;
+}
+
+
+</script>
+
+

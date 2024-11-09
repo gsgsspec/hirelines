@@ -324,29 +324,33 @@ def deleteTestInJdDB(dataObjs,):
                 # If the ID matches, perform delete or other action
                 if workflowDetails[testInWorkFlow]['id'] == dataObjs['deleteTestId']:
                     deleteTest = Workflow.objects.filter(id=workflowDetails[testInWorkFlow]['id']).last()
-                    delBrules = Brules.objects.filter(workflowid = deleteTest.workflowid,jobdescid = deleteTest.jobid).last()
-                    deleteTest.delete()
-                    if delBrules:
-                        delBrules.delete()
+                    if deleteTest:
+                        delBrules = Brules.objects.filter(workflowid = deleteTest.id,jobdescid = deleteTest.jobid).last()
+                        if deleteTest:
+                            deleteTest.delete()
+                        if delBrules:
+                            delBrules.delete()
+                        else:
+                            ''
+                            # Brules Not Found
+
+                        nextSelectedCard = 0
+                        if testInWorkFlow == 0:
+                            
+                            if(len(testIdList) >= 2):
+                                nextSelectedCard = testIdList[testInWorkFlow + 1] # return this if first card deleted
+                        else:
+                            if(testInWorkFlow + 1) == len(testIdList):
+                                if(testInWorkFlow + 1) <= len(testIdList):
+                                    nextSelectedCard = testIdList[testInWorkFlow - 1] # return this if last card deleted and there is another in fornt of card
+
+                            if(testInWorkFlow + 1) <= len(testIdList) and len(testIdList) >= (testInWorkFlow + 1):
+                                nextSelectedCard = testIdList[testInWorkFlow - 1] # return this if last card deleted 
+
+                        return {'msg':'Deleted-successfully','testData':workflowDetails[testInWorkFlow],'nextSelectTestId':nextSelectedCard}
                     else:
                         ''
-                        # Brules Not Found
-
-                    nextSelectedCard = 0
-                    if testInWorkFlow == 0:
-                        
-                        if(len(testIdList) >= 2):
-                            nextSelectedCard = testIdList[testInWorkFlow + 1] # return this if first card deleted
-                    else:
-                        if(testInWorkFlow + 1) == len(testIdList):
-                            if(testInWorkFlow + 1) <= len(testIdList):
-                                nextSelectedCard = testIdList[testInWorkFlow - 1] # return this if last card deleted and there is another in fornt of card
-
-                        if(testInWorkFlow + 1) <= len(testIdList) and len(testIdList) >= (testInWorkFlow + 1):
-                            nextSelectedCard = testIdList[testInWorkFlow - 1] # return this if last card deleted 
-
-                    return {'msg':'Deleted-successfully','testData':workflowDetails[testInWorkFlow],'nextSelectTestId':nextSelectedCard}
-
+                        # No workflow find
 
         # if dataObjs['deleteTestId']:
         #     getTestData = Workflow.objects.filter(id = dataObjs['deleteTestId']).last()
@@ -386,6 +390,7 @@ def saveAddJD(dataObjs,compyId,hrEmail):
                 title       = dataObjs['title'] if dataObjs['title'] else None,
                 description = dataObjs['jobDesc'] if dataObjs['jobDesc'] else None,
                 role        = dataObjs['role'] if dataObjs['role'] else None,
+                department  = dataObjs['role'] if dataObjs['role'] else None,
                 expmin      = dataObjs['minExp'] if dataObjs['minExp'] else None,
                 expmax      = dataObjs['maxExp'] if dataObjs['maxExp'] else None,
                 location    = dataObjs['workLocation'] if dataObjs['workLocation'] else None,
@@ -425,7 +430,7 @@ def saveUpdateJd(dataObjs, compyId, hrEmail):
                 jobDesc.skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None
                 jobDesc.companyid   = compyId if compyId else None
                 jobDesc.createdby   = hrDetails.id if hrDetails.id else None
-                jobDesc.status      = 'O'  # 'O' is the open status for JD
+                # jobDesc.status      = 'O'  # 'O' is the open status for JD
                 # Save the updated JobDesc
                 jobDesc.save()
     except Exception as e:

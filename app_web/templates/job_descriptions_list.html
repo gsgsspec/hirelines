@@ -30,7 +30,15 @@
                 <div class="d-flex justify-content-between">
                   <div class="custm_created_by_userName" style="display: flex; justify-content: start; align-items: center;"> <i class='bx bx-user-circle m-0'></i> &nbsp; {{ jd.createdbyUserName }}</div>
                   <!-- <button type="button" class="btn btn-outline-info">Info</button> -->
-                  <div style="color: gray;">Exp : {% if jd.expmin is not none %} {{ jd.expmin }} - {% endif %}  {% if jd.expmax is not none %}  {{ jd.expmax }} {% endif %} Yrs</div>
+                  <!-- <div style="color: gray;">Exp : {% if jd.expmin is not none %} {{ jd.expmin }} - {% endif %}  {% if jd.expmax is not none %}  {{ jd.expmax }} {% endif %} Yrs</div> -->
+                  {% if jd.status == 'D' %}
+                    <span class="badge bg-label-primary me-1" style="height: max-content;">Draft</span>
+                  {% elif jd.status == 'A' %}
+                    <span class="badge bg-label-success me-1" style="height: max-content;">Published</span>
+                  {% elif jd.status == 'P' %}
+                    <span class="badge bg-label-danger me-1" style="height: max-content;">Stopped</span>
+                  {% else %}
+                  {% endif %}
                 </div>
               </div>
             </div>
