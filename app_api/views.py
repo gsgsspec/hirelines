@@ -434,8 +434,11 @@ def registerCandidate(request):
                         dataObjs["jd"] = jd_id
                         dataObjs['begin-from'] = workflow_data.paperid
                         company_id = workflow_data.companyid
-                        addCandidateDB(dataObjs,company_id,workflow_data)
-                        response['data'] = 'Registration completed successfully'
+                        add_resp  =  addCandidateDB(dataObjs,company_id,workflow_data)
+                        if add_resp == "insufficient_credits":
+                            response['data'] = 'Insufficient_credits'
+                        else:
+                            response['data'] = 'Registration completed successfully'
                     else:
                         response['data'] = 'Workflow not defined'
                 else:
