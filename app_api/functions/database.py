@@ -430,7 +430,7 @@ def saveUpdateJd(dataObjs, compyId, hrEmail):
                 jobDesc.skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None
                 jobDesc.companyid   = compyId if compyId else None
                 jobDesc.createdby   = hrDetails.id if hrDetails.id else None
-                jobDesc.status      = 'O'  # 'O' is the open status for JD
+                # jobDesc.status      = 'O'  # 'O' is the open status for JD
                 # Save the updated JobDesc
                 jobDesc.save()
     except Exception as e:
