@@ -24,110 +24,124 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
         company_account = Account.objects.get(companyid=cid)
         workflow = Workflow.objects.filter(companyid= cid,paperid=dataObjs['begin-from']).last()
         company_credits = CompanyCredits.objects.get(companyid=cid,transtype=workflow.papertype)
-        if company_account.balance >= company_credits.credits:
-            candidate = Candidate(
-                firstname = dataObjs["firstname"],
-                lastname = dataObjs["lastname"],
-                companyid = cid,
-                email = dataObjs["email"],
-                mobile = dataObjs["mobile"],
-                jobid = dataObjs["jd"],
-                registrationdate = datetime.now(),
-                status = 'P'
-            )
-            candidate.save()
-            company_data = Company.objects.get(id=cid)
-            year = datetime.now().strftime("%y")
 
-            refid_obj, refid_flag = ReferenceId.objects.get_or_create(type = "R", prefix1 = "{:03}".format(cid), prefix2 = year)
-                
-            if refid_flag == True:
-                lastid = 1
-                refid_obj.lastid = lastid
-                refid_obj.save()
-
-            if refid_flag == False:
-                lastid = refid_obj.lastid+1
-                refid_obj.lastid = lastid
-                refid_obj.save()
-
-            candidate_id_seq = str('{:05}'.format(int(refid_obj.lastid)))
-            candidate_code = f"{refid_obj.prefix1}{refid_obj.prefix2}{candidate_id_seq}"
-
-            candidate.candidateid = candidate_code
-
-            candidate.save()
-
-            acert_domain = getConfig()['DOMAIN']['acert']
-            # Adding candidate at acert via api
-            endpoint = '/api/hirelines-add-candidate'
-
-            url = urljoin(acert_domain, endpoint)
-
-            candidate_data = {
-                'firstname' : dataObjs["firstname"],
-                'lastname' : dataObjs["lastname"],
-                'email':dataObjs["email"],
-                'mobile': dataObjs["mobile"],
-                'paper_id': dataObjs['begin-from'], 
-                'company_id':cid,
-                'reference_id': candidate.candidateid
-            }
-
-            send_candidate_data = requests.post(url, json = candidate_data, verify=False)
-            response_content = send_candidate_data.content
-
-            if response_content:
-                
-                json_data = json.loads(response_content.decode('utf-8'))
-
-                acert_data = json_data['data']
-
-                c_registration = Registration(
-                    candidateid = candidate.id,
-                    paperid = dataObjs['begin-from'],
-                    registrationdate = candidate.registrationdate,
-                    companyid = candidate.companyid,
-                    jobid = candidate.jobid,
-                    status = 'I',
-                    papertype = acert_data["papertype"],
-                )
-
-                c_registration.save()
-
-                if c_registration.papertype == 'I':
-                    call_schedule = CallSchedule(
-                        candidateid = candidate.id,
-                        hrid = user_id,
-                        paper_id = dataObjs['begin-from'],
-                        status = 'N',
-                        companyid = candidate.companyid
-                    )
-                    call_schedule.save()
-                
-                c_data = {
-                    'candidateid':candidate.id,
-                    'papertype':c_registration.papertype
-                }
-                
-                # Removed, because the this process has to handled by ACERT
-                # 
-                # replacements = {
-                #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
-                #     "[paper_name]": acert_data["paper_name"],
-                #     "[company_name]": company_data.name,
-                #     "[recruitment_email_address]": company_data.email,
-                #     "[exam_link]":acert_data["exam_url"],
-                #     "[deadline]": acert_data["deadline"]
-                # }
-                # if workflow_data.papertype == "I":
-                #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Call_Schedule',replacements,candidate.email)
-                # else:
-                #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Registration',replacements,candidate.email)
-                deductCreditsService(cid,acert_data["papertype"],dataObjs['begin-from'])
-                return c_data
+        app_config = getConfig()['APP_CONFIG']
+        register_candidate_once_per_jd = app_config["register_candidate_once_per_jd"]
+        if register_candidate_once_per_jd == "N":
+            check_candidate_registered = "N"
         else:
-            return "insufficient_credits"
+            check_candidate_registered = Candidate.objects.filter(companyid = cid,
+                jobid = dataObjs["jd"],
+                email = dataObjs["email"])
+
+        if (not check_candidate_registered) or (check_candidate_registered == "N"):
+
+            if company_account.balance >= company_credits.credits:
+                candidate = Candidate(
+                    firstname = dataObjs["firstname"],
+                    lastname = dataObjs["lastname"],
+                    companyid = cid,
+                    email = dataObjs["email"],
+                    mobile = dataObjs["mobile"],
+                    jobid = dataObjs["jd"],
+                    registrationdate = datetime.now(),
+                    status = 'P'
+                )
+                candidate.save()
+                company_data = Company.objects.get(id=cid)
+                year = datetime.now().strftime("%y")
+
+                refid_obj, refid_flag = ReferenceId.objects.get_or_create(type = "R", prefix1 = "{:03}".format(cid), prefix2 = year)
+                    
+                if refid_flag == True:
+                    lastid = 1
+                    refid_obj.lastid = lastid
+                    refid_obj.save()
+
+                if refid_flag == False:
+                    lastid = refid_obj.lastid+1
+                    refid_obj.lastid = lastid
+                    refid_obj.save()
+
+                candidate_id_seq = str('{:05}'.format(int(refid_obj.lastid)))
+                candidate_code = f"{refid_obj.prefix1}{refid_obj.prefix2}{candidate_id_seq}"
+
+                candidate.candidateid = candidate_code
+
+                candidate.save()
+
+                acert_domain = getConfig()['DOMAIN']['acert']
+                # Adding candidate at acert via api
+                endpoint = '/api/hirelines-add-candidate'
+
+                url = urljoin(acert_domain, endpoint)
+
+                candidate_data = {
+                    'firstname' : dataObjs["firstname"],
+                    'lastname' : dataObjs["lastname"],
+                    'email':dataObjs["email"],
+                    'mobile': dataObjs["mobile"],
+                    'paper_id': dataObjs['begin-from'], 
+                    'company_id':cid,
+                    'reference_id': candidate.candidateid
+                }
+
+                send_candidate_data = requests.post(url, json = candidate_data, verify=False)
+                response_content = send_candidate_data.content
+
+                if response_content:
+                    
+                    json_data = json.loads(response_content.decode('utf-8'))
+
+                    acert_data = json_data['data']
+
+                    c_registration = Registration(
+                        candidateid = candidate.id,
+                        paperid = dataObjs['begin-from'],
+                        registrationdate = candidate.registrationdate,
+                        companyid = candidate.companyid,
+                        jobid = candidate.jobid,
+                        status = 'I',
+                        papertype = acert_data["papertype"],
+                    )
+
+                    c_registration.save()
+
+                    if c_registration.papertype == 'I':
+                        call_schedule = CallSchedule(
+                            candidateid = candidate.id,
+                            hrid = user_id,
+                            paper_id = dataObjs['begin-from'],
+                            status = 'N',
+                            companyid = candidate.companyid
+                        )
+                        call_schedule.save()
+                    
+                    c_data = {
+                        'candidateid':candidate.id,
+                        'papertype':c_registration.papertype
+                    }
+                    
+                    # Removed, because the this process has to handled by ACERT
+                    # 
+                    # replacements = {
+                    #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
+                    #     "[paper_name]": acert_data["paper_name"],
+                    #     "[company_name]": company_data.name,
+                    #     "[recruitment_email_address]": company_data.email,
+                    #     "[exam_link]":acert_data["exam_url"],
+                    #     "[deadline]": acert_data["deadline"]
+                    # }
+                    # if workflow_data.papertype == "I":
+                    #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Call_Schedule',replacements,candidate.email)
+                    # else:
+                    #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Registration',replacements,candidate.email)
+                    deductCreditsService(cid,acert_data["papertype"],dataObjs['begin-from'])
+                    return c_data
+            else:
+                return "insufficient_credits"
+        else:
+            return 'candidate_already_registered'
     except Exception as e:
         raise
 

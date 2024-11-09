@@ -243,7 +243,9 @@ def addCandidate(request):
             user_email = request.user
             user = auth_user(request.user)
             company_id = getCompanyId(user_email)
+
             c_data = addCandidateDB(dataObjs,company_id,None,user.id)
+                
             response['data'] = c_data
             response['statusCode'] = 0
         else:
