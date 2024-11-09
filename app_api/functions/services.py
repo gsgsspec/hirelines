@@ -729,10 +729,15 @@ def workFlowDataService(data, cmpyId):
         jdData = list(JobDesc.objects.filter(id = data).values())
 
         JdStatus = None
+        selectedJdInterviewers = ''
         if len(jdData) > 0:
             JdStatus = jdData[0]['status']
             
-        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus}
+            if jdData[0]['interviewers']:
+                selectedJdInterviewers = ast.literal_eval(jdData[0]['interviewers'])
+
+            
+        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus, 'selectedJDInterviewers':selectedJdInterviewers}
     except Exception as e:
         raise
 
@@ -1679,6 +1684,28 @@ def notifyCandidateService(dataObjs):
 
     except Exception as e:
         print(str(e))
+        raise
+
+
+def addNewUserService(company_id, user_data):
+    try:
+        print('-------------------------')
+        print(company_id, user_data)
+        userFind = User.objects.filter(email = user_data['userEmail']).last()
+        if userFind:
+            return {'userAlreadyExisted':'Y'}
+        else:
+            save_user = User(
+                companyid = company_id,
+                name = user_data['userName'],
+                email = user_data['userEmail'],
+                password = user_data['userPswd'],
+                role = user_data['userRole'],
+                location = user_data['newUserLocation'],
+                status = 'A'
+            )
+            save_user.save()
+    except Exception as e:
         raise
 
 

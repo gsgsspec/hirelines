@@ -377,6 +377,8 @@ def saveInterviewersJD(dataObjs):
             if dataObjs['interviwersLst']:
                 jdData.interviewers = dataObjs['interviwersLst']
                 jdData.save()
+
+                return {'interviewers':jdData.interviewers}
     except Exception as e:
         raise
 

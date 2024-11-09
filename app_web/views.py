@@ -623,19 +623,12 @@ def userLst(request):
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
     try:
-
         user_mail = request.user
         user_data = auth_user(user_mail)
-
         companyId = getCompanyId(user_mail)
-
         user_role = user_data.role
-
         menuItemList = get_functions_service(user_role)
-
         usersData = companyUserLst(companyId)
-        print('======================')
-        print('usersData :: ',usersData)
 
         return render(request, "portal_index.html", {"template_name": 'usersLst.html','menuItemList':menuItemList
                                                      , 'usersDataLst':usersData})

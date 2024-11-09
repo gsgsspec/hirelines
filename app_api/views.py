@@ -17,7 +17,7 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, \
-        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, \
+        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
 
         
@@ -683,7 +683,7 @@ def deleteTestinJs(request):
     return JsonResponse(response)
 
 @api_view(['POST'])
-def saveInterviewersForJs(request):
+def saveInterviewersForJd(request):
     response = {
         'data': None,
         'error': None,
@@ -693,12 +693,12 @@ def saveInterviewersForJs(request):
         if request.method == "POST":
             user = auth_user(request.user)
             dataObjs = json.loads(request.POST.get('data'))
-            saveInterviewersService(user, dataObjs)
-            
+            interviwersData = saveInterviewersService(user, dataObjs)
+            response['data'] = interviwersData
             response['statusCode'] = 0
 
     except Exception as e:
-        response['data'] = 'Error in Deleting Test from workflow'
+        response['data'] = 'Error in saving interviewers'
         response['error'] = str(e)
         raise
     return JsonResponse(response)
@@ -944,6 +944,28 @@ def updateCompanyBrandingView(request):
 def getUserName(request):
     user = auth_user(request.user)
     return JsonResponse({"name": user.name})
+
+
+@api_view(['POST'])
+def addNewUsers(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        user = auth_user(request.user)
+        dataObjs = dataObjs = json.loads(request.POST.get('data'))
+        userData = addNewUserService(user.companyid,dataObjs)
+        response['data'] = userData
+        response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Creating New User'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
+
 
     
 @api_view(['POST'])
