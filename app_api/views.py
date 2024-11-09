@@ -418,19 +418,31 @@ def registerCandidate(request):
             jd_id = decrypt_code(dataObjs["encjdid"])
             #Filter the first workflow obj to attend first paper $ order functionality not added $
             job_description = JobDesc.objects.get(id=jd_id)
-            if job_description.status == "A":
-                workflow_data = Workflow.objects.filter(jobid=jd_id,order=1).last()
-                if workflow_data:
-                    company_id = workflow_data.companyid
-                    dataObjs["jd"] = jd_id
-                    dataObjs['begin-from'] = workflow_data.paperid
-                    company_id = workflow_data.companyid
-                    addCandidateDB(dataObjs,company_id,workflow_data)
-                    response['data'] = 'Registration completed successfully'
-                else:
-                    response['data'] = 'Workflow not defined'
+            app_config = getConfig()['APP_CONFIG']
+            register_candidate_once_per_jd = app_config["register_candidate_once_per_jd"]
+            if register_candidate_once_per_jd == "Y":
+                check_candidate_registered = "N"
             else:
-                response['data'] = 'JD inactive'
+                check_candidate_registered = Candidate.objects.filter(companyid = job_description.companyid,
+                    jobid = job_description.id,
+                    email = dataObjs["email"])
+            
+            if check_candidate_registered:
+                if job_description.status == "A":
+                    workflow_data = Workflow.objects.filter(jobid=jd_id,order=1).last()
+                    if workflow_data:
+                        company_id = workflow_data.companyid
+                        dataObjs["jd"] = jd_id
+                        dataObjs['begin-from'] = workflow_data.paperid
+                        company_id = workflow_data.companyid
+                        addCandidateDB(dataObjs,company_id,workflow_data)
+                        response['data'] = 'Registration completed successfully'
+                    else:
+                        response['data'] = 'Workflow not defined'
+                else:
+                    response['data'] = 'JD inactive'
+            else:
+                response['data'] = 'Candidate already registered'
             response['statusCode'] = 0
     except Exception as err:
         response['data'] = 'Error in registerCandidate'
@@ -553,7 +565,7 @@ def evaluationView(request):
     except Exception as e:
         response['data'] = 'Error in evaluationquestionsView'
         response['error'] = str(e)
-        raise
+        # raise
         # logging.error("Error in evaluationquestionsView : ", str(e))
     return JsonResponse(response)
 

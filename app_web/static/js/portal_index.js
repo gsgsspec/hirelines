@@ -4,7 +4,7 @@ var menuItemsUrls = {
     'dashboard': ['/dashboard'],
     'questionnaire': ['/questionnaire', '/add-category', '/add-report-data', '/edit-category', '/section-edit', '/section-add'],
     'branding': ['/branding'],
-    'email-templates': ['/email-templates'],
+    'email-templates': ['/email-templates','/update-emailtemp'],
     'candidates': ['/candidates', '/add-candidate', 'interview-schedule', '/candidate-data'],
     'branding': ['/branding'],
     'reports': ['/reports', '/jd'],
