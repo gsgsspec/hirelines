@@ -98,10 +98,12 @@
                         </td>
                         <td style="text-align: center;">
                             {% for reg in candidate.registrations.S %}
-                                {% if reg.status == 'Q' %}
+                                {% if reg.status == 'P' %}
                                     <i class="fas fa-check" style="color: #4CAF50;"></i>
-                                {% else %}
+                                {% elif reg.status == 'F' %}
                                     <i class="fas fa-times" style="color: #f44336;"></i>
+                                {% else %}
+                                    <i class="fas fa-hourglass-half" style="color: var(--secondary-color);"></i>
                                 {% endif %}    
                                 <br>
                             {% endfor %}
@@ -113,10 +115,12 @@
                         </td>
                         <td style="text-align: center;">
                             {% for reg in candidate.registrations.E %}
-                                {% if reg.status == 'Q' %}
+                                {% if reg.status == 'P' %}
                                     <i class="fas fa-check" style="color: #4CAF50;"></i>
-                                {% else %}
+                                {% elif reg.status == 'F' %}
                                     <i class="fas fa-times" style="color: #f44336;"></i>
+                                {% else %}
+                                    <i class="fas fa-hourglass-half" style="color: var(--secondary-color);"></i>
                                 {% endif %}    
                                 <br>
                             {% endfor %}
@@ -129,9 +133,11 @@
                         <td style="text-align: center;">
                             {% for reg in candidate.registrations.I %}
                                 {% if reg.status == 'O' %}
-                                <i class="fas fa-check" style="color: #4CAF50;"></i>
-                                {% else %}
+                                    <i class="fas fa-check" style="color: #4CAF50;"></i>
+                                {% elif reg.status == 'R' %}
                                     <i class="fas fa-times" style="color: #f44336;"></i>
+                                {% else %}
+                                    <i class="fas fa-hourglass-half" style="color: var(--secondary-color);"></i>
                                 {% endif %}    
                                 <br>
                             {% endfor %}
