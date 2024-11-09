@@ -372,7 +372,7 @@ def getJdCandidatesData(jid, userid):
             candidate_info = {
                 "id": candidate.id,
                 "cid": candidate.candidateid,
-                "name": candidate.firstname,
+                "name": f"{candidate.firstname} {candidate.lastname}",
                 "email": candidate.email,
                 "registrations": {"S": [], "E": [], "I": []},
             }
@@ -1089,6 +1089,7 @@ def getCandidateInterviewData(scd_id):
             "location": job_desc.location,
             "skills": job_desc.skillset,
             "notes": job_desc.skillnotes,
+            'instructions':call_details.instructions
         }
 
         int_paper_title = (
@@ -1230,6 +1231,7 @@ def interviewCompletionService(dataObjs, user_id):
             "interviewed_by": interviewed_by,
             "to_mail": to_mail,
             "paper_id": call_sch_details.paper_id,
+            'int_notes':call_sch_details.intnotes
         }
 
         acert_domain = getConfig()["DOMAIN"]["acert"]

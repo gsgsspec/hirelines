@@ -181,7 +181,8 @@ def scheduleInterviewDB(user_id, dataObjs):
                         'candidate_code': candidate.candidateid,
                         'interviewer': call_details.interviewerid,
                         'interview_time': interview_time,
-                        'to_emails': to_mails
+                        'to_emails': to_mails,
+                        'instructions': call_details.instructions
                     }
 
                     acert_domain = getConfig()['DOMAIN']['acert']
@@ -555,3 +556,13 @@ def updateEmailtempDB(user,dataObjs,fileObjs):
         raise
 
 
+
+def interviewRemarkSaveDB(dataObjs):
+    try:
+
+        call_schedule = CallSchedule.objects.get(id=int(dataObjs["sch_id"]))
+        call_schedule.intnotes = dataObjs["remarks"]
+        call_schedule.save()
+            
+    except Exception as e:
+        raise

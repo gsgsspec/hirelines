@@ -34,6 +34,7 @@ urlpatterns = [
     path('update-company-branding',views.updateCompanyBrandingView),
     path('get-user-name',views.getUserName),
     path('update-hirelines-data',views.updateHirelinesData),
+    path('interview-remarks',views.interviewRemarkSave),
 
 
     path('update-emailtemp',views.updateEmailtemp),

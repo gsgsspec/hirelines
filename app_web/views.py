@@ -193,6 +193,8 @@ def reportsPage(request):
 
     except Exception as e:
         raise
+
+
 def jobDescription(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
@@ -243,6 +245,7 @@ def Addjobdescription(request):
     except Exception as e:
         raise
 
+
 def update_jobdescription(request,update_jd_id):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
@@ -265,6 +268,8 @@ def update_jobdescription(request,update_jd_id):
         return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details})
     except Exception as e:
         raise
+
+
 
 # this function render's inside html pages
 def jobDescriptionSetUp(request,jd_id): 

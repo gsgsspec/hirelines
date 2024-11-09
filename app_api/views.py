@@ -22,7 +22,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -1016,4 +1016,26 @@ def updateHirelinesData(request):
         response['data'] = 'Error in getUpdateCompanyCreditsView'
         response['error'] = str(e)
         raise
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def interviewRemarkSave(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            res = interviewRemarkSaveDB(dataObjs)
+
+            response['data'] = res
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in save interview remark view'
+        response['error'] = str(e)
     return JsonResponse(response)
