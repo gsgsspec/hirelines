@@ -26,7 +26,7 @@ urlpatterns = [
     path('check-test-has-paper',views.checkTestHasPaper),
     path('get-candidate-report',views.candidateReport),
     path('delete-test-injd',views.deleteTestinJs),
-    path('save-interviewers-lst',views.saveInterviewersForJs),
+    path('save-interviewers-lst',views.saveInterviewersForJd),
     path('notify-candidate',views.notifyCandidate),
     path('get-update-company-credits',views.getUpdateCompanyCreditsView),
     path('get-credits',views.getCreditsView),
@@ -34,7 +34,9 @@ urlpatterns = [
     path('update-company-branding',views.updateCompanyBrandingView),
     path('get-user-name',views.getUserName),
     path('update-hirelines-data',views.updateHirelinesData),
+    path('interview-remarks',views.interviewRemarkSave),
 
+    path('add-new-user',views.addNewUsers),
 
     path('update-emailtemp',views.updateEmailtemp),
 ]

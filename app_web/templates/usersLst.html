@@ -9,7 +9,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalCenterTitle">New User</h5>
+              <h5 class="modal-title" id="modalCenterTitle">New User</h5> &nbsp;&nbsp;&nbsp;&nbsp; <strong style="color: red;" hidden id="userAlreadyExistedValidation"> <i class="fas fa-exclamation-circle"></i> This email address is already in use.</strong>
               <button
                 type="button"
                 class="btn-close"
@@ -20,42 +20,56 @@
             <div class="modal-body pt-2 pb-2">
               <div class="row">
                 <div class="col mb-3">
-                  <label for="nameWithTitle" class="form-label">Name <span hidden>User name is required</span></label>
+                  <label for="nameWithTitle" class="form-label">Name &nbsp;&nbsp; <span hidden id="NewUserNameValidation" class="validationNewUser">User name is required</span></label>
                   <input
                     type="text"
                     id="newUserName"
                     class="form-control"
                     placeholder="Enter Name"
+                    value="Pratap"
                   />
                 </div>
               </div>
               <div class="row">
                 <div class="col mb-3">
-                  <label for="nameWithTitle" class="form-label">Password <span hidden>Password is required</span></label>
+                  <label for="nameWithTitle" class="form-label">Password &nbsp;&nbsp; <span hidden id="NewUserpasswordValidation" class="validationNewUser">Password is required</span></label>
                   <input
                     type="text"
                     id="newUserPassword"
                     class="form-control"
                     placeholder="Password..."
+                    onkeyup="sanitizePassword()"
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Location</label>
+                  <input
+                    type="text"
+                    id="newUserLocation"
+                    class="form-control"
+                    placeholder="Location..."
                   />
                 </div>
               </div>
               <div class="row g-2">
                 <div class="col mb-0">
-                  <label for="emailWithTitle" class="form-label">Email <span hidden>Email address is required</span></label>
+                  <label for="emailWithTitle" class="form-label">Email &nbsp;&nbsp; <span hidden class="validationNewUser" id="newUserEmailValidation">Email address is required</span></label>
                   <input
-                    type="text"
+                    type="email"
                     id="newUserEmail"
                     class="form-control"
                     placeholder="xxxx@xxx.xx"
+                    value="pratap.medisetty@gsspec.com"
                   />
                 </div>
                 <div class="col mb-0">
-                  <label for="dobWithTitle" class="form-label">Role <span hidden>Role is required</span></label>
+                  <label for="dobWithTitle" class="form-label">Role &nbsp;&nbsp; <span hidden class="validationNewUser" id="newUserRoleValidation">Role is required</span></label>
                   <div class="row mb-3 mx-1">
                       <select class="form-select" id="newUserRole" required>
-                        <option selected="" disabled>Select Role</option>
-                        <option value="HR">HR</option>
+                        <option>Select Role</option>
+                        <option value="HR" selected>HR</option>
                         <option value="Interviewer">Interviewer</option>
                       </select>
                   </div>
@@ -178,85 +192,12 @@
         </table>
     </div>
 </div>
-
-
 <style>
     tbody tr:hover {
         cursor: pointer;
     }
+    .validationNewUser{
+      color: red;
+    }
 </style>
-
-<script>
-
-$(document).ready(function() {
-    $.noConflict();
-    $('#candidates-table').DataTable({
-        "order": [],
-        "ordering": false,
-        language: { search: "",searchPlaceholder: "Search..." } ,
-        pagingType: 'simple_numbers'
-    });
-});
-
-
-function addNewUser(){
-
-  var newUserName_ = document.getElementById('')
-  var newUserPassword_
-  var newUserEmail_
-  var newUserRole_
-
-
-}
-
-
-function openNewUserModal() {
-  
-  var passwordInpt = document.getElementById('newUserPassword')
-
-  if(passwordInpt.value == ""){
-    document.getElementById('newUserPassword').value = generateStrongPassword()
-  }
-
-
-
-  const modalElement = document.getElementById('AddNewUserModal');
-  const modal = new bootstrap.Modal(modalElement);
-  modal.show();
-}
-
-
-
-
-function generateStrongPassword() {
-  length = 12
-  const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const lowerCase = "abcdefghijklmnopqrstuvwxyz";
-  const numbers = "0123456789";
-  const symbols = "!@#$%^&*()_+[]{}|;:,.<>?";
-
-  const allCharacters = upperCase + lowerCase + numbers + symbols;
-
-  let password = "";
-  
-  // Ensure the password contains at least one character from each set
-  password += upperCase[Math.floor(Math.random() * upperCase.length)];
-  password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
-  password += numbers[Math.floor(Math.random() * numbers.length)];
-  password += symbols[Math.floor(Math.random() * symbols.length)];
-
-  // Fill the rest of the password length with random characters
-  for (let i = password.length; i < length; i++) {
-      password += allCharacters[Math.floor(Math.random() * allCharacters.length)];
-  }
-
-  // Shuffle the password to avoid a predictable pattern
-  password = password.split('').sort(() => Math.random() - 0.5).join('');
-
-  return password;
-}
-
-
-</script>
-
-
+<script src="{% static 'js/userLst.js' %}"></script>

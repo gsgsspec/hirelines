@@ -18,6 +18,7 @@ var tempPaper
 var selectedPaper = {}
 var JdStatus = ''
 var nextStatus
+var totalinterviwersLst
 // var createTestCard = true
 
 
@@ -40,6 +41,7 @@ function workFlowData(){
         if (res.statusCode == 0){
             if(res.data){
                 createTest(res.data['workFlowData'],'edit')
+                totalinterviwersLst = res.data['selectedJDInterviewers']
                 JdStatus = res.data['jdStatus']
                 changeStatusInHtml(res.data['jdStatus'])
                 // deleteTestValidation(res.data['jdStatus'])
@@ -69,36 +71,53 @@ function changeStatusInHtml(changeStatus){
 
 function openPublishJd(){
 
-    console.log('calling',JdStatus);
+    if(totalinterviwersLst != 0){
 
-    var totalTestLst = Object.keys(testsList).length
+        var totalTestLst = Object.keys(testsList).length
 
-    if(totalTestLst == 0){
-        $('#jdPublishValidators').modal('show')
-    }
+        if(totalTestLst == 0){
+            $('#jdPublishValidators').modal('show')
+        }
+        else{
+
+            if(JdStatus == 'D'){
+                changeStatusInHtml('D')
+                nextStatus = 'A'
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one','margin-top-adjust_two');
+                document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_three');
+                document.getElementById('conformationPublish').innerHTML = "One's Publish you can not delete any of the tests"
+                document.getElementById('publishJdConform').innerText = 'Publish'
+                $('#JdPublishConformation').modal('show')
+            }
+            
+            if(JdStatus == 'A'){
+                changeStatusInHtml('A')
+                nextStatus = 'P'
+                document.getElementById('conformationPublish').innerHTML = "Do you want to stop registering candidates to this JD"
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one','margin-top-adjust_three');
+                document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_two');
     
-    if(JdStatus == 'D'){
-        changeStatusInHtml('D')
-        nextStatus = 'A'
-        document.getElementById('conformationPublish').innerHTML = "One's Publish you can not delete any of the tests"
-        document.getElementById('publishJdConform').innerText = 'Publish'
-        $('#JdPublishConformation').modal('show')
-    }
+                document.getElementById('publishJdConform').innerText = 'Confirm'
+                $('#JdPublishConformation').modal('show')
+            }
     
-    if(JdStatus == 'A'){
-        changeStatusInHtml('A')
-        nextStatus = 'P'
-        document.getElementById('conformationPublish').innerHTML = "Do you want to stop registering candidates to this JD"
-        document.getElementById('publishJdConform').innerText = 'Confirm'
-        $('#JdPublishConformation').modal('show')
-    }
+            if(JdStatus == 'P'){ // Paused JD
+                changeStatusInHtml('P')
+                nextStatus = 'A'
+                document.getElementById('conformationPublish').innerHTML = "Do you want to publish this JD again"
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_two','margin-top-adjust_three');
+                document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_one');
+                document.getElementById('publishJdConform').innerText = 'Publish'
+                $('#JdPublishConformation').modal('show')
+            }
 
-    if(JdStatus == 'P'){ // Paused JD
-        changeStatusInHtml('P')
-        nextStatus = 'A'
-        document.getElementById('conformationPublish').innerHTML = "Do you want to publish this JD again"
-        document.getElementById('publishJdConform').innerText = 'Publish'
-        $('#JdPublishConformation').modal('show')
+        }
+
+    }
+    else{
+        
+        $('#InterviewValidationModal').modal('show')
+        
     }
 
 }
@@ -1619,6 +1638,8 @@ function saveInterviewers(){
 
         if(selectedInterviewersList.length > 0){
 
+            totalinterviwersLst = selectedInterviewersList
+
             dataObj = {
                 'interviwersLst' : selectedInterviewersList,
                 'jdId'           : jdId
@@ -1633,6 +1654,7 @@ function saveInterviewers(){
             $.post(CONFIG['portal'] + "/api/save-interviewers-lst", final_data, function (res) {
 
                 if(res.statusCode == 0){
+                    totalinterviwersLst = res.data
                     $('#InterviewPanel').modal('hide');
                 }
 
@@ -1720,6 +1742,9 @@ function closeModals(){
     $('#publishValidationModal').modal('hide')
 }
 
+function openInterviewpPanel(){
+    $('#InterviewPanel').modal('show')
+}
 
 // only allow when JD status "D"
 // function deleteTestValidation(JdStatus__){

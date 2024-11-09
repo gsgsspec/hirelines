@@ -276,7 +276,7 @@ function remarks() {
   }
 
 
-  $.post(CONFIG['domain'] + "/api/interview-remarks", final_data, function (res) {
+  $.post(CONFIG['portal'] + "/api/interview-remarks", final_data, function (res) {
 
   })
 

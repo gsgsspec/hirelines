@@ -161,6 +161,40 @@ def candidatesPage(request):
         raise
 
 
+
+def reportsPage(request):
+
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    # if checkCompanyTrailPeriod(request.user):
+    #     return redirect('/trial-expired')
+
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+
+        job_descriptions = JobDesc.objects.all()
+    
+        if menuItemObjList: 
+            return render(request, "portal_index.html", {"template_name": 'reports.html','menuItemList': menuItemList ,"job_descriptions":job_descriptions})
+    
+        else:
+            return redirect('../')
+
+    except Exception as e:
+        raise
+
+
 def jobDescription(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
@@ -211,6 +245,7 @@ def Addjobdescription(request):
     except Exception as e:
         raise
 
+
 def update_jobdescription(request,update_jd_id):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
@@ -233,6 +268,8 @@ def update_jobdescription(request,update_jd_id):
         return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details})
     except Exception as e:
         raise
+
+
 
 # this function render's inside html pages
 def jobDescriptionSetUp(request,jd_id): 
@@ -586,19 +623,12 @@ def userLst(request):
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
     try:
-
         user_mail = request.user
         user_data = auth_user(user_mail)
-
         companyId = getCompanyId(user_mail)
-
         user_role = user_data.role
-
         menuItemList = get_functions_service(user_role)
-
         usersData = companyUserLst(companyId)
-        print('======================')
-        print('usersData :: ',usersData)
 
         return render(request, "portal_index.html", {"template_name": 'usersLst.html','menuItemList':menuItemList
                                                      , 'usersDataLst':usersData})

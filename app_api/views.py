@@ -17,12 +17,12 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, \
-        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, \
+        jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -681,7 +681,7 @@ def deleteTestinJs(request):
     return JsonResponse(response)
 
 @api_view(['POST'])
-def saveInterviewersForJs(request):
+def saveInterviewersForJd(request):
     response = {
         'data': None,
         'error': None,
@@ -691,12 +691,12 @@ def saveInterviewersForJs(request):
         if request.method == "POST":
             user = auth_user(request.user)
             dataObjs = json.loads(request.POST.get('data'))
-            saveInterviewersService(user, dataObjs)
-            
+            interviwersData = saveInterviewersService(user, dataObjs)
+            response['data'] = interviwersData
             response['statusCode'] = 0
 
     except Exception as e:
-        response['data'] = 'Error in Deleting Test from workflow'
+        response['data'] = 'Error in saving interviewers'
         response['error'] = str(e)
         raise
     return JsonResponse(response)
@@ -943,6 +943,28 @@ def getUserName(request):
     user = auth_user(request.user)
     return JsonResponse({"name": user.name})
 
+
+@api_view(['POST'])
+def addNewUsers(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        user = auth_user(request.user)
+        dataObjs = dataObjs = json.loads(request.POST.get('data'))
+        userData = addNewUserService(user.companyid,dataObjs)
+        response['data'] = userData
+        response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Creating New User'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
+
+
     
 @api_view(['POST'])
 @authentication_classes([])
@@ -1014,4 +1036,26 @@ def updateHirelinesData(request):
         response['data'] = 'Error in getUpdateCompanyCreditsView'
         response['error'] = str(e)
         raise
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def interviewRemarkSave(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            res = interviewRemarkSaveDB(dataObjs)
+
+            response['data'] = res
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in save interview remark view'
+        response['error'] = str(e)
     return JsonResponse(response)

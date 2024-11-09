@@ -192,13 +192,13 @@
           {% for asgn_interviewer in jd_details.selectedInterviewerLst %}
               <div class="form-group row interview-panel align-items-center" id="panel_{{ forloop.counter }}">
                   {% if forloop.first %}
-                      <div class="col-xl-3 col-form-label">Interview Panel</div>
+                      <div class="col-xl-3 col-form-label">Add Interviewers</div>
                   {% else %}
                       <div class="col-xl-3 col-form-label"></div>
                   {% endif %}
                   <div class="col-xl-6">
                       <select class="custom-select custom-select-sm interviewer-select form-select my-2" required="">
-                          <option value="" disabled>Select Role</option>
+                          <option value="" disabled>Select Interviewer</option>
                           {% for interviewer in jd_details.interviewes_lst  %}
                               {% if asgn_interviewer.id == interviewer.id %}
                               <option value="{{ interviewer.id }}" selected>{{ interviewer.name }}</option>
@@ -264,7 +264,7 @@
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title" id="conformationPublish">One's Publish you can not edit or delete the any test</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -3.25rem!important;"></button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="publishConformationCloseBtn"></button>
               </div>
               <div class="modal-body" style="padding: 0.5rem;"></div>
               <div class="modal-footer">
@@ -311,13 +311,13 @@
       <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
           <div class="modal-content">
               <div class="modal-header">
-                  <h5 class="modal-title" id="InterviewValidators">Can't add Interview as a first Test</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2.25rem !important;"></button>
+                  <h5 class="modal-title" id="InterviewValidators">Please create interview panel</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -1.25rem !important;"></button>
               </div>
               <div class="modal-body" style="padding: 0.5rem;"></div>
               <div class="modal-footer">
                   <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> -->
-                  <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal">
+                  <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal" onclick="openInterviewpPanel()">
                       Close
                   </button>
               </div>
@@ -764,7 +764,15 @@
 .cust-add-interview-container{
   width: 101%;
 }
-
+.margin-top-adjust_one {
+    margin-top: -1.25rem !important;
+}
+.margin-top-adjust_two {
+    margin-top: -3.25rem !important;
+}
+.margin-top-adjust_three {
+    margin-top: -3.25rem !important;
+}
 </style>
 <script src="/static/config/config.js"></script>
 <script src="{% static 'js/jd_setup.js' %}"></script>

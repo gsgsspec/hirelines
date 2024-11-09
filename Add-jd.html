@@ -1,0 +1,193 @@
+
+<div class="content-wrapper">
+  <!-- Content -->
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+      <div class="col-xxl">
+        <div class="container-center">
+          <div class="card mb-4 w-75">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h5 class="mb-0">Add Job Description</h5>
+            </div>
+            <div class="card-body">
+              <form id="addJD">
+                
+                <!-- Search Job Description with Suggestions -->
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="searchJobDescription">Search JD</label>
+                  <div class="col-sm-9 position-relative">
+                    <input type="text" id="searchJobDescription" class="form-control" placeholder="Search Job Description" autocomplete="off">
+                    <div class="prompt-message text-muted" id="promptMessage" style="font-size: 12px; margin-top: 5px;">Please enter at least 3 characters to search for a JD requirement.</div>
+                    <div class="suggestions-box border" id="suggestionsBox" style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;"></div>
+                  </div>
+                </div>
+
+                <!-- Job Description Dropdown -->
+                <!-- <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label">Job Descriptions</label>
+                  <div class="col-sm-9">
+                    <select class="form-select" id="jdLibrary" required onchange="fillJdData()">
+                      <option value="0" disabled selected>Please Select Job Description</option>
+                    </select>
+                  </div>
+                </div> -->
+
+                <!-- Your Existing Form Fields -->
+                <div class="row mb-3 container-center">
+                  <label for="JobDescription" class="col-sm-2 col-form-label">Description</label>
+                  <div class="col-sm-9 ">
+                    <textarea class="form-control" id="JobDescription" rows="3"></textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="jdRole">Role</label>
+                  <div class="col-sm-9">
+                    <select class="form-select" id="jdRole" aria-label="Default select example">
+                      <option value="0"></option>
+                      <option value="Development">Development</option>
+                      <option value="Testing">Testing</option>
+                      <option value="Deployment">Deployment</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="min_experince" class="col-sm-2 col-form-label">Experiences</label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input type="number" class="form-control w-25 mr-2" id="min_experince" placeholder="" style="margin-right: 1rem;" />
+                    <input type="number" class="form-control w-25" id="max_experince" placeholder="" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Budget <small>(LPA)</small></label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input type="number" class="form-control w-25 mr-2" id="jdBudget" placeholder="" style="margin-right: 1rem;" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">No of Positions</label>
+                  <div style="display: flex; justify-content: start;" class="col-sm-9">
+                    <input type="number" class="form-control w-25 mr-2" id="jdNoPositions" placeholder="Members count.." style="margin-right: 1rem;" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="jdWorkLocation">Work Location</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="jdWorkLocation" placeholder="" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label for="jdSkills" class="col-sm-2 col-form-label">Skill Set</label>
+                  <div class="col-sm-9">
+                    <textarea class="form-control" id="jdSkills" rows="3"></textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Any Special Notes <small>(optional)</small></label>
+                  <div class="col-sm-9">
+                    <textarea id="JdanySpecialNotes" class="form-control" placeholder="Any Special instruction" rows="3"></textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center">
+                  <div class="col-sm-9 row align-items-center px-0">
+                    <div class="px-0" hidden id="validater">Job Description added Successfully</div>
+                  </div>
+                  <div class="col-sm-2 row justify-content-end px-0 my-0">
+                    <button type="submit" id="submitJd" class="btn btn-primary">Done</button>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #suggestionsBox{
+    width: 96% !important;
+    border-radius: 7px;
+    margin-top: 5px;
+  }
+</style>
+
+<!-- Include JavaScript for Search and Suggestions -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const jobDescriptions = [
+        "Python Developer",
+        "Python Developer - 1",
+        "Python Developer - 2",
+        "Python Developer - 3",
+        "Python Developer - 4",
+        "Data Scientist",
+        "Frontend Developer",
+        "Backend Engineer",
+        "Full Stack Developer",
+        "Machine Learning Engineer",
+        "DevOps Engineer",
+        "UI/UX Designer"
+    ];  // Replace with dynamic data if needed
+
+    const searchInput = document.getElementById('searchJobDescription');
+    const suggestionsBox = document.getElementById('suggestionsBox');
+    const promptMessage = document.getElementById('promptMessage');
+
+    function showSuggestions() {
+        const query = searchInput.value.trim().toLowerCase();
+
+        // Display prompt message if less than 3 characters are entered
+        if (query.length < 3) {
+            promptMessage.style.display = "block";
+            suggestionsBox.style.display = "none";
+            return;
+        }
+
+        promptMessage.style.display = "none";
+
+        // Filter job descriptions based on the query
+        const filteredDescriptions = jobDescriptions.filter(jd =>
+            jd.toLowerCase().includes(query)
+        ).slice(0, 4); // Limit to 4 suggestions
+
+        // Show suggestions or "No job descriptions found" if none match
+        if (filteredDescriptions.length > 0) {
+            suggestionsBox.innerHTML = filteredDescriptions.map(jd =>
+                `<div class="suggestion-item p-2" style="cursor: pointer;">${jd}</div>`
+            ).join('');
+        } else {
+            suggestionsBox.innerHTML = `<div class="p-2 text-muted">No job descriptions found</div>`;
+        }
+        suggestionsBox.style.display = "block";
+    }
+
+    // Trigger suggestions on input and focus
+    searchInput.addEventListener('input', showSuggestions);
+    searchInput.addEventListener('focus', showSuggestions);
+
+    // Hide suggestions on outside click
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+            suggestionsBox.style.display = "none";
+        }
+    });
+
+    // Add click event to select a suggestion
+    suggestionsBox.addEventListener('click', function(e) {
+        if (e.target.classList.contains('suggestion-item')) {
+            searchInput.value = e.target.textContent;
+            suggestionsBox.style.display = "none";
+        }
+    });
+});
+</script>

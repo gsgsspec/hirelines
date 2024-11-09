@@ -374,7 +374,7 @@ def getJdCandidatesData(jid, userid):
             candidate_info = {
                 "id": candidate.id,
                 "cid": candidate.candidateid,
-                "name": candidate.firstname,
+                "name": f"{candidate.firstname} {candidate.lastname}",
                 "email": candidate.email,
                 "registrations": {"S": [], "E": [], "I": []},
             }
@@ -731,14 +731,15 @@ def workFlowDataService(data, cmpyId):
         jdData = list(JobDesc.objects.filter(id=data).values())
 
         JdStatus = None
+        selectedJdInterviewers = ''
         if len(jdData) > 0:
-            JdStatus = jdData[0]["status"]
+            JdStatus = jdData[0]['status']
+            
+            if jdData[0]['interviewers']:
+                selectedJdInterviewers = ast.literal_eval(jdData[0]['interviewers'])
 
-        return {
-            "workFlowData": list(papersDetails),
-            "jdInterviewers": interviewersLst,
-            "jdStatus": JdStatus,
-        }
+            
+        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus, 'selectedJDInterviewers':selectedJdInterviewers}
     except Exception as e:
         raise
 
@@ -1095,6 +1096,7 @@ def getCandidateInterviewData(scd_id):
             "location": job_desc.location,
             "skills": job_desc.skillset,
             "notes": job_desc.skillnotes,
+            'instructions':call_details.instructions
         }
 
         int_paper_title = (
@@ -1236,6 +1238,7 @@ def interviewCompletionService(dataObjs, user_id):
             "interviewed_by": interviewed_by,
             "to_mail": to_mail,
             "paper_id": call_sch_details.paper_id,
+            'int_notes':call_sch_details.intnotes
         }
 
         acert_domain = getg()["DOMAIN"]["acert"]
@@ -1696,6 +1699,28 @@ def notifyCandidateService(dataObjs):
 
     except Exception as e:
         print(str(e))
+        raise
+
+
+def addNewUserService(company_id, user_data):
+    try:
+        print('-------------------------')
+        print(company_id, user_data)
+        userFind = User.objects.filter(email = user_data['userEmail']).last()
+        if userFind:
+            return {'userAlreadyExisted':'Y'}
+        else:
+            save_user = User(
+                companyid = company_id,
+                name = user_data['userName'],
+                email = user_data['userEmail'],
+                password = user_data['userPswd'],
+                role = user_data['userRole'],
+                location = user_data['newUserLocation'],
+                status = 'A'
+            )
+            save_user.save()
+    except Exception as e:
         raise
 
 
