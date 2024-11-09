@@ -566,7 +566,7 @@ def generate_random_password(length=15):
 
 def getCompanyJdData(cid):
     try:
-        company_jds = JobDesc.objects.filter(companyid=cid, status="O")
+        company_jds = JobDesc.objects.filter(companyid=cid, status="A")
 
         jds_list = []
 
@@ -1676,6 +1676,7 @@ def notifyCandidateService(dataObjs):
         candidate.save()
 
     except Exception as e:
+        print(str(e))
         raise
 
 
