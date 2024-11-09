@@ -425,7 +425,7 @@ def registerCandidate(request):
                 check_candidate_registered = Candidate.objects.filter(companyid = job_description.companyid,
                     jobid = job_description.id,
                     email = dataObjs["email"])
-            
+            print("check_candidate_registered",check_candidate_registered)
             if check_candidate_registered:
                 if job_description.status == "A":
                     workflow_data = Workflow.objects.filter(jobid=jd_id,order=1).last()
