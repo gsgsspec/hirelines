@@ -324,8 +324,6 @@ function AppendSectionsAndQuestions(data, TestCardId) {
 }
 
 
-
-
 function selectLibrary(element,libraryId,SelectedTestId){
 
     var currentLibList = instialLibrarySelection[SelectedTestId]
@@ -1698,8 +1696,8 @@ function publishJd(){
                         showSuccessMessage('JD Stopped Successfully');
                     }
 
-                    deleteTestValidation(JdStatus)
-
+                    // deleteTestValidation(JdStatus)
+ 
                     // if(JdStatus == 'A'){
                     //     showFailureMessage('JD ') 
                     // }
