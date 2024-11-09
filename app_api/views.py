@@ -426,7 +426,7 @@ def registerCandidate(request):
                     jobid = job_description.id,
                     email = dataObjs["email"])
 
-            if (not check_candidate_registered) and (check_candidate_registered == "N"):
+            if (not check_candidate_registered) or (check_candidate_registered == "N"):
                 if job_description.status == "A":
                     workflow_data = Workflow.objects.filter(jobid=jd_id,order=1).last()
                     if workflow_data:
