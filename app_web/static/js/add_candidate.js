@@ -31,7 +31,6 @@ document.getElementById("save-data").onclick = function () {
                     position: 'center',
                     icon: 'error',
                     title: 'Insufficient Credits',
-                    text: 'Please try again after some time',
                     showConfirmButton: true,
                     confirmButtonText: 'OK'
                 })
@@ -46,7 +45,6 @@ document.getElementById("save-data").onclick = function () {
                     position: 'center',
                     icon: 'error',
                     title: 'Candidate already registered for this jd',
-                    text: 'Please try again after some time',
                     showConfirmButton: true,
                     confirmButtonText: 'OK'
                 })
