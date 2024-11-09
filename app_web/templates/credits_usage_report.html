@@ -7,7 +7,7 @@
             </div>
             <div>
                 <div class="table-responsive text-nowrap table-cls mb-2">
-                    <table class="table table-bordered" id="credits_usage_table">
+                    <table class="table table-bordered" id="credits_usage_table" style="cursor: default;">
                         <thead>
                             <tr>
                                 <th>Date time</th>
@@ -17,9 +17,9 @@
                                 <th>JD HR</th>
                             </tr>
                         </thead>
-                        <tbody class="table-border-bottom-0">
+                        <tbody class="table-border-bottom-0"  style="cursor: default;">
                             {% for usage in credits_usage %}
-                            <tr onclick="window.location.href='/candidate-data/{{candidate.id}}'">
+                            <tr>
                                 <td>{{ usage.transdatetime }}</td>
                                 <td>{{ usage.transtype }}</td>
                                 <td>{{ usage.paper_title }}</td>
