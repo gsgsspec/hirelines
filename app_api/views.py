@@ -416,11 +416,10 @@ def registerCandidate(request):
             dataObjs = json.loads(request.body)
             #decrypt encjdid
             jd_id = decrypt_code(dataObjs["encjdid"])
-            #Filter the first workflow obj to attend first paper $ order functionality not added $
             job_description = JobDesc.objects.get(id=jd_id)
             app_config = getConfig()['APP_CONFIG']
             register_candidate_once_per_jd = app_config["register_candidate_once_per_jd"]
-            if register_candidate_once_per_jd == "Y":
+            if register_candidate_once_per_jd == "N":
                 check_candidate_registered = "N"
             else:
                 check_candidate_registered = Candidate.objects.filter(companyid = job_description.companyid,
@@ -448,7 +447,6 @@ def registerCandidate(request):
         response['data'] = 'Error in registerCandidate'
         response['error'] = str(err)
         raise
-    print("response",response)
     return JsonResponse(response)
 
 

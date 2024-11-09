@@ -1,21 +1,24 @@
-<h2 class="text-center">Job Descriptions</h2>
-
-<div class="row mb-5">
-    {% for jd in job_descriptions %}
-    <div class="col-md-6 col-lg-4 pointer" onclick="window.location.href='jd/{{jd.id}}'">
-      <div class="card mb-3 h-100">
-        <div class="card-body">
-            <div class="card-badge">
-                {% if jd.status == 'O'  %}
-                    <span class="badge bg-label-success">OPEN</span>
-                {% elif jd.status == 'C' %}
-                    <span class="badge bg-label-danger">CLOSED</span>
-                {% endif %}
+{% load static %}
+<div class="container-center">
+    <div class="col-12">
+        <div class="card mb-4" style="background-color:#f9f5f5;">
+            <div class="card-title-table">
+                <h4 class="card-header">Reports</h4>
             </div>
-            <h5 class="card-title">{{ jd.title }}</h5>
-            <p class="card-text">{{ jd.description }}</p>
+            <div class="p-3">
+                <div class="row" style="padding-bottom: 0% !important;justify-content: normal;">
+                    <div class="col-xl-4 col-sm-6 mb-4">
+                        <div class="card cursor-pointer" onclick="window.location.href='/credits-usage-report'">
+                            <div class="card-header p-3">
+                                <div class="text-center">
+                                    <h5 class="mb-0"><i class="fas fa-coins fa-lg"></i>&ensp;Credits Usage</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    {% endfor %}
 </div>
+

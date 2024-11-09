@@ -21,6 +21,14 @@ const_candidate_status = {
     "I": 'Interviewed',
 }
 
+
+const_paper_types = {
+    "S": 'Screening',
+    "E": 'Coding',
+    "I": 'Interview',
+}
+
+
 hirelines_domain = getConfig()['DOMAIN']['hirelines']
 
 hirelines_integration_script = """<!-- hirelines registration script -->

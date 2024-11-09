@@ -12,6 +12,7 @@ var menuItemsUrls = {
     'interviews': ['/interviews'],
     'evaluation': ['/evaluation'],
     'feedback': ['/feedbacks', '/interviewer-feedback'],
+    'reports': ['/reports', '/credits-usage'],
     'logout': ['/']
 };
 

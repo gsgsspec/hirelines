@@ -1,0 +1,56 @@
+{% load static %}
+<div class="container-center">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-title-table">
+                <h4 class="card-header">Credits Usage</h4>
+            </div>
+            <div>
+                <div class="table-responsive text-nowrap table-cls mb-2">
+                    <table class="table table-bordered" id="credits_usage_table">
+                        <thead>
+                            <tr>
+                                <th>Date time</th>
+                                <th>Test</th>
+                                <th>Paper Title</th>
+                                <th>Points Deducted</th>
+                                <th>JD HR</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                            {% for usage in credits_usage %}
+                            <tr onclick="window.location.href='/candidate-data/{{candidate.id}}'">
+                                <td>{{ usage.transdatetime }}</td>
+                                <td>{{ usage.transtype }}</td>
+                                <td>{{ usage.paper_title }}</td>
+                                <td>{{ usage.points }}</td>
+                                <td>{{ usage.user }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // $.noConflict();
+        // $('#credits_usage_table').DataTable({
+        //     "order": [], // Disable initial sorting
+        //     "ordering": true, // Enable ordering globally
+        //     "columnDefs": [
+        //         { "orderable": false, "targets": 0 }, // Disable ordering on all columns by default
+        //         { "orderable": true, "targets": '_all' } // Enable ordering only on the first column (index 0)
+        //     ],
+        //     language: {
+        //         search: "",
+        //         searchPlaceholder: "Search..."
+        //     },
+        //     pagingType: 'simple_numbers'
+        // });
+
+    });
+</script>

@@ -50,7 +50,7 @@ from app_api.functions.database import (
 )
 from app_api.functions.mailing import sendEmail
 from django.forms.models import model_to_dict
-from .constants import const_candidate_status
+from .constants import const_candidate_status, const_paper_types
 
 
 def addCompanyDataService(dataObjs):
@@ -120,7 +120,7 @@ def registerUserService(dataObjs):
             )
             company.save()
 
-            free_trail_data = getConfig()["FREETRAIL"]
+            free_trail_data = getg()["FREETRAIL"]
             company_account = Account(
                 companyid=company.id,
                 creditamount=free_trail_data["registration_grace_credits"],
@@ -132,19 +132,19 @@ def registerUserService(dataObjs):
             CompanyCredits(
                 companyid=company.id,
                 transtype="S",
-                credits = free_trail_data["screening_credits_charges"]
+                credits=free_trail_data["screening_credits_charges"],
             ).save()
-            
+
             CompanyCredits(
                 companyid=company.id,
                 transtype="E",
-                credits = free_trail_data["coding_credits_charges"]
+                credits=free_trail_data["coding_credits_charges"],
             ).save()
-            
+
             CompanyCredits(
                 companyid=company.id,
                 transtype="I",
-                credits = free_trail_data["interview_credits_charges"]
+                credits=free_trail_data["interview_credits_charges"],
             ).save()
 
             user = User(
@@ -163,23 +163,25 @@ def registerUserService(dataObjs):
             default_branding = Branding.objects.filter(companyid=0).last()
 
             company_branding = Branding(
-                companyid=company.id,
-                content= default_branding.content,
-                status="A"
+                companyid=company.id, content=default_branding.content, status="A"
             )
-            
+
             company_branding.save()
 
-            acert_domain = getConfig()["DOMAIN"]["acert"]
+            acert_domain = getg()["DOMAIN"]["acert"]
             endpoint = "/api/add-company"
 
             url = urljoin(acert_domain, endpoint)
 
-            company_data = {"id": company.id, "company_name": company.name, 'brand_content': company_branding.content}
+            company_data = {
+                "id": company.id,
+                "company_name": company.name,
+                "brand_content": company_branding.content,
+            }
 
             send_company_data = requests.post(url, json=company_data)
 
-            hirelines_domain = getConfig()["DOMAIN"]["hirelines"]
+            hirelines_domain = getg()["DOMAIN"]["hirelines"]
             mail_data = {
                 "name": user.name,
                 "email": user.email,
@@ -247,11 +249,11 @@ def addJdServices(addjdData, companyID, hrEmail):
 
 def companyUserLst(companyID):
     try:
-        print('===============')
-        print(':: ',companyID)
+        print("===============")
+        print(":: ", companyID)
         usersDataLst = []
-        userLst = User.objects.filter(companyid = companyID)
-        print('userLst :: ',userLst)
+        userLst = User.objects.filter(companyid=companyID)
+        print("userLst :: ", userLst)
         for user in userLst:
             userData = model_to_dict(user)
             usersDataLst.append(userData)
@@ -315,7 +317,7 @@ def candidateRegistrationService(dataObjs):
 
         # Acert API
 
-        acert_domain = getConfig()["DOMAIN"]["acert"]
+        acert_domain = getg()["DOMAIN"]["acert"]
         endpoint = "/api/hirelines-add-candidate"
 
         url = urljoin(acert_domain, endpoint)
@@ -530,7 +532,7 @@ def checkCompanyTrailPeriod(user_mail):
 
             company = Company.objects.get(id=user.companyid)
 
-            trial_days = getConfig()["FREETRAIL"]["days"]
+            trial_days = getg()["FREETRAIL"]["days"]
 
             if company.freetrail == "I" and company.status == "T":
 
@@ -725,14 +727,18 @@ def workFlowDataService(data, cmpyId):
             ).last()
             if brulesDetails:
                 test["promot"] = brulesDetails.passscore
-        
-        jdData = list(JobDesc.objects.filter(id = data).values())
+
+        jdData = list(JobDesc.objects.filter(id=data).values())
 
         JdStatus = None
         if len(jdData) > 0:
-            JdStatus = jdData[0]['status']
-            
-        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus}
+            JdStatus = jdData[0]["status"]
+
+        return {
+            "workFlowData": list(papersDetails),
+            "jdInterviewers": interviewersLst,
+            "jdStatus": JdStatus,
+        }
     except Exception as e:
         raise
 
@@ -794,7 +800,7 @@ def getCallScheduleDetails(cid):
 def interviewSchedulingService(aplid, int_id):
     try:
 
-        call_scheduling_constraints = getConfig()["CALL_SCHEDULING_CONSTRAINTS"]
+        call_scheduling_constraints = getg()["CALL_SCHEDULING_CONSTRAINTS"]
 
         WORK_HOURS = int(call_scheduling_constraints["work_hours"])
         STARTING_HOUR = int(call_scheduling_constraints["starting_hour"])
@@ -1055,7 +1061,7 @@ def getCandidateInterviewData(scd_id):
             "coding_data": None,
         }
 
-        acert_domain = getConfig()["DOMAIN"]["acert"]
+        acert_domain = getg()["DOMAIN"]["acert"]
         endpoint = "/api/candidate-interviewdata"
 
         url = urljoin(acert_domain, endpoint)
@@ -1200,7 +1206,7 @@ def interviewCompletionService(dataObjs, user_id):
             feedback.save()
 
         candidate = Candidate.objects.get(id=call_sch_details.candidateid)
-        candidate.status = 'I'
+        candidate.status = "I"
         candidate.save()
         jd = JobDesc.objects.get(id=candidate.jobid)
         interviewers_data = ast.literal_eval(jd.interviewers)
@@ -1232,7 +1238,7 @@ def interviewCompletionService(dataObjs, user_id):
             "paper_id": call_sch_details.paper_id,
         }
 
-        acert_domain = getConfig()["DOMAIN"]["acert"]
+        acert_domain = getg()["DOMAIN"]["acert"]
         endpoint = "/api/interview-completion"
 
         url = urljoin(acert_domain, endpoint)
@@ -1431,7 +1437,7 @@ def getCandidateWorkflowData(cid):
 
 def generateCandidateReport(cid):
     try:
-        acert_domain = getConfig()["DOMAIN"]["acert"]
+        acert_domain = getg()["DOMAIN"]["acert"]
         endpoint = "/api/hireline-candidate-report"
 
         url = urljoin(acert_domain, endpoint)
@@ -1589,12 +1595,16 @@ def jdPublishService(dataObjs, companyId):
 
             for test in worflowData:
                 if test.paperid == None:
-                    return {"noPaper": "Y", "paperTitle": test.papertitle,'jdStatus_':JdData.status}
+                    return {
+                        "noPaper": "Y",
+                        "paperTitle": test.papertitle,
+                        "jdStatus_": JdData.status,
+                    }
 
             if JdData:
-                JdData.status = dataObjs['nextStatus_']
+                JdData.status = dataObjs["nextStatus_"]
                 JdData.save()
-                    
+
             latestJD = JobDesc.objects.filter(id=dataObjs["jobDescriptionId"]).last()
 
             orderCounter = 1
@@ -1603,12 +1613,14 @@ def jdPublishService(dataObjs, companyId):
                 test.order = orderCounter
                 orderCounter += 1
                 tempDct = model_to_dict(test)
-                brulesData = Brules.objects.filter(companyid = companyId, workflowid = test.id).last()
+                brulesData = Brules.objects.filter(
+                    companyid=companyId, workflowid=test.id
+                ).last()
 
                 if brulesData:
-                    tempDct['promotPercentage'] = brulesData.passscore
+                    tempDct["promotPercentage"] = brulesData.passscore
                 else:
-                    tempDct['promotPercentage'] = None
+                    tempDct["promotPercentage"] = None
 
                 paperData.append(tempDct)
                 test.save()
@@ -1616,10 +1628,17 @@ def jdPublishService(dataObjs, companyId):
             paperLst = paperData
             newPaperLst = []
             for paper in range(len(paperLst) - 1):  # Loop until the second-last item
-                tempLst = [ paperLst[paper],  paperLst[paper + 1] ]   # Create a list with two items
+                tempLst = [
+                    paperLst[paper],
+                    paperLst[paper + 1],
+                ]  # Create a list with two items
                 newPaperLst.append(tempLst)
-            
-            return {"companyid": companyId, "papersData": newPaperLst,'jdStatus_': latestJD.status}
+
+            return {
+                "companyid": companyId,
+                "papersData": newPaperLst,
+                "jdStatus_": latestJD.status,
+            }
 
     except Exception as e:
         raise
@@ -1644,7 +1663,7 @@ def notifyCandidateService(dataObjs):
             user = User.objects.get(id=call_details.hrid)
             hr_mail = user.email
 
-        acert_domain = getConfig()["DOMAIN"]["acert"]
+        acert_domain = getg()["DOMAIN"]["acert"]
         endpoint = "/api/candidate-notification"
 
         url = urljoin(acert_domain, endpoint)
@@ -1668,7 +1687,7 @@ def notifyCandidateService(dataObjs):
         registration = Registration.objects.get(
             candidateid=candidate.id, paperid=workflow.paperid
         )
-        
+
         registration.status = notify
         registration.save()
 
@@ -1701,5 +1720,33 @@ def deductCreditsService(company_id, paper_type, paper_id=None):
             transid=paper_id,
         )
         transaction.save()
+    except Exception as e:
+        raise
+
+
+def getCompanyCreditsUsageService(dataObjs):
+    try:
+        company_credits_usage = Credits.objects.filter(
+            companyid=dataObjs["cid"]
+        ).values().order_by("-id")
+        
+        usage_list = []
+        
+        for usage in company_credits_usage:
+            workflow = Workflow.objects.filter(
+                companyid=dataObjs["cid"],
+                papertype=usage["transtype"],
+                paperid=usage["transid"]
+            ).last()
+            user = User.objects.get(id=usage["user"]).name
+            usage_dict = dict(usage)
+            usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
+            usage_dict["transtype"] = const_paper_types.get(usage["transtype"], "")
+            usage_dict["paper_title"] = workflow.papertitle if workflow else "-"
+            usage_dict["user"] = user
+            
+            usage_list.append(usage_dict)
+            
+        return usage_list
     except Exception as e:
         raise

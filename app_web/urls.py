@@ -28,6 +28,9 @@ urlpatterns = [
     path('candidate-call/<str:room_id>', views.candidateSideMeetingPage),
     path('candidate-data/<int:cid>',views.candidateData),
     path('users',views.userLst),
+    path("reports",views.reportsPage),
+    path("credits-usage-report",views.creditsUsageReportPage),
+    
     # Company data page
     path("cmp-reg", views.homePage),
     
