@@ -436,7 +436,7 @@ def registerCandidate(request):
                         company_id = workflow_data.companyid
                         add_resp  =  addCandidateDB(dataObjs,company_id,workflow_data)
                         if add_resp == "insufficient_credits":
-                            response['data'] = 'Insufficient_credits'
+                            response['data'] = 'Insufficient Credits'
                         else:
                             response['data'] = 'Registration completed successfully'
                     else:
