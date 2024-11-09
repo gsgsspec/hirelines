@@ -245,6 +245,21 @@ def addJdServices(addjdData, companyID, hrEmail):
         raise
 
 
+def companyUserLst(companyID):
+    try:
+        print('===============')
+        print(':: ',companyID)
+        usersDataLst = []
+        userLst = User.objects.filter(companyid = companyID)
+        print('userLst :: ',userLst)
+        for user in userLst:
+            userData = model_to_dict(user)
+            usersDataLst.append(userData)
+        return usersDataLst
+    except Exception as e:
+        raise
+
+
 def updateJdServices(addjdData, companyID, hrEmail):
     try:
         saveUpdateJd(addjdData, companyID, hrEmail)

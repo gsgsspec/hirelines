@@ -42,6 +42,7 @@ function workFlowData(){
                 createTest(res.data['workFlowData'],'edit')
                 JdStatus = res.data['jdStatus']
                 changeStatusInHtml(res.data['jdStatus'])
+                // deleteTestValidation(res.data['jdStatus'])
             }
         }
 
@@ -68,32 +69,35 @@ function changeStatusInHtml(changeStatus){
 
 function openPublishJd(){
 
-    console.log('calling');
+    console.log('calling',JdStatus);
 
     var totalTestLst = Object.keys(testsList).length
 
     if(totalTestLst == 0){
         $('#jdPublishValidators').modal('show')
     }
-    console.log('::',JdStatus);
+    
     if(JdStatus == 'D'){
         changeStatusInHtml('D')
         nextStatus = 'A'
-        document.getElementById('conformationPublish').innerHTML = "One's Publish you can not edit or delete the any test"
+        document.getElementById('conformationPublish').innerHTML = "One's Publish you can not delete any of the tests"
+        document.getElementById('publishJdConform').innerText = 'Publish'
         $('#JdPublishConformation').modal('show')
     }
     
     if(JdStatus == 'A'){
         changeStatusInHtml('A')
         nextStatus = 'P'
-        document.getElementById('conformationPublish').innerHTML = "Do you want to stop registration to this JD"
+        document.getElementById('conformationPublish').innerHTML = "Do you want to stop registering candidates to this JD"
+        document.getElementById('publishJdConform').innerText = 'Confirm'
         $('#JdPublishConformation').modal('show')
     }
 
     if(JdStatus == 'P'){ // Paused JD
         changeStatusInHtml('P')
         nextStatus = 'A'
-        document.getElementById('conformationPublish').innerHTML = "Do you want to publish JD again"
+        document.getElementById('conformationPublish').innerHTML = "Do you want to publish this JD again"
+        document.getElementById('publishJdConform').innerText = 'Publish'
         $('#JdPublishConformation').modal('show')
     }
 
@@ -599,9 +603,9 @@ function addTestCardToShow(testName, promotValue, testType, data) {
                 </figure>
                 <div class="d-flex justify-content-between mt-0 pt-0"> 
                     <i class="bx bx-edit custm-edit-icon" id="editTestCard_${data['id']}" onclick="updateTest(event, ${data['id']})" style="cursor: pointer;"></i>
-                    <div class="deleteFontIcon" data-bs-toggle="modal" onclick="deleteTestModalOpen(${data['id']})"  style="cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <button class="deleteFontIcon perventDeleteBtn" data-bs-toggle="modal" onclick="deleteTestModalOpen(${data['id']})"  style="cursor: pointer; display: flex; align-items: center; justify-content: center; background-color: transparent;">
                         <i class='bx bx-trash' ></i>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>`;
@@ -985,7 +989,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                 staticQuestionContainer.style.display = 'flex';
 
                 if(testLibraries[lib]['papertype'] == "I"){
-                    console.log('margin Right --');
                     staticQuestionContainer.style.marginRight = '10px'
                 }
 
@@ -1427,12 +1430,25 @@ function createPaper(libraryid, testid, event) {
 
 
 function deleteTestModalOpen(testid) {
-    var testTilt =  document.getElementById('testTitle_'+testid).innerText
-    document.getElementById('conformationForDelete').innerText =  'Are sure want to delete '+testTilt
-    document.getElementById('deleteTestConformation').dataset['deletetestid'] = testid
-    $('#modalToggle').modal('show')
-    event.stopPropagation();
-    TestWithLibrariesAndQuestions
+
+    if(JdStatus == 'D'){
+        var testTilt =  document.getElementById('testTitle_'+testid).innerText
+        document.getElementById('delectCancelBtn').hidden = false
+        document.getElementById('deleteTestConformation').hidden = false
+        document.getElementById('conformationForDelete').innerText =  'Are sure want to delete '+testTilt
+        document.getElementById('deleteTestConformation').dataset['deletetestid'] = testid
+        $('#modalToggle').modal('show')
+        event.stopPropagation();
+        TestWithLibrariesAndQuestions
+    }
+    else{
+        document.getElementById('delectCancelBtn').hidden = true
+        document.getElementById('deleteTestConformation').hidden = true
+        document.getElementById('deleteCloseBtn').hidden = false
+        document.getElementById('conformationForDelete').innerText =  "Can't delete any of this test"
+        $('#modalToggle').modal('show')
+    }
+    
 }
 
 
@@ -1674,7 +1690,20 @@ function publishJd(){
                     $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {
                     
                     });
-                    showSuccessMessage('JD Published Successfully');
+
+                    if(JdStatus == 'A'){
+                        showSuccessMessage('JD Published Successfully');
+                    }
+                    if(JdStatus == 'P'){
+                        showSuccessMessage('JD Stopped Successfully');
+                    }
+
+                    deleteTestValidation(JdStatus)
+
+                    // if(JdStatus == 'A'){
+                    //     showFailureMessage('JD ') 
+                    // }
+
                     $('#JdPublishConformation').modal('hide')
     
                 }
@@ -1692,3 +1721,16 @@ function publishJd(){
 function closeModals(){
     $('#publishValidationModal').modal('hide')
 }
+
+
+// only allow when JD status "D"
+// function deleteTestValidation(JdStatus__){
+//     console.log(':::',JdStatus__);
+
+//     document.getElementsByClassName('')
+
+//     if(JdStatus__ == 'A'){
+
+//     }
+
+// }
