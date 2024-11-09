@@ -78,36 +78,39 @@ function openPublishJd(){
         if(totalTestLst == 0){
             $('#jdPublishValidators').modal('show')
         }
-        
-        if(JdStatus == 'D'){
-            changeStatusInHtml('D')
-            nextStatus = 'A'
-            document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one','margin-top-adjust_two');
-            document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_three');
-            document.getElementById('conformationPublish').innerHTML = "One's Publish you can not delete any of the tests"
-            document.getElementById('publishJdConform').innerText = 'Publish'
-            $('#JdPublishConformation').modal('show')
-        }
-        
-        if(JdStatus == 'A'){
-            changeStatusInHtml('A')
-            nextStatus = 'P'
-            document.getElementById('conformationPublish').innerHTML = "Do you want to stop registering candidates to this JD"
-            document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one','margin-top-adjust_three');
-            document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_two');
+        else{
 
-            document.getElementById('publishJdConform').innerText = 'Confirm'
-            $('#JdPublishConformation').modal('show')
-        }
+            if(JdStatus == 'D'){
+                changeStatusInHtml('D')
+                nextStatus = 'A'
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one','margin-top-adjust_two');
+                document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_three');
+                document.getElementById('conformationPublish').innerHTML = "One's Publish you can not delete any of the tests"
+                document.getElementById('publishJdConform').innerText = 'Publish'
+                $('#JdPublishConformation').modal('show')
+            }
+            
+            if(JdStatus == 'A'){
+                changeStatusInHtml('A')
+                nextStatus = 'P'
+                document.getElementById('conformationPublish').innerHTML = "Do you want to stop registering candidates to this JD"
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one','margin-top-adjust_three');
+                document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_two');
+    
+                document.getElementById('publishJdConform').innerText = 'Confirm'
+                $('#JdPublishConformation').modal('show')
+            }
+    
+            if(JdStatus == 'P'){ // Paused JD
+                changeStatusInHtml('P')
+                nextStatus = 'A'
+                document.getElementById('conformationPublish').innerHTML = "Do you want to publish this JD again"
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_two','margin-top-adjust_three');
+                document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_one');
+                document.getElementById('publishJdConform').innerText = 'Publish'
+                $('#JdPublishConformation').modal('show')
+            }
 
-        if(JdStatus == 'P'){ // Paused JD
-            changeStatusInHtml('P')
-            nextStatus = 'A'
-            document.getElementById('conformationPublish').innerHTML = "Do you want to publish this JD again"
-            document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_two','margin-top-adjust_three');
-            document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_one');
-            document.getElementById('publishJdConform').innerText = 'Publish'
-            $('#JdPublishConformation').modal('show')
         }
 
     }
@@ -116,8 +119,6 @@ function openPublishJd(){
         $('#InterviewValidationModal').modal('show')
         
     }
-
-    
 
 }
 
