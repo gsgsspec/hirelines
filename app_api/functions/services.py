@@ -126,11 +126,12 @@ def registerUserService(dataObjs):
                 datentime=datetime.now(),
                 location=dataObjs["reg-location"],
                 companyid=company.id,
-                role="HR",
+                role="HR-Admin",
                 password=random_password,
                 email=bussiness_email,
                 status="A",
             )
+
             user.save()
             
             free_trail_data = getConfig()["FREETRAIL"]
@@ -156,8 +157,6 @@ def registerUserService(dataObjs):
                         balance=company_account.balance)
             credits.save()
             
-
-
             CompanyCredits(
                 companyid=company.id,
                 transtype="S",
@@ -176,18 +175,6 @@ def registerUserService(dataObjs):
                 credits=free_trail_data["interview_credits_charges"],
             ).save()
 
-            user = User(
-                name=dataObjs["reg-name"],
-                datentime=datetime.now(),
-                location=dataObjs["reg-location"],
-                companyid=company.id,
-                role="HR-Admin",
-                password=random_password,
-                email=bussiness_email,
-                status="A",
-            )
-
-            user.save()
 
             default_branding = Branding.objects.filter(companyid=0).last()
 
