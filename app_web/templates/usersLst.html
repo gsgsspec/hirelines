@@ -25,35 +25,13 @@
                     type="text"
                     id="newUserName"
                     class="form-control"
-                    placeholder="Enter Name"
+                    placeholder="Name"
                   />
                 </div>
               </div>
+
               <div class="row">
-                <div class="col mb-3">
-                  <label for="nameWithTitle" class="form-label">Password &nbsp;&nbsp; <span hidden id="NewUserpasswordValidation" class="validationNewUser">Password is required</span></label>
-                  <input
-                    type="text"
-                    id="newUserPassword"
-                    class="form-control"
-                    placeholder="Password..."
-                    onkeyup="sanitizePassword()"
-                  />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col mb-3">
-                  <label for="nameWithTitle" class="form-label">Location</label>
-                  <input
-                    type="text"
-                    id="newUserLocation"
-                    class="form-control"
-                    placeholder="Location..."
-                  />
-                </div>
-              </div>
-              <div class="row g-2">
-                <div class=" mb-0" style="width: 75% !important;">
+                <div class=" mb-0">
                   <label for="emailWithTitle" class="form-label">Email &nbsp;&nbsp; <span hidden class="validationNewUser" id="newUserEmailValidation">Email address is required</span></label>
                   <input
                     type="email"
@@ -63,6 +41,55 @@
                   />
                   <div class="pt-2"><strong style="color: red;" id="userAlreadyExistedValidation" class="" hidden> <i class="fas fa-exclamation-circle"></i> This email address is already in use.</strong></div>
                 </div>
+              </div>
+
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Password &nbsp;&nbsp; <span hidden id="NewUserpasswordValidation" class="validationNewUser">Password is required</span></label>
+                  <input
+                    type="text"
+                    id="newUserPassword"
+                    class="form-control"
+                    placeholder="Password..."
+                    onkeyup="sanitizePassword()"
+                    maxlength="15"
+                  />
+                </div>
+              </div>
+              <!-- <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Location</label>
+                  <input
+                    type="text"
+                    id="newUserLocation"
+                    class="form-control"
+                    placeholder="Location..."
+                  />
+                </div>
+              </div> -->
+              <div class="row g-2">
+
+                <div class="col mb-3" style="width: 75% !important;">
+                  <label for="nameWithTitle" class="form-label">Location</label>
+                  <input
+                    type="text"
+                    id="newUserLocation"
+                    class="form-control"
+                    placeholder="Location..."
+                  />
+                </div>
+
+                <!-- <div class=" mb-0" style="width: 75% !important;">
+                  <label for="emailWithTitle" class="form-label">Email &nbsp;&nbsp; <span hidden class="validationNewUser" id="newUserEmailValidation">Email address is required</span></label>
+                  <input
+                    type="email"
+                    id="newUserEmail"
+                    class="form-control"
+                    placeholder="xxxx@xxx.xx"
+                  />
+                  <div class="pt-2"><strong style="color: red;" id="userAlreadyExistedValidation" class="" hidden> <i class="fas fa-exclamation-circle"></i> This email address is already in use.</strong></div>
+                </div> -->
+                
                 <div class="col mb-0">
                   <label for="dobWithTitle" class="form-label">Role &nbsp;&nbsp; <span hidden class="validationNewUser" id="newUserRoleValidation">Role is required</span></label>
                   <div class="row mb-3 mx-1">
@@ -170,11 +197,11 @@
             </thead>
             <tbody class="table-border-bottom-0" id="userListTabelList">
               {% for user in usersDataLst %}
-                <tr>
-                    <td><strong>{{user.name}}</strong></td>
-                    <td>{{user.role}}</td>
-                    <td>{{ user.location }}</td>
-                    <td>
+                <tr onclick="openEditUserModal('{{user.id}}')">
+                    <td><strong id="userNameField_{{user.id}}" data-username="{{user.name}}" data-userpwd="{{ user.password }}">{{user.name}}</strong></td>
+                    <td id="userRoleField_{{user.id}}" data-userrole="{{user.role}}">{{user.role}}</td>
+                    <td id="userLocation_{{user.id}}" data-userlocation="{{ user.location }}">{{ user.location }}</td>
+                    <td id="userStatus_{{user.id}}" data-userstatus="{{ user.status }}">
                       {% if user.status == 'A' %}
                       <span class="badge bg-label-success me-1" style="text-transform: capitalize;">
                         Active 

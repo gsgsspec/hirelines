@@ -119,8 +119,27 @@ function addNewUser() {
 }
 
 
-function openEditUserModal(){
+function openEditUserModal(editUserId){
+
+  var editUserName = document.getElementById('userNameField_' + editUserId).dataset.username;
+  var editUserpswd = document.getElementById('userNameField_'+editUserId).dataset.userpwd;
+  var editUserRole = document.getElementById('userRoleField_'+editUserId).dataset.userrole;
+  var editUserLocation = document.getElementById('userLocation_'+editUserId).dataset.userlocation;
+  var editUserStatus = document.getElementById('userStatus_'+editUserId).dataset.userstatus;
+
+  console.log('editUserRole :: ',editUserRole);
+
   
+
+  document.getElementById('newUserName').value = editUserName
+  document.getElementById('newUserEmail').value = editUserpswd
+  document.getElementById('newUserPassword').value = editUserRole
+  document.getElementById('newUserLocation').value = editUserLocation
+  document.getElementById('newUserRole').value = editUserStatus
+
+  const modalElement = document.getElementById('AddNewUserModal');
+  const modal = new bootstrap.Modal(modalElement);
+  modal.show();
 }
 
 
