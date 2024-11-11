@@ -120,7 +120,7 @@ def registerUserService(dataObjs):
             )
             company.save()
 
-            free_trail_data = getg()["FREETRAIL"]
+            free_trail_data = getConfig()["FREETRAIL"]
             company_account = Account(
                 companyid=company.id,
                 creditamount=free_trail_data["registration_grace_credits"],
@@ -168,7 +168,7 @@ def registerUserService(dataObjs):
 
             company_branding.save()
 
-            acert_domain = getg()["DOMAIN"]["acert"]
+            acert_domain = getConfig()["DOMAIN"]["acert"]
             endpoint = "/api/add-company"
 
             url = urljoin(acert_domain, endpoint)
@@ -181,7 +181,7 @@ def registerUserService(dataObjs):
 
             send_company_data = requests.post(url, json=company_data)
 
-            hirelines_domain = getg()["DOMAIN"]["hirelines"]
+            hirelines_domain = getConfig()["DOMAIN"]["hirelines"]
             mail_data = {
                 "name": user.name,
                 "email": user.email,
@@ -314,7 +314,7 @@ def candidateRegistrationService(dataObjs):
 
         # Acert API
 
-        acert_domain = getg()["DOMAIN"]["acert"]
+        acert_domain = getConfig()["DOMAIN"]["acert"]
         endpoint = "/api/hirelines-add-candidate"
 
         url = urljoin(acert_domain, endpoint)
@@ -529,7 +529,7 @@ def checkCompanyTrailPeriod(user_mail):
 
             company = Company.objects.get(id=user.companyid)
 
-            trial_days = getg()["FREETRAIL"]["days"]
+            trial_days = getConfig()["FREETRAIL"]["days"]
 
             if company.freetrail == "I" and company.status == "T":
 
@@ -798,7 +798,7 @@ def getCallScheduleDetails(cid):
 def interviewSchedulingService(aplid, int_id):
     try:
 
-        call_scheduling_constraints = getg()["CALL_SCHEDULING_CONSTRAINTS"]
+        call_scheduling_constraints = getConfig()["CALL_SCHEDULING_CONSTRAINTS"]
 
         WORK_HOURS = int(call_scheduling_constraints["work_hours"])
         STARTING_HOUR = int(call_scheduling_constraints["starting_hour"])
@@ -1059,7 +1059,7 @@ def getCandidateInterviewData(scd_id):
             "coding_data": None,
         }
 
-        acert_domain = getg()["DOMAIN"]["acert"]
+        acert_domain = getConfig()["DOMAIN"]["acert"]
         endpoint = "/api/candidate-interviewdata"
 
         url = urljoin(acert_domain, endpoint)
@@ -1238,7 +1238,7 @@ def interviewCompletionService(dataObjs, user_id):
             'int_notes':call_sch_details.intnotes
         }
 
-        acert_domain = getg()["DOMAIN"]["acert"]
+        acert_domain = getConfig()["DOMAIN"]["acert"]
         endpoint = "/api/interview-completion"
 
         url = urljoin(acert_domain, endpoint)
@@ -1437,7 +1437,7 @@ def getCandidateWorkflowData(cid):
 
 def generateCandidateReport(cid):
     try:
-        acert_domain = getg()["DOMAIN"]["acert"]
+        acert_domain = getConfig()["DOMAIN"]["acert"]
         endpoint = "/api/hireline-candidate-report"
 
         url = urljoin(acert_domain, endpoint)
@@ -1663,7 +1663,7 @@ def notifyCandidateService(dataObjs):
             user = User.objects.get(id=call_details.hrid)
             hr_mail = user.email
 
-        acert_domain = getg()["DOMAIN"]["acert"]
+        acert_domain = getConfig()["DOMAIN"]["acert"]
         endpoint = "/api/candidate-notification"
 
         url = urljoin(acert_domain, endpoint)
