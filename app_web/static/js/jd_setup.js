@@ -510,6 +510,26 @@ function saveOrUpdateTest(){
                             var key_ = data['id']
                             testsList[[key_]] =  data
                             updateCardAfterSaveData(testsList,data['id'])
+
+                            if(data['paperid']){
+
+                                dataObj = {
+                                    'event':'update',
+                                    'paperId': data['paperid'],
+                                    'paperTitle': data['papertitle']
+                                }
+                                
+                                var final_data = {
+                                    'data': JSON.stringify(dataObj),
+                                    csrfmiddlewaretoken: CSRF_TOKEN,
+                                }
+                                
+                                $.post(CONFIG['acert'] + "/api/update-paperdetails", final_data, function (res) {
+    
+                                })
+                            }
+
+
                         }
                         else{
                             // test is add and create card
@@ -1416,7 +1436,7 @@ function createPaper(libraryid, testid, event) {
                                 csrfmiddlewaretoken: CSRF_TOKEN,
                             };
 
-                            // Second AJAX call
+                            // Saving Paper id in hireline with this app 
                             $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data_jd, function (res) {
                                 resolve(data); // Resolve the promise with the data after both calls
                             }).fail((error) => {
@@ -1485,6 +1505,26 @@ function deleteTest() {
 
         $.post(CONFIG['portal'] + "/api/delete-test-injd", final_data, function (res) {
             if (res.statusCode == 0) {
+
+                var data = res.data
+
+                if(data['paperId']){
+
+                    dataObj = {
+                        'event':'paperStatus',
+                        'paperId': data['paperId'],
+                        'paperTitle': data['papertitle']
+                    }
+                    
+                    var final_data = {
+                        'data': JSON.stringify(dataObj),
+                        csrfmiddlewaretoken: CSRF_TOKEN,
+                    }
+                    
+                    $.post(CONFIG['acert'] + "/api/update-paperdetails", final_data, function (res) {
+
+                    })
+                }
 
                 var testCardDetails = res.data
 

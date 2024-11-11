@@ -685,6 +685,7 @@ def deleteTestinJs(request):
         raise
     return JsonResponse(response)
 
+
 @api_view(['POST'])
 def saveInterviewersForJd(request):
     response = {
@@ -705,6 +706,7 @@ def saveInterviewersForJd(request):
         response['error'] = str(e)
         raise
     return JsonResponse(response)
+
 
 @api_view(['POST'])
 def checkTestHasPaper(request):
@@ -748,7 +750,6 @@ def updateEmailtemp(request):
         response['error'] = str(e)
     
     return JsonResponse(response)
-
 
 
 @api_view(["GET"])

@@ -1,6 +1,5 @@
 {% load static  %}
 
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
   <!-- Vertically Centered Modal -->
   <div class="col-lg-4 col-md-6">
     <div class="mt-3">
@@ -9,12 +8,13 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalCenterTitle">New User</h5> &nbsp;&nbsp;&nbsp;&nbsp; <strong style="color: red;" hidden id="userAlreadyExistedValidation"> <i class="fas fa-exclamation-circle"></i> This email address is already in use.</strong>
+              <strong><h5 class="modal-title p-clr" id="modalCenterTitle">New User</h5></strong>
               <button
                 type="button"
                 class="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                id="close_add_user_modal"
               ></button>
             </div>
             <div class="modal-body pt-2 pb-2">
@@ -54,7 +54,7 @@
                 </div>
               </div>
               <div class="row g-2">
-                <div class="col mb-0">
+                <div class=" mb-0" style="width: 75% !important;">
                   <label for="emailWithTitle" class="form-label">Email &nbsp;&nbsp; <span hidden class="validationNewUser" id="newUserEmailValidation">Email address is required</span></label>
                   <input
                     type="email"
@@ -63,6 +63,7 @@
                     placeholder="xxxx@xxx.xx"
                     value="pratap.medisetty@gsspec.com"
                   />
+                  <div class="pt-2"><strong style="color: red;" id="userAlreadyExistedValidation" class=""> <i class="fas fa-exclamation-circle"></i> This email address is already in use.</strong></div>
                 </div>
                 <div class="col mb-0">
                   <label for="dobWithTitle" class="form-label">Role &nbsp;&nbsp; <span hidden class="validationNewUser" id="newUserRoleValidation">Role is required</span></label>
@@ -169,7 +170,7 @@
                     <th> <strong> Status </strong></th>
                 </tr>
             </thead>
-            <tbody class="table-border-bottom-0">
+            <tbody class="table-border-bottom-0" id="userListTabelList">
               {% for user in usersDataLst %}
                 <tr onclick="window.location.href='/candidate-data/{{candidate.id}}'">
                     <td><strong>{{user.name}}</strong></td>

@@ -224,7 +224,7 @@
                       <div class="col-xl-3 col-form-label">Interview Panel</div>
                   <div class="col-xl-6">
                     <select class="custom-select custom-select-sm interviewer-select form-select my-2" required="">
-                      <option value="" disabled selected>Select Role</option>
+                      <option value="" disabled selected>Select Interviewer</option>
                       {% for interviewer in jd_details.interviewes_lst  %}
                           <option value="{{ interviewer.id}}">{{ interviewer.name }}</option>
                       {% endfor %}

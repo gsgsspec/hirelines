@@ -249,11 +249,8 @@ def addJdServices(addjdData, companyID, hrEmail):
 
 def companyUserLst(companyID):
     try:
-        print("===============")
-        print(":: ", companyID)
         usersDataLst = []
-        userLst = User.objects.filter(companyid=companyID)
-        print("userLst :: ", userLst)
+        userLst = User.objects.filter(companyid = companyID).order_by('-id')
         for user in userLst:
             userData = model_to_dict(user)
             usersDataLst.append(userData)
@@ -1720,6 +1717,7 @@ def addNewUserService(company_id, user_data):
                 status = 'A'
             )
             save_user.save()
+            return {'userAlreadyExisted':'N'}
     except Exception as e:
         raise
 

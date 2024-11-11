@@ -339,10 +339,14 @@ def deleteTestInJdDB(dataObjs,):
                 # If the ID matches, perform delete or other action
                 if workflowDetails[testInWorkFlow]['id'] == dataObjs['deleteTestId']:
                     deleteTest = Workflow.objects.filter(id=workflowDetails[testInWorkFlow]['id']).last()
+                    paperId = ''
                     if deleteTest:
-                        delBrules = Brules.objects.filter(workflowid = deleteTest.id,jobdescid = deleteTest.jobid).last()
+                        paperId = deleteTest.paperid
+
                         if deleteTest:
                             deleteTest.delete()
+
+                        delBrules = Brules.objects.filter(workflowid = deleteTest.id,jobdescid = deleteTest.jobid).last()
                         if delBrules:
                             delBrules.delete()
                         else:
@@ -362,7 +366,7 @@ def deleteTestInJdDB(dataObjs,):
                             if(testInWorkFlow + 1) <= len(testIdList) and len(testIdList) >= (testInWorkFlow + 1):
                                 nextSelectedCard = testIdList[testInWorkFlow - 1] # return this if last card deleted 
 
-                        return {'msg':'Deleted-successfully','testData':workflowDetails[testInWorkFlow],'nextSelectTestId':nextSelectedCard}
+                        return {'msg':'Deleted-successfully','testData':workflowDetails[testInWorkFlow],'nextSelectTestId':nextSelectedCard, 'paperId':paperId}
                     else:
                         ''
                         # No workflow find

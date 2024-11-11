@@ -6,10 +6,12 @@ $(document).ready(function() {
         language: { search: "",searchPlaceholder: "Search..." } ,
         pagingType: 'simple_numbers'
     });
+    
 });
 
 
 function addNewUser() {
+  
   var newUserName_ = document.getElementById('newUserName').value;
   var newUserPassword_ = document.getElementById('newUserPassword').value;
   var newUserEmail_ = document.getElementById('newUserEmail').value;
@@ -87,10 +89,30 @@ function addNewUser() {
               if(res.data['userAlreadyExisted'] == 'Y'){
                 document.getElementById('userAlreadyExistedValidation').hidden = false;
               }
+              else{
+
+                var newUser = document.createElement('tr');
+                newUser.innerHTML = `
+                <td><strong>${newUserName_}</strong></td>
+                <td>${newUserRole_}</td>
+                <td>${newUserLocation_}</td>
+                <td>
+                    <span class="badge bg-label-success me-1">
+                        Active 
+                    </span>
+                </td>
+                `;
+
+                var userListTable = document.getElementById('userListTabelList');
+                userListTable.insertBefore(newUser, userListTable.firstChild);
+
+                $('#close_add_user_modal').click();
+
+              }
           }
         }
-    }).fail(function (error) {
         
+    }).fail(function (error) {
     });
     
   }
