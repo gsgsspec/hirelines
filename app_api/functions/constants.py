@@ -62,7 +62,7 @@ hirelines_registration_script ="""
         if (inputType === 'text' && (inputName && (inputName.toLowerCase().includes('first') || inputName.toLowerCase().includes('fname') || inputName.toLowerCase().includes('firstname')) || inputId && (inputId.toLowerCase().includes('first') || inputId.toLowerCase().includes('fname') || inputId.toLowerCase().includes('firstname')))) {
             firstName = inputValue;
         }
-        if (inputType === 'text' && (inputName && (inputName.toLowerCase().includes('last') || inputName.toLowerCase().includes('lname') || inputName.toLowerCase().includes('lastname')) || inputId && (inputId.toLowerCase().includes('last') || inputId.toLowerCase().includes('lname') || inputId.toLowerCase().includes('lastname')))) {
+        if (inputType === 'text' && ( (inputName && (inputName.toLowerCase().includes('last') || inputName.toLowerCase().includes('lname') || inputName.toLowerCase().includes('lastname')) && !inputName.toLowerCase().includes('fullname')) || (inputId && (inputId.toLowerCase().includes('last') || inputId.toLowerCase().includes('lname') || inputId.toLowerCase().includes('lastname')) && !inputId.toLowerCase().includes('fullname')) )) {
             lastName = inputValue;
         }
         if (inputType === 'email' || (inputName && inputName.toLowerCase().includes('mail')) || (inputId && inputId.toLowerCase().includes('mail'))) {
@@ -73,6 +73,7 @@ hirelines_registration_script ="""
         }
         if (firstName || lastName) {
             name = (firstName ? firstName : "") + (lastName ? lastName : "");
+            
         } else {
             if (inputType === 'text' && (inputName && (inputName.toLowerCase().includes('candidatename') || inputName.toLowerCase().includes('applicantname') || inputName.toLowerCase().includes('name')) || (inputId && (inputId.toLowerCase().includes('candidatename') || inputId.toLowerCase().includes('applicantname') || inputId.toLowerCase().includes('name'))))) {
                 name = inputValue;
