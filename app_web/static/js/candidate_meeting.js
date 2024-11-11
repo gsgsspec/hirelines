@@ -131,6 +131,7 @@ function showCandidateInfo() {  // it shows the candidate details
   //$('.ins').prop("hidden",true);
   $('#sec').prop("hidden", true);
   $('.ins').prop("hidden", true);
+  $('.test_sec').prop("hidden", true);
   $("#verif_sec").addClass("sec_selected");
   $("#ins_sec").removeClass('sec_selected');
 }
