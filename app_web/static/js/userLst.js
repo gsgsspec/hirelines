@@ -119,6 +119,10 @@ function addNewUser() {
 }
 
 
+function openEditUserModal(){
+  
+}
+
 
 function validateEmail(email) {
   // Regular expression pattern for basic email validation
@@ -136,18 +140,15 @@ function sanitizePassword() {
 
 function openNewUserModal() {
   
-  var passwordInpt = document.getElementById('newUserPassword')
-  if(passwordInpt.value == ""){
+  // var passwordInpt = document.getElementById('newUserPassword')
+  // if(passwordInpt.value == ""){
     document.getElementById('newUserPassword').value = generateStrongPassword()
-  }
+  // }
 
   const modalElement = document.getElementById('AddNewUserModal');
   const modal = new bootstrap.Modal(modalElement);
   modal.show();
 }
-
-
-
 
 
 function generateStrongPassword() {
