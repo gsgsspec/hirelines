@@ -90,16 +90,27 @@
                   <div class="pt-2"><strong style="color: red;" id="userAlreadyExistedValidation" class="" hidden> <i class="fas fa-exclamation-circle"></i> This email address is already in use.</strong></div>
                 </div> -->
                 
-                <div class="col mb-0">
+                <div class="col mb-0" id="newUserRoleContainer">
                   <label for="dobWithTitle" class="form-label">Role &nbsp;&nbsp; <span hidden class="validationNewUser" id="newUserRoleValidation">Role is required</span></label>
                   <div class="row mb-3 mx-1">
                       <select class="form-select" id="newUserRole" required>
                         <option>Select Role</option>
-                        <option value="HR">HR</option>
+                        <option value="HR-Executive">HR-Executive</option>
                         <option value="Interviewer">Interviewer</option>
                       </select>
                   </div>
                 </div>
+
+                <div class="col mb-3" id="userRoleEditContainer">
+                  <label for="nameWithTitle" class="form-label">Role</label>
+                  <input
+                    type="text"
+                    id="userRoleEdit"
+                    class="form-control"
+                    placeholder="User Role"
+                  />
+                </div>
+
               </div>
             </div>
             <div class="modal-footer">

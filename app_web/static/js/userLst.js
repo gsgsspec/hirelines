@@ -121,15 +121,21 @@ function addNewUser() {
 
 function openEditUserModal(editUserId){
 
+  document.getElementById('newUserRoleContainer').hidden = true;
+
   var editUserName = document.getElementById('userNameField_' + editUserId).dataset.username;
   var editUserpswd = document.getElementById('userNameField_'+editUserId).dataset.userpwd;
   var editUserRole = document.getElementById('userRoleField_'+editUserId).dataset.userrole;
   var editUserLocation = document.getElementById('userLocation_'+editUserId).dataset.userlocation;
   var editUserStatus = document.getElementById('userStatus_'+editUserId).dataset.userstatus;
 
-  console.log('editUserRole :: ',editUserRole);
+  editUserRole = editUserRole.trim();
 
-  
+  document.getElementById('newUserEmail').disabled = true
+  var editRoleInpt = document.getElementById('userRoleEdit')
+  editRoleInpt.disabled = true
+  editRoleInpt.value = editUserRole
+  document.getElementById('userRoleEditContainer').hidden = false
 
   document.getElementById('newUserName').value = editUserName
   document.getElementById('newUserEmail').value = editUserpswd

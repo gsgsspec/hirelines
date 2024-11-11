@@ -1178,85 +1178,94 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
 
 function savePaper(element, element_id, testid_, selectedPaper) {
 
-    if (testid_) {
-        var testid = Number(testid_);
-        var questionsLst = document.getElementsByClassName('questionSelect_' + testid);
+    console.log('JdStatus :: ',JdStatus);
 
-        var staticQuesLst = [];
-        var dynamicQuesLst = [];
+    if(JdStatus == "D"){
+        if (testid_) {
 
-        for (var ques = 0; ques < questionsLst.length; ques++) {
-            var questionElement = questionsLst[ques];
-            var quesType = questionElement.dataset['question_type'];
-            
-            if (questionElement.checked) {
-                var quesid = questionElement.id.split('_')[1];
+            var testid = Number(testid_);
+            var questionsLst = document.getElementsByClassName('questionSelect_' + testid);
 
-                if (quesType === 'S') {
-                    staticQuesLst.push(quesid);
-                } 
-                else if (quesType === 'D') {
-                    dynamicQuesLst.push(parseInt(quesid));
+            var staticQuesLst = [];
+            var dynamicQuesLst = [];
+
+            for (var ques = 0; ques < questionsLst.length; ques++) {
+                var questionElement = questionsLst[ques];
+                var quesType = questionElement.dataset['question_type'];
+                
+                if (questionElement.checked) {
+                    var quesid = questionElement.id.split('_')[1];
+
+                    if (quesType === 'S') {
+                        staticQuesLst.push(quesid);
+                    } 
+                    else if (quesType === 'D') {
+                        dynamicQuesLst.push(parseInt(quesid));
+                    }
                 }
             }
+
+            var dynamicQuestionValidation = true
+            if(dynamicQuesLst.length == 1) {
+                dynamicQuestionValidation =  false
+                $('#dynamicQuestionsValidators').modal('show')
+                document.getElementById('dynamicQuestionsValidator').innerText = "Dynamic Questions Can't be Single Question"
+            }
+
+            var dynCount = 0
+            var reqDynaminQuestionsCount = document.getElementById('dynamicQuestionsCount_'+testid)
+            if(reqDynaminQuestionsCount){
+                dynCount = reqDynaminQuestionsCount.value
+            }
+
+            // if(dynamicQuesLst.length > 0){
+            //     if (dynCount == 0){
+            //         dynamicQuestionValidation =  false
+            //         $('#dynamicQuestionsValidators').modal('show')
+            //         document.getElementById('DynquestionsCount').hidden = false
+            //         document.getElementById('dynamicQuestionsValidator').innerText = "Dynamic Questions Count have to Less than total dynamic questions"
+            //     }
+            // }
+
+            var paper_Title
+            var paperTitle__ = document.getElementById('questionPaperTitle_'+testid)
+            if(paperTitle__){
+                paper_Title = paperTitle__.innerText
+            }
+
+            if(dynamicQuestionValidation){
+
+                dataObj = {
+                    'event'                : 'updatePaper',
+                    'paperid'              : selectedPaper['paperid'],
+                    'paperLibraryId'       : testsList[testid_]['paperlibraryid'],
+                    'paperTitle'           : paper_Title,
+                    'staticQuestionsList'  : staticQuesLst,
+                    'dynamicQuestionsList' : dynamicQuesLst,
+                    'dynamicQuestionsCount': dynCount
+                };
+        
+                var final_data = {
+                    "data":JSON.stringify(dataObj),
+                    csrfmiddlewaretoken: CSRF_TOKEN,
+                };
+        
+                $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
+        
+                    if(res.statusCode == 0){
+                        showSuccessMessage('Test paper created');
+                    }
+        
+                });
+
+            }
+
         }
-
-        var dynamicQuestionValidation = true
-        if(dynamicQuesLst.length == 1) {
-            dynamicQuestionValidation =  false
-            $('#dynamicQuestionsValidators').modal('show')
-            document.getElementById('dynamicQuestionsValidator').innerText = "Dynamic Questions Can't be Single Question"
-        }
-
-        var dynCount = 0
-        var reqDynaminQuestionsCount = document.getElementById('dynamicQuestionsCount_'+testid)
-        if(reqDynaminQuestionsCount){
-            dynCount = reqDynaminQuestionsCount.value
-        }
-
-        // if(dynamicQuesLst.length > 0){
-        //     if (dynCount == 0){
-        //         dynamicQuestionValidation =  false
-        //         $('#dynamicQuestionsValidators').modal('show')
-        //         document.getElementById('DynquestionsCount').hidden = false
-        //         document.getElementById('dynamicQuestionsValidator').innerText = "Dynamic Questions Count have to Less than total dynamic questions"
-        //     }
-        // }
-
-        var paper_Title
-        var paperTitle__ = document.getElementById('questionPaperTitle_'+testid)
-        if(paperTitle__){
-            paper_Title = paperTitle__.innerText
-        }
-
-        if(dynamicQuestionValidation){
-
-            dataObj = {
-                'event'                : 'updatePaper',
-                'paperid'              : selectedPaper['paperid'],
-                'paperLibraryId'       : testsList[testid_]['paperlibraryid'],
-                'paperTitle'           : paper_Title,
-                'staticQuestionsList'  : staticQuesLst,
-                'dynamicQuestionsList' : dynamicQuesLst,
-                'dynamicQuestionsCount': dynCount
-            };
-    
-            var final_data = {
-                "data":JSON.stringify(dataObj),
-                csrfmiddlewaretoken: CSRF_TOKEN,
-            };
-    
-            $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
-    
-                if(res.statusCode == 0){
-                    showSuccessMessage('Test paper created');
-                }
-    
-            });
-
-        }
-
     }
+    else{
+        $('#createPaperStatusValidation').modal('show')
+    }
+    
 }
 
 
