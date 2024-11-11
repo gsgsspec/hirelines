@@ -170,7 +170,7 @@
             </thead>
             <tbody class="table-border-bottom-0" id="userListTabelList">
               {% for user in usersDataLst %}
-                <tr onclick="window.location.href='/candidate-data/{{candidate.id}}'">
+                <tr>
                     <td><strong>{{user.name}}</strong></td>
                     <td>{{user.role}}</td>
                     <td>{{ user.location }}</td>
