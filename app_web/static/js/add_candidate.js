@@ -36,6 +36,8 @@ document.getElementById("save-data").onclick = function () {
                     confirmButtonColor: '#274699'
                 })
 
+                $("#save-data").prop("disabled", false);
+
                 return 
                 
             }
@@ -50,6 +52,8 @@ document.getElementById("save-data").onclick = function () {
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#274699'
                 })
+
+                $("#save-data").prop("disabled", false);
 
                 return 
                 
