@@ -994,6 +994,7 @@ def updateHirelinesData(request):
                                                            jobid=candidate.jobid,
                                                            papertype=dataObjs["paper_type"],
                                                            paperid=decrypt_code(dataObjs["paper_id"])).last()
+                registration.completiondate = datetime.now()
                 registration.status = dataObjs["update_value"]
                 registration.save()
                 
