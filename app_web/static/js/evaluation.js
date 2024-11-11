@@ -446,18 +446,21 @@ function confirm_and_RESEND_result(pid_){
     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
     Swal.fire({
-        title: "Results are already sent to candidate. Do you want to resend?",
+        title: "Results are already sent to candidate. Please contact administrator.",
         text: "The applicant is already proceeded to next level based on promote level. Resending may distrub the application workflow",
         icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: secondaryColor,
-        cancelButtonColor: primaryColor,
-        confirmButtonText: "Confirm"
-      }).then((result) => {
-        if (result.isConfirmed) {
-            send_evaluation_result(pid_)
-        }
-      });
+        showCancelButton: false,
+        confirmButtonColor: primaryColor,
+        // cancelButtonColor: primaryColor,
+        confirmButtonText: "OK"
+        // cancelButtonText:"OK"
+        
+      })
+    //   .then((result) => {
+    //     if (result.isConfirmed) {
+    //         send_evaluation_result(pid_)
+    //     }
+    //   });
 }
 
 
