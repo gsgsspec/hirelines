@@ -21,6 +21,7 @@ from app_api.models import (
     Credits,
     JobDesc,
     Candidate,
+    Payments,
     Registration,
     ReferenceId,
     Company,
@@ -119,15 +120,43 @@ def registerUserService(dataObjs):
                 freetrail="I",
             )
             company.save()
-
-            free_trail_data = getConfig()["FREETRAIL"]
-            company_account = Account(
+            
+            user = User(
+                name=dataObjs["reg-name"],
+                datentime=datetime.now(),
+                location=dataObjs["reg-location"],
                 companyid=company.id,
-                creditamount=free_trail_data["registration_grace_credits"],
-                balance=free_trail_data["registration_grace_credits"],
+                role="HR",
+                password=random_password,
+                email=bussiness_email,
+                status="A",
             )
-
+            user.save()
+            
+            free_trail_data = getConfig()["FREETRAIL"]
+            
+            payments = Payments(companyid=company.id,dateofpay=datetime.now(),
+                                amount=30000,credits=free_trail_data["registration_grace_credits"])
+            payments.save()
+            
+            company_account,company_account_flag = Account.objects.get_or_create(
+                companyid=company.id,
+            )
+            
+            company_account.creditamount=payments.credits
+            company_account.balance=int(payments.credits)+int(company_account.balance) if company_account.balance else payments.credits
             company_account.save()
+            
+            credits = Credits(companyid=company.id,
+                        transdatetime=payments.dateofpay,
+                        transtype="C",
+                        user=user.id,
+                        transid=payments.id,
+                        points=payments.credits,
+                        balance=company_account.balance)
+            credits.save()
+            
+
 
             CompanyCredits(
                 companyid=company.id,
@@ -146,19 +175,8 @@ def registerUserService(dataObjs):
                 transtype="I",
                 credits=free_trail_data["interview_credits_charges"],
             ).save()
-
-            user = User(
-                name=dataObjs["reg-name"],
-                datentime=datetime.now(),
-                location=dataObjs["reg-location"],
-                companyid=company.id,
-                role="HR",
-                password=random_password,
-                email=bussiness_email,
-                status="A",
-            )
-
-            user.save()
+            
+            
 
             default_branding = Branding.objects.filter(companyid=0).last()
 
@@ -1737,10 +1755,12 @@ def deductCreditsService(company_id, paper_type, paper_id=None):
         transaction = Credits(
             companyid=company_id,
             transdatetime=datetime.now(),
-            transtype=paper_type,
+            transtype="D",
+            papertype=paper_type,
             points=company_credits.credits,
             user=job_desc_data.createdby,
             transid=paper_id,
+            balance = company_account.balance
         )
         transaction.save()
     except Exception as e:
@@ -1751,22 +1771,40 @@ def getCompanyCreditsUsageService(dataObjs):
     try:
         company_credits_usage = Credits.objects.filter(
             companyid=dataObjs["cid"]
-        ).values().order_by("-id")
+        ).values().order_by("id")
         
         usage_list = []
         
         for usage in company_credits_usage:
-            workflow = Workflow.objects.filter(
-                companyid=dataObjs["cid"],
-                papertype=usage["transtype"],
-                paperid=usage["transid"]
-            ).last()
             user = User.objects.get(id=usage["user"]).name
             usage_dict = dict(usage)
-            usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
-            usage_dict["transtype"] = const_paper_types.get(usage["transtype"], "")
-            usage_dict["paper_title"] = workflow.papertitle if workflow else "-"
+            # usage_dict["transtype"] = paper_type
+            # usage_dict["paper_title"] = paper_title
             usage_dict["user"] = user
+            usage_dict["credit"] = ""
+            usage_dict["debit"] = ""
+            usage_dict["description"] = ""
+            usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
+            if usage["transtype"] == "D":
+                workflow = Workflow.objects.filter(
+                companyid=dataObjs["cid"],
+                papertype=usage["papertype"],
+                paperid=usage["transid"]
+                ).last()
+                JD = JobDesc.objects.get(id=workflow.jobid)
+                paper_type = const_paper_types.get(usage["papertype"], "")
+                paper_title = workflow.papertitle if workflow else "-"
+                # usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
+                usage_dict["description"] = f"""Registration for {paper_type}
+                {paper_title} - JD ({JD.title})"""
+                usage_dict["debit"] = f'{usage_dict["points"]}'
+            if usage["transtype"] == "C":
+                payments = Payments.objects.get(id=usage_dict["transid"])
+                usage_dict["description"] = f"""Payment Successfull {payments.amount} INR
+                {usage_dict['points']} Credits added
+                """
+                usage_dict["credit"] = f'{usage_dict["points"]}'
+                
             
             usage_list.append(usage_dict)
             

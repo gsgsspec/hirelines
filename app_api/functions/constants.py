@@ -23,9 +23,9 @@ const_candidate_status = {
 
 
 const_paper_types = {
-    "S": 'Screening',
-    "E": 'Coding',
-    "I": 'Interview',
+    "S": 'Screening Test',
+    "E": 'Coding Test',
+    "I": 'Interview Test',
 }
 
 

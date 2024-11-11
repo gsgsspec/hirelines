@@ -7,24 +7,24 @@
             </div>
             <div>
                 <div class="table-responsive text-nowrap table-cls mb-2">
-                    <table class="table table-bordered" id="credits_usage_table" style="cursor: default;">
+                    <table class="table table-bordered table-hover" id="credits_usage_table" style="cursor: default;animation: slide-in-right 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;">
                         <thead>
                             <tr>
-                                <th>Date time</th>
-                                <th>Test</th>
-                                <th>Paper Title</th>
-                                <th>Points Deducted</th>
-                                <th>JD HR</th>
+                                <th>Txn Datetime</th>
+                                <th>Description</th>
+                                <th class="text-end">Credited</th>
+                                <th class="text-end">Usage</th>
+                                <th class="text-end">Balance</th>
                             </tr>
                         </thead>
                         <tbody class="table-border-bottom-0"  style="cursor: default;">
                             {% for usage in credits_usage %}
-                            <tr>
-                                <td>{{ usage.transdatetime }}</td>
-                                <td>{{ usage.transtype }}</td>
-                                <td>{{ usage.paper_title }}</td>
-                                <td>{{ usage.points }}</td>
-                                <td>{{ usage.user }}</td>
+                            <tr {% if usage.credit %}style="background-color: #e8ffe8;"{% endif %}>
+                                <td style="vertical-align: middle;">{{ usage.transdatetime }}</td>
+                                <td style="white-space: pre-line;vertical-align: middle;">{{ usage.description }}</td>
+                                <td style="vertical-align: middle;" class="text-end">{{ usage.credit }}</td>
+                                <td style="vertical-align: middle;" class="text-end">{{ usage.debit }}</td>
+                                <td style="vertical-align: middle;" class="text-end">{{ usage.balance }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -34,6 +34,90 @@
         </div>
     </div>
 </div>
+<style>
+.table-responsive {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+#credits_usage_table {
+    table-layout: auto; /* Ensures fixed width for columns */
+    width: 100%; /* Adjusts the table to full width of its container */
+}
+
+#credits_usage_table th,
+#credits_usage_table td {
+    padding: 10px; /* Adds padding for better readability */
+    height: auto; /* Allows the cell to expand based on content */
+    text-align: left;
+    vertical-align: top;
+}
+
+#credits_usage_table th {
+    background-color: #f2f2f2; /* Adds background to header cells */
+    font-weight: bold;
+}
+
+#credits_usage_table th:nth-child(1),
+#credits_usage_table td:nth-child(1) {
+    width: 200px; /* Adjust width as needed */
+    white-space: normal; /* Allows content to wrap within the cell */
+    word-wrap: break-word; /* Forces long words to wrap to the next line if necessary */
+}
+
+/* Increase width for Description column */
+#credits_usage_table th:nth-child(2),
+#credits_usage_table td:nth-child(2) {
+    width: 450px; /* Adjust width as needed */
+    white-space: normal; /* Allows content to wrap within the cell */
+    word-wrap: break-word; /* Forces long words to wrap to the next line if necessary */
+}
+
+/* #credits_usage_table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+} */
+
+</style>
+
+
+<!-- /* Set a max height and enable scroll for tbody */
+#credits_usage_table tbody {
+    display: block;
+    max-height: 300px; /* Adjust as needed */
+    overflow-y: auto;
+}
+
+#credits_usage_table thead,
+#credits_usage_table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Allows columns to be of fixed width */
+}
+
+/* Style for WebKit-based browsers */
+#credits_usage_table tbody::-webkit-scrollbar {
+    width: 8px; /* Adjust width for a thin scrollbar */
+}
+
+#credits_usage_table tbody::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Background color for the scrollbar track */
+}
+
+#credits_usage_table tbody::-webkit-scrollbar-thumb {
+    background-color: #888; /* Color of the scrollbar thumb */
+    border-radius: 10px; /* Round edges for the scrollbar thumb */
+    border: 2px solid #f1f1f1; /* Adds padding around thumb */
+}
+
+#credits_usage_table tbody::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Darker shade when hovered */
+}
+
+/* Style for Firefox */
+#credits_usage_table tbody {
+    scrollbar-width: thin; /* Makes scrollbar thin */
+    scrollbar-color: #888 #f1f1f1; /* Sets thumb and track colors */
+} -->
 
 <script>
     $(document).ready(function () {

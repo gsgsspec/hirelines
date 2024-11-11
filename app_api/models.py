@@ -402,10 +402,12 @@ class Credits(models.Model):
     id = models.AutoField(primary_key=True)
     companyid = models.IntegerField(null=True)
     transdatetime = models.DateTimeField(null=True)
-    transtype = models.CharField(max_length=1, null=True) # papertype
+    transtype = models.CharField(max_length=1, null=True) # Credit / Debit
+    papertype = models.CharField(max_length=1, null=True) # papertype
     points = models.IntegerField(null=True) # credits used
     user = models.IntegerField(null=True) # hrid / interviewer
     transid = models.IntegerField(null=True) # paperid/regid
+    balance = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'credits'

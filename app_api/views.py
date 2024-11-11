@@ -85,11 +85,12 @@ def registerUser(request):
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
             data_add_status = registerUserService(dataObjs)
+            print("data_add_status",data_add_status)
             response['statusCode'] = int(data_add_status)
     except Exception as e:
         response['data'] = 'Error in adding company data'
         response['error'] = str(e)
-
+        raise
     return JsonResponse(response)
 
 
