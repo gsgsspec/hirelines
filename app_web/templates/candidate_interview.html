@@ -68,6 +68,10 @@
                             onclick="showCandidateInfo();" style="align-items: center;">
                             <h5 style="font-size: 17px; font-weight: 800;">Candidate Info</h5>
                         </div>
+                        <div class="grid-item cursor-pointer" name="secs" id="test_data"
+                            onclick="showTestData();" style="align-items: center;">
+                            <h5 style="font-size: 17px; font-weight: 800;">Tests Data</h5>
+                        </div>
                         {% for section in interview_sections %}
                         <span name="vs" >
                           <div class="grid-item cursor-pointer" name="secs" id="{{ section.id }}"
@@ -265,6 +269,63 @@
                           </div>
                         </div>
                       {% endfor %}
+                    </div>
+                    
+                  </div>
+
+                  <div class="test_sec" style="overflow: auto; position: relative; padding:1%;height: 75%;" hidden>
+                    <div class="qol">
+                      {% if not screening_data and not coding_data %}
+                        <p class="no-test-display">No screening or coding test found for this candidate</p>
+                      {% else %}
+                        {% for screening in screening_data %}
+                          <div class="mb-2">
+                            <div class="screeing-bar">
+                              <span>{{ screening.paper_title }}  ({{ screening.scored_marks }}/{{ screening.paper_marks }})</span>
+                              <span style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#screening_{{ screening.paper_id }}" aria-expanded="false" aria-controls="collapseExample"><u>view details</u></span>
+                            </div>
+                            <div class="collapse" id="screening_{{ screening.paper_id }}">
+                              <div class="d-grid d-sm-flex p-3 border">
+                                <table class="table table-bordered mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th><strong> #</strong></th>
+                                      <th><strong>Question</strong></th>
+                                      <th><strong>Response</strong></th>
+                                      <th><strong>Marks</strong></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for question in screening.paper_questions %}
+                                    <tr>
+                                      <td>{{ question.sno }}</td>
+                                      <td>{{ question.question }}</td>
+                                      <td>{{ question.response }}</td>
+                                      <td>{{ question.marks }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        {% endfor %}
+                        {% for coding in coding_data %}
+                          <div class="screeing-bar">
+                            <span>{{ coding.paper_title }} ({{ coding.scored_marks }}/{{ coding.paper_marks }})</span>
+                            <span style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#coding_{{ coding.paper_id }}" aria-expanded="false" aria-controls="codingExample"><u>view details</u></span>
+                          </div>
+                          <div class="collapse" id="coding_{{ coding.paper_id }}">
+                            <div class="d-grid d-sm-flex p-3 border" style="flex-direction: column;">
+                              {% for question in coding.paper_questions %}
+                                <p>{{ question.sno }}. {{ question.question }}</p>
+                                <p>Marks : {{ question.marks }}</p>
+                                <textarea class="form-control" rows="23" disabled="">{{ question.response }}</textarea>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        {% endfor %}
+                      {% endif %}
                     </div>
                     
                   </div>
@@ -689,6 +750,12 @@
 
     input:checked+.slider:before {
         transform: translateX(5.5em);
+    }
+
+    .no-test-display {
+      text-align: center;
+      font-size: 1rem;
+      margin-top: 2rem;
     }
 </style>
 

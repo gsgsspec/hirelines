@@ -125,13 +125,23 @@ function verify(id) {
 }
 
 
-function showCandidateInfo() {  // it shows the jod details
+function showCandidateInfo() {  // it shows the candidate details
   $("div[name='secs']").removeClass('sec_selected');
   $('.apl_sec').prop("hidden", false);
   //$('.ins').prop("hidden",true);
   $('#sec').prop("hidden", true);
   $('.ins').prop("hidden", true);
   $("#verif_sec").addClass("sec_selected");
+  $("#ins_sec").removeClass('sec_selected');
+}
+
+function showTestData() {  // it shows the tests details
+  $("div[name='secs']").removeClass('sec_selected');
+  $('.test_sec').prop("hidden", false);
+  $('#sec').prop("hidden", true);
+  $('.ins').prop("hidden", true);
+  $('.apl_sec').prop("hidden", true);
+  $("#test_data").addClass("sec_selected");
   $("#ins_sec").removeClass('sec_selected');
 }
 
@@ -155,6 +165,7 @@ function show_section(sec_id) {  // it shows and hides the sections
 
   $('#sec').prop("hidden", false);
   $('.apl_sec').prop("hidden", true);
+  $('.test_sec').prop("hidden", true);
   $("#ins_sec").removeClass('sec_selected');
   $('.ins').prop("hidden", true);
 
