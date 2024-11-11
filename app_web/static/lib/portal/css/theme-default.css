@@ -343,7 +343,9 @@ button.list-group-item-primary.active {
 }
 
 .form-switch .form-check-input:focus {
-  background-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='-4%20-4%208%208'><circle%20r='3'%20fill='%23274699");
+  /* background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23696cff'/%3e%3c/svg%3e"); */
+  background-image: url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%27-4%20-4%208%208%27%3E%3Ccircle%20r=%273%27%20fill=%27%23274699%27/%3E%3C/svg%3E');
+
 }
 .form-switch .form-check-input:checked {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
