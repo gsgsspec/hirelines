@@ -388,7 +388,13 @@ function filter_data(pid, ptid) {
                 } else {
                     is_submission_evaluated = false
                 }
-                $(".eval-question-section").append(`<button type="button" class="btn btn-primary mt-3 float-right send-result" id="send_result_pid_${DATA['selected_participants']}" onclick="send_evaluation_result(${DATA['selected_participants']})" ${DATA['questions_tobe_evaluated'] == 0 ? '' : 'disabled'}>Send Result</button>`)
+                if(DATA['questions_tobe_evaluated'] == 0){
+                    $(".eval-question-section").append(`<button type="button" class="btn btn-primary mt-3 float-right send-result" id="send_result_pid_${DATA['selected_participants']}" onclick="confirm_and_RESEND_result(${DATA['selected_participants']})" >Resend Result</button>`)
+                }else{
+                    $(".eval-question-section").append(`<button type="button" class="btn btn-primary mt-3 float-right send-result" id="send_result_pid_${DATA['selected_participants']}" onclick="confirm_and_SEND_result(${DATA['selected_participants']})" disabled>Send Result</button>`)
+                }
+                
+                // ${DATA['questions_tobe_evaluated'] == 0 ? '' : 'disabled'}
             }
             $('body').removeClass('cursor-progress');
             $('p[name="papers"]').removeClass('cursor-progress')
@@ -416,6 +422,44 @@ function filter_data(pid, ptid) {
 }
 
 
+function confirm_and_SEND_result(pid_){
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
+    Swal.fire({
+        title: "Confirm to send results to candidate",
+        text: "Based on promote level the furthur process is carried out.",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: primaryColor,
+        cancelButtonColor: secondaryColor,
+        confirmButtonText: "Confirm"
+      }).then((result) => {
+        if (result.isConfirmed) {
+            send_evaluation_result(pid_)
+        }
+      });
+}
+
+
+
+function confirm_and_RESEND_result(pid_){
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
+    Swal.fire({
+        title: "Results are already sent to candidate. Do you want to resend?",
+        text: "The applicant is already proceeded to next level based on promote level. Resending may distrub the application workflow",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: secondaryColor,
+        cancelButtonColor: primaryColor,
+        confirmButtonText: "Confirm"
+      }).then((result) => {
+        if (result.isConfirmed) {
+            send_evaluation_result(pid_)
+        }
+      });
+}
+
 
 function send_evaluation_result(pid_) {
 
@@ -439,6 +483,8 @@ function send_evaluation_result(pid_) {
             $("#send_result_pid_"+pid_).text("Send Result");
 
             if (res.statusCode == 0) {
+                $("#send_result_pid_" + pid_).text("Resend Result");
+                $("#send_result_pid_" + pid_).attr("onclick", "confirm_and_RESEND_result(" + pid_ + ")");
                 Swal.fire({
                     icon: 'success',
                     title: 'Result mail sent to candidate successfully',
