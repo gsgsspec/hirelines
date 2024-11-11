@@ -210,7 +210,7 @@ def registerUserService(dataObjs):
                 "company_name": company.name,
                 "brand_content": company_branding.content,
                 "company_email": bussiness_email,
-                "company_logo":company_branding.logourl
+                "company_logo":str(company_branding.logourl)
             }
 
             send_company_data = requests.post(url, json=company_data)
