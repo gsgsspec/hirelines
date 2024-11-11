@@ -11,6 +11,7 @@ var menuItemsUrls = {
     'job-descriptions' : ['/job-descriptions','/add-job-description','/job-description-set-up','/update-job-description','/jd'],
     'interviews': ['/interviews'],
     'evaluation': ['/evaluation'],
+    'users': ['/users'],
     'feedback': ['/feedbacks', '/interviewer-feedback'],
     'reports': ['/reports', '/credits-usage'],
     'logout': ['/']

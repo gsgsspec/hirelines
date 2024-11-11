@@ -18,8 +18,8 @@ document.getElementById('login-btn').onclick=function(){
         
             if (res.statusCode == 0){   
                 if (res.token == 'token_generated'){
-                    if(res.data == 'HR'){
-                        window.location.href = '/dashboard'
+                    if(res.data == 'HR-Admin'){
+                        window.location.href = '/job-descriptions'
                     } else if(res.data == 'Interviewer'){
                         window.location.href = '/interviews' 
                     }

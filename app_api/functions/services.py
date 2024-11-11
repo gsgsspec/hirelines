@@ -175,13 +175,27 @@ def registerUserService(dataObjs):
                 transtype="I",
                 credits=free_trail_data["interview_credits_charges"],
             ).save()
-            
-            
+
+            user = User(
+                name=dataObjs["reg-name"],
+                datentime=datetime.now(),
+                location=dataObjs["reg-location"],
+                companyid=company.id,
+                role="HR-Admin",
+                password=random_password,
+                email=bussiness_email,
+                status="A",
+            )
+
+            user.save()
 
             default_branding = Branding.objects.filter(companyid=0).last()
 
             company_branding = Branding(
-                companyid=company.id, content=default_branding.content, status="A"
+                companyid=company.id, 
+                content=default_branding.content,
+                logourl = default_branding.logourl if default_branding.logourl else "",
+                status="A"
             )
 
             company_branding.save()
@@ -195,6 +209,8 @@ def registerUserService(dataObjs):
                 "id": company.id,
                 "company_name": company.name,
                 "brand_content": company_branding.content,
+                "company_email": bussiness_email,
+                "company_logo":company_branding.logourl
             }
 
             send_company_data = requests.post(url, json=company_data)
@@ -1199,6 +1215,7 @@ def getCdnData():
 def interviewCompletionService(dataObjs, user_id):
     try:
         call_sch_details = CallSchedule.objects.filter(id=dataObjs["sch_id"]).last()
+        call_sch_details.callendeddtt = datetime.now()
         call_sch_details.status = "C"
         call_sch_details.save()
 
@@ -1401,6 +1418,7 @@ def getCandidateWorkflowData(cid):
                 candidateid=candidate.id, companyid=candidate.companyid
             )
             notify_check = "N"
+            call_completion_date = ""
 
             registrations_data = []
 
@@ -1414,6 +1432,7 @@ def getCandidateWorkflowData(cid):
 
                     paper_type = ""
                     call_status = ""
+                    scheduled_time = ""
 
                     if workflow.papertype == "S":
                         paper_type = "Screening"
@@ -1426,8 +1445,10 @@ def getCandidateWorkflowData(cid):
                         ).last()
                         if call_schedule:
                             call_status = call_schedule.status
+                            scheduled_time = call_schedule.datentime.strftime("%d-%b-%Y %I:%M %p") if call_schedule.datentime else ""
                             if call_schedule.status == "C":
                                 notify_check = "Y"
+                                call_completion_date = call_schedule.callendeddtt.strftime("%d-%b-%Y %I:%M %p") if call_schedule.callendeddtt else ""
                     else:
                         paper_type = ""
 
@@ -1439,7 +1460,10 @@ def getCandidateWorkflowData(cid):
                             "call_status": call_status,
                             "candidateid": candidate.id,
                             "reg_status": registration.status,
+                            "completion_date": registration.completiondate.strftime("%d-%b-%Y %I:%M %p") if registration.completiondate else "",
                             "notify_check": notify_check,
+                            "call_completion_date":call_completion_date,
+                            "scheduled_time": scheduled_time
                         }
                     )
 

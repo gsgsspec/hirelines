@@ -93,6 +93,7 @@ class Registration(models.Model):
     papertype = models.CharField(max_length=1, null=True, blank=True)
     companyid = models.IntegerField(null=True)
     registrationdate = models.DateTimeField(null=True)
+    completiondate = models.DateTimeField(null=True)
     status = models.CharField(max_length=1, null=True, blank=True) # (For Interview : O - Offered, H - Hold)
 
     class Meta:

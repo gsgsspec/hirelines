@@ -7235,15 +7235,15 @@ function captureAudioPlusScreen(config) {
 
                     Swal.fire({
                         title: "",
-                        text: 'Please Choose "Also share tab audio"',
-                        imageUrl: "/static/lib/img/tab_audio.png",
+                        text: 'Please enable system audio',
+                        imageUrl: "/static/lib/portal/img/system_audio.png",
                         imageWidth: 300,
                         imageHeight: 300,
-                        imageAlt: "tab_audio",
+                        imageAlt: "system_audio",
                         showDenyButton: false,
                         showCancelButton: false,
                         confirmButtonText: "OK",
-                        confirmButtonColor: '#48d0ca'
+                        confirmButtonColor: '#274699'
 
                     }).then((result) => {
 

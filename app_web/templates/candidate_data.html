@@ -40,14 +40,16 @@
           <div class="card-container">
             {% for registration in registrations_data %}
             <div class="card flow-card">
-              <b><label class="p-clr mb-1">{{ registration.paper_title }}</label></b>
               <label class="s-clr mb-1">{{ registration.type_title }}</label>
+              <b><label class="p-clr mb-1">{{ registration.paper_title }}</label></b>
               {% if registration.paper_type == "I"%}
                 {%  if registration.call_status == "N"  %}
                   <button class="btn btn-primary" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
                 {% elif registration.call_status == "S" %}
                   <label>Interview scheduled</label>
+                  <label>Scheduled Time : {{ registration.scheduled_time }}</label>
                 {% elif registration.call_status == "C" %}
+                  <label>Completed on : {{ registration.call_completion_date }}</label>
                   <label>Interview is completed</label>
                 {% endif %}
                 {% if registration.reg_status == "O" %}
@@ -60,8 +62,10 @@
               {% else %}
             
                 {% if registration.reg_status == "P" %}
+                  <label>Completed on : {{ registration.completion_date }}</label>
                   <label>Promoted</label>
                 {% elif registration.reg_status == "F" %}
+                  <label>Completed on : {{ registration.completion_date }}</label>
                   <label>Failed</label>
                 {% elif registration.reg_status == "E" %}
                   <label>Under Evaluation</label>

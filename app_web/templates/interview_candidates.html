@@ -9,7 +9,7 @@
   </div>
   <div class="row p-3">
     {% for candidate in interview_candidates %}
-      <div class="col-md-6 col-lg-4 c-card" onclick="window.location.href='/candidate-interview/{{candidate.scd_id}}'">
+      <div class="col-md-6 col-lg-4 c-card" style="cursor: pointer;" onclick="window.location.href='/candidate-interview/{{candidate.scd_id}}'">
         <div class="card mb-3 shadow">
           <div class="card-body int-card-bd">
             <i class="fas fa-user fa-4x me-4 p-clr"></i>

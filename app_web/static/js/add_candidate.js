@@ -24,7 +24,7 @@ document.getElementById("save-data").onclick = function () {
     $.post(CONFIG['portal'] + "/api/add-candidate", final_data, function (res) {
         if (res.statusCode == 0) {
             var candidateData = res.data
-            console.log('candidateData',candidateData)
+
             if (candidateData == "insufficient_credits") {
 
                 Swal.fire({

@@ -281,11 +281,11 @@
                         {% for q in question.section_questions %}
                         <div class="form-check mt-1" style="width:80%; font-size: 16px;">
                           <li class="ql mb-3"><span> {{ q.qus }} </span><br>
-                            <span for="qr_{{ q.qus_id }}">Lowest(0)</span>
+                            <span for="qr_{{ q.qus_id }}">Low(0)</span>
                             <input style="padding: 0px; width: 62%;" type="range" min="0" max="5" step="1" value="0"
                               name="q3" id="qr_{{ q.qus_id }}"
                               onchange="answer({ 'question_id' : {{ q.qus_id }}, 'call_shud_id' : {{ candidate_data.schd_id }}, 'inpt_id' : this.id , 'candid_id' : {{ candidate_data.id }}} );">
-                            <span for="qr_{{ q.qus_id }}" >Highest(5)</span>
+                            <span for="qr_{{ q.qus_id }}" >High(5)</span>
                             <div style="padding-top: 10px;">Rating :<span id="qs_{{ q.qus_id }}">0</span></div>
                           </li>
                         </div>
