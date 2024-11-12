@@ -1796,6 +1796,12 @@ def addNewUserService(company_id, user_data):
 
         if user_data['event'] == 'update':
             userFind = User.objects.filter(email=user_data['userEmail']).last()
+            
+            userAuthdata = User_data.objects.filter(username = userFind.email).last()
+            if userAuthdata:
+                userAuthdata.usr_password = user_data['userPswd']
+                userAuthdata.save()
+
             if userFind:
                 userFind.name = user_data['userName']
                 userFind.password = user_data['userPswd']

@@ -1618,7 +1618,7 @@ document.addEventListener('DOMContentLoaded', function () {
         defaultOption.value = '';
         defaultOption.disabled = true;
         defaultOption.selected = true;
-        defaultOption.textContent = 'Select Role';
+        defaultOption.textContent = 'Select Interviewer';
         newSelect.appendChild(defaultOption);
         
         interviewersList.forEach(function (interviewer) {
