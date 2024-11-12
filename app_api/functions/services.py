@@ -1728,25 +1728,101 @@ def notifyCandidateService(dataObjs):
         raise
 
 
+# def addNewUserService(company_id, user_data):
+#     try:
+#         if user_data['event'] == 'create':
+#             print('-------------------------')
+#             print(company_id, user_data)
+#             userFind = User.objects.filter(email = user_data['userEmail']).last()
+#             if userFind:
+#                 return {'userAlreadyExisted':'Y'}
+#             else:
+#                 save_user = User(
+#                     companyid = company_id,
+#                     name = user_data['userName'],
+#                     email = user_data['userEmail'],
+#                     password = user_data['userPswd'],
+#                     role = user_data['userRole'],
+#                     location = user_data['newUserLocation'],
+#                     status = 'A'
+#                 )
+#                 save_user.save()
+#                 return {'userAlreadyExisted':'N','event':'created'}
+            
+#         if user_data['event'] == 'update':
+#             userFind = User.objects.filter(email = user_data['userEmail']).last()
+#             if userFind:
+#                 userFind.name = user_data['userName']
+#                 userFind.password = user_data['userPswd']
+#                 userFind.location = user_data['newUserLocation']
+#                 userFind.save()
+                
+#                 # return JsonResponse
+#                 return {'event':'update','userid':userFind,'name':userFind.name,'pswd':userFind.password,'location':userFind.location}
+#             # else:
+#                 # save_user = User(
+#                 #     companyid = company_id,
+#                 #     name = user_data['userName'],
+#                 #     email = user_data['userEmail'],
+#                 #     password = user_data['userPswd'],
+#                 #     role = user_data['userRole'],
+#                 #     location = user_data['newUserLocation'],
+#                 #     status = 'A'
+#                 # )
+#                 # save_user.save()
+                
+#     except Exception as e:
+#         raise
+
+
 def addNewUserService(company_id, user_data):
     try:
-        print('-------------------------')
-        print(company_id, user_data)
-        userFind = User.objects.filter(email = user_data['userEmail']).last()
-        if userFind:
-            return {'userAlreadyExisted':'Y'}
-        else:
-            save_user = User(
-                companyid = company_id,
-                name = user_data['userName'],
-                email = user_data['userEmail'],
-                password = user_data['userPswd'],
-                role = user_data['userRole'],
-                location = user_data['newUserLocation'],
-                status = 'A'
-            )
-            save_user.save()
-            return {'userAlreadyExisted':'N'}
+        if user_data['event'] == 'create':
+            userFind = User.objects.filter(email=user_data['userEmail']).last()
+            if userFind:
+                return {'userAlreadyExisted': 'Y'}
+            else:
+                save_user = User(
+                    companyid=company_id,
+                    name=user_data['userName'],
+                    email=user_data['userEmail'],
+                    password=user_data['userPswd'],
+                    role=user_data['userRole'],
+                    location=user_data['newUserLocation'],
+                    status='A'
+                )
+                save_user.save()
+                return {'userAlreadyExisted': 'N', 'event': 'created','userid':save_user.id}
+
+        if user_data['event'] == 'update':
+            userFind = User.objects.filter(email=user_data['userEmail']).last()
+            if userFind:
+                userFind.name = user_data['userName']
+                userFind.password = user_data['userPswd']
+                userFind.location = user_data['newUserLocation']
+                userFind.save()
+                
+                # Convert userFind to a dictionary format for JSON serialization
+                user_data_response = {
+                    'event': 'update',
+                    'userid': userFind.id,
+                    'name': userFind.name,
+                    'pswd': userFind.password,
+                    'location': userFind.location
+                }
+                return user_data_response
+    except Exception as e:
+        raise
+
+
+def changeUserstatusService(company_id, user_data):
+    try:
+        userid = user_data['userid']
+        userdata = User.objects.filter(id = userid).last()
+        if userdata:
+            userdata.status = user_data['status']
+            userdata.save()
+            
     except Exception as e:
         raise
 

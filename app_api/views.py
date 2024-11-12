@@ -16,7 +16,7 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, \
+from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
 
@@ -972,7 +972,27 @@ def addNewUsers(request):
     return JsonResponse(response)
 
 
-    
+@api_view(['POST'])
+def changeUserStatus(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        user = auth_user(request.user)
+        dataObjs = dataObjs = json.loads(request.POST.get('data'))
+        userData = changeUserstatusService(user.companyid,dataObjs)
+        response['data'] = userData
+        response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Creating New User'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
+
+
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])

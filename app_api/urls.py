@@ -37,6 +37,7 @@ urlpatterns = [
     path('interview-remarks',views.interviewRemarkSave),
 
     path('add-new-user',views.addNewUsers),
+    path('change-user-status',views.changeUserStatus),
 
     path('update-emailtemp',views.updateEmailtemp),
 ]
