@@ -920,7 +920,7 @@ def updateCompanyBrandingView(request):
                     logo_fullpath = f"{request.scheme}://{request.META['HTTP_HOST']}/media/{company_branding.logourl}"
                     company_branding.logourl = logo_fullpath
                     company_branding.save()
-                    logo_file_path = BASE_DIR+"/media/logos/"+logo_file_path
+                    logo_file_path = BASE_DIR+"/media/"+logo_file_path
                     logo_file = {"logo":open(logo_file_path, 'rb')}
                 dataObjs["cid"] = enc_company_id
                 
