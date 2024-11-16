@@ -1865,7 +1865,7 @@ def getCompanyCreditsUsageService(dataObjs):
     try:
         company_credits_usage = Credits.objects.filter(
             companyid=dataObjs["cid"]
-        ).values().order_by("id")
+        ).values().order_by("-id")
         
         usage_list = []
         
@@ -1889,14 +1889,19 @@ def getCompanyCreditsUsageService(dataObjs):
                 paper_type = const_paper_types.get(usage["papertype"], "")
                 paper_title = workflow.papertitle if workflow else "-"
                 # usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
-                usage_dict["description"] = f"""Registration for {paper_type}
+                usage_dict["description"] = f"""{paper_type}
                 {paper_title} - JD ({JD.title})"""
                 usage_dict["debit"] = f'{usage_dict["points"]}'
             if usage["transtype"] == "C":
                 payments = Payments.objects.get(id=usage_dict["transid"])
-                usage_dict["description"] = f"""Payment Successfull {payments.amount} INR
-                {usage_dict['points']} Credits added
-                """
+                if payments.modeofpay == "T":
+                    usage_dict["description"] = f"""Free Trial
+                    {usage_dict['points']} Credits added
+                    """
+                else:
+                    usage_dict["description"] = f"""Payment Successfull {payments.amount} INR
+                    {usage_dict['points']} Credits added
+                    """
                 usage_dict["credit"] = f'{usage_dict["points"]}'
                 
             

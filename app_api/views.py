@@ -912,6 +912,7 @@ def updateCompanyBrandingView(request):
                 company_branding.status = dataObjs['status']
                 company_branding.save()
                 logo_file_path = ""
+                logo_file = ""
                 for file in fileObjs.items():
                     company_branding.logourl = file[1]
                     company_branding.save()
@@ -919,8 +920,8 @@ def updateCompanyBrandingView(request):
                     logo_fullpath = f"{request.scheme}://{request.META['HTTP_HOST']}/media/{company_branding.logourl}"
                     company_branding.logourl = logo_fullpath
                     company_branding.save()
-                logo_file_path = BASE_DIR+"/media/"+logo_file_path
-                logo_file = {"logo":open(logo_file_path, 'rb')}
+                    logo_file_path = BASE_DIR+"/media/"+logo_file_path
+                    logo_file = {"logo":open(logo_file_path, 'rb')}
                 dataObjs["cid"] = enc_company_id
                 
                 acert_domain = getConfig()['DOMAIN']['acert']

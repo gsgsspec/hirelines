@@ -31,7 +31,7 @@ def sendRegistrainMail(mail_data):
         template_file_path =  root_path + "/app_api/functions/email_templates/registration.html"
         
 
-        with open(template_file_path, 'r') as template_file:
+        with open(template_file_path, 'r',encoding="utf-8") as template_file:
             email_template = template_file.read()
 
         email_body =  (email_template.replace('[user_name]',mail_data['name'])

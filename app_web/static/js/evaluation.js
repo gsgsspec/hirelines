@@ -21,7 +21,7 @@ function get_papers_data() {
             var papers_data = res.data;
             papers_count = papers_data.length
             if(papers_count==0){
-                $(".papers-card").append("<h5 class='form-label all_eval_label'>No Papers</h5>")
+                $(".papers-card").append("<h5 class='form-label all_eval_label'>No Tests</h5>")
             }
             papers_data.map((paper, index) => {
                 if (paper.paper_count == 0) {
@@ -34,7 +34,7 @@ function get_papers_data() {
             })
             if (papers_count == evaluated_papers) {
                 // $('#show_all_papers').click();
-                $(".papers-card").append("<h5 class='form-label all_eval_label'>All Papers Evaluated</h5>")
+                $(".papers-card").append("<h5 class='form-label all_eval_label'>All Tests Evaluated</h5>")
             } else {
                 $("p[name='papers']:first").click();
             }
@@ -70,7 +70,7 @@ $('#show_all_papers').click(function () {
     if (paper_status == "to_be_evaluated") {
         $('#show_all_papers').text('Show All');
         if (papers_count == evaluated_papers) {
-            $(".papers-card").append("<h5 class='form-label all_eval_label'>All Papers Evaluated</h5>")
+            $(".papers-card").append("<h5 class='form-label all_eval_label'>All Tests Evaluated</h5>")
             $('#participants').html('<div class="loader-overlay">' +
                 '<div class="loader"></div>' +
                 '</div>');
@@ -446,21 +446,21 @@ function confirm_and_RESEND_result(pid_){
     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim();
     Swal.fire({
-        title: "Results are already sent to candidate. Please contact administrator.",
+        title: "Results are already sent to candidate. Confirm to Resend.",
         text: "The applicant is already proceeded to next level based on promote level. Resending may distrub the application workflow",
         icon: "warning",
-        showCancelButton: false,
+        showCancelButton: true,
         confirmButtonColor: primaryColor,
-        // cancelButtonColor: primaryColor,
-        confirmButtonText: "OK"
-        // cancelButtonText:"OK"
+        cancelButtonColor: secondaryColor,
+        confirmButtonText: "Confirm",
+        cancelButtonText:"Cancel"
         
       })
-    //   .then((result) => {
-    //     if (result.isConfirmed) {
-    //         send_evaluation_result(pid_)
-    //     }
-    //   });
+      .then((result) => {
+        if (result.isConfirmed) {
+            send_evaluation_result(pid_)
+        }
+      });
 }
 
 
