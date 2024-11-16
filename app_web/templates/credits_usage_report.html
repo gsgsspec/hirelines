@@ -7,24 +7,26 @@
             </div>
             <div>
                 <div class="table-responsive text-nowrap table-cls mb-2">
-                    <table class="table table-bordered table-hover" id="credits_usage_table" style="cursor: default;animation: slide-in-right 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;">
+                    <div id="export-buttons-container"></div>
+                    <table class="table table-bordered table-hover table-striped" id="credits_usage_table"
+                        style="border-top: 1px solid #b8bfc6;    border-bottom: 1px solid #b8bfc6;">
                         <thead>
                             <tr>
-                                <th>Txn Datetime</th>
+                                <th>Datetime</th>
                                 <th>Description</th>
                                 <th class="text-end">Credited</th>
                                 <th class="text-end">Usage</th>
                                 <th class="text-end">Balance</th>
                             </tr>
                         </thead>
-                        <tbody class="table-border-bottom-0"  style="cursor: default;">
+                        <tbody>
                             {% for usage in credits_usage %}
-                            <tr {% if usage.credit %}style="background-color: #e8ffe8;"{% endif %}>
-                                <td style="vertical-align: middle;">{{ usage.transdatetime }}</td>
-                                <td style="white-space: pre-line;vertical-align: middle;">{{ usage.description }}</td>
-                                <td style="vertical-align: middle;" class="text-end">{{ usage.credit }}</td>
-                                <td style="vertical-align: middle;" class="text-end">{{ usage.debit }}</td>
-                                <td style="vertical-align: middle;" class="text-end">{{ usage.balance }}</td>
+                            <tr {% if usage.credit %}style="background-color: #e8ffe8;" {% endif %}>
+                                <td class="datetime">{{ usage.transdatetime }}</td>
+                                <td style="white-space: pre-line;">{{ usage.description }}</td>
+                                <td class="text-end">{{ usage.credit }}</td>
+                                <td class="text-end">{{ usage.debit }}</td>
+                                <td class="text-end">{{ usage.balance }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -34,107 +36,92 @@
         </div>
     </div>
 </div>
+
 <style>
-.table-responsive {
-    overflow-x: auto;
-    white-space: nowrap;
-}
+    .dt-buttons button {
+        padding: 5px 15px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        background-color: #274699;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+    }
 
-#credits_usage_table {
-    table-layout: auto; /* Ensures fixed width for columns */
-    width: 100%; /* Adjusts the table to full width of its container */
-}
+    .dataTables_filter {
+        margin-bottom: 5px !important;
+    }
+    .dataTables_length{
+        margin: 10px !important;
+    }
 
-#credits_usage_table th,
-#credits_usage_table td {
-    padding: 10px; /* Adds padding for better readability */
-    height: auto; /* Allows the cell to expand based on content */
-    text-align: left;
-    vertical-align: top;
-}
+     /* Custom CSS to move the sorting arrows to the left for columns 2, 3, and 4 */
+     th:nth-child(3), th:nth-child(4), th:nth-child(5) {
+        text-align: left !important;
+    }
 
-#credits_usage_table th {
-    background-color: #f2f2f2; /* Adds background to header cells */
-    font-weight: bold;
-}
+    th:nth-child(3) .sorting,
+    th:nth-child(4) .sorting,
+    th:nth-child(5) .sorting {
+        float: left;
+        margin-left: 10px; /* Adjust spacing as needed */
+    }
 
-#credits_usage_table th:nth-child(1),
-#credits_usage_table td:nth-child(1) {
-    width: 200px; /* Adjust width as needed */
-    white-space: normal; /* Allows content to wrap within the cell */
-    word-wrap: break-word; /* Forces long words to wrap to the next line if necessary */
-}
+    th:nth-child(3) .sorting_asc,
+    th:nth-child(4) .sorting_asc,
+    th:nth-child(5) .sorting_asc {
+        margin-left: 10px;
+    }
 
-/* Increase width for Description column */
-#credits_usage_table th:nth-child(2),
-#credits_usage_table td:nth-child(2) {
-    width: 550px; /* Adjust width as needed */
-    white-space: normal; /* Allows content to wrap within the cell */
-    word-wrap: break-word; /* Forces long words to wrap to the next line if necessary */
-}
-
-/* #credits_usage_table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-} */
-
+    th:nth-child(3) .sorting_desc,
+    th:nth-child(4) .sorting_desc,
+    th:nth-child(5) .sorting_desc {
+        margin-left: 10px;
+    }
+    
 </style>
-
-
-<!-- /* Set a max height and enable scroll for tbody */
-#credits_usage_table tbody {
-    display: block;
-    max-height: 300px; /* Adjust as needed */
-    overflow-y: auto;
-}
-
-#credits_usage_table thead,
-#credits_usage_table tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed; /* Allows columns to be of fixed width */
-}
-
-/* Style for WebKit-based browsers */
-#credits_usage_table tbody::-webkit-scrollbar {
-    width: 8px; /* Adjust width for a thin scrollbar */
-}
-
-#credits_usage_table tbody::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Background color for the scrollbar track */
-}
-
-#credits_usage_table tbody::-webkit-scrollbar-thumb {
-    background-color: #888; /* Color of the scrollbar thumb */
-    border-radius: 10px; /* Round edges for the scrollbar thumb */
-    border: 2px solid #f1f1f1; /* Adds padding around thumb */
-}
-
-#credits_usage_table tbody::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Darker shade when hovered */
-}
-
-/* Style for Firefox */
-#credits_usage_table tbody {
-    scrollbar-width: thin; /* Makes scrollbar thin */
-    scrollbar-color: #888 #f1f1f1; /* Sets thumb and track colors */
-} -->
-
 <script>
-    $(document).ready(function () {
-        // $.noConflict();
-        // $('#credits_usage_table').DataTable({
-        //     "order": [], // Disable initial sorting
-        //     "ordering": true, // Enable ordering globally
-        //     "columnDefs": [
-        //         { "orderable": false, "targets": 0 }, // Disable ordering on all columns by default
-        //         { "orderable": true, "targets": '_all' } // Enable ordering only on the first column (index 0)
-        //     ],
-        //     language: {
-        //         search: "",
-        //         searchPlaceholder: "Search..."
-        //     },
-        //     pagingType: 'simple_numbers'
-        // });
+    jQuery(document).ready(function () {
+        $.noConflict();
 
+        var table = $('#credits_usage_table').DataTable({
+            order: [[0, 'desc']], // Sort by Datetime column in descending order
+            columnDefs: [
+                {
+                    targets: 0, // Apply to the first column (Datetime)
+                    type: 'moment', // Specify that the column type is Moment.js
+                    render: function(data, type, row) {
+                        // Keep the UI format intact
+                        return data; // Just return the data without modification for UI
+                    }
+                }
+            ],
+            paging: true,
+            pageLength: 10, // Display 10 rows per page by default
+            lengthMenu: [10, 25, 50, 100], // Options for the number of records to display
+            language: {
+                paginate: {
+                    previous: '&lt;',
+                    next: '&gt;'
+                },
+                search: "Search:",
+                lengthMenu: "Display _MENU_ records per page", // Show the dropdown to select records per page
+                zeroRecords: "No records found"
+            }
+        });
+
+        // Manually add export buttons
+        new $.fn.dataTable.Buttons(table, {
+            buttons: [
+                {
+                    extend: 'excelHtml5', // This enables Excel export
+                    text: '<i class="fas fa-file-upload"></i>&ensp; Export to Excel',
+                    title: 'Credits Usage Report - Hirelines',
+                    footer: true, // Enable footer for Excel
+                    customize: function (xlsx) {
+                    }
+                }
+            ]
+        }).container().appendTo('#export-buttons-container'); // Append buttons to the custom container
     });
 </script>
