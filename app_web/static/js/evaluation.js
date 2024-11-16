@@ -452,7 +452,7 @@ function confirm_and_RESEND_result(pid_){
         showCancelButton: true,
         confirmButtonColor: primaryColor,
         cancelButtonColor: secondaryColor,
-        confirmButtonText: "OK",
+        confirmButtonText: "Confirm",
         cancelButtonText:"Cancel"
         
       })
