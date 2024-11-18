@@ -45,6 +45,11 @@ function workFlowData(){
                 JdStatus = res.data['jdStatus']
                 changeStatusInHtml(res.data['jdStatus'])
                 // deleteTestValidation(res.data['jdStatus'])
+
+                if (res.data['workFlowData'].length == 0){
+                    setUpInstructions()
+                }
+
             }
         }
 
@@ -1806,3 +1811,7 @@ function openInterviewpPanel(){
 //     }
 
 // }
+
+function setUpInstructions(){
+    document.getElementById('setupInstructions').hidden = false
+}

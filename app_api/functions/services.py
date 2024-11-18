@@ -606,14 +606,18 @@ def getCompanyJdData(cid):
 def getCompanyJDsList(companyId):
     try:
         company_jds = list(JobDesc.objects.filter(companyid=companyId).values())
-        for jd in company_jds:
-            userData = User.objects.filter(id=jd["createdby"]).last()
-            userName = ""
-            if userData:
-                userName = userData.name
-            jd["createdbyUserName"] = userName
-        company_jds.reverse()
-        return company_jds
+        if len(company_jds) > 0:
+            for jd in company_jds:
+                userData = User.objects.filter(id=jd["createdby"]).last()
+                userName = ""
+                if userData:
+                    userName = userData.name
+                jd["createdbyUserName"] = userName
+            company_jds.reverse()
+            return company_jds
+        else:
+            company_jds = []
+            return company_jds
     except Exception as e:
         raise
 
@@ -641,18 +645,15 @@ def jdDetails(jdId, companyId):
                     jd_interviewers = ast.literal_eval(jdData.interviewers)
                     for selectedInterviewer in jd_interviewers:
                         if selectedInterviewer:
-                            userData = list(
-                                User.objects.filter(id=selectedInterviewer).values(
-                                    "id", "name"
-                                )
-                            )
-                            if selectedInterviewer:
-                                selectedInterviewerLst.append(
-                                    {
-                                        "id": userData[0]["id"],
-                                        "name": userData[0]["name"],
-                                    }
-                                )
+                            userData = list(User.objects.filter(id=selectedInterviewer).values("id", "name"))
+                            if userData:
+                                if selectedInterviewer:
+                                    selectedInterviewerLst.append(
+                                        {
+                                            "id": userData[0]["id"],
+                                            "name": userData[0]["name"],
+                                        }
+                                    )
 
             jdDataDict = {
                 "id": jdData.id,
