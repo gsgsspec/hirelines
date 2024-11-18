@@ -137,6 +137,7 @@ def registerUserService(dataObjs):
             free_trail_data = getConfig()["FREETRAIL"]
             
             payments = Payments(companyid=company.id,dateofpay=datetime.now(),
+                                modeofpay="T",
                                 amount=30000,credits=free_trail_data["registration_grace_credits"])
             payments.save()
             
