@@ -183,6 +183,7 @@ def registerUserService(dataObjs):
                 companyid=company.id, 
                 content=default_branding.content,
                 logourl = default_branding.logourl if default_branding.logourl else "",
+                sociallinks = default_branding.sociallinks if default_branding.sociallinks else "",
                 status="A"
             )
 
@@ -198,7 +199,8 @@ def registerUserService(dataObjs):
                 "company_name": company.name,
                 "brand_content": company_branding.content,
                 "company_email": bussiness_email,
-                "company_logo":str(company_branding.logourl)
+                "company_logo":str(company_branding.logourl),
+                "sociallinks": company_branding.sociallinks
             }
 
             send_company_data = requests.post(url, json=company_data)
@@ -1477,6 +1479,8 @@ def generateCandidateReport(cid):
 
         candidate = Candidate.objects.get(candidateid=cid)
 
+        branding = Branding.objects.get(companyid=candidate.companyid)
+
         send_candidate_data = requests.post(url, json=candidate_data)
 
         response_content = send_candidate_data.content
@@ -1526,7 +1530,8 @@ def generateCandidateReport(cid):
                 "{interview_section}", interview_data
             )
             updated_report = updated_report.replace("{#jd_title#}", jd.title)
-
+            updated_report = updated_report.replace("{#comapany_logo#}", str(branding.logourl) if str(branding.logourl) else "")
+            print('branding.logourl',branding.logourl)
             call_schedule = CallSchedule.objects.filter(candidateid=candidate.id).last()
             if call_schedule:
 

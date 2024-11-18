@@ -26,8 +26,6 @@ def homePage(request):
     except Exception as e:
         raise
 
-
-
 def webHomePage(request):
     try:
 
@@ -37,6 +35,16 @@ def webHomePage(request):
 
     except Exception as e:
         raise
+
+# def webHomePage(request):
+#     try:
+
+#         company_types = constants.company_types
+
+#         return render(request, 'tmp_website.html' )
+
+#     except Exception as e:
+#         raise
 
 
 def loginPage(request):
