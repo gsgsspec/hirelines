@@ -521,7 +521,8 @@ function saveOrUpdateTest(){
                                 dataObj = {
                                     'event':'update',
                                     'paperId': data['paperid'],
-                                    'paperTitle': data['papertitle']
+                                    'paperTitle': data['papertitle'],
+                                    'promotPercentage':data['promot']
                                 }
                                 
                                 var final_data = {
@@ -1279,22 +1280,24 @@ function selectedPaperQuestionsCheck(selectedPaper,testId){
 
     var staticQuestionsLst = selectedPaper['paperQuestionslst']
     var dynaminQuestionsLst = selectedPaper['dynamicQuestionIds']
-
-    if(staticQuestionsLst.length > 0){
-        for( var statQues = 0; statQues < staticQuestionsLst.length; statQues++){
-            var questionCheckInpt = document.getElementById('staticQuestionCheckBox_'+staticQuestionsLst[statQues]['id']+'_'+testId)
-            if(questionCheckInpt){
-                questionCheckInpt.checked = true
+    if(staticQuestionsLst){
+        if(staticQuestionsLst.length > 0){
+            for( var statQues = 0; statQues < staticQuestionsLst.length; statQues++){
+                var questionCheckInpt = document.getElementById('staticQuestionCheckBox_'+staticQuestionsLst[statQues]['id']+'_'+testId)
+                if(questionCheckInpt){
+                    questionCheckInpt.checked = true
+                }
             }
         }
     }
-
-    if(dynaminQuestionsLst.length > 0){
-        for( var dynQues = 0; dynQues < dynaminQuestionsLst.length; dynQues++){
-            var questionCheckInpt = document.getElementById('dynamicQuestionCheckBox_'+dynaminQuestionsLst[dynQues]+'_'+testId)
-            if(questionCheckInpt){
-                questionCheckInpt.checked = true
-            }   
+    if(dynaminQuestionsLst){
+        if(dynaminQuestionsLst.length > 0){
+            for( var dynQues = 0; dynQues < dynaminQuestionsLst.length; dynQues++){
+                var questionCheckInpt = document.getElementById('dynamicQuestionCheckBox_'+dynaminQuestionsLst[dynQues]+'_'+testId)
+                if(questionCheckInpt){
+                    questionCheckInpt.checked = true
+                }   
+            }
         }
     }
 
