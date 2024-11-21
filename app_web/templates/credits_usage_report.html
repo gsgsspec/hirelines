@@ -21,7 +21,7 @@
                         </thead>
                         <tbody>
                             {% for usage in credits_usage %}
-                            <tr {% if usage.credit %}style="background-color: #e8ffe8;" {% endif %}>
+                            <tr {% if usage.credit %}style="color: #05ac05 !important;" {% endif %}>
                                 <td class="datetime">{{ usage.transdatetime }}</td>
                                 <td style="white-space: pre-line;">{{ usage.description }}</td>
                                 <td class="text-end">{{ usage.credit }}</td>
