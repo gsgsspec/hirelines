@@ -21,7 +21,7 @@
                         </thead>
                         <tbody>
                             {% for usage in credits_usage %}
-                            <tr {% if usage.credit %}style="color: #05ac05 !important;" {% endif %}>
+                            <tr>
                                 <td class="datetime">{{ usage.transdatetime }}</td>
                                 <td style="white-space: pre-line;">{{ usage.description }}</td>
                                 <td class="text-end">{{ usage.credit }}</td>
@@ -38,9 +38,6 @@
 </div>
 
 <style>
-    tr.odd[style] {
-    color: #05ac05 !important;
-}
     .dt-buttons button {
         padding: 5px 15px;
         font-size: 14px;
