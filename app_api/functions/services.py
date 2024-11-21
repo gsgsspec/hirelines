@@ -1876,7 +1876,10 @@ def getCompanyCreditsUsageService(dataObjs):
         usage_list = []
         
         for usage in company_credits_usage:
-            user = User.objects.get(id=usage["user"]).name
+            if usage["user"]:
+                user = User.objects.get(id=usage["user"]).name
+            else:
+                user= ""
             usage_dict = dict(usage)
             # usage_dict["transtype"] = paper_type
             # usage_dict["paper_title"] = paper_title
