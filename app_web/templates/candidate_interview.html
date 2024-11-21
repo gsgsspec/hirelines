@@ -57,10 +57,10 @@
               <div class="row" style="flex-flow: row;padding: 1%;padding-top: 0%;padding-bottom: 0.1%;" id="ini_div">
                 
                 <div style="height: 522px;width: 60%;border: solid 1px #d2d6da; border-radius: 6px; border-top-left-radius: 0px; border-bottom-left-radius: 0px;">
-                    <div>
+                    <div style="height: 160px;">
                         <p id="reg_code" hidden>{{candidate_data.code}}_{{ candidate_data.schd_id }}</p>
 
-                        <div class="grid-container pb-2">
+                        <div class="grid-container pb-2" style="height: 160px;overflow: auto;">
                         <div class="grid-item cursor-pointer sec_selected" name="ins" id="ins_sec" onclick="show_ins();" style="align-items: center;">
                             <h5 style="font-size: 17px; font-weight: 800;">Job Description</h5>
                         </div>
@@ -86,7 +86,7 @@
                   <!-- Started container -->
 
                   <!-- <h5 class="ins">Candidate Info</h5> -->
-                  <div class="ins" style="overflow: auto; position: relative; height: 72%; padding:1%">
+                  <div class="ins" style="overflow: auto; position: relative; height: 65%; padding:1%">
                     <div class="qol">
                       <table style="width:100%;">
                         <tr>
@@ -162,7 +162,7 @@
                     </div>
                   </div>
 
-                  <div class="apl_sec" style="overflow: auto; position: relative; padding:1%;height: 75%;" hidden>
+                  <div class="apl_sec" style="overflow: auto; position: relative; padding:1%;height: 65%;" hidden>
                     <div class="qol">
                       <table style="width:100%;">
                         <tr>
@@ -226,7 +226,7 @@
                     
                   </div>
 
-                  <div class="test_sec" style="overflow: auto; position: relative; padding:1%;height: 75%;" hidden>
+                  <div class="test_sec" style="overflow: auto; position: relative; padding:1%;height: 65%;" hidden>
                     <div class="qol">
                       {% if not screening_data and not coding_data %}
                         <p class="no-test-display">No screening or coding test found for this candidate</p>
@@ -283,7 +283,7 @@
                     
                   </div>
 
-                  <div hidden id="sec" class="sec_q" style="position: relative; height: 75%; padding:1%">
+                  <div hidden id="sec" class="sec_q" style="position: relative; height: 65%; padding:1%">
 
                     {% for question in sections_questions_lst %}
 
@@ -721,5 +721,33 @@
         padding-left: 0px !important;
     }
 </style>
+
+<script>
+  function adjustGridItemHeight() {
+    const gridContainer = document.querySelector('.grid-container');
+
+    // Check if the container exists
+    if (!gridContainer) {
+      console.error('Container with class "grid-container" not found.');
+      return;
+    }
+
+    // Select all child elements with class 'grid-item' within the container
+    const gridItems = gridContainer.querySelectorAll('.grid-item');
+
+    // Get the count of grid items
+    const itemCount = gridItems.length;
+
+    // Determine the height based on the count
+    const newHeight = itemCount < 7 ? '100%' : '50px';
+
+    // Update the height of each grid item
+    gridItems.forEach(item => {
+      item.style.height = newHeight;
+    });
+
+  }
+  adjustGridItemHeight();
+</script>
 
 </body>
