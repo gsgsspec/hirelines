@@ -374,7 +374,7 @@ class Account(models.Model):
     companyid = models.IntegerField(null=True)
     type = models.CharField(max_length=1, null=True)
     payment = models.DecimalField(max_digits=13, decimal_places=2, null=True) # total amount paid
-    creditamount = models.IntegerField(null=True) # total added credits
+    credit = models.IntegerField(null=True) # total added credits
     lastpayment = models.DecimalField(max_digits=13, decimal_places=2, null=True)
     lastpaymentdatetime = models.DateTimeField(null=True)
     lastcredit = models.IntegerField(null=True) # last added credits
