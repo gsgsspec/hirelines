@@ -1530,7 +1530,8 @@ function deleteTest() {
                     dataObj = {
                         'event':'paperStatus',
                         'paperId': data['paperId'],
-                        'paperTitle': data['papertitle']
+                        'paperTitle': data['papertitle'],
+                        'promotPercentage': ""
                     }
                     
                     var final_data = {
