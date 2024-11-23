@@ -70,6 +70,14 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
 
                 candidate.save()
 
+                jd_title = ''
+                jd_desc = ''
+
+                jd_details = JobDesc.objects.filter(id=dataObjs["jd"]).last()
+                if jd_details:
+                    jd_title = jd_details.title or ''
+                    jd_desc = jd_details.description or ''
+
                 acert_domain = getConfig()['DOMAIN']['acert']
                 # Adding candidate at acert via api
                 endpoint = '/api/hirelines-add-candidate'
@@ -83,7 +91,9 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                     'mobile': dataObjs["mobile"],
                     'paper_id': dataObjs['begin-from'], 
                     'company_id':cid,
-                    'reference_id': candidate.candidateid
+                    'reference_id': candidate.candidateid,
+                    'jd_title':jd_title,
+                    'jd_desc':jd_desc
                 }
 
                 send_candidate_data = requests.post(url, json = candidate_data, verify=False)
