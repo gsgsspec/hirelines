@@ -99,8 +99,9 @@
                   <div class="row mb-3 mx-1">
                       <select class="form-select" id="newUserRole" required>
                         <option disabled selected>Select Role</option>
-                        <!-- <option value="HR-Executive" >HR-Executive</option> -->
-                        <option value="Interviewer">Interviewer</option>
+                          {% for role in rolesLst %}
+                              <option value="{{ role.id }}" >{{ role.Name }}</option>  
+                          {% endfor %}
                       </select>
                   </div>
                 </div>

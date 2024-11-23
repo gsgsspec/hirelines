@@ -23,9 +23,14 @@ function addNewUser() {
   var newUserName_ = document.getElementById('newUserName').value;
   var newUserPassword_ = document.getElementById('newUserPassword').value;
   var newUserEmail_ = document.getElementById('newUserEmail').value;
-  var newUserRole_ = document.getElementById('newUserRole').value;
+  // var newUserRole_ = document.getElementById('newUserRole').value;
   var newUserLocation_ = document.getElementById('newUserLocation').value;
   
+  var select = document.getElementById('newUserRole');
+  var selectedOption = select.options[select.selectedIndex];
+  var selectedRoleIdvalue = selectedOption.value;
+  var newUserRole_ = selectedOption.text;
+
   var NewUserDataValidation = true;  // Initialize as true, and set to false if any validation fails
 
   // Username validation
@@ -92,7 +97,7 @@ function addNewUser() {
     "userName"  :  newUserName_,
     "userPswd"  :  newUserPassword_,
     "userEmail" :  newUserEmail_,
-    "userRole"  :  newUserRole_,
+    "userRole"  :  selectedRoleIdvalue,
     "newUserLocation": newUserLocation_,
     };
 
@@ -142,8 +147,6 @@ function addNewUser() {
                   // document.getElementById('successMsg').hidden = false
                   // document.getElementById('successMsg').innerHTML = '<i class="far fa-check-circle"></i> User Updated'
 
-                  
-
                   var userData = document.getElementById('userNameField_'+ res.data['userid'])
                   var userLocation = document.getElementById('userLocation_'+ res.data['userid'])
                   userData.innerText = res.data['name']
@@ -178,7 +181,6 @@ function openNewUserModal() {
   document.getElementById('newUserEmailValidation').hidden = true
   document.getElementById('NewUserpasswordValidation').hidden = true
   document.getElementById('newUserRoleValidation').hidden = true
-
 
   document.getElementById('UserCreateAndEditModal').innerText = 'New User'
   document.getElementById('newUserName').value = ''
