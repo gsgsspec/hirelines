@@ -6,7 +6,7 @@ from app_api.functions.enc_dec import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
-    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData
+    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -491,10 +491,13 @@ def interviewSchedule(request,cid):
 
         call_schedule_details = getCallScheduleDetails(cid)
 
+        schedule_type = request.GET.get('status', 'N')
+
         interviewers = call_schedule_details[0]
         candidate_data = call_schedule_details[1]
         
-        return render(request, "portal_index.html", {"template_name": 'interview_schedule.html','menuItemList':menuItemList,'interviewers':interviewers,'candidate_data':candidate_data })
+        return render(request, "portal_index.html", {"template_name": 'interview_schedule.html','menuItemList':menuItemList,'interviewers':interviewers,'candidate_data':candidate_data,
+                                                    'schedule_type':schedule_type })
     
     except Exception as e:
         raise
@@ -685,6 +688,32 @@ def creditsUsageReportPage(request):
         
         return render(request, "portal_index.html", {"template_name": 'credits_usage_report.html','menuItemList':menuItemList,
                                                      "credits_usage":credits_usage})
+    
+    except Exception as e:
+        raise
+
+
+
+
+def companyPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        company_data = getCompanyData(user_data.companyid)
+
+        company_types = constants.company_types
+        
+        return render(request, "portal_index.html", {"template_name": 'company_data.html','menuItemList':menuItemList,
+                                                     'company_types':company_types,'company_data':company_data})
     
     except Exception as e:
         raise

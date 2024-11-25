@@ -1,0 +1,145 @@
+{% load static %}
+<div class="container-center">
+    <div class="col-9">
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">Company Details</h5>
+            </div>
+            <div class="card-body">
+                <form id="company-data">
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" maxlength="100" id="company-name" placeholder="Company name" value="{{company_data.name}}" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Contact Person</label>
+                        <div class="col-sm-10">
+                            <div class="input-group input-group-merge">
+                                <input type="text" id="contact-person" maxlength="100" class="form-control" placeholder="Contact Person" value="{{company_data.contact_person}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Contact Email</label>
+                        <div class="col-sm-10">
+                            <div class="input-group input-group-merge">
+                                <input type="email" id="company-email" class="form-control" maxlength="100" placeholder="Contact Email" value="{{company_data.email}}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Contact Phone</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="phone" class="form-control phone-mask" placeholder="Contact Phone" value="{{company_data.phone}}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Website</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="website" class="form-control phone-mask" maxlength="100" placeholder="Company Website" value="{{company_data.website}}">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">City</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="city" class="form-control phone-mask" maxlength="100" placeholder="City" value="{{company_data.city}}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Location</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="location" class="form-control phone-mask" maxlength="100" placeholder="Location" value="{{company_data.address}}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Country</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="country" class="form-control phone-mask" placeholder="Country" value="{{company_data.country}}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Company Type</label>
+                        <div class="col-sm-10">
+                            <select id="companytype" class="form-select" required>
+                                <option value="" selected disabled></option>
+                                {% for company_type in company_types %}
+                                    {% if company_data.company_type == company_type %}
+                                        <option value="{{ company_type }}" selected>{{ company_type }}</option>
+                                    {% else %}
+                                        <option value="{{ company_type }}">{{ company_type }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h5 class="mb-3 mt-4">Social Links</h5>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Linkedin</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <span class="input-group-text" ><i class="fab fa-linkedin" style="color: #0a66c2;font-size: large;"></i></span>
+                                <input type="text" class="form-control" id="linkedin" placeholder="Linkedin"  value="{{company_data.Linkedin}}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Facebook</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <span class="input-group-text" ><i class="fab fa-facebook-square" style="color: #0866ff;font-size: large;"></i></span>
+                                <input type="text" class="form-control" id="facebook" placeholder="Facebook"  value="{{company_data.Facebook}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Instagram</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <span class="input-group-text"><iconify-icon icon="skill-icons:instagram" style="font-size: large;"></iconify-icon></span>
+                                <input type="text" class="form-control" id="instagram" placeholder="Instagram"  value="{{company_data.Instagram}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Youtube</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fab fa-youtube" style="color: #e1002d;"></i></span>
+                                <input type="text" class="form-control" id="youtube" placeholder="Youtube"  value="{{company_data.Youtube}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">X (Twitter)</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <span class="input-group-text"><iconify-icon icon="fa6-brands:square-x-twitter" style="color: #000;font-size: large;"></iconify-icon></span>
+                                <input type="text" class="form-control" id="twitter" placeholder="X / Twitter"  value="{{company_data.Twitter}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-end">
+                        <div class="col-sm-10 text-end">
+                            <button id="update-data" type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<span id="company-id" name="{{company_data.id}}" hidden></span>
+<script src="{% static 'js/company_data.js' %}"></script>

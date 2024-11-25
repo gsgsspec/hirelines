@@ -2,7 +2,11 @@
 
 <div class="card">
     <div class="card-title-table">
-        <h4 class="card-header">Schedule interview for {{candidate_data.c_name}}</h4>
+        {% if schedule_type == 'R' %}
+            <h4 class="card-header">Reschedule interview for {{candidate_data.c_name}}</h4>
+        {% else %}
+            <h4 class="card-header">Schedule interview for {{candidate_data.c_name}}</h4>
+        {% endif %}
     </div>
     <div class="card-body">
             <div class="row mb-1">
@@ -64,6 +68,11 @@
         cursor: pointer;
     }
 </style>
+
+<script>
+    var schedule_type = "{{schedule_type}}"
+</script>
+
 <script src="{% static 'js/interview_schedule.js' %}"></script>
 
 <script>
@@ -114,3 +123,5 @@
         cursor: pointer;
     }
 </style>
+
+

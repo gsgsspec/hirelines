@@ -9,7 +9,7 @@ document.getElementById("save_branding").onclick = function () {
             'branding_id': $('#organization').attr('name'),
             // 'organization': $('#organization').val(),
             'css_content': $('#css_content').val(),
-            'social_links': $('#social_links').val(),
+            // 'social_links': $('#social_links').val(),
             'status': $("input[name='status']:checked").val()
         }
 

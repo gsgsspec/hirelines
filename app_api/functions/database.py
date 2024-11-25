@@ -8,7 +8,7 @@ from app_api.functions.enc_dec import decrypt_code
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
-    IvFeedback, Email_template
+    IvFeedback, Email_template, Branding
 
 
 def addCompanyDataDB(dataObjs):
@@ -159,81 +159,70 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
 def scheduleInterviewDB(user_id, dataObjs):
     try:
         user = User.objects.get(id=user_id)
-        company_account = Account.objects.get(companyid=user.companyid)
-        company_credits = CompanyCredits.objects.get(companyid=user.companyid,transtype="I")
-        if company_account.balance >= company_credits.credits:
-            call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
-            if call_details:
-                datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
-                datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p') 
-                interviewer = dataObjs['slot_id'].split('__')[2:]
-                interviewer_id = interviewer[0]
+        # company_account = Account.objects.get(companyid=user.companyid)
+        # company_credits = CompanyCredits.objects.get(companyid=user.companyid,transtype="I")
+        # if company_account.balance >= company_credits.credits:
 
-                scheduled_check = CallSchedule.objects.filter(Q(interviewerid=interviewer_id), Q(datentime=datentime),
-                                                                Q(status='S')|Q(status='R'))
-                
+        call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
+        if call_details:
+            datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
+            datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p') 
+            interviewer = dataObjs['slot_id'].split('__')[2:]
+            interviewer_id = interviewer[0]
 
-                # Updating Not scheduled Call
+            scheduled_check = CallSchedule.objects.filter(Q(interviewerid=interviewer_id), Q(datentime=datentime),
+                                                            Q(status='S')|Q(status='R'))
+            
 
-                if not scheduled_check:
-                    candidate = Candidate.objects.get(id=call_details.candidateid)
-                    meeting_config = getConfig()['MEETING_CONFIG']['meeting_link']
-                    string_ = str(interviewer_id) + (str(candidate.candidateid).replace("-", "")) + str(call_details.id)
-                    enc_st_ = string_.encode('utf-8')
-                    hex_code = enc_st_.hex()
-                    meeting_link = meeting_config + hex_code
-                    call_details.datentime = datentime
-                    call_details.interviewerid = interviewer_id
-                    call_details.instructions = dataObjs['instructions']
-                    call_details.status = 'S'
-                    call_details.meetinglink = meeting_link
-                    call_details.hrid = user_id
-                    call_details.companyid = user.companyid
-                    call_details.save()
+            # Updating Not scheduled Call
 
-                    # Mail Replacements
-                    job_desc = JobDesc.objects.get(id=candidate.jobid)
-                    interview_time = call_details.datentime.strftime("%d-%b-%Y %I:%M %p") 
+            if not scheduled_check:
+                candidate = Candidate.objects.get(id=call_details.candidateid)
+                meeting_config = getConfig()['MEETING_CONFIG']['meeting_link']
+                string_ = str(interviewer_id) + (str(candidate.candidateid).replace("-", "")) + str(call_details.id)
+                enc_st_ = string_.encode('utf-8')
+                hex_code = enc_st_.hex()
+                meeting_link = meeting_config + hex_code
+                call_details.datentime = datentime
+                call_details.interviewerid = interviewer_id
+                call_details.instructions = dataObjs['instructions']
+                call_details.status = 'S'
+                call_details.meetinglink = meeting_link
+                call_details.hrid = user_id
+                call_details.companyid = user.companyid
+                call_details.save()
 
-                    interviewer = User.objects.get(id=call_details.interviewerid)
-                    to_mails = f"{candidate.email},{interviewer.email}"
+                # Mail Replacements
+                job_desc = JobDesc.objects.get(id=candidate.jobid)
+                interview_time = call_details.datentime.strftime("%d-%b-%Y %I:%M %p") 
 
-                    interview_data = {
-                        'job_title':job_desc.title,
-                        'meetinglink':call_details.meetinglink,
-                        'int_paper': call_details.paper_id,
-                        'candidate_code': candidate.candidateid,
-                        'interviewer': call_details.interviewerid,
-                        'interview_time': interview_time,
-                        'to_emails': to_mails,
-                        'instructions': call_details.instructions
-                    }
+                interviewer = User.objects.get(id=call_details.interviewerid)
+                to_mails = f"{candidate.email},{interviewer.email}"
 
-                    acert_domain = getConfig()['DOMAIN']['acert']
-                    endpoint = '/api/schedule-interview'
+                interview_data = {
+                    'job_title':job_desc.title,
+                    'meetinglink':call_details.meetinglink,
+                    'int_paper': call_details.paper_id,
+                    'candidate_code': candidate.candidateid,
+                    'interviewer': call_details.interviewerid,
+                    'interview_time': interview_time,
+                    'to_emails': to_mails,
+                    'instructions': call_details.instructions,
+                    'schedule_type':dataObjs['schedule_type']
+                }
 
-                    url = urljoin(acert_domain, endpoint)
+                acert_domain = getConfig()['DOMAIN']['acert']
+                endpoint = '/api/schedule-interview'
 
-                    send_interview_data = requests.post(url, json=interview_data)
+                url = urljoin(acert_domain, endpoint)
 
-                    # replacements = {
-                    #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname}",
-                    #     "[job_title]": job_desc.title,
-                    #     "[company_name]": company.name,
-                    #     "[date]": interview_time,
-                    #     "[link]": call_details.meetinglink,
-                    # }
-                    
+                send_interview_data = requests.post(url, json=interview_data)
 
-                    # Email Function
-
-                    # sendEmail(candidate.companyid,'I',call_details.paper_id,'Call_Schedule',replacements,emails,call_details.datentime)
-
-                    return "Slot Booked"
-            else:
-                return "No Candidate"
+                return "Slot Booked"
         else:
-            return "insufficient_credits"
+            return "No Candidate"
+        # else:
+        #     return "insufficient_credits"
     except Exception as e:
         print(str(e))
         raise
@@ -595,4 +584,50 @@ def interviewRemarkSaveDB(dataObjs):
         call_schedule.save()
             
     except Exception as e:
+        raise
+
+
+def updateCompanyDB(dataObjs):
+    try:
+
+        company = Company.objects.get(id=dataObjs['cid'])
+
+        company.name = dataObjs['company-name']
+        company.contactperson = dataObjs['contact-person']
+        company.email = dataObjs['company-email']
+        company.phone1 = dataObjs['phone']
+        company.website = dataObjs['website']
+        company.city = dataObjs['city']
+        company.address1 = dataObjs['location']
+        company.country = dataObjs['country']
+        company.companytype = dataObjs['companytype']
+
+        company.save()
+
+        social_links = []
+        for key in ['Linkedin', 'Facebook', 'Instagram', 'Youtube', 'Twitter']:
+            if dataObjs.get(key):
+                social_links.append(f"{key}:{dataObjs[key]}")
+
+        social_links_string = ', '.join(social_links) + ',' if social_links else ''
+
+        branding = Branding.objects.filter(companyid=company.id).last()
+
+        if branding:
+            branding.sociallinks = social_links_string
+            branding.save()
+
+        acert_domain = getConfig()["DOMAIN"]["acert"]
+        endpoint = "/api/update-company"
+
+        url = urljoin(acert_domain, endpoint)
+
+        company_data = {
+            'data':dataObjs,
+            'social_links': social_links_string
+        }
+
+        send_company_data = requests.post(url, json=company_data)
+        
+    except Exception as e :
         raise

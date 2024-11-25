@@ -22,7 +22,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -908,7 +908,7 @@ def updateCompanyBrandingView(request):
                 fileObjs = request.FILES
                 company_branding , company_branding_flag  = Branding.objects.get_or_create(companyid=user_company)
                 company_branding.content=dataObjs['css_content']
-                company_branding.sociallinks=dataObjs['social_links']
+                # company_branding.sociallinks=dataObjs['social_links']
                 company_branding.status = dataObjs['status']
                 company_branding.save()
                 logo_file_path = ""
@@ -1094,6 +1094,7 @@ def interviewRemarkSave(request):
 @authentication_classes([])
 @permission_classes([])
 def getJDData(request):
+
     response = {
         'data': None,
         'error': None,
@@ -1113,4 +1114,26 @@ def getJDData(request):
     except Exception as e:
         response['data'] = 'Error in getJDData'
         response['error'] = str(e)
+    return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def updateCompany(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            updateCompanyDB(dataObjs)
+            response['data'] = "Company details updated successfully"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in update emails'
+        response['error'] = str(e)
+    
     return JsonResponse(response)

@@ -14,6 +14,7 @@ var menuItemsUrls = {
     'users': ['/users'],
     'feedback': ['/feedbacks', '/interviewer-feedback'],
     'reports': ['/reports', '/credits-usage'],
+    'company': ['/company-data'],
     'logout': ['/']
 };
 

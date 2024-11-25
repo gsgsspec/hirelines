@@ -1929,3 +1929,61 @@ def getCompanyCreditsUsageService(dataObjs):
         return usage_list
     except Exception as e:
         raise
+
+
+
+def getCompanyData(cid):
+    try:
+
+        company_data = ""
+
+        company = Company.objects.filter(id=cid).last()
+
+        if company:
+
+            branding = Branding.objects.filter(companyid=company.id).last()
+
+            keywords = ['Linkedin', 'Facebook', 'Instagram', 'Youtube', 'Twitter']
+
+            # Initialize variables in a dictionary
+            social_links_vars = {key: "" for key in keywords}
+
+            if branding:
+                social_links_string = branding.sociallinks
+
+                social_links = social_links_string.strip(',').split(', ')
+
+                for link in social_links:
+                    if link: 
+                        key, value = link.split(':', 1)  # Split at the first colon
+                        if key in keywords:
+                            social_links_vars[key] = value
+
+                Linkedin = social_links_vars['Linkedin']
+                Facebook = social_links_vars['Facebook']
+                Instagram = social_links_vars['Instagram']
+                Youtube = social_links_vars['Youtube']
+                Twitter = social_links_vars['Twitter']
+
+            company_data = {
+                'id': company.id,
+                'name': company.name if company.name else "",
+                'email': company.email if company.email else "",
+                'website': company.website if company.website else "",
+                'phone': company.phone1 if company.phone1 else "",
+                'company_type': company.companytype if company.companytype else "",
+                'address': company.address1 if company.address1 else "",
+                'city': company.city if company.city else "",
+                'country': company.country if company.country else "",
+                'Linkedin': Linkedin if Linkedin else "",
+                'Facebook': Facebook if Facebook else "",
+                'Instagram': Instagram if Instagram else "",
+                'Youtube': Youtube if Youtube else "",
+                'Twitter': Twitter if Twitter else "",
+                'contact_person': company.contactperson if company.contactperson else ""
+            }
+
+        return company_data
+
+    except Exception as e:
+        raise

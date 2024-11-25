@@ -30,6 +30,8 @@ urlpatterns = [
     path('users',views.userLst),
     path("reports",views.reportsPage),
     path("credits-usage-report",views.creditsUsageReportPage),
+
+    path("company-data",views.companyPage),
     
     # Company data page
     path("cmp-reg", views.homePage),

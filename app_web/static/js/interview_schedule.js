@@ -77,7 +77,8 @@ $('#schedule_btn').on('click', function () {
     dataObj = {
       "candidate_id": $('#cid').html(),
       "slot_id": sch,
-      "instructions": $("#instructions").val()
+      "instructions": $("#instructions").val(),
+      "schedule_type":schedule_type
     }
 
     var final_data = {

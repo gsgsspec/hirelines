@@ -4,9 +4,7 @@ from hirelines.metadata import getConfig
 public_email_domains = [
    "hotmail.com", "aol.com", "icloud.com", "mail.com", "zoho.com", 
     "yandex.com", "gmx.com", "fastmail.com", "tutanota.com", "mail.ru", "hushmail.com", "airmail.net", "lycos.com", "netcourrier.com",
-    "zimbra.com", "rediffmail.com", "mailinator.com"
-
-    # "gmail.com", "yahoo.com",  "outlook.com","protonmail.com",
+    "zimbra.com", "rediffmail.com", "mailinator.com","gmail.com", "yahoo.com",  "outlook.com","protonmail.com"
 ]
 
 company_types = [

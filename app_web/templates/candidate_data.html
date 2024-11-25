@@ -33,7 +33,7 @@
           </table>
         </div>
         <div class="mt-3 d-flex justify-content-end">
-          <button class="btn btn-primary"  onclick="getReportData('{{ candidate_info.c_code }}')">Download Candidate Report</button>
+          <button class="btn btn-primary"  onclick="getReportData('{{ candidate_info.c_code }}')"><i class="fas fa-file-download"></i> &nbsp;Download Candidate Report</button>
         </div>
         <div>
           <h5>Workflow</h5>
@@ -48,6 +48,9 @@
                 {% elif registration.call_status == "S" %}
                   <label>Interview scheduled</label>
                   <label>Scheduled Time : {{ registration.scheduled_time }}</label>
+                  <div class="mt-2 d-flex justify-content-start">
+                    <button class="btn btn-primary btn-sm" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}?status=R'">Reschedule</button>
+                  </div>
                 {% elif registration.call_status == "C" %}
                   <label>Completed on : {{ registration.call_completion_date }}</label>
                   <label>Interview is completed</label>
