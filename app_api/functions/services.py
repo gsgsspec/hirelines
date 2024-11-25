@@ -1433,6 +1433,7 @@ def getCandidateWorkflowData(cid):
                     paper_type = ""
                     call_status = ""
                     scheduled_time = ""
+                    interviewer_name = ""
 
                     if workflow.papertype == "S":
                         paper_type = "Screening"
@@ -1446,6 +1447,10 @@ def getCandidateWorkflowData(cid):
                         if call_schedule:
                             call_status = call_schedule.status
                             scheduled_time = call_schedule.datentime.strftime("%d-%b-%Y %I:%M %p") if call_schedule.datentime else ""
+
+                            if scheduled_time:
+                                interviewer_name = User.objects.get(id=call_schedule.interviewerid).name
+
                             if call_schedule.status == "C":
                                 notify_check = "Y"
                                 call_completion_date = call_schedule.callendeddtt.strftime("%d-%b-%Y %I:%M %p") if call_schedule.callendeddtt else ""
@@ -1463,7 +1468,8 @@ def getCandidateWorkflowData(cid):
                             "completion_date": registration.completiondate.strftime("%d-%b-%Y %I:%M %p") if registration.completiondate else "",
                             "notify_check": notify_check,
                             "call_completion_date":call_completion_date,
-                            "scheduled_time": scheduled_time
+                            "scheduled_time": scheduled_time,
+                            "interviewer_name":interviewer_name
                         }
                     )
 

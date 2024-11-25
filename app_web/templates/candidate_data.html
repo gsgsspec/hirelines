@@ -48,11 +48,13 @@
                 {% elif registration.call_status == "S" %}
                   <label>Interview scheduled</label>
                   <label>Scheduled Time : {{ registration.scheduled_time }}</label>
+                  <label>Interviewer : {{ registration.interviewer_name }}</label>
                   <div class="mt-2 d-flex justify-content-start">
                     <button class="btn btn-primary btn-sm" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}?status=R'">Reschedule</button>
                   </div>
                 {% elif registration.call_status == "C" %}
                   <label>Completed on : {{ registration.call_completion_date }}</label>
+                  <label>Interviewer : {{ registration.interviewer_name }}</label>
                   <label>Interview is completed</label>
                 {% endif %}
                 {% if registration.reg_status == "O" %}

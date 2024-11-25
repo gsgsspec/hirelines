@@ -93,7 +93,7 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                     'company_id':cid,
                     'reference_id': candidate.candidateid,
                     'jd_title':jd_title,
-                    'jd_desc':jd_desc
+                    'jd_desc':jd_desc,
                 }
 
                 send_candidate_data = requests.post(url, json = candidate_data, verify=False)
