@@ -637,9 +637,10 @@ def userLst(request):
         user_role = user_data.role
         menuItemList = get_functions_service(user_role)
         usersData = companyUserLst(companyId)
+        
 
         return render(request, "portal_index.html", {"template_name": 'usersLst.html','menuItemList':menuItemList
-                                                     , 'usersDataLst':usersData})
+                                                     , 'usersDataLst':usersData['usrs '], 'rolesLst':usersData['roles']})
     
     except Exception as e:
         raise

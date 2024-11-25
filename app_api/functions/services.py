@@ -41,6 +41,7 @@ from app_api.models import (
     InterviewMedia,
     Brules,
     Branding,
+    Role
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -278,7 +279,15 @@ def companyUserLst(companyID):
         for user in userLst:
             userData = model_to_dict(user)
             usersDataLst.append(userData)
-        return usersDataLst
+        lstRoles = Role.objects.all()
+
+        roleslst = []
+        for rolee in lstRoles:
+            userRole = model_to_dict(rolee)
+            if userRole['Name'] != 'HR-Admin':
+                roleslst.append(userRole)
+
+        return {'usrs':usersDataLst,'roles':roleslst}
     except Exception as e:
         raise
 
@@ -1660,7 +1669,7 @@ def jdPublishService(dataObjs, companyId):
 
                 paperData.append(tempDct)
                 test.save()
-
+            len(paperLst) == 1
             paperLst = paperData
             newPaperLst = []
             for paper in range(len(paperLst) - 1):  # Loop until the second-last item
@@ -1789,12 +1798,13 @@ def addNewUserService(company_id, user_data):
             if userFind:
                 return {'userAlreadyExisted': 'Y'}
             else:
+                userRole = Role.objects.filter(id = user_data['userRole']).last()
                 save_user = User(
                     companyid=company_id,
                     name=user_data['userName'],
                     email=user_data['userEmail'],
                     password=user_data['userPswd'],
-                    role=user_data['userRole'],
+                    role= userRole.Name,
                     location=user_data['newUserLocation'],
                     status='A'
                 )
