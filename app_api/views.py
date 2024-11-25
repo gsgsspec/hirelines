@@ -1088,3 +1088,29 @@ def interviewRemarkSave(request):
         response['data'] = 'Error in save interview remark view'
         response['error'] = str(e)
     return JsonResponse(response)
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def getJDData(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = request.data
+            
+            company_id = decrypt_code(dataObjs["company_id"])
+            cand_refid = dataObjs["cand_refid"]
+            candidate = Candidate.objects.get(candidateid=cand_refid,companyid=company_id)
+            jd_data = JobDesc.objects.filter(id=candidate.jobid).values().last()
+            response['data'] = jd_data
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getJDData'
+        response['error'] = str(e)
+    return JsonResponse(response)

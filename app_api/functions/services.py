@@ -145,7 +145,7 @@ def registerUserService(dataObjs):
                 companyid=company.id,
             )
             
-            company_account.creditamount=payments.credits
+            company_account.credit=payments.credits
             company_account.balance=int(payments.credits)+int(company_account.balance) if company_account.balance else payments.credits
             company_account.save()
             

@@ -40,4 +40,5 @@ urlpatterns = [
     path('change-user-status',views.changeUserStatus),
 
     path('update-emailtemp',views.updateEmailtemp),
+    path('get-jddata',views.getJDData)
 ]
