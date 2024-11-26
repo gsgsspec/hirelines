@@ -643,7 +643,7 @@ def userLst(request):
         
 
         return render(request, "portal_index.html", {"template_name": 'usersLst.html','menuItemList':menuItemList
-                                                     , 'usersDataLst':usersData['usrs '], 'rolesLst':usersData['roles']})
+                                                     , 'usersDataLst':usersData['usrs'], 'rolesLst':usersData['roles']})
     
     except Exception as e:
         raise

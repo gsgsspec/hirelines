@@ -220,14 +220,19 @@
                     <td onclick="openEditUserModal('{{user.id}}')" id="userLocation_{{user.id}}" data-userlocation="{{ user.location }}">{{ user.location }}</td>
                     
                     <td id="userStatus_{{user.id}}" data-userstatus="{{ user.status }}">
-                      {% if user.status == 'A' %}
-                        <div class="form-check form-switch mb-2">
-                          <input class="form-check-input" type="checkbox" id="useractiveorinactive_{{user.id}}" checked="" onclick="changeUserStatus(this.id)" title="Active">
-                        </div>
+                      {% if user.role != 'HR-Admin' %}
+
+                          {% if user.status == 'A' %}
+                            <div class="form-check form-switch mb-2">
+                              <input class="form-check-input" type="checkbox" id="useractiveorinactive_{{user.id}}" checked="" onclick="changeUserStatus(this.id)" title="Active">
+                            </div>
+                          {% else %}
+                            <div class="form-check form-switch mb-2">
+                              <input class="form-check-input" type="checkbox" id="useractiveorinactive_{{user.id}}" onclick="changeUserStatus(this.id)" title="Inactive">
+                            </div>
+                          {% endif %}
+
                       {% else %}
-                        <div class="form-check form-switch mb-2">
-                          <input class="form-check-input" type="checkbox" id="useractiveorinactive_{{user.id}}" onclick="changeUserStatus(this.id)" title="Inactive">
-                        </div>
                       {% endif %}
                     </td>
 
