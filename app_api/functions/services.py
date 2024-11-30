@@ -1991,3 +1991,22 @@ def getCompanyData(cid):
 
     except Exception as e:
         raise
+
+
+def demoUserService(dataObjs):
+    try:
+
+        company_data = CompanyData(
+            companyname = dataObjs['company-name'],
+            companyemail = dataObjs['email'],
+            location = dataObjs['location'],
+            contactperson = dataObjs['contact-person'],
+            registerationtime = datetime.now()
+        )
+
+        company_data.save()
+
+        return company_data.id
+
+    except Exception as e:
+        raise

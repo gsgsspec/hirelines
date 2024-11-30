@@ -631,3 +631,16 @@ def updateCompanyDB(dataObjs):
         
     except Exception as e :
         raise
+
+
+def demoRequestDB(dataObjs):
+    try:
+        
+        company_data = CompanyData.objects.filter(id=dataObjs['demo-id']).last()
+
+        if company_data:
+            company_data.demorequest = "Y"
+            company_data.save()
+
+    except Exception as e:
+        raise

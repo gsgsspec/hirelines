@@ -717,3 +717,14 @@ def companyPage(request):
     
     except Exception as e:
         raise
+
+
+def demoPage(request):
+    try:
+        
+        demo_video = getConfig()['APP_CONFIG']['demo_videoid']
+
+        return render(request, "web_index.html", {"template_name": 'demo.html','demo_video':demo_video})
+
+    except Exception as e:
+        raise

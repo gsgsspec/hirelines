@@ -1,0 +1,57 @@
+{% load static %}
+<header id="header" class="header">
+    <div class="login-sec">
+        <div class="web-landing-content-lg-demo">
+            <div class="text-container">
+                <div class="form-div">
+                    <div class="detiails-sec">
+                        <div class="form-card-heading">
+                            <h4>Request a Demo
+                            </h4>
+                        </div>
+                        <form id="demo-form">
+                            <div class="mb-4 form-floating">
+                                <input type="text" class="form-control" id="company-name" placeholder="Company Name" required>
+                                <label>Company Name</label>
+                            </div>
+                            <div class="mb-4 form-floating">
+                                <input type="text" class="form-control" id="contact-person" placeholder="Name" required>
+                                <label>Contact Person</label>
+                            </div>
+                            <div class="mb-4 form-floating">
+                                <input type="email" class="form-control" id="email" placeholder="Email" required>
+                                <label>Email</label>
+                            </div>
+                            <div class="mb-4 form-floating">
+                                <input type="text" class="form-control" id="location" placeholder="Location" required>
+                                <label>Location</label>
+                            </div>
+                           <div class="d-flex justify-contet-end w-50">
+                               <button type="submit" id="demo-btn" class="btn-solid-lg">Submit</button>
+                           </div>
+                        </form>
+                    </div>
+                    <div class="re-demo-sec">
+                        <div class="demo-video">
+                            <iframe style="aspect-ratio: 16/9;width: 100%;"  src="https://www.youtube.com/embed/{{demo_video}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            <p class="demo-content">
+                                If you need any personalized demo, please let us know
+                                <button class="btn-solid-sm" id="req-demo-btn">Request demo</button>
+                            </p>
+                        </div>
+                        <p class="demo-txt">
+                            <i class="fas fa-check-circle check-icon"></i>Thanks for your response, we will get in touch with you shortly..
+                        </p>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+</header>
+<style>
+    body {
+        background-color: #e3f0fc;
+    }
+</style>
+
+<script src="{% static 'js/demo.js' %}"></script>
