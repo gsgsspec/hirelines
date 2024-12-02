@@ -31,6 +31,8 @@ urlpatterns = [
     path("reports",views.reportsPage),
     path("credits-usage-report",views.creditsUsageReportPage),
     path('demo',views.demoPage),
+    path('tnc',views.termsAndConditionsPage),
+    path('privacy-policy',views.privacyPolicyPage),
 
     path("company-data",views.companyPage),
     

@@ -728,3 +728,24 @@ def demoPage(request):
 
     except Exception as e:
         raise
+
+
+
+def termsAndConditionsPage(request):
+    try:
+        
+
+        return render(request, "tnc.html")
+
+    except Exception as e:
+        raise
+
+
+def privacyPolicyPage(request):
+    try:
+        
+
+        return render(request, "privacy_policy.html")
+
+    except Exception as e:
+        raise

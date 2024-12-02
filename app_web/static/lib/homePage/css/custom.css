@@ -421,3 +421,29 @@
     width: 1px;
     background-color: #ccc;
 }
+
+@keyframes fadeInHome {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-home {
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+
+.card-icon-2 {
+    width: 126px;
+	height: 126px;
+	margin-right: auto;
+	margin-bottom: 2.5rem;
+	margin-left: auto;
+	border-radius: 10px;
+	background-color: #efebfd;
+}
