@@ -227,20 +227,22 @@ def getJobDescData(jid, company_id):
 
         job_desc = JobDesc.objects.filter(id=jid).last()
 
+        deleted_candidate_ids = Candidate.objects.filter(jobid=jid,deleteflag="Y").values_list('id', flat=True)
+
         if job_desc:
 
             screening_tests = Registration.objects.filter(
                 companyid=company_id, jobid=jid, papertype="S"
-            ).count()
+            ).exclude(candidateid__in=deleted_candidate_ids).count()
             coding_tests = Registration.objects.filter(
                 companyid=company_id, jobid=jid, papertype="E"
-            ).count()
+            ).exclude(candidateid__in=deleted_candidate_ids).count()
             interviews = Registration.objects.filter(
                 companyid=company_id, jobid=jid, papertype="I"
-            ).count()
+            ).exclude(candidateid__in=deleted_candidate_ids).count()
             offer_letters = Registration.objects.filter(
                 companyid=company_id, jobid=jid, papertype="I", status="O"
-            ).count()
+            ).exclude(candidateid__in=deleted_candidate_ids).count()
 
             jd_data = {
                 "title": job_desc.title,
@@ -392,7 +394,7 @@ def getJdCandidatesData(jid, userid):
 
         candidates = Candidate.objects.filter(
             jobid=jid, companyid=user.companyid
-        ).order_by("-id")
+        ).exclude(deleteflag='Y').order_by("-id")
 
         candidates_data = []
 
@@ -439,11 +441,13 @@ def getCandidatesData(userid):
 
         candidates_list = []
 
-        candidates = Candidate.objects.filter(companyid=user.companyid).order_by("-id")
+        candidates = Candidate.objects.filter(companyid=user.companyid).exclude(deleteflag='Y').order_by("-id")
 
         for candidate in candidates:
 
             c_status = const_candidate_status.get(candidate.status, "")
+
+            job_desc = JobDesc.objects.filter(id=candidate.jobid).last()
 
             candidates_list.append(
                 {
@@ -453,6 +457,7 @@ def getCandidatesData(userid):
                     "lastname": candidate.lastname,
                     "email": candidate.email,
                     "status": c_status,
+                    "jd_title": job_desc.title if job_desc else ""
                 }
             )
 
@@ -1053,9 +1058,7 @@ def interviewSchedulingService(aplid, int_id):
 def getInterviewerCandidates(userid):
     try:
 
-        call_details = CallSchedule.objects.filter(
-            interviewerid=userid, status="S"
-        ).order_by("-id")
+        call_details = CallSchedule.objects.filter(interviewerid=userid, status="S").order_by("-id")
         candidates = []
 
         for call_data in call_details:
@@ -1403,6 +1406,7 @@ def getCandidateWorkflowData(cid):
             jd = JobDesc.objects.get(id=candidate.jobid)
 
             candidate_info = {
+                "cid": candidate.id,
                 "c_code": candidate.candidateid,
                 "name": f"{candidate.firstname} {candidate.lastname}",
                 "email": candidate.email,
@@ -1457,6 +1461,7 @@ def getCandidateWorkflowData(cid):
 
                     registrations_data.append(
                         {
+                            "reg_id": registration.id,
                             "paper_title": workflow.papertitle,
                             "paper_type": workflow.papertype,
                             "type_title": paper_type,
@@ -2007,6 +2012,122 @@ def demoUserService(dataObjs):
         company_data.save()
 
         return company_data.id
+
+    except Exception as e:
+        raise
+
+
+
+def updateCandidateWorkflowService(dataObjs):
+    try:
+
+        registration = Registration.objects.filter(id=dataObjs['reg_id']).last()
+
+        if registration:
+
+            candidate = Candidate.objects.get(id=registration.candidateid)
+
+            job_desc = JobDesc.objects.get(id=candidate.jobid)
+
+            workflow_data = {
+                "candidate_code": candidate.candidateid,
+                "status" : None,
+                "paperid": registration.paperid,
+                "paper_type":registration.papertype,
+                "companyid":candidate.companyid,
+                "job_desc": job_desc.description if job_desc.description else "",
+                "job_title": job_desc.title if job_desc.title else ""
+            }
+
+            acert_domain = getConfig()["DOMAIN"]["acert"]
+            endpoint = "/api/update-candidate-workflow"
+
+            url = urljoin(acert_domain, endpoint)
+
+            if dataObjs["status"] == "P":
+
+                workflow_data["status"] = dataObjs["status"]
+
+                current_workflow = Workflow.objects.filter(companyid=candidate.companyid,jobid=job_desc.id,paperid=registration.paperid).last()
+
+                if current_workflow:
+
+                    next_workflow = Workflow.objects.filter(
+                        companyid=candidate.companyid,
+                        jobid=job_desc.id,
+                        id__gt=current_workflow.id
+                    ).order_by('id').first()
+
+                    company_account = Account.objects.get(companyid=candidate.companyid)
+                    company_credits = CompanyCredits.objects.get(companyid=candidate.companyid,transtype=next_workflow.papertype)
+
+                    if company_account.balance >= company_credits.credits:
+
+                        send_workflow_data = requests.post(url, json=workflow_data)
+
+                        response_content = send_workflow_data.content
+
+                        if response_content:
+                            json_data = json.loads(response_content.decode("utf-8"))
+
+                            if json_data['statusCode'] == 0:
+
+                                c_registration = Registration(
+                                    candidateid = candidate.id,
+                                    paperid = next_workflow.paperid,
+                                    registrationdate = candidate.registrationdate,
+                                    companyid = candidate.companyid,
+                                    jobid = candidate.jobid,
+                                    status = 'I',
+                                    papertype = next_workflow.papertype,
+                                )
+
+                                c_registration.save()
+
+                                if c_registration.papertype == 'I':
+                                    call_schedule = CallSchedule(
+                                        candidateid = candidate.id,
+                                        paper_id = next_workflow.paperid,
+                                        status = 'N',
+                                        companyid = candidate.companyid
+                                    )
+                                    call_schedule.save()
+
+                                if registration.papertype == "S":
+                                    candidate.status = "S"
+                                    registration.status = "P"
+                                    candidate.save()
+                                    registration.save()
+                                elif registration.papertype == "E":
+                                    candidate.status = "E"
+                                    registration.status = "P"
+                                    candidate.save()
+                                    registration.save()
+
+                                deductCreditsService(candidate.companyid,c_registration.papertype,c_registration.paperid)
+
+                            else:
+                                return 2
+                    else:
+                        return 1
+
+            elif dataObjs["status"] == "R":
+                workflow_data["status"] = dataObjs["status"]
+
+                send_workflow_data = requests.post(url, json=workflow_data)
+
+                response_content = send_workflow_data.content
+
+                if response_content:
+                    json_data = json.loads(response_content.decode("utf-8"))
+
+                    if json_data['statusCode'] == 0:
+                        registration.status = "F"
+                        registration.save()
+                    else:
+                        return 2
+
+            return 0
 
     except Exception as e:
         raise

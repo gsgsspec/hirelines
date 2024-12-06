@@ -90,9 +90,7 @@ $('#schedule_btn').on('click', function () {
         if (res.statusCode == 0) {
           
           $('#success').attr("hidden", false);
-          setTimeout(function () { 
-            window.location.href = '/candidates'
-          }, 3000);
+            redirectBasedOnPage();
         
         } else {
         showFailureMessage('Error in saving the scheduling interview. Please try again after some time')
@@ -107,3 +105,28 @@ $('#cancel_btn').on('click', function () {
   sch = null;
   $("#sel_slot").prop("hidden", true);
 })
+
+function redirectBasedOnPage() {
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get('Page'); 
+
+  console.log('page',page)
+
+  if (page === 'C') {
+    setTimeout(function () { window.location.href = '/candidates'}, 3000);
+  } else if (page === 'I') {
+
+    Swal.fire({
+      position: 'center',
+      icon: 'success',
+      title: 'Interview Rescheduled',
+      showConfirmButton: false,
+      timer: 2000
+    })
+
+    setTimeout(function () { window.location.href = '/interviews'}, 2000);
+
+  } else {
+    setTimeout(function () { window.location.href = '/candidates'}, 3000);
+  }
+}

@@ -45,6 +45,8 @@ urlpatterns = [
 
     path('demo-user',views.demoUser),
     path('req-demo',views.demoRequest),
+    path('delete-candidate',views.deleteCandidate),
+    path('update-candidate-workflow',views.updateCandidateWorkflow),
 
 
 ]

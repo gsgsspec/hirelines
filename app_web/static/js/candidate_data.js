@@ -86,3 +86,142 @@ document.getElementById("notify").onclick = function () {
 
     })
 }
+
+
+function deleteCandidate(id){
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#274699',
+        cancelButtonColor: '#f25c05',
+        confirmButtonText: 'Yes, Delete'
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            dataObj = {
+                'cid': [id],
+            }
+    
+            var final_data = {
+                'data': JSON.stringify(dataObj),
+                csrfmiddlewaretoken: CSRF_TOKEN,
+            }
+
+            $.post(CONFIG['portal'] + "/api/delete-candidate", final_data, function (res) { 
+
+                if (res.statusCode == 0) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Canididate Deleted',
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
+
+                    setTimeout(function () {window.location.href = '/candidates';}, 2000);
+                }
+
+            })
+        }
+    })
+}
+
+
+function updateCandidateWorkflow(regId){
+
+    regStatus = document.getElementById('regid-'+regId).value
+    
+    if(!regStatus) {
+        Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: 'Please select the status ',
+            showConfirmButton: true,
+            confirmButtonColor: '#274699'
+        })
+
+        return;
+    }
+
+
+    $('.update-btn').prop('disabled', true);
+
+
+    dataObj = {
+        'reg_id': regId,
+        'status': regStatus
+    }
+
+    var final_data = {
+        'data': JSON.stringify(dataObj),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    }
+
+    $.post(CONFIG['portal'] + "/api/update-candidate-workflow", final_data, function (res) { 
+
+        if (res.statusCode == 0) {
+
+            if(res.data == 1) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Insufficient Credits',
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#274699'
+                })
+
+                $('.update-btn').prop('disabled', false);
+            }
+
+            if(res.data == 2){
+
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error in updating the status',
+                    text: 'Please try again after some time',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+                $('.update-btn').prop('disabled', false);
+
+            }
+
+            if(res.data == 0) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Canididate status updated',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+
+                setTimeout(function () { window.location.reload();}, 2000);
+            }
+
+        } else {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Error in updating the status',
+                text: 'Please try again after some time',
+                showConfirmButton: false,
+                timer: 1500
+            })
+
+            $('.update-btn').prop('disabled', false);
+        }
+
+
+
+    })
+
+
+}
+
+

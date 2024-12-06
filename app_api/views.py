@@ -18,11 +18,11 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
-        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService
+        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, demoRequestDB
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, demoRequestDB, deleteCandidateDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -1224,4 +1224,47 @@ def demoRequest(request):
     except Exception as e:
         response['data'] = 'Error in requesting demo'
         response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def deleteCandidate(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            deleteCandidateDB(dataObjs)
+            response['data'] = "Candidate deleted"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in deleting the candidates'
+        response['error'] = str(e)
+    
+    return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def updateCandidateWorkflow(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            updated_data = updateCandidateWorkflowService(dataObjs)
+            response['data'] = int(updated_data)
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updating candidate workflow data'
+        response['error'] = str(e)
+    
     return JsonResponse(response)
