@@ -82,46 +82,57 @@
 </style>
 <script>
     jQuery(document).ready(function () {
-        $.noConflict();
-        // $.fn.dataTable.moment('DD-MMM-YYYY hh:mm A');
-        var table = $('#credits_usage_table').DataTable({
-            order: [], // Sort by Datetime column in descending order
-            columnDefs: [
-                {
-                    targets: 0, // Apply to the first column (Datetime)
-                    type: 'moment', // Specify that the column type is Moment.js
-                    render: function(data, type, row) {
-                        // Keep the UI format intact
-                        return data; // Just return the data without modification for UI
-                    }
-                }
-            ],
-            paging: true,
-            pageLength: 10, // Display 10 rows per page by default
-            lengthMenu: [10, 25, 50, 100], // Options for the number of records to display
-            language: {
-                paginate: {
-                    previous: '&lt;',
-                    next: '&gt;'
-                },
-                search: "Search:",
-                lengthMenu: "Display _MENU_ records per page", // Show the dropdown to select records per page
-                zeroRecords: "No records found"
-            }
-        });
+    // Ensure no conflict with other libraries
+    $.noConflict();
 
-        // Manually add export buttons
-        new $.fn.dataTable.Buttons(table, {
-            buttons: [
-                {
-                    extend: 'excelHtml5', // This enables Excel export
-                    text: '<i class="fas fa-file-upload"></i>&ensp; Export to Excel',
-                    title: 'Credits Usage Report - Hirelines',
-                    footer: true, // Enable footer for Excel
-                    customize: function (xlsx) {
+    // Load the Moment.js sorting plugin
+    if ($.fn.dataTable.moment) {
+        $.fn.dataTable.moment('DD-MMM-YYYY hh:mm A');
+    } else {
+        console.error("datetime-moment.js plugin is not loaded!");
+        return;
+    }
+
+    // Initialize DataTable
+    var table = $('#credits_usage_table').DataTable({
+        order: [[0, 'desc']], // Default sorting on the first column (Datetime)
+        columnDefs: [
+            {
+                targets: 0, // Target the first column
+                type: 'datetime-moment', // Use moment.js sorting
+                render: function (data, type, row) {
+                    if (type === 'sort' || type === 'type') {
+                        return moment(data, 'DD-MMM-YYYY hh:mm A').valueOf(); // Use moment.js for sorting
                     }
+                    return data; // Display the original format in UI
                 }
-            ]
-        }).container().appendTo('#export-buttons-container'); // Append buttons to the custom container
+            }
+        ],
+        paging: true,
+        pageLength: 10, // Default number of rows per page
+        lengthMenu: [10, 25, 50, 100], // Options for rows per page
+        language: {
+            paginate: {
+                previous: '&lt;',
+                next: '&gt;'
+            },
+            search: "Search:",
+            lengthMenu: "Display _MENU_ records per page", // Show dropdown
+            zeroRecords: "No records found"
+        }
     });
+
+    // Add export button
+    new $.fn.dataTable.Buttons(table, {
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="fas fa-file-upload"></i>&ensp; Export to Excel',
+                title: 'Credits Usage Report - Hirelines',
+                footer: true
+            }
+        ]
+    }).container().appendTo('#export-buttons-container'); // Append export buttons to the container
+});
+
 </script>
