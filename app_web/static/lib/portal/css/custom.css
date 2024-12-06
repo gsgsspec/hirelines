@@ -3,6 +3,7 @@
 	--secondary-color : #f25c05;
   --light-primary-color: #e3f0fc;
 	--button-primary-color : #274699;
+  --light-secondary-color:#fff2dc;
 }
 
 .p-clr {
@@ -419,4 +420,10 @@ table.dataTable thead th, table.dataTable thead td {
   color: var(--primary-color);
   font-size: 1rem;
   font-weight: 600;
+}
+
+.filter-sec {
+  /* background-color: var(--light-secondary-color); */
+  border-bottom: 1px dashed var(--primary-color);
+  padding: 1rem 1.5rem;
 }

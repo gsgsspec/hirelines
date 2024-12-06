@@ -8,8 +8,8 @@
     </div>
   </div>
   <div class="row p-3">
-    {% for candidate in interview_candidates %}
-      <div class="col-md-6 col-lg-4 c-card" style="cursor: pointer;" onclick="window.location.href='/candidate-interview/{{candidate.scd_id}}'">
+    <!-- {% for candidate in interview_candidates %}
+      <div class="col-md-6 col-lg-6 c-card" style="cursor: pointer;" onclick="window.location.href='/candidate-interview/{{candidate.scd_id}}'">
         <div class="card mb-3 shadow">
           <div class="card-body int-card-bd">
             <i class="fas fa-user fa-4x me-4 p-clr"></i>
@@ -17,35 +17,71 @@
               <h5 class="card-title p-clr">{{candidate.jd}}</h5>
               <p class="card-title mb-0">Name : {{candidate.name}}</p>
               <p class="card-text mb-0">Code : {{candidate.c_code}}</p>
-              <p class="card-text mb-0">Email : {{candidate.email}}</p>
+              <p class="card-text mb-0">Email : {{candidate.email}}jfireujhfiehfiuvefvefe</p>
               <p class="card-text mb-0">Time : {{candidate.scheduled_time}}</p>
             </div>
           </div>
         </div>
       </div>
-    {% endfor %}
+    {% endfor %} -->
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Job Description</th>
+          <th>Email</th>
+          <th>Time</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        {% for candidate in interview_candidates %}
+            <tr class="c-card" onclick="window.location.href='/candidate-interview/{{candidate.scd_id}}'">
+                <td>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user fa-2x me-4 p-clr"></i> 
+                        <strong>{{candidate.name}}</strong>
+                    </div>
+                </td>
+                <td>{{candidate.jd}}</td>
+                <td>{{candidate.email}}</td>
+                <td>{{candidate.scheduled_time}}</td>
+                <td>
+                    <button type="button" onclick="event.stopPropagation();window.location.href='/interview-schedule/{{ candidate.id }}?status=R&Page=I'" class="btn rounded-pill btn-icon btn-primary btn" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<span>Reschedule</span>">
+                        <iconify-icon icon="entypo:back-in-time" width="20" height="20"></iconify-icon>
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 
 <script>
-  function searchCandidate() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
-    const listItems = document.querySelectorAll('.c-card');
+    function searchCandidate() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const listItems = document.querySelectorAll('.c-card');
 
-    listItems.forEach(item => {
-      const textContent = item.textContent.toLowerCase();
-      if (textContent.includes(input)) {
-        item.style.display = '';
-      } else {
-        item.style.display = 'none';
-      }
-    });
-  }
+        listItems.forEach(item => {
+            const textContent = item.textContent.toLowerCase();
+            if (textContent.includes(input)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+    }   
 </script>
 
 <style>
   input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
     appearance: none;
+  }
+
+  table tr {
+    cursor: pointer;
   }
 </style>

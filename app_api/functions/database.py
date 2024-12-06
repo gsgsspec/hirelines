@@ -662,3 +662,19 @@ def demoRequestDB(dataObjs):
 
     except Exception as e:
         raise
+
+
+def deleteCandidateDB(dataObjs):
+    try:
+
+        delete_candidates = dataObjs['cid']
+
+        if delete_candidates:
+            for candidate_id in delete_candidates:
+                candidate = Candidate.objects.filter(id=candidate_id).last()
+                if candidate:
+                    candidate.deleteflag = "Y"
+                    candidate.save()
+
+    except Exception as e:
+        raise
