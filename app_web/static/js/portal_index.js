@@ -65,10 +65,14 @@ function getCredits(){
 
         if (res.statusCode == 0) {
             var CREDITS_DATA = res.data;
-            if(CREDITS_DATA.low_credits == "Y"){
+            if(CREDITS_DATA.credits_avaliabilty == "N"){
                 $("#credits_display").prop("hidden",true);
                 $("#low_credits_display").prop("hidden",false);
-                $("span[name='balance_credits_display']").html("Avaliable Credits : "+CREDITS_DATA.balance_credits)
+                $("span[name='balance_credits_display']").html("Low Credits("+CREDITS_DATA.balance_credits+"). Auto promote and New Registrations will be stopped. Please Load Credits")
+            }else if(CREDITS_DATA.credits_avaliabilty == "L"){
+                $("#credits_display").prop("hidden",true);
+                $("#low_credits_display").prop("hidden",false);
+                $("span[name='balance_credits_display']").html("Low Credits("+CREDITS_DATA.balance_credits+"). Please Load Credits")
             }else{
                 $("#low_credits_display").prop("hidden",true);
                 $("#credits_display").prop("hidden",false);

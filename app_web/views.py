@@ -214,10 +214,10 @@ def jobDescription(request):
         user_mail = request.user
         user_data = auth_user(user_mail)
         user_role = user_data.role
-
+        
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
-
+    
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         if menuItemObjList:

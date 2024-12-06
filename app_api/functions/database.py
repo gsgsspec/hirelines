@@ -35,7 +35,39 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                 email = dataObjs["email"])
 
         if (not check_candidate_registered) or (check_candidate_registered == "N"):
+            app_config = getConfig()['APP_CONFIG']
+            lowcredits_warning = int(app_config["lowcredits_warning"])
+            reg_stop_warning = int(app_config["reg_stop_warning"])
+            if company_account.balance<=reg_stop_warning:
+                credits_status =  "N"
+                current_credits = company_account.balance
+                event_name = "low_credits"
+            elif (company_account.balance-company_credits.credits)<=lowcredits_warning:
+                credits_status = "L"
+                current_credits = company_account.balance-company_credits.credits
+                
+            else:
+                credits_status = "A"
+            if (credits_status == "N") or (credits_status=="L"):
+                hr_admin_label = "HR-Admin"
+                hradmin_emails_list = list(User.objects.filter(companyid=cid,role__contains=hr_admin_label,status="A").values_list("email",flat=True))
+                credits_info = {
+                        "company_id":cid,
+                        "credits_status":credits_status,
+                        "hradmin_emails_list":hradmin_emails_list,
+                        "current_credits":current_credits
+                    }
+                acert_domain = getConfig()['DOMAIN']['acert']
+                # credits-notification at acert via api
+                endpoint = '/api/credits-notification'
+                credits_notification_url = urljoin(acert_domain, endpoint)
+                credits_notification_request = requests.post(credits_notification_url, json = credits_info, verify=False)
+                credits_notification_resp = credits_notification_request.content
 
+                if credits_notification_resp:
+                    
+                    credits_notification_resp_obj = json.loads(credits_notification_resp.decode('utf-8'))
+                    print("credits_notification_resp_obj",credits_notification_resp_obj)
             if company_account.balance >= company_credits.credits:
                 candidate = Candidate(
                     firstname = dataObjs["firstname"],
@@ -93,7 +125,7 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                     'company_id':cid,
                     'reference_id': candidate.candidateid,
                     'jd_title':jd_title,
-                    'jd_desc':jd_desc,
+                    'jd_desc':jd_desc
                 }
 
                 send_candidate_data = requests.post(url, json = candidate_data, verify=False)

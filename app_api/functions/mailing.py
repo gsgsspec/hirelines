@@ -115,18 +115,22 @@ def sendEmail(company,paper_type,participant_paper_id,event,replacements,to_emai
             brand = Branding.objects.get(companyid=0)
 
         email_template = ''
-        
-        check = Email_template.objects.filter(event=event, company_id=company,paper_type=paper_type)
+        if paper_type:
+            
+            check = Email_template.objects.filter(event=event, company_id=company,paper_type=paper_type)
+        else:
+            check = Email_template.objects.filter(event=event, company_id=company)
     
         if check:
-          
-            # paperwise_temp = PaperWiseEmailTemp.objects.filter(event=event, company_id=company,paperid=participant_paper_id).last()
-            # if paperwise_temp:
-            #     email_template = paperwise_temp
-            
-            # else:
-            email_template = Email_template.objects.get(event=event, company_id=company,paper_type=paper_type)
-
+            if paper_type:
+                email_template = Email_template.objects.get(event=event, company_id=company,paper_type=paper_type)
+            else:
+                email_template = Email_template.objects.get(event=event, company_id=company)
+        else:
+            if paper_type:
+                email_template = Email_template.objects.get(event=event, company_id=0,paper_type=paper_type)
+            else:
+                email_template = Email_template.objects.get(event=event, company_id=0)
 
         sender_label  = email_template.sender_label if email_template.sender_label else company_obj.name
         

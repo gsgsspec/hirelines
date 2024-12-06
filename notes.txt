@@ -1,0 +1,9 @@
+
+02-Dec-2024==================Srinivas=======================
+Low credits warning
+
+[APP_CONFIG]
+lowcredits_warning = 300
+reg_stop_warning = 100
+
+============================================================

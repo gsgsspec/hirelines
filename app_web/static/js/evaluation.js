@@ -123,6 +123,8 @@ function filter_data(pid, ptid) {
             var PARTICIPANT_NAME = DATA.name;
             var PARTICIPANT_LAST_NAME = DATA.l_name;
             var MARKS = DATA.total_marks;
+            var PAPER_MARKS = DATA.paper_marks;
+            var SECURED_MARKS = DATA.secured_marks;
 
 
             $('#participants').html('<div class="loader-overlay">' +
@@ -185,6 +187,7 @@ function filter_data(pid, ptid) {
                 $("#questions").html('');
             } else {
                 QUESTIONS_LIST = DATA.questionlist
+                $("#questions").append('<h5 style="display: flex ;font-weight:bold; justify-content: space-between;"><span>'+PAPER_NAME+'</span><span>'+ first_name + '&ensp;' + last_name +'</span><span>Total Marks: '+PAPER_MARKS+'</span><span id="secured_marks">Secured Marks: '+SECURED_MARKS+'</span></h5>')
             }
             for (var n = 0; n < QUESTIONS_LIST.length; n++) {
 
@@ -279,7 +282,7 @@ function filter_data(pid, ptid) {
                     accord_style = ''
                 }
 
-
+                
                 $("#questions").append(
                     '<button class="accordion" id="questions" name="eval_ques_' + question_sno + '">' + accord_style +
                     '<div class="w-100p text-left " style="font-weight:600">' + question_sno + '.' + ' ' + QUESTIONS_LIST[n]["question"] +
@@ -486,14 +489,26 @@ function send_evaluation_result(pid_) {
             $("#send_result_pid_"+pid_).text("Send Result");
 
             if (res.statusCode == 0) {
-                $("#send_result_pid_" + pid_).text("Resend Result");
-                $("#send_result_pid_" + pid_).attr("onclick", "confirm_and_RESEND_result(" + pid_ + ")");
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Result mail sent to candidate successfully',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#274699'
-                })
+                if (res.data == "insufficent_credits"){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Insufficent Credits',
+                        text: 'Please load the credits and try again',
+                        footer: 'Please contact hirelines support',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#274699'
+                    })
+                }else{
+                    $("#send_result_pid_" + pid_).text("Resend Result");
+                    $("#send_result_pid_" + pid_).attr("onclick", "confirm_and_RESEND_result(" + pid_ + ")");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Result mail sent to candidate successfully',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#274699'
+                    })
+                }
+                
             }else{
                 Swal.fire({
                     icon: 'error',
@@ -602,11 +617,13 @@ function updateMarks(q_no) {
             $('body').addClass('cursor-progress');
             $('button[name="update_marks_btns"]').prop('disabled', true);
             $.post(CONFIG['portal'] + "/api/evaluation", final_data, function (res) {
-                var marks = res.answer_data.secure_marks;
+                var marks = res.answer_data.secured_marks;
                 $('#total_marks').html('');
                 $('#total_marks').append(
                     '<label style="text-transform: capitalize;" id="total_marks">' + marks + '&ensp;&ensp;' + '</label>'
                 );
+                $("#secured_marks").html("");
+                $("#secured_marks").html("Secured Marks: "+ marks);
 
                 if (res.statusCode == 0) {
                     notifyNow($('[data-notify]'));

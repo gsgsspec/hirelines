@@ -21,7 +21,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
 
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User_data, Workflow, InterviewMedia, CallSchedule
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB
 from app_api.functions.constants import hirelines_registration_script
 
@@ -85,7 +85,6 @@ def registerUser(request):
         if request.method == 'POST':
             dataObjs = json.loads(request.POST.get('data'))
             data_add_status = registerUserService(dataObjs)
-            print("data_add_status",data_add_status)
             response['statusCode'] = int(data_add_status)
     except Exception as e:
         response['data'] = 'Error in adding company data'
@@ -559,7 +558,7 @@ def evaluationView(request):
 
                         acert_data = resp['data']
                         if resp["statusCode"] == 0:
-                            response['data'] = "Result Mail Sent to Candidate Successfully"
+                            response['data'] = acert_data
                             response['statusCode'] = 0
                 else:                
                     response['data'] = "Query Not Found"
@@ -838,13 +837,38 @@ def getUpdateCompanyCreditsView(request):
             dataObjs = request.data
             company_id = decrypt_code(dataObjs["company_id"])
             if dataObjs["request_type"] == "check_credits":
+
                 paper_type = dataObjs["paper_type"]
                 company_account = Account.objects.get(companyid=company_id)
                 company_credits = CompanyCredits.objects.get(companyid=company_id,transtype=paper_type)
+                credit_availablity_stat = "N"
+
                 if company_account.balance >= company_credits.credits:
-                    response['data'] = "credits_available"
+                    credit_availablity_stat = "Y"
+                    current_credits = company_account.balance-company_credits.credits
                 else:
-                    response['data'] = "insufficient_credits"
+                    credit_availablity_stat = "N"
+                    current_credits = company_account.balance
+                app_config = getConfig()['APP_CONFIG']
+                lowcredits_warning = int(app_config["lowcredits_warning"])
+                reg_stop_warning = int(app_config["reg_stop_warning"])
+                if current_credits<=reg_stop_warning:
+                    credits_status =  "N"
+                elif current_credits<=lowcredits_warning:
+                    credits_status = "L"
+                else:
+                    credits_status = "A"
+                
+                hr_admin_label = "HR-Admin"
+                hradmin_emails_list = list(User.objects.filter(companyid=company_id,role__contains=hr_admin_label,status="A").values_list("email",flat=True))
+                
+                response["data"]={
+                    "company_id":company_id,
+                    "credit_availablity_stat":credit_availablity_stat,
+                    "credits_status":credits_status,
+                    "hradmin_emails_list":hradmin_emails_list,
+                    "current_credits":current_credits
+                }
             if dataObjs["request_type"] == "deduct_credits":
                 paper_type = dataObjs["paper_type"]
                 paper_id = dataObjs["paper_id"]
@@ -871,14 +895,19 @@ def getCreditsView(request):
             user = auth_user(request.user)
             user_company = user.companyid
             company_account = Account.objects.get(companyid=user_company)
-            if company_account.balance<1000:
-                low_credits =  "Y"
+            app_config = getConfig()['APP_CONFIG']
+            lowcredits_warning = int(app_config["lowcredits_warning"])
+            reg_stop_warning = int(app_config["reg_stop_warning"])
+            if company_account.balance<=reg_stop_warning:
+                credits_avaliabilty =  "N"
+            elif company_account.balance<=lowcredits_warning:
+                credits_avaliabilty = "L"
             else:
-                low_credits = "N"
+                credits_avaliabilty = "A"
                 
             company_account_obj = {
                 "balance_credits":company_account.balance,
-                "low_credits":low_credits
+                "credits_avaliabilty":credits_avaliabilty
             }
             response["data"] = company_account_obj
             response['statusCode'] = 0
