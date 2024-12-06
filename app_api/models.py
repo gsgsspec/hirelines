@@ -79,9 +79,9 @@ class JobDesc(models.Model):
     expjoindate = models.DateField(max_length=11,null=True)
     positions = models.IntegerField(null=True)
     createdby = models.IntegerField(null=True)
-    status = models.CharField(max_length=1, null=True) # D - Draft , A - Active , P - Paused
     createdon = models.DateTimeField(null=True)
     companyid = models.IntegerField(null=True)
+    status = models.CharField(max_length=1, null=True) # D - Draft, P - Publish , S - Stopped , I - Close 
 
     class Meta:
         db_table = 'jobdesc'
@@ -199,6 +199,8 @@ class Brules(models.Model):
     passscore = models.IntegerField(null=True, blank=True)
     passevent = models.IntegerField(null=True, blank=True) # email template id
     failevent = models.IntegerField(null=True, blank=True) # email template id
+    hold = models.CharField(max_length=1,null=True,blank=True) # hold candidate "Y"  Or "N"
+    holdpercentage = models.IntegerField(null=True, blank=True) # hold candidate percentage
 
     class Meta:
         db_table = 'brules'

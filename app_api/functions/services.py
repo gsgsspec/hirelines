@@ -630,11 +630,22 @@ def getCompanyJDsList(companyId):
                 if userData:
                     userName = userData.name
                 jd["createdbyUserName"] = userName
-            company_jds.reverse()
-            return company_jds
+            company_jds.reverse()  # Reverse the list to show latest jobs first
+            
+            InactiveJds = []
+            activeJds = []
+            # Separate the jobs based on status
+            for jd in company_jds:
+                if jd['status'] == 'I':
+                    InactiveJds.append(jd)  # Add to inactive jobs list
+                else:
+                    activeJds.append(jd)  # Add to active jobs list
+
+            return {'activeJd': activeJds, 'inactiveJd': InactiveJds}
         else:
-            company_jds = []
-            return company_jds
+            # If no jobs are found, return empty lists for both
+            return {'activeJd': [], 'inactiveJd': []}
+
     except Exception as e:
         raise
 
@@ -759,8 +770,11 @@ def workFlowDataService(data, cmpyId):
                 jobdescid=test["jobid"],
                 companyid=test["companyid"],
             ).last()
+
             if brulesDetails:
                 test["promot"] = brulesDetails.passscore
+                test["hold"] = brulesDetails.hold
+                test["holdpercentage"] = brulesDetails.holdpercentage
 
         jdData = list(JobDesc.objects.filter(id=data).values())
 
@@ -771,7 +785,6 @@ def workFlowDataService(data, cmpyId):
             
             if jdData[0]['interviewers']:
                 selectedJdInterviewers = ast.literal_eval(jdData[0]['interviewers'])
-
             
         return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus, 'selectedJDInterviewers':selectedJdInterviewers}
     except Exception as e:
@@ -1673,12 +1686,18 @@ def jdPublishService(dataObjs, companyId):
 
                 if brulesData:
                     tempDct["promotPercentage"] = brulesData.passscore
+                    tempDct["hold"] = brulesData.hold
+                    tempDct["holdpercentage"] = brulesData.holdpercentage
                 else:
                     tempDct["promotPercentage"] = None
+                    tempDct["hold"] = 'N'
+                    tempDct["holdpercentage"] = 0
 
                 paperData.append(tempDct)
                 test.save()
-            len(paperLst) == 1
+            
+            # len(paperLst) == 1
+
             paperLst = paperData
             newPaperLst = []
             for paper in range(len(paperLst) - 1):  # Loop until the second-last item
@@ -1687,7 +1706,7 @@ def jdPublishService(dataObjs, companyId):
                     paperLst[paper + 1],
                 ]  # Create a list with two items
                 newPaperLst.append(tempLst)
-
+            
             return {
                 "companyid": companyId,
                 "papersData": newPaperLst,

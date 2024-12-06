@@ -273,18 +273,44 @@ def saveJdNewTest(dataObjs,compyId):
             
             workFlowDetails = Workflow.objects.filter(id=wrkflId).values().last()
 
+            holdStatus = None
+            if 'holdYesOrNo' in dataObjs:
+                holdStatus = dataObjs['holdYesOrNo']
+            
+            # holdpercentagval = None
+            # if 'holdvalue' in dataObjs:
+            #     holdpercentagval = dataObjs['holdvalue']
+
+            holdpercentagval = 0
+            if 'holdvalue' in dataObjs:
+                if dataObjs['holdvalue']:
+                    holdpercentagval = int(dataObjs['holdvalue'])
+
             save_bruls = Brules(
-                    companyid = compyId,
-                    jobdescid = dataObjs['jdId'],
-                    workflowid = wrkflId,
-                    passscore = dataObjs['promotPercentage']
+                        companyid = compyId,
+                        jobdescid = dataObjs['jdId'],
+                        workflowid = wrkflId,
+                        passscore = dataObjs['promotPercentage'],
+                        hold = holdStatus,
+                        holdpercentage = holdpercentagval,
                     )
             save_bruls.save()
             workFlowDetails['promot'] = save_bruls.passscore
+            workFlowDetails['hold'] = dataObjs['holdYesOrNo']
+            workFlowDetails['holdpercentage'] = dataObjs['holdvalue']
 
             return [workFlowDetails]
 
         if dataObjs['createOrUpdate'] == 'update': # it will update the existing Test
+            
+            holdStatus = None
+            if 'holdYesOrNo' in dataObjs:
+                holdStatus = dataObjs['holdYesOrNo']
+            
+            holdpercentagval = 0
+            if 'holdvalue' in dataObjs:
+                if dataObjs['holdvalue']:
+                    holdpercentagval = int(dataObjs['holdvalue'])
 
             if 'testId' in dataObjs:
                 currentTestId = dataObjs['testId']
@@ -312,17 +338,23 @@ def saveJdNewTest(dataObjs,compyId):
                 passcore = ''
                 if 'promotPercentage' in dataObjs:
                     if dataObjs['promotPercentage']:
-                        brulesDetails = Brules.objects.filter(companyid = compyId, jobdescid = dataObjs['jdId'], workflowid = currentTestId).last()
+                        brulesDetails = Brules.objects.filter(companyid = compyId, workflowid = currentTestId , jobdescid = dataObjs['jdId']).last()
+                        passcore = dataObjs['promotPercentage']
+
                         if brulesDetails:
+                            brulesDetails.hold = holdStatus
+                            brulesDetails.holdpercentage = holdpercentagval
                             brulesDetails.passscore = dataObjs['promotPercentage']
-                            passcore = brulesDetails.passscore
                             brulesDetails.save()
+
                         else:
                             save_bruls = Brules(
                                 companyid = compyId,
                                 jobdescid = dataObjs['jdId'],
                                 workflowid = currentTestId,
-                                passscore = dataObjs['promotPercentage']
+                                hold = holdStatus,
+                                holdpercentage = holdpercentagval,
+                                passscore = dataObjs['promotPercentage'],
                             )
                             save_bruls.save()
 
@@ -335,7 +367,9 @@ def saveJdNewTest(dataObjs,compyId):
                     'paperid'   : savedWorkFlowDetails.paperid,
                     'papertitle': savedWorkFlowDetails.papertitle,
                     'papertype' : savedWorkFlowDetails.papertype,
-                    'promot'    : passcore
+                    'promot'    : passcore,
+                    'hold'      : holdStatus,
+                    'holdpercentage' : holdpercentagval
                 }
 
                 return dict(updatedData)
@@ -451,6 +485,8 @@ def saveAddJD(dataObjs,compyId,hrEmail):
 def saveUpdateJd(dataObjs, compyId, hrEmail):
     try:
         hrDetails = User.objects.filter(email=hrEmail).last()
+        print('========================')
+        print(dataObjs)
         if hrDetails is not None:
             # Check if the JobDesc with the given jdLibraryId exists
             jobDesc = JobDesc.objects.filter(id = dataObjs['JdID']).first()
@@ -468,7 +504,7 @@ def saveUpdateJd(dataObjs, compyId, hrEmail):
                 jobDesc.skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None
                 jobDesc.companyid   = compyId if compyId else None
                 jobDesc.createdby   = hrDetails.id if hrDetails.id else None
-                # jobDesc.status      = 'O'  # 'O' is the open status for JD
+                jobDesc.status      = dataObjs['jobDescriptionStatus']
                 # Save the updated JobDesc
                 jobDesc.save()
     except Exception as e:
@@ -600,6 +636,36 @@ def interviewRemarkSaveDB(dataObjs):
         call_schedule = CallSchedule.objects.get(id=int(dataObjs["sch_id"]))
         call_schedule.intnotes = dataObjs["remarks"]
         call_schedule.save()
+            
+    except Exception as e:
+        raise
+
+
+def saveStarQuestion(dataObjs):
+    try:
+        print('=======================')
+        print('dataObjs :: ',dataObjs)
+
+        if dataObjs['testCardId']:
+            workFlowData = Workflow.objects.filter(id = dataObjs['testCardId']).last()
+            if workFlowData:
+                dataObjs['paperid'] = workFlowData.paperid
+            else:
+                return {'msg':'test paper id was not found'}
+        else:
+            return {'msg':'test number was not found'}
+        
+        acert_domain = getConfig()["DOMAIN"]["acert"]
+        endpoint = "/api/star-question"
+
+        url = urljoin(acert_domain, endpoint)
+
+        company_data = {
+            'data':dataObjs,
+            'social_links': ''
+        }
+
+        send_company_data = requests.post(url, json=company_data)
             
     except Exception as e:
         raise

@@ -1,6 +1,25 @@
+function activeJDOrInactiveJd() {
+    var statusLabel = document.getElementById('statusLabel');
+    var jdStatus = document.getElementById('jdStatus');
+
+    // Check if the checkbox is checked
+    if (jdStatus.checked) {
+        statusLabel.textContent = '( Active )';
+    } else {
+        statusLabel.textContent = '( Inactive )';
+    }
+}
+
+
 document.getElementById('addJD').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
-    console.log('calleddd');
+    var jdStatus
+    var jdStatusElement = document.getElementById('jdStatus');
+    if (jdStatusElement.checked) {
+        jdStatus = 'D'
+    } else {
+        jdStatus = 'I'
+    }
 
     // Gather data from the form
     const jdValues = {
@@ -14,7 +33,8 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
         noPositions : document.getElementById('jdNoPositions').value,
         workLocation   : document.getElementById('jdWorkLocation').value,
         skills         : document.getElementById('jdSkills').value,
-        anySpecialNote : document.getElementById('JdanySpecialNotes').value
+        anySpecialNote : document.getElementById('JdanySpecialNotes').value,
+        jobDescriptionStatus : jdStatus,
     };
     
     // Prepare data to be sent to the backend

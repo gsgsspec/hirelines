@@ -22,7 +22,8 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, demoRequestDB, deleteCandidateDB
+# from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -1158,6 +1159,26 @@ def getJDData(request):
         response['error'] = str(e)
     return JsonResponse(response)
 
+
+@api_view(['POST'])
+def makeAstarQuestion(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            saveStarQuestion(dataObjs)
+            response['data'] = "make a star question"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in update emails'
+        response['error'] = str(e)
+    
+    return JsonResponse(response)
 
 
 @api_view(['POST'])

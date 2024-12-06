@@ -123,7 +123,7 @@
         <h5 class="modal-title" id="modalCenterTitle"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body pt-2">
+      <div class="modal-body pt-2 pb-2">
         <div class="row">
           <div class="col mb-3">
             <label for="testType" class="form-label">Test Name</label> <span hidden id="test_name_validator"
@@ -133,13 +133,37 @@
           </div>
         </div>
         <div class="row g-2" id="promotLevelContainer">
-          <div class="col mb-0">
+          <div class="col mb-3">
             <label for="emailWithTitle" class="form-label">Promote</label>&nbsp;<small class="form-label">( percentage
-              )</small><span hidden id="promot_validator" class="validator_font_color mx-3">Please Enter Promote
-              level</span>
+              )</small><span hidden id="promot_validator" class="validator_font_color mx-3">Please Enter Promote percentage</span>
             <input type="number" id="promot_level" class="form-control" placeholder="" value="60" />
           </div>
         </div>
+
+        <div class="row g-2" id="holdContainer">
+          <div class="col mb-0" style="margin-right: 0; display: flex; flex-direction: column;">
+            <label for="testHold" class="form-label px-0">Promote</label>
+              <div class="form-check form-switch p-0 mb-2"> 
+                <input class="form-check-input" type="checkbox" id="testHold" style="height: 2em; width: 4em; margin-left: 0.5rem;" onclick="enableOrDisableHold()"> 
+              </div>
+
+              <span id="holdInputContainer" style="display: none;">
+                <label for="emailWithTitle" class="form-label m-0" >Hold Percentage </label> 
+                <span hidden id="hold_validator" class="validator_font_color mx-3">Please Enter Hold Percentage</span>
+                <br>
+                <span class="">
+                  <small class="form-label">( Score in hold will not Auto Promote for Next Test And Not Rejected )</small>
+                </span>
+                
+                <input type="number" id="holdPercentage" class="form-control mt-2" placeholder="" value="50" />
+              </span>
+
+          </div>
+          <span id="holdInfo" class="form-label" style="text-transform: capitalize; font-weight: 700; color: #ff3e1dd9;"> Below the Promote percentage candidate will be rejected </span>
+          <!-- Below the Promote percentage candidate will be rejected -->
+          <!-- <span id="infoCandidatetHold" class="form-label" style="text-transform: capitalize; font-weight: 700; color: #ff3e1dd9;">Below the Hold percentage candidate will be rejected</span> -->
+        </div>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -192,7 +216,7 @@
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title" id="conformationForDelete">Are you sure you want to delete?</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -3.25rem;"></button>
               </div>
               <div class="modal-body" style="padding: 0.5rem;"></div>
               <div class="modal-footer">
@@ -219,7 +243,7 @@
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title" id="carrersPageIntegrationValidation"></h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -3.25rem;"></button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2rem;"></button>
               </div>
               <div class="modal-body" style="padding: 0.5rem;"></div>
               <div class="modal-footer">
@@ -321,7 +345,7 @@
 <!-- Jd Publish Conformation Modal start -->
 
 <div class="col-lg-4 col-md-6">
-  <div class="modal fade" id="JdPublishConformation" aria-labelledby="conformationForDelete" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="JdPublishConformation" aria-labelledby="conformationPublish" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
           <div class="modal-content">
               <div class="modal-header">
@@ -470,7 +494,7 @@
 
   var jdlibraryid = "{{jd_details.jdlibraryid}}";
   var jdId = '{{jd_details.id}}';
-  var interviewersList = {{ jd_details.interviewes_lst|safe }};
+  var interviewersList = {{ jd_details.interviewes_lst|safe }}
 
 </script>
 <style>
@@ -860,7 +884,24 @@
 .margin-top-adjust_three {
     margin-top: -3.25rem !important;
 }
+
+/* .starCongratesGif{
+  background-image: url('/static/img/illustrations/congratulations-7600-ezgif.com-gif-maker.gif');
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 2;
+} */
+
+/* .blastGif{
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  height: 30px;
+  width: 30px;
+} */
+
 </style>
+<script src="{% static 'lib/portal/assets/js/ui-popover.js' %}"></script>
 <script src="/static/config/config.js"></script>
 <script src="{% static 'js/jd_setup.js' %}"></script>
 <script src="{% static 'lib/portal/assets/js/extended-ui-perfect-scrollbar.js' %}"></script>

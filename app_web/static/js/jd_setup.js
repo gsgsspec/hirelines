@@ -57,6 +57,7 @@ function workFlowData(){
 
 }
 
+
 function changeStatusInHtml(changeStatus){
     
     if(changeStatus == 'D'){
@@ -274,11 +275,15 @@ function AppendSectionsAndQuestions(data, TestCardId) {
                     .replace(/\s+/g, ' ');
 
                 questionText.innerText = (ques + 1) + ' . ' + cleanedQuestion;
-
-                var questionCheckBoxContainer = document.createElement('div');
-
+                // star showing before selecting library
+                var questionStarContainer = document.createElement('div');
+                questionStarContainer.innerHTML = ('<i class="far fa-star"></i>')
+                if (LibraryQuestionsList[ques].starquestion == 'Y'){
+                    questionStarContainer.innerHTML = ('<i class="fas fa-star"></i>')
+                }
+                
                 questionContainer.append(questionText);
-                questionContainer.append(questionCheckBoxContainer);
+                questionContainer.append(questionStarContainer);
 
                 questionLibraryContainer.append(questionContainer);
 
@@ -393,22 +398,28 @@ function createNewTestModalOpen(testType){
     if (testType == 'screening'){
         testName = 'Screening'
         document.getElementById('promotLevelContainer').hidden = false;
+        document.getElementById('holdContainer').hidden = false;
     }
     else if(testType == 'coding'){
         testName = 'Coding'
         document.getElementById('promotLevelContainer').hidden = false;
+        document.getElementById('holdContainer').hidden = false;
     }
     else if(testType == 'interview'){
         testName = 'Interview'
         document.getElementById('promotLevelContainer').hidden = true;
+        document.getElementById('holdContainer').hidden = true;
     }
 
     if(testName){
         document.getElementById('modalCenterTitle').innerText = testName
         document.getElementById('testType').value = testName
-        document.getElementById('promot_level').value = 60
+        document.getElementById('promot_level').value = 80
+        document.getElementById('holdPercentage').value = 60
         document.getElementById('testType').dataset['test_type'] = testName
     }
+
+    document.getElementById('holdInfo').innerText = 'Below the Promote percentage candidate will be rejected'
 
 }
 
@@ -439,10 +450,28 @@ function saveOrUpdateTest(){
     
     var testName = document.getElementById('testType').value;
     var promotValue = document.getElementById('promot_level').value;
+    var holdCheck = document.getElementById('testHold');
     var testNameValidator = document.getElementById('test_name_validator');
     var promotValidator = document.getElementById('promot_validator');
     var testType = document.getElementById('testType').dataset.test_type
     var saveTest = true;
+    var testHoldYesOrNo = 'N'
+    var holdPercenTageVal 
+
+    if(holdCheck.checked){
+        testHoldYesOrNo = 'Y'
+        var holdPercentageValue = document.getElementById('holdPercentage')
+
+        if (!holdPercentageValue.value){ // input is empty this will call
+            saveTest = false
+            hold_validator.hidden = false
+        }
+        else{ // input has value
+            holdPercenTageVal = parseInt(holdPercentageValue.value)
+            hold_validator.hidden = true
+        }
+
+    }
 
     // Check test name value validation
     if (!testName) {
@@ -480,22 +509,24 @@ function saveOrUpdateTest(){
                     'testName'        : testName,
                     'promotPercentage': promotValue,
                     'testType'        : testType,
+                    'holdYesOrNo'     : testHoldYesOrNo,
+                    'holdvalue'       : holdPercenTageVal,
                     'jdId'            : jdId
                 }
     
             }
     
             if (testCreateOrUpdate == 'update'){
-    
                 dataObj = {
                     'createOrUpdate'  : testCreateOrUpdate,
                     'testId'          : cureentTestId,
                     'testName'        : testName,
                     'promotPercentage': promotValue,
                     'testType'        : testType,
+                    'holdYesOrNo'     : testHoldYesOrNo,
+                    'holdvalue'       : holdPercenTageVal,
                     'jdId'            : jdId
                 }
-    
             }
     
             var final_data = {
@@ -522,7 +553,9 @@ function saveOrUpdateTest(){
                                     'event':'update',
                                     'paperId': data['paperid'],
                                     'paperTitle': data['papertitle'],
-                                    'promotPercentage':data['promot']
+                                    'promotPercentage':data['promot'],
+                                    'holdYesOrNo'     : testHoldYesOrNo,
+                                    'holdvalue'       : holdPercenTageVal,
                                 }
                                 
                                 var final_data = {
@@ -534,7 +567,6 @@ function saveOrUpdateTest(){
     
                                 })
                             }
-
 
                         }
                         else{
@@ -574,7 +606,7 @@ function saveOrUpdateTest(){
 
 
 function updateCardAfterSaveData(allTestsList,testId){
-
+    console.log('allTestsList :: ',allTestsList);
     var testType = allTestsList[testId]['papertype']
     var testName
     if (testType == 'S'){
@@ -744,18 +776,44 @@ function updateTest(event, currentSelectedtestId) {
 
 function openUpdateTestModel(currentSelectedtestId) {
     if (currentSelectedtestId) {
+        
         var testType = testsList[currentSelectedtestId]['papertype'];
+        var holdStatus = testsList[currentSelectedtestId]['hold']
+        var holdPercentageValue = testsList[currentSelectedtestId]['holdpercentage']
+
+        var holdMainContainer = document.getElementById('holdContainer')
+        var holdElement = document.getElementById('testHold')
+        var holdInputContai = document.getElementById('holdInputContainer') 
+        var holdInfo = document.getElementById('holdInfo') 
+
+        if(holdStatus == 'Y'){
+            holdElement.checked = true
+            document.getElementById('holdPercentage').value = holdPercentageValue
+            holdInputContai.style.display = 'block'
+            holdInfo.innerText = 'Below the Hold percentage candidate will be rejected'
+        }
+        else{
+            holdElement.checked = false
+            holdInputContai.style.display = 'none'
+            holdInfo.innerText = 'Below the Promote percentage candidate will be rejected'
+        }
+
         var testName;
 
         if (testType == 'screening' || testType == 'S') {
             testName = 'Screening';
             document.getElementById('promotLevelContainer').hidden = false;
-        } else if (testType == 'coding' || testType == 'E') {
-            testName = 'Coding';
-            document.getElementById('promotLevelContainer').hidden = false;
-        } else if (testType == 'interview' || testType == 'I') {
-            testName = 'Interview';
-            document.getElementById('promotLevelContainer').hidden = true;
+            holdMainContainer.hidden = false
+        } 
+        else if (testType == 'coding' || testType == 'E') {
+                testName = 'Coding';
+                document.getElementById('promotLevelContainer').hidden = false;
+                holdMainContainer.hidden = false
+        }
+        else if (testType == 'interview' || testType == 'I') {
+                testName = 'Interview';
+                document.getElementById('promotLevelContainer').hidden = true;
+                holdMainContainer.hidden = true
         }
 
         var modalTitle = document.getElementById('modalCenterTitle');
@@ -826,10 +884,12 @@ function getPapersLibraries(test_type, workFlowId) {
 
         } else {
             // this code excuites after paper created
+            // console.log('testPaperData :: ',testPaperData);
             var dataObj = {
                 'jdLibId': parseInt(jdlibraryid),
                 'LibType': testPaperData['paperType'],
-                'paperId': testPaperData['paperId']
+                'paperId': testPaperData['paperId'],
+                'paperLibraryId':testPaperData['libraryId']
             };
 
             var final_data = {
@@ -838,11 +898,14 @@ function getPapersLibraries(test_type, workFlowId) {
             };
 
             $.post(CONFIG['acert'] + "/api/libraries", final_data, function (res) {
+                
                 if (res.statusCode == 0 && res.data) {
-
+                    
+                    // if library paper was set to not a library paper questions was not appear on the screen
+                    // it will excuite after paper create.
                     tempPaper = res.data['paper']
                     TestWithLibrariesAndQuestions[workFlowId] = res.data['librariesList'];
-                    createQuestionsContainer(workFlowId, testPaperData['libraryId'], tempPaper);
+                    createQuestionsContainer(workFlowId, testPaperData['libraryId'], tempPaper, res['data']['starQuestionsLst']);
 
                 }
             }).fail(function (error) {
@@ -904,7 +967,9 @@ function showQuestionConatainer(event) { // Where ever we click on the use Templ
                 var paperCreatedData = createPaper(selectedLibrary__, testId, 'useTemplate');
                 paperCreatedData.then(
                     (responseData) => {
-                        createQuestionsContainer(testIdStoreContainer, selectedLibrary__, responseData); // it will create HTML and show on static and Dynamic Questions on webapge
+                        // this will excuite when use click on uselibrary button 
+                        // it will create HTML and show on static and Dynamic Questions on webapge
+                        createQuestionsContainer(testIdStoreContainer, selectedLibrary__, responseData);
                     }
                 ).catch(
                     (error) => {
@@ -918,7 +983,11 @@ function showQuestionConatainer(event) { // Where ever we click on the use Templ
 }
 
 
-function createQuestionsContainer(testId, librarieId, selectedPaper) { // it will create HTML and show on static and Dynamic Questions on webapge
+// it will create HTML and show on static and Dynamic Questions on webapge
+function createQuestionsContainer(testId, librarieId, selectedPaper, starQuestionList) { 
+
+    // console.log('Fst selectedPaper :: ',selectedPaper);
+    // console.log('starQuestionList',starQuestionList);
     
     testsList[testId]['paperlibraryid'] = librarieId
     
@@ -927,10 +996,10 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
 
     if (buttonData) { // when use template button  click 
         selectedLibraryId = buttonData.dataset['libraryid'];
-    } else { // this code will excuite after paper_ create
+    } else { // this code will excuite after paper create
         selectedLibraryId = librarieId;
     }
-
+    
     var testLibraries = TestWithLibrariesAndQuestions[testId];
 
     for (var lib = 0; lib < testLibraries.length; lib++) {
@@ -942,13 +1011,13 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
         librariesQuestionsListContainer.style.paddingLeft = '1rem';
         librariesQuestionsListContainer.style.paddingRight = '0rem';
         librariesQuestionsListContainer.style.width = '100%';
-
+        
         if (testLibraries[lib]['id'] == selectedLibraryId) { // libraries loop
-
+            
             var paperTitle_
             var staticQuestionCountNum
             var dynamicQuestionCountNum
-
+            
             if(selectedPaper){
                 
                 paperTitle_ = selectedPaper['papertitle']
@@ -966,7 +1035,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                 paperTitle_ = testTitleInnerText
                 staticQuestionCountNum = testLibraries[lib]['questionsList'].length
                 dynamicQuestionCountNum = 0
-                
             }
 
             var staticQuestionsContainer = document.createElement('div');
@@ -983,7 +1051,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                 staticQuestionsContainer.append(staticContainerHeading);
             }
 
-
             var dynamicQuestionsContainer = document.createElement('div');
             dynamicQuestionsContainer.classList.add('dynamicQuestionsContainer', 'fade-in'); // Added fade-in class
 
@@ -998,6 +1065,8 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
             labelForDynamicInputField.classList.add('mx-4');
 
             var dynamicQuestionCountInpt = document.createElement('input');
+            dynamicQuestionCountInpt.style.borderWidth = '0.1px'
+            dynamicQuestionCountInpt.style.borderColor = 'var(--primary-color)'
             dynamicQuestionCountInpt.type = 'number';
             dynamicQuestionCountInpt.classList.add('form-control', 'inputCustWidth');
             dynamicQuestionCountInpt.id = 'dynamicQuestionsCount_' + testId;
@@ -1064,8 +1133,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                     return savePaper(this, this.id, testId, selectedPaper);
                 };
 
-                // saveButtonToContainer = '<button id="saveQuestions123" class="btn btn-primary" data-testid="123">Save</button>'
-
                 staticQuestionContainer.append(staticQuestionlabel, staticQuestionCounBox);
                 dynQuestionContainer.append(dynQuestionlabel, dynQuestionCounBox);
                 
@@ -1075,7 +1142,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                 else{
                     questionsCountContainer.append(staticQuestionContainer, dynQuestionContainer, saveButtonToContainer);
                 }
-
                 
                 questionContainerHeader.append(selectedLibraryTitle, questionsCountContainer);
 
@@ -1124,12 +1190,28 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                     var quesId = libraryquestionsList[ques]['question_id'];
                     var questionText = document.createElement('div');
                     questionText.classList.add('px-3', 'py-2');
+                    questionText.style.width = '90%'
                     questionText.id = 'question_' + quesId + '_' + testId;
                     var cleanedQuestion = libraryquestionsList[ques]['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');
                     questionText.innerText = (ques + 1) + ' . ' + cleanedQuestion;
 
                     var questionCheckBoxContainer = document.createElement('div');
-                    questionCheckBoxContainer.innerHTML = `<input type="checkbox" name="" id="questionCheckBox_${quesId}_${testId}" class="form-check-input questionSelect_${testId}" onclick="SelectQuestionOrUnSelectQuestion(this.id,${quesId},${testId})">`; // function parameter first parameter is questionId and second Parameter Testid 
+                    questionCheckBoxContainer.style.position = 'relative';
+                    
+                    var Star
+                    if(testLibraries[lib]['papertype'] == "I"){
+                        Star = ''
+                    }
+                    else{
+                        questionCheckBoxContainer.style.width = '65px'
+                        questionCheckBoxContainer.classList.add('checkboxcontainer')
+                        var starId = `id="staticstarQuestion_${quesId}_${testId}"`
+                        // Star = `<i ${starId} class="far fa-star p-clr star_question_" style="font-size:20px; margin-right: 15px; cursor: pointer;" onclick="makeAsStarQuestion(${quesId},${testId})" data-star="" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title=""> </i> <img class="blastGif" src="/static/img/illustrations/congratulations-7600-ezgif.com-gif-maker.gif" alt="">`;
+                        Star = `<i ${starId} class="far fa-star p-clr star_question_" style="font-size:20px; margin-right: 15px; cursor: pointer;" onclick="makeAsStarQuestion(${quesId},${testId})" data-star="" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title=""> </i>`;
+                    }
+
+                    // function parameter first parameter is questionId and second Parameter Testid 
+                    questionCheckBoxContainer.innerHTML = `${Star}<input type="checkbox" name="" id="questionCheckBox_${quesId}_${testId}" class="form-check-input questionSelect_${testId}" onclick="SelectQuestionOrUnSelectQuestion(this.id,${quesId},${testId})" style="border-color:var(--primary-color);">`;
 
                     questionContainer.append(questionText, questionCheckBoxContainer);
 
@@ -1140,8 +1222,7 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                     // Cloning for static and dynamic containers
                     var staticClone = questionContainer.cloneNode(true);
                     var dynamicClone = questionContainer.cloneNode(true);
-
-                    // Modify dynamic clone checkbox to be unchecked
+                    
                     var staticCheckbox = staticClone.querySelector('input[type="checkbox"]');
                     if (staticCheckbox) {
                         staticCheckbox.checked = staticCheckbox__;
@@ -1149,8 +1230,17 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
                         staticCheckbox.id = `staticQuestionCheckBox_${quesId}_${testId}`;
                     }
 
-                    // Modify dynamic clone checkbox to be unchecked
+                    // Removing Star From Dynamic Questions
                     var dynamicCheckbox = dynamicClone.querySelector('input[type="checkbox"]');
+                    var dynamicCheckBoxContainer = dynamicClone.querySelector('.checkboxcontainer');
+                    var dynamicStarquestion = dynamicClone.querySelector('.star_question_');
+                    if(dynamicStarquestion){
+                        dynamicCheckBoxContainer.style.width = 'max-content'
+                        dynamicStarquestion.remove()
+                    } 
+
+                    // console.log(':::',dynamicClone.childNodes);
+
                     if (dynamicCheckbox) {
                         dynamicCheckbox.checked = dynamicCheckbox__;
                         dynamicCheckbox.dataset['question_type'] = 'D'; // "D" Dynamic Type Question
@@ -1178,13 +1268,11 @@ function createQuestionsContainer(testId, librarieId, selectedPaper) { // it wil
         }
     }
     if(selectedPaper){
-        selectedPaperQuestionsCheck(selectedPaper,testId)
+        selectedPaperQuestionsCheck(selectedPaper,testId, starQuestionList)
     }
 }
 
 function savePaper(element, element_id, testid_, selectedPaper) {
-
-    console.log('JdStatus :: ',JdStatus);
 
     if(JdStatus == "D"){
         if (testid_) {
@@ -1276,10 +1364,11 @@ function savePaper(element, element_id, testid_, selectedPaper) {
 
 
 // it checks hr selected static and dynamic question 
-function selectedPaperQuestionsCheck(selectedPaper,testId){
+function selectedPaperQuestionsCheck(selectedPaper, testId, starQuestionList){
 
     var staticQuestionsLst = selectedPaper['paperQuestionslst']
     var dynaminQuestionsLst = selectedPaper['dynamicQuestionIds']
+
     if(staticQuestionsLst){
         if(staticQuestionsLst.length > 0){
             for( var statQues = 0; statQues < staticQuestionsLst.length; statQues++){
@@ -1290,6 +1379,8 @@ function selectedPaperQuestionsCheck(selectedPaper,testId){
             }
         }
     }
+    
+    // selecting the questions checkbox
     if(dynaminQuestionsLst){
         if(dynaminQuestionsLst.length > 0){
             for( var dynQues = 0; dynQues < dynaminQuestionsLst.length; dynQues++){
@@ -1306,9 +1397,37 @@ function selectedPaperQuestionsCheck(selectedPaper,testId){
         dynamicCountElem.value = selectedPaper['dynamicQuestionsInpt']
     }
 
+    for (var starQuestion  = 0; starQuestion < starQuestionList.length; starQuestion++ ){
+        var staticstarQuestionActiveOrInactive = document.getElementById('staticstarQuestion_'+starQuestionList[starQuestion]['questionId']+'_'+testId)
+        
+        if(starQuestionList[starQuestion]['star'] == 'Y'){
+            staticstarQuestionActiveOrInactive.classList.remove('far'); 
+            staticstarQuestionActiveOrInactive.classList.add('fas');
+            staticstarQuestionActiveOrInactive.dataset['star'] = 'Y'
+        }
+        else{
+            staticstarQuestionActiveOrInactive.classList.remove('fas');
+            staticstarQuestionActiveOrInactive.classList.add('far');
+            staticstarQuestionActiveOrInactive.dataset['star'] = 'N'
+        }
+
+        // this star question was not in paper , this is library question so we can't make any change to this question 
+        if(starQuestionList[starQuestion]['starDisable'] == 'Y'){
+            staticstarQuestionActiveOrInactive.dataset['disable'] = 'Y'
+            staticstarQuestionActiveOrInactive.style.color = 'gray'
+            staticstarQuestionActiveOrInactive.style.cursor = 'not-allowed';
+
+        }
+        // this is a star question from Paper
+        else{
+            staticstarQuestionActiveOrInactive.dataset['disable'] = 'N'
+        }
+
+    }
+
 }
 
-
+// add questions and removing questions from the paper by click on the checkbox
 function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
     
     var question = document.getElementById(elementId)
@@ -1329,18 +1448,29 @@ function SelectQuestionOrUnSelectQuestion(elementId, questionId, TestId){
 
     if(questionTypeDynamicOrStatic == "S"){
         var staticQuestion_ = document.getElementById(`staticQuestionCheckBox_${questionid}_${testid}`)
+        var statstarQuestion = document.getElementById(`staticstarQuestion_${questionid}_${testid}`)
 
         if(staticQuestion_.checked){
+
+            statstarQuestion.dataset['disable'] = 'N'
+            statstarQuestion.style.color = 'var(--primary-color)'
+            statstarQuestion.style.cursor = 'pointer';
             
             var dynamicQuestion = document.getElementById(`dynamicQuestionCheckBox_${questionid}_${testid}`)
             if(dynamicQuestion){
                 
                 if(dynamicQuestion.checked == false){}
                 else{
-                    showSuccessMessage('This Question added in Dynamic Questions');
+                    showSuccessMessage('This Question added in Dynamic Questions uncheck the question in Dynamic section');
                     staticQuestion_.checked = false
                 }
             }
+
+        }
+        else{
+            statstarQuestion.dataset['disable'] = 'Y'
+            statstarQuestion.style.color = 'gray'
+            statstarQuestion.style.cursor = 'not-allowed';
 
         }
 
@@ -1355,7 +1485,6 @@ function questionCountChanger(TestId){
 
     var statQuesCount = 0
     var dynaQuesCount = 0
-    
     var librariesLst = TestWithLibrariesAndQuestions[TestId]
     
     for(var library = 0; library < librariesLst.length; library++){
@@ -1396,7 +1525,6 @@ function questionCountChanger(TestId){
     if(elementStat){
         elementStat.innerText = statQuesCount
     }
-
 
     var elementDyn = document.getElementById(`dynamic_questions_count_${TestId}`)
     if(elementDyn){
@@ -1480,7 +1608,6 @@ function createPaper(libraryid, testid, event) {
         }
     });
 }
-
 
 
 function deleteTestModalOpen(testid) {
@@ -1796,13 +1923,16 @@ function publishJd(){
 
 }
 
+
 function closeModals(){
     $('#publishValidationModal').modal('hide')
 }
 
+
 function openInterviewpPanel(){
     $('#InterviewPanel').modal('show')
 }
+
 
 // only allow when JD status "D"
 // function deleteTestValidation(JdStatus__){
@@ -1816,6 +1946,78 @@ function openInterviewpPanel(){
 
 // }
 
+
 function setUpInstructions(){
     document.getElementById('setupInstructions').hidden = false
+}
+
+
+// it update the star question state and status
+function makeAsStarQuestion(questionId, TestId){
+
+    var staticstarElement = document.getElementById(`staticstarQuestion_${questionId}_${TestId}`)
+
+    // disable "N" means that question was in Paper
+    // if star was disable "N" means NO then only we have to update or change state of the star
+    if(staticstarElement.dataset['disable'] == 'N'){
+
+        // un checked star
+        if (staticstarElement.dataset['star'] == 'Y') { 
+            staticstarElement.classList.remove('fas'); // remove filled star
+            staticstarElement.classList.add('far'); // empty star
+            staticstarElement.dataset['star'] = 'N';
+        } 
+        // checked star
+        else {
+            staticstarElement.classList.remove('far'); // remove empty star
+            staticstarElement.classList.add('fas'); // filled star
+            staticstarElement.dataset['star'] = 'Y'; 
+        }
+
+        dataObj = {
+            'questionId'  : questionId,
+            'testCardId'  : TestId,
+            'staryesorno' : staticstarElement.dataset['star']
+        }
+
+        var final_data = {
+            'data': JSON.stringify(dataObj),
+            csrfmiddlewaretoken: CSRF_TOKEN
+        }
+
+        $.post(CONFIG['portal'] + "/api/make-star-question", final_data, function (res) {
+            if (res.statusCode == 0) {
+                
+            }
+        }).fail(function (error) {
+            console.error("API request failed:", error);
+        });
+        
+    }
+
+}
+
+
+function enableOrDisableHold() {
+    var testHoldElement = document.getElementById('testHold');
+    var holdContainer = $('#holdInputContainer'); // Use jQuery selector for holdContainer
+    var holdInputInfo = document.getElementById('holdInfo');
+    var holdPercentageInputElement = document.getElementById('holdPercentage');
+    var promotePercentageValueElement = document.getElementById('promot_level')
+
+    // if(!holdPercentageInputElement.value){
+        var reducedValue = 50
+        if(promotePercentageValueElement.value){
+            reducedValue = promotePercentageValueElement.value - (promotePercentageValueElement.value * (20 / 100));
+        }
+    // }
+
+    if (testHoldElement.checked) {
+        holdContainer.fadeIn(); // Show the container with fade-in effect
+        holdInputInfo.innerText = 'Below the Hold percentage candidate will be rejected';
+        holdPercentageInputElement.value = reducedValue
+    } else {
+        holdContainer.fadeOut(); // Hide the container with fade-out effect
+        holdInputInfo.innerText = 'Below the Promote percentage candidate will be rejected';
+    }
 }

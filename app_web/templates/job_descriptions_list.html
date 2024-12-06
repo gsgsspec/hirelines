@@ -1,5 +1,5 @@
 {% load static  %}
-<div class="card container-custm-height" >
+<div class="card container-custm-height" {% if activeJd|length == 0 %} style="height: 90vh;" {% else %} style="height: max-content;" {% endif %}>
     <div class="card-title-table">
         <h4 class="card-header">Job Descriptions</h4>
         <div class="p-3 text-align-right d-flex align-items-center justify-content-center">
@@ -11,16 +11,15 @@
     </div>
     <div class="row p-3">
 
-      <!-- <div class="c-card col-sm" style="max-width: max-content;">
-        <a href="/add-job-description">
-          <div class="card mb-3 new_jd_card_border">
-            <i class="fas fa-plus custm_icon_new_jd" style="color: var(--primary-color);"></i> 
-            <div class="new_jd_txt">New JD</div>
-          </div>
-        </a>
-      </div> -->
+      <div class="pb-3">
+        <div class="tabsContainer">
+          <span id="active" class="custm-tab p-clr activeTab shadow" onclick="tabSwitch(this.id)">Active</span>
+          <span id="Inactive" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Inactive</span>
+        </div>
+      </div>
 
-      {% for jd in allJds %}
+      <div class="row" id="activeJdsContainer">
+        {% for jd in activeJd %}
       <div class="col-md-6 col-lg-4 c-card">
         <div class="card mb-3 shadow jd_card_border jd_card_cust"  onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer;">
           <div>
@@ -29,8 +28,6 @@
                 <h5 class="card-title p-clr mb-1" style="height: 2.6rem; overflow: hidden;text-overflow: ellipsis; ">{{ jd.title }}</h5>
                 <div class="d-flex justify-content-between">
                   <div class="custm_created_by_userName" style="display: flex; justify-content: start; align-items: center;"> <i class='bx bx-user-circle m-0'></i> &nbsp; {{ jd.createdbyUserName }}</div>
-                  <!-- <button type="button" class="btn btn-outline-info">Info</button> -->
-                  <!-- <div style="color: gray;">Exp : {% if jd.expmin is not none %} {{ jd.expmin }} - {% endif %}  {% if jd.expmax is not none %}  {{ jd.expmax }} {% endif %} Yrs</div> -->
                   {% if jd.status == 'D' %}
                     <span class="badge bg-label-primary me-1" style="height: max-content; text-transform: capitalize;">Draft</span>
                   {% elif jd.status == 'A' %}
@@ -46,9 +43,6 @@
           
           <div class="card-footer d-flex justify-content-between mt-auto pt-0" style="padding: 0.8rem 1rem;">
             <button type="button" class="btn btn-icon btn-sm" onclick="event.stopPropagation();redirectToJobDashboard('{{ jd.id }}')" style=" width: calc(1.625rem + 10px); background-color: var(--secondary-color);box-shadow: 0 0.25rem 1rem rgba(161, 172, 184, 0.45) !important;">
-              <!-- <i class="fas fa-chart-line"></i> -->
-              <!-- <i class='bx bx-bar-chart-alt'></i> -->
-              <!-- <i class='bx bx-bar-chart'></i> -->
               <i class='bx bxs-bar-chart-alt-2' style="color: white;"></i>
             </button>
             <button onclick="event.stopPropagation();redirectToJobDetails('{{ jd.id }}')" type="button" class="btn btn-sm" style="font-weight: 700;letter-spacing: 0.4px; background-color: var(--secondary-color); color: white; box-shadow: 0 0.25rem 1rem rgba(161, 172, 184, 0.45) !important;">
@@ -58,6 +52,40 @@
         </div>
       </div>
       {% endfor %}
+      </div>
+
+      <div class="row" id="InactiveJdsContainer" style="display: none;">
+        {% for jd in inactiveJd %}
+        <div class="col-md-6 col-lg-4 c-card">
+          <div class="card mb-3 shadow jd_card_border jd_card_cust"  onclick="window.location.href='/update-job-description/{{ jd.id }}'" style="cursor: pointer;">
+            <div>
+              <div class="card-body int-card-bd pb-0" style="padding: 0.8rem 1rem;">
+                <div class="jd_card_wdth_cust">
+                  <h5 class="card-title p-clr mb-1" style="height: 2.6rem; overflow: hidden;text-overflow: ellipsis; ">{{ jd.title }}</h5>
+                  <div class="d-flex justify-content-between">
+                    <div class="custm_created_by_userName" style="display: flex; justify-content: start; align-items: center;"> <i class='bx bx-user-circle m-0'></i> &nbsp; {{ jd.createdbyUserName }}</div>
+                    {% if jd.status == 'I' %}
+                      <span class="badge bg-label-secondary me-1" style="height: max-content; text-transform: capitalize;">Inactive</span>
+                    {% else %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-footer d-flex justify-content-between mt-auto pt-0" style="padding: 0.8rem 1rem;">
+              <button type="button" class="btn btn-icon btn-sm" onclick="event.stopPropagation();redirectToJobDashboard('{{ jd.id }}')" style=" width: calc(1.625rem + 10px); background-color: var(--secondary-color);box-shadow: 0 0.25rem 1rem rgba(161, 172, 184, 0.45) !important;">
+                <i class='bx bxs-bar-chart-alt-2' style="color: white;"></i>
+              </button>
+              <button onclick="event.stopPropagation();redirectToJobDetails('{{ jd.id }}')" type="button" class="btn btn-sm" style="font-weight: 700;letter-spacing: 0.4px; background-color: var(--secondary-color); color: white; box-shadow: 0 0.25rem 1rem rgba(161, 172, 184, 0.45) !important;">
+                  Setup
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
   </div>  
 </div>
 
@@ -110,9 +138,33 @@
     color: gray;
     padding-left: 0px;
    }
-   .container-custm-height{
-    height: 90vh;
+   .tabsContainer{
+    height: 50px;
+    /* border: 0.9px solid #d3d3d369; */
+    border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+    width: 240px;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
    }
+   .custm-tab{
+    height: min-content;
+    border: 0.9px solid lightgray;
+    border-radius: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+    width: 107px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+   }
+   .activeTab{
+    background-color: var(--light-primary-color);
+    font-weight: 700;
+   }
+
 </style>
 <script>
   function redirectToJobDetails(redirectId) {
@@ -121,4 +173,21 @@
   function redirectToJobDashboard(jid){
     window.location.href = '/jd/'+jid;
   }
+
+  function tabSwitch(element) {
+  if (element === 'active') {
+    $('#active').addClass('activeTab shadow');  // Added both classes with space
+    $('#Inactive').removeClass('activeTab shadow');  // Removed both classes with space
+    $("#activeJdsContainer").fadeIn("slow");
+    $("#InactiveJdsContainer").fadeOut("slow").hide(); // Ensures #InactiveJdsContainer is hidden after fading out
+  }
+
+  if (element === 'Inactive') {
+    $('#Inactive').addClass('activeTab shadow');  // Added both classes with space
+    $('#active').removeClass('activeTab shadow');  // Removed both classes with space
+    $("#activeJdsContainer").fadeOut("slow");
+    $("#InactiveJdsContainer").fadeIn("slow").show(); // Ensures #InactiveJdsContainer is shown after fading in
+  }
+}
+
 </script>

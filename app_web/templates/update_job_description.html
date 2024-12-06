@@ -133,6 +133,20 @@
                   </div>
                 </div>
 
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="jdStatus">Status -- {{ jd_details.status }} </label>
+                  <div class="col-sm-9" style="display: flex; align-items: center;">
+                    <div class="form-check form-switch"> 
+                      <input class="form-check-input" type="checkbox" id="jdStatus" onclick="activeJDOrInactiveJd()" {% if jd_details.status == 'I' %} {% else %} checked {% endif %} style="height: 2em; width: 4em;"> 
+                      &nbsp;&nbsp; 
+                      
+                    </div>
+                    <span class="col-form-label" id="statusLabel" style="font-size: 1rem;">
+                      {% if jd_details.status == 'I' %} ( Inactive ) {% else %} ( Active ) {% endif %} 
+                    </span>
+                  </div>
+                </div>
+
                 <!-- <div class="row mb-3 container-center">
                   <div class="row mb-3" style="display: flex; justify-content: space-evenly;align-items: center;">
                     <div class="col-sm-9 row align-items-center px-0" style="width: max-content;">

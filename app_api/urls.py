@@ -49,4 +49,5 @@ urlpatterns = [
     path('update-candidate-workflow',views.updateCandidateWorkflow),
 
 
+    path('make-star-question',views.makeAstarQuestion),
 ]
