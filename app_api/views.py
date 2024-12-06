@@ -473,7 +473,7 @@ def evaluationView(request):
             acert_domain = getConfig()['DOMAIN']['acert']
             endpoint = '/api/evaluate-papers'
             url = urljoin(acert_domain, endpoint)
-            print('1')
+
             company_paper_ids = list(Workflow.objects.filter(companyid=user_company).values_list("paperid",flat=True))
             company_papers={
                 "request_for":"get_evaluation_papers",
@@ -502,7 +502,6 @@ def evaluationView(request):
             endpoint = '/api/evaluate-papers'
             url = urljoin(acert_domain, endpoint)
 
-            print('2')
             
             company_paper_ids = list(Workflow.objects.filter(companyid=user_company).values_list("paperid",flat=True))
             
@@ -547,7 +546,6 @@ def evaluationView(request):
             
             if dataObjs["request_for"] == "send_evaluation_result":
 
-                print('3')
                 
                 dataObjs["enc_company_id"]=enc_company_id
                 dataObjs["company_paper_ids"]=company_paper_ids
@@ -559,7 +557,7 @@ def evaluationView(request):
                     if response_content:
                         
                         resp = json.loads(response_content.decode('utf-8'))
-
+                        
                         acert_data = resp['data']
                         if resp["statusCode"] == 0:
                             response['data'] = acert_data
@@ -573,7 +571,7 @@ def evaluationView(request):
         response['data'] = 'Error in evaluationquestionsView'
         response['error'] = str(e)
         print(str(e))
-        raise
+        # raise
         # logging.error("Error in evaluationquestionsView : ", str(e))
     return JsonResponse(response)
 
@@ -854,6 +852,8 @@ def getUpdateCompanyCreditsView(request):
                 else:
                     credit_availablity_stat = "N"
                     current_credits = company_account.balance
+                
+                    
                 app_config = getConfig()['APP_CONFIG']
                 lowcredits_warning = int(app_config["lowcredits_warning"])
                 reg_stop_warning = int(app_config["reg_stop_warning"])
@@ -863,7 +863,13 @@ def getUpdateCompanyCreditsView(request):
                     credits_status = "L"
                 else:
                     credits_status = "A"
-                
+                send_lowcredits_notification = "N"
+                if (credits_status ==  "N") or (credits_status == "L"):
+                    if company_account.lowcreditsnotification != "Y":
+                        send_lowcredits_notification = "Y"
+                        company_account.lowcreditsnotification = "Y"
+                        company_account.save()
+
                 hr_admin_label = "HR-Admin"
                 hradmin_emails_list = list(User.objects.filter(companyid=company_id,role__contains=hr_admin_label,status="A").values_list("email",flat=True))
                 
@@ -872,8 +878,10 @@ def getUpdateCompanyCreditsView(request):
                     "credit_availablity_stat":credit_availablity_stat,
                     "credits_status":credits_status,
                     "hradmin_emails_list":hradmin_emails_list,
-                    "current_credits":current_credits
+                    "current_credits":current_credits,
+                    "send_lowcredits_notification":send_lowcredits_notification
                 }
+                
             if dataObjs["request_type"] == "deduct_credits":
                 paper_type = dataObjs["paper_type"]
                 paper_id = dataObjs["paper_id"]

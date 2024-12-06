@@ -382,6 +382,7 @@ class Account(models.Model):
     lastcredit = models.IntegerField(null=True) # last added credits
     lastcreditdatetime = models.DateTimeField(null=True)
     balance = models.IntegerField(null=True) # balance credits
+    lowcreditsnotification = models.CharField(max_length=1, null=True,blank=True)
 
     class Meta:
         db_table = 'account'
