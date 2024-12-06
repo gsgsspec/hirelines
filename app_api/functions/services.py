@@ -279,9 +279,10 @@ def companyUserLst(companyID):
         for user in userLst:
             userData = model_to_dict(user)
             usersDataLst.append(userData)
+        
         lstRoles = Role.objects.all()
-
         roleslst = []
+        
         for rolee in lstRoles:
             userRole = model_to_dict(rolee)
             if userRole['Name'] != 'HR-Admin':
@@ -642,14 +643,11 @@ def jdDetails(jdId, companyId):
         if jdData:
             # Manually create the dictionary with conditions for None values
 
-            interviewes_lst = User.objects.filter(
-                status="A", role="Interviewer", companyid=companyId
-            ).values("id", "name")
+            interviewes_lst = User.objects.filter(status="A", companyid=companyId).values("id", "name")
+
             for interviewer in interviewes_lst:
                 if interviewer:
-                    total_interviewers_lst.append(
-                        {"id": interviewer["id"], "name": interviewer["name"]}
-                    )
+                    total_interviewers_lst.append({"id": interviewer["id"], "name": interviewer["name"]})
 
                 selectedInterviewerLst = []
                 if jdData.interviewers:
@@ -1990,6 +1988,25 @@ def getCompanyData(cid):
             }
 
         return company_data
+
+    except Exception as e:
+        raise
+
+
+def demoUserService(dataObjs):
+    try:
+
+        company_data = CompanyData(
+            companyname = dataObjs['company-name'],
+            companyemail = dataObjs['email'],
+            location = dataObjs['location'],
+            contactperson = dataObjs['contact-person'],
+            registerationtime = datetime.now()
+        )
+
+        company_data.save()
+
+        return company_data.id
 
     except Exception as e:
         raise
