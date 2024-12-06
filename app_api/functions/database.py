@@ -164,20 +164,6 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                         'papertype':c_registration.papertype
                     }
                     
-                    # Removed, because the this process has to handled by ACERT
-                    # 
-                    # replacements = {
-                    #     "[candidate_name]": f"{candidate.firstname} {candidate.lastname if candidate.lastname else ''}",
-                    #     "[paper_name]": acert_data["paper_name"],
-                    #     "[company_name]": company_data.name,
-                    #     "[recruitment_email_address]": company_data.email,
-                    #     "[exam_link]":acert_data["exam_url"],
-                    #     "[deadline]": acert_data["deadline"]
-                    # }
-                    # if workflow_data.papertype == "I":
-                    #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Call_Schedule',replacements,candidate.email)
-                    # else:
-                    #     sendEmail(candidate.companyid,workflow_data.papertype,dataObjs['begin-from'],'Registration',replacements,candidate.email)
                     deductCreditsService(cid,acert_data["papertype"],dataObjs['begin-from'])
                     return c_data
             else:
