@@ -1,91 +1,158 @@
 {% load static %}
 
-
-<!-- Header -->
-<header id="header" class="header">
-    
-    <div class="landing-sec">
-        <div class="landing-img">
-            <img class="img-fluid" src="{% static 'lib/homePage/images/slide_final.gif' %}" alt="alternative">
-        </div>
-        <div class="web-landing-content">
-            <div class="text-container slide-in-right">
-                <!-- <div class="req-access"><h3>
-                    Request for early access
-                </h3></div> -->
-                <div class="form-div">
-                    <div class="detiails-sec">
-                        <div class="form-card-heading">
-                            <h4>Sign up now</h4>
+<section class="hero" id="home">
+    <div  class="fade-in-home">
+        <h1>Streamlining Your Recruitment Process with AI</h1>
+        <p>Fast, Accurate, and Efficient Hiring for Software Development Companies</p>
+        <button href="#header" class="btn-outline-lg page-scroll get-start-btn hero-btn">Get Started Today</button>
+    </div>
+    <div id="webLandingContent" class="web-landing-content" style="display: none;">
+        <div class="text-container slide-in-right" style="width: 500px;">
+            <div class="form-div">
+                <div class="detiails-sec" style="text-align: left;">
+                    <div class="form-card-heading">
+                        <h4>Sign up</h4>
+                    </div>
+                    <form id="registerForm" class="needs-validation" novalidate>
+                        <div class="mb-4 form-floating">
+                            <input type="email" class="form-control" id="reg-bemail" placeholder="name@example.com" required>
+                            <label for="reg-bemail">Business Email</label>
+                            <div class="invalid-feedback">
+                                Please enter email address.
+                            </div>
+                            <div class="domain-check">
+                                Business domain is required
+                            </div>
+                            <div class="existing-email">
+                                Email already registered
+                            </div>
                         </div>
-                        <form id="registerForm" class="needs-validation" novalidate>
-                            <div class="mb-4 form-floating">
-                                <input type="email" class="form-control" id="reg-bemail" placeholder="name@example.com" required>
-                                <label for="reg-bemail">Business Email</label>
-                                <div class="invalid-feedback">
-                                    Please enter email address.
-                                </div>
-                                <div class="domain-check">
-                                    Business domain is required
-                                </div>
-                                <div class="existing-email">
-                                    Email already registered
-                                </div>
+                        <div class="mb-4 form-floating">
+                            <input type="text" class="form-control" id="reg-company" placeholder="Company" required>
+                            <label for="reg-company">Company Name</label>
+                            <div class="invalid-feedback">
+                                Please enter your company name.
                             </div>
-                            <div class="mb-4 form-floating">
-                                <input type="text" class="form-control" id="reg-company" placeholder="Company" required>
-                                <label for="reg-company">Company Name</label>
-                                <div class="invalid-feedback">
-                                    Please enter your company name.
-                                </div>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <select id="reg-companytype" class="form-select" required>
+                                <option value="" selected disabled></option>
+                                {% for company_type in company_types %}
+                                <option value="{{ company_type }}">{{ company_type }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="reg-companytype">Company Type</label>
+                            <div class="invalid-feedback">
+                                Please select company type.
                             </div>
-                            <div class="form-floating mb-4">
-                                <select id="reg-companytype" class="form-select" required>
-                                    <option value="" selected disabled></option>
-                                    {% for company_type in company_types %}
-                                    <option value="{{ company_type }}">{{ company_type }}</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="reg-companytype">Company Type</label>
-                                <div class="invalid-feedback">
-                                    Please select company type.
-                                </div>
+                        </div>
+                        <div class="mb-4 form-floating">
+                            <input type="text" class="form-control" id="reg-name" placeholder="Name" required>
+                            <label for="reg-name">Name</label>
+                            <div class="invalid-feedback">
+                                Please enter your name.
                             </div>
-                            <div class="mb-4 form-floating">
-                                <input type="text" class="form-control" id="reg-name" placeholder="Name" required>
-                                <label for="reg-name">Name</label>
-                                <div class="invalid-feedback">
-                                    Please enter your name.
-                                </div>
+                        </div>
+                        <div class="mb-4 form-floating">
+                            <input type="text" class="form-control" id="reg-location" placeholder="Location" required>
+                            <label for="reg-location">Location</label>
+                            <div class="invalid-feedback">
+                                Please enter your location.
                             </div>
-                            <div class="mb-4 form-floating">
-                                <input type="text" class="form-control" id="reg-location" placeholder="Location" required>
-                                <label for="reg-location">Location</label>
-                                <div class="invalid-feedback">
-                                    Please enter your location.
-                                </div>
-                            </div>
-                            <div class="error-sec mb-2" style="display: none;">
-                                <span style="color:red">Something went wrong, Please try again after sometime...</span>
-                            </div>
-                            <div class="error-existing mb-2" style="display: none;">
-                                <span style="color:red">Company already registered, Please contact your company HR/Administrator..</span>
-                            </div>
-                            <button type="submit" id="register" class="btn-solid-lg">Sign up</button>
-                        </form>
-                    </div>
-                    <div class="success-sec">
-                        <i class="fas fa-check-circle check-icon"></i>
-                        <span>You are successfully signed up</span><br>
-                        <span>Check your email for access details</span>
-                    </div>
-                    
+                        </div>
+                        <div class="error-sec mb-2" style="display: none;">
+                            <span style="color:red">Something went wrong, Please try again after sometime...</span>
+                        </div>
+                        <div class="error-existing mb-2" style="display: none;">
+                            <span style="color:red">Company already registered, Please contact your company HR/Administrator..</span>
+                        </div>
+                        <button type="submit" id="register" class="btn-solid-lg">Sign up</button>
+                    </form>
                 </div>
-            </div> 
-        </div>
-    </div> <br><br>
-</header>
-<!-- end of header -->
+                <div class="success-sec">
+                    <i class="fas fa-check-circle check-icon"></i>
+                    <span>You are successfully signed up</span><br>
+                    <span>Check your email for access details</span>
+                </div>
+            </div>
+        </div> 
+    </div>
+</section>
+
+
+<!-- Benefits -->
+<div id="benefits" class="cards-1 bg-gray">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="h2-heading">Benefits</h2>
+            </div> <!-- end of col -->
+        </div> <!-- end of row -->
+        <div class="row">
+            <div class="col-lg-12">
+                
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/benefits/126-time-save.png' %}" alt="Time Saver Icon">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">10X Time Saver</h3>
+                        <p>For HR & Interview Panel</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/benefits/126-communication.png' %}" alt="Time Saver Icon">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">25X Communication</h3>
+                        <p>Improved Communication and Collaboration</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/benefits/126-optimization.png' %}" alt="Time Saver Icon">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">50X Lead Time Optimization</h3>
+                        <p>In Hiring the Candidate</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/benefits/126-hiring.png' %}" alt="Time Saver Icon">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">75X Hiring Success</h3>
+                        <p>In Hiring the Right Candidate</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/benefits/128-insight.png' %}" alt="Time Saver Icon">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">100X Insight</h3>
+                        <p>Into Recruitment Process</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+               
+
+            </div> <!-- end of col -->
+        </div> <!-- end of row -->
+    </div> <!-- end of container -->
+</div> <!-- end of cards-1 -->
+<!-- end of services -->
 
 
 <!-- Features -->
@@ -93,7 +160,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="h2-heading">Hirelines application is packed with <span>awesome features</span></h2>
+                <h2 class="h2-heading">Hirelines.io is packaged with awesome features</h2>
             </div> <!-- end of col -->
         </div> <!-- end of row -->
         <div class="row">
@@ -148,202 +215,18 @@
 
 
 
-
-
-<!-- Details 2 -->
-<div class="basic-2  bg-gray">
-    <div class="container">
-        <h2>Transform Recruitment with AI and Data-Driven Solutions</h2>
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="image-container" style="text-align: center;">
-                    <img class="img-fluid" src="{% static 'lib/homePage/images/process-no-label.svg' %}" alt="alternative">
-                </div> <!-- end of image-container -->
-            </div> <!-- end of col -->
-            <div class="col-lg-6">
-                <div class="text-container">
-                    <!-- <img class="img-fluid" src="{% static 'lib/homePage/images/ai.svg' %}" alt="alternative"> -->
-                    <p>Unlock the power of intelligent automation and data-driven insights to streamline your recruitment process. Our AI-driven tools and comprehensive assessments help you hire the right talent faster and more efficiently.</p>
-                    <ul class="list-unstyled li-space-lg" style="font-weight: 600;color: #274699;margin-top: 4rem;">
-                        <li class="d-flex">
-                            <i class="fas fa-square"></i>
-                            <div class="flex-grow-1">AI-Driven Efficiency</div>
-                        </li>
-                        <li class="d-flex">
-                            <i class="fas fa-square"></i>
-                            <div class="flex-grow-1">Comprehensive Assessments</div>
-                        </li>
-                        <li class="d-flex">
-                            <i class="fas fa-square"></i>
-                            <div class="flex-grow-1">Streamlined Video Interviews</div>
-                        </li>
-                        <li class="d-flex">
-                            <i class="fas fa-square"></i>
-                            <div class="flex-grow-1">Data-Driven Decisions</div>
-                        </li>
-                        <li class="d-flex">
-                            <i class="fas fa-square"></i>
-                            <div class="flex-grow-1">Improved Candidate Experience</div>
-                        </li>
-                    </ul>
-                </div> <!-- end of text-container -->
-            </div> <!-- end of col -->
-        </div> <!-- end of row -->
-    </div> <!-- end of container -->
-</div> <!-- end of basic-2 -->
-<!-- end of details 2 -->
-
-<section class="hero">
-    <h1>Streamlining Your Recruitment Process with AI</h1>
-    <p>Fast, Accurate, and Efficient Hiring for Software Development Companies</p>
-    <a href="#header" class="btn-outline-lg page-scroll get-start-btn">Get Started Today</a>
-</section>
-
-<!-- Testimonials -->
-<div class="slider-1">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <h2 class="h2-heading">Few words from our clients</h2>
-            </div> <!-- end of col -->
-        </div> <!-- end of row -->
-        <div class="row">
-            <div class="col-lg-12">
-
-                <!-- Card Slider -->
-                <div class="slider-container">
-                    <div class="swiper-container card-slider">
-                        <div class="swiper-wrapper">
-                            
-                            <!-- Slide -->
-                            <div class="swiper-slide">
-                                <div class="card">
-                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-1.jpg' %}" alt="alternative">
-                                    <div class="card-body">
-                                        <p class="testimonial-text">The ATS has streamlined our process, letting us manage applicants in one place and quickly focus on top talent!</p>
-                                        <p class="testimonial-author">Jude Thorn</p>
-                                    </div>
-                                </div>
-                            </div> <!-- end of swiper-slide -->
-                            <!-- end of slide -->
-    
-                            <!-- Slide -->
-                            <div class="swiper-slide">
-                                <div class="card">
-                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-2.jpg' %}" alt="alternative">
-                                    <div class="card-body">
-                                        <p class="testimonial-text">Scheduling interviews and following up are now so efficient; we stay connected with candidates effortlessly</p>
-                                        <p class="testimonial-author">Roy Smith</p>
-                                    </div>
-                                </div>        
-                            </div> <!-- end of swiper-slide -->
-                            <!-- end of slide -->
-    
-                            <!-- Slide -->
-                            <div class="swiper-slide">
-                                <div class="card">
-                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-3.jpg' %}" alt="alternative">
-                                    <div class="card-body">
-                                        <p class="testimonial-text">The built-in assessments have improved our screening process and made skills evaluation a breeze!</p>
-                                        <p class="testimonial-author">Marsha Singer</p>
-                                    </div>
-                                </div>        
-                            </div> <!-- end of swiper-slide -->
-                            <!-- end of slide -->
-    
-                            <!-- Slide -->
-                            <div class="swiper-slide">
-                                <div class="card">
-                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-4.jpg' %}" alt="alternative">
-                                    <div class="card-body">
-                                        <p class="testimonial-text">Video interviews are easy to schedule and review, saving us valuable time.</p>
-                                        <p class="testimonial-author">Tim Shaw</p>
-                                    </div>
-                                </div>
-                            </div> <!-- end of swiper-slide -->
-                            <!-- end of slide -->
-    
-                            <!-- Slide -->
-                            <div class="swiper-slide">
-                                <div class="card">
-                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-5.jpg' %}" alt="alternative">
-                                    <div class="card-body">
-                                        <p class="testimonial-text">Effortless job posting across platforms has boosted our reach significantly!</p>
-                                        <p class="testimonial-author">Lindsay Spice</p>
-                                    </div>
-                                </div>        
-                            </div> <!-- end of swiper-slide -->
-                            <!-- end of slide -->
-    
-                            <!-- Slide -->
-                            <div class="swiper-slide">
-                                <div class="card">
-                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-6.jpg' %}" alt="alternative">
-                                    <div class="card-body">
-                                        <p class="testimonial-text">Having structured interview guides and feedback tools saves us so much time.</p>
-                                        <p class="testimonial-author">Ann Blake</p>
-                                    </div>
-                                </div>        
-                            </div> <!-- end of swiper-slide -->
-                            <!-- end of slide -->
-                        
-                        </div> <!-- end of swiper-wrapper -->
-    
-                        <!-- Add Arrows -->
-                        <div class="swiper-button-next"></div>
-                        <div class="swiper-button-prev"></div>
-                        <!-- end of add arrows -->
-    
-                    </div> <!-- end of swiper-container -->
-                </div> <!-- end of slider-container -->
-                <!-- end of card slider -->
-
-            </div> <!-- end of col -->
-        </div> <!-- end of row -->
-    </div> <!-- end of container -->
-</div> <!-- end of slider-1 -->
-<!-- end of testimonials -->
-
-
-<!-- Details 1 -->
-<div id="details" class="basic-1" style="background: url({% static 'lib/homePage/images/3409297.jpg' %}) no-repeat center center/cover;">
-    <div class="container">
-        <h2>Who We Are</h2>
-        <div class="row">
-            <!-- <div class="col-lg-6 col-xl-5"> -->
-                <!-- <div class="text-container">
-                    <h2>Manage your customer’s expectations and get them to trust you</h2>
-                    <p>Vestibulum ullamcorper augue ex, imperdiet tincidunt tellus bibendum inconsectetur rutrum mauris orbi scelerisque cursus augue, ac suscipit sem mattis at ut suscipit</p>
-                    <a class="btn-solid-reg" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Modal</a>
-                </div>  -->
-                <div class="text-container" >
-                    <p>
-                        At <strong>HireLines</strong>, we are passionate about connecting top-tier software developers with dynamic companies.
-                        Our team of experts combines deep industry knowledge with cutting-edge technology, creating a recruitment platform that enhances efficiency and effectiveness.
-                      </p>
-                      <p>
-                        We aim to empower recruitment teams at software development companies by removing the barriers of traditional hiring methods.
-                      </p>
-                </div> 
-            <!-- </div>  -->
-            <!-- <div class="col-lg-6 col-xl-7">
-                <div class="image-container">
-                    <img class="img-fluid" src="{% static 'lib/homePage/images/hwa1.svg' %}" alt="alternative">
-                </div>
-            </div> -->
-        </div>
-    </div>
-</div>
-
-
 <!-- Pricing -->
-<div id="pricing" class="cards-2 bg-gray">
+<div id="how-it-works" class="cards-2 bg-gray" style="background-color: #e2efff;">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <h2 class="h2-heading">How it Works?</h2>
             </div> <!-- end of col -->
         </div> <!-- end of row -->
+        <div class="landing-img">
+            <img class="img-fluid" src="{% static 'lib/homePage/images/slide_v2.gif' %}" alt="alternative">
+        </div>
+        <br>
         <div class="row">
             <div class="col-lg-12">
                 <!-- Card -->
@@ -402,58 +285,243 @@
 
 
 
-<!-- Questions -->
-<!-- <div class="accordion-1">
+
+
+<!-- Details 2 -->
+<div class="basic-2  bg-gray">
+    <div class="container">
+        <h2>Transform Recruitment with AI and Data-Driven Solutions</h2>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="image-container" style="text-align: center;">
+                    <img class="img-fluid" src="{% static 'lib/homePage/images/process-no-label.svg' %}" alt="alternative">
+                </div> <!-- end of image-container -->
+            </div> <!-- end of col -->
+            <div class="col-lg-6">
+                <div class="text-container">
+                    <!-- <img class="img-fluid" src="{% static 'lib/homePage/images/ai.svg' %}" alt="alternative"> -->
+                    <p>Unlock the power of intelligent automation and data-driven insights to streamline your recruitment process. Our AI-driven tools and comprehensive assessments help you hire the right talent faster and more efficiently.</p>
+                    <ul class="list-unstyled li-space-lg" style="font-weight: 600;color: #274699;margin-top: 4rem;">
+                        <li class="d-flex">
+                            <i class="fas fa-square"></i>
+                            <div class="flex-grow-1">AI-Driven Efficiency</div>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fas fa-square"></i>
+                            <div class="flex-grow-1">Comprehensive Assessments</div>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fas fa-square"></i>
+                            <div class="flex-grow-1">Streamlined Video Interviews</div>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fas fa-square"></i>
+                            <div class="flex-grow-1">Data-Driven Decisions</div>
+                        </li>
+                        <li class="d-flex">
+                            <i class="fas fa-square"></i>
+                            <div class="flex-grow-1">Improved Candidate Experience</div>
+                        </li>
+                    </ul>
+                </div> <!-- end of text-container -->
+            </div> <!-- end of col -->
+        </div> <!-- end of row -->
+    </div> <!-- end of container -->
+</div> <!-- end of basic-2 -->
+<!-- end of details 2 -->
+
+<section class="demo">
+    <h1>Experience the Power of AI in Recruitment</h1>
+    <p>Transform your hiring process with fast, accurate, and efficient AI solutions tailored for software development companies.</p>
+    <a href="/demo" class="btn-outline-lg page-scroll get-start-btn">Request a Demo</a>
+</section>
+
+<div class="pricing-sec bg-gray">
+    <div class="column-1">
+        <img class="img-fluid" style="max-width: 200px;" src="{% static 'lib/homePage/images/credits.webp' %}">
+        <h2>1,000 Free credits for each company</h2>
+        <p>Start your journey with us by getting 1,000 free credits. No commitments, just growth opportunities for your business.</p>
+    </div>
+    <div class="divider"></div>
+    <div class="column-2">
+        <h2>Credit based Pricing Model</h2>
+        <div class="right-content">
+            <table>
+                <thead>
+                  <tr>
+                    <th>Test Type</th>
+                    <th>Credits</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><i class="fas fa-clipboard-check" style="color: #8763ee;"></i> &nbsp; Screening Test</td>
+                    <td>10 credits</td>
+                  </tr>
+                  <tr>
+                    <td><i class="fas fa-code" style="color: #00d462;"></i> &nbsp;Coding Test</td>
+                    <td>30 credits</td>
+                  </tr>
+                  <tr>
+                    <td><i class="fas fa-chalkboard-teacher" style="color: #1f68f3;"></i> &nbsp;Interview</td>
+                    <td>60 credits</td>
+                  </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="note">* Credit charges may vary based on the company's custom needs.</p>
+    </div>
+</div>
+
+
+<div class="brands-logo">
+    <div class="container">
+        <section class="client-logos">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="h2-heading">Our Clients</h2>
+                </div> <!-- end of col -->
+            </div> <!-- end of row -->
+            <div class="logos-container">
+                <img src="{% static 'lib/homePage/images/brand_logos/gsspec.jpg' %}" alt="gsspec" class="animate" />
+                <img src="{% static 'lib/homePage/images/brand_logos/talentforge.png' %}" alt="TalentForge" class="animate" />
+                <img src="https://alephys.com/wp-content/uploads/al_opt_content/IMAGE/alephys.com//wp-content/uploads/2024/05/Alephys-2-1.png.bv.webp" alt="Apple" class="animate" />
+            </div>
+        </section>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- 
+<section class="container-benefits" style="background: url('static/lib/homePage/images/benefits/bg-2.jpg') no-repeat center center/cover !important;;">
+    <div class="sec">
+        <p>Ji</p>
+    </div>
+    <div class="benefits-section">
+      <div class="benefit">
+        <img src="{% static 'lib/homePage/images/benefits/time-save.png' %}" alt="Time Saver Icon">
+        <div class="benefit-text">
+          <h3>10X Time Saver</h3>
+          <p>For HR & Interview Panel</p>
+        </div>
+      </div>
+  
+      <div class="benefit">
+        <img src="{% static 'lib/homePage/images/benefits/communication-2.png' %}" alt="Communication Icon">
+        <div class="benefit-text">
+          <h3>25X Communication</h3>
+          <p>Improvement in Collaboration</p>
+        </div>
+      </div>
+  
+      <div class="benefit">
+        <img src="{% static 'lib/homePage/images/benefits/optimization.png' %}" alt="Optimization Icon">
+        <div class="benefit-text">
+          <h3>50X Lead Time Optimization</h3>
+          <p>In Hiring the Candidate</p>
+        </div>
+      </div>
+  
+      <div class="benefit">
+        <img src="{% static 'lib/homePage/images/benefits/hiring.png' %}" alt="Success Icon">
+        <div class="benefit-text">
+          <h3>75X Hiring Success</h3>
+          <p>In Hiring the Right Candidate</p>
+        </div>
+      </div>
+  
+      <div class="benefit">
+        <img src="{% static 'lib/homePage/images/benefits/insight.png' %}" alt="Insight Icon">
+        <div class="benefit-text">
+          <h3>100X Insight</h3>
+          <p>Into Recruitment Process</p>
+        </div>
+      </div>
+    </div>
+</section> -->
+
+
+<!-- Testimonials -->
+<!-- <div class="slider-1 bg-gray">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="h2-heading">Frequent questions</h2>
-            </div> 
-        </div> 
+                <h2 class="h2-heading">Few words from our clients</h2>
+            </div>
+        </div>
         <div class="row">
             <div class="col-lg-12">
-                <div class="accordion" id="accordionExample">
-                    
-                    
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">How can I contact you quickly and get a reasonable quote more for my project?</button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">Sed lacinia cursus viverra. Nunc sed libero euismod, congue dui a, vulputate quam. Pellentesque neque nisi, ultrices ut ipsum ac, mattis sollicitudin neque. Ut ac nunc sem. Etiam id erat facilisis magna sagittis porta. Donec eu dolor eu dolor finibus sodales consectetur, et condimentum elit tincidunt</div>
+                <div class="slider-container">
+                    <div class="swiper-container card-slider">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
+                                <div class="card">
+                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-1.jpg' %}" alt="alternative">
+                                    <div class="card-body">
+                                        <p class="testimonial-text">The ATS has streamlined our process, letting us manage applicants in one place and quickly focus on top talent!</p>
+                                        <p class="testimonial-author">Jude Thorn</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="card">
+                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-2.jpg' %}" alt="alternative">
+                                    <div class="card-body">
+                                        <p class="testimonial-text">Scheduling interviews and following up are now so efficient; we stay connected with candidates effortlessly</p>
+                                        <p class="testimonial-author">Roy Smith</p>
+                                    </div>
+                                </div>        
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="card">
+                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-3.jpg' %}" alt="alternative">
+                                    <div class="card-body">
+                                        <p class="testimonial-text">The built-in assessments have improved our screening process and made skills evaluation a breeze!</p>
+                                        <p class="testimonial-author">Marsha Singer</p>
+                                    </div>
+                                </div>        
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="card">
+                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-4.jpg' %}" alt="alternative">
+                                    <div class="card-body">
+                                        <p class="testimonial-text">Video interviews are easy to schedule and review, saving us valuable time.</p>
+                                        <p class="testimonial-author">Tim Shaw</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="card">
+                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-5.jpg' %}" alt="alternative">
+                                    <div class="card-body">
+                                        <p class="testimonial-text">Effortless job posting across platforms has boosted our reach significantly!</p>
+                                        <p class="testimonial-author">Lindsay Spice</p>
+                                    </div>
+                                </div>        
+                            </div>
+                            <div class="swiper-slide">
+                                <div class="card">
+                                    <img class="card-image" src="{% static 'lib/homePage/images/testimonial-6.jpg' %}" alt="alternative">
+                                    <div class="card-body">
+                                        <p class="testimonial-text">Having structured interview guides and feedback tools saves us so much time.</p>
+                                        <p class="testimonial-author">Ann Blake</p>
+                                    </div>
+                                </div>        
+                            </div>
                         </div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
                     </div>
-                    
-
-                    
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwo">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Is the Free Tier available for unlimited time or it will end more words after a while?</button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">Mauris faucibus placerat nisl. Sed eros odio, posuere at felis quis, tincidunt facilisis nibh. Nulla in ante sem. Nam aliquam urna nisi, cursus semper dolor convallis at. Duis vulputate est in consectetur, et condimentum elit tincidunt libero consectetur, et condimentum suis vulputate est in libero</div>
-                        </div>
-                    </div>
-                    
-
-                    
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingThree">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Can I use the app on mobile devices or it’s limited more words to desktop use?</button>
-                        </h2>
-                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">Nullam at diam at mi facilisis consectetur at non turpis. Proin a felis nisi. Sed at orci rutrum, tincidunt magna vel, pharetra libero. Proin mauris orci, faucibus eget malesuada vel, consectetur, et condimentum elit tincidunt pellentesque vitae ligula. Pellentesque euismod tincidun</div>
-                        </div>
-                    </div>
-                    
-
-                </div> 
-            </div> 
-        </div> 
-    </div> 
-</div>  -->
-<!-- end of questions -->
-
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+<!-- end of testimonials -->
 
 <!-- Footer -->
 <div class="footer">
@@ -467,8 +535,8 @@
                 <div class="footer-col second">
                     <h6>Links</h6>
                     <ul class="list-unstyled li-space-lg p-small">
-                        <li><a href="#">Terms & Conditions</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="/tnc" target="_blank">Terms & Conditions</a></li>
+                        <li><a href="/privacy-policy" target="_blank">Privacy Policy</a></li>
                     </ul>
                 </div> <!-- end of footer-col -->
                 <!-- <div class="footer-col third">
@@ -496,8 +564,14 @@
                             <i class="fab fa-instagram fa-stack-1x"></i>
                         </a>
                     </span>
+                    <span class="fa-stack">
+                        <a href="#your-link">
+                            <i class="fas fa-circle fa-stack-2x"></i>
+                            <i class="fab fa-youtube fa-stack-1x"></i>
+                        </a>
+                    </span>
                     <p class="p-small">Quam posuerei pellent esque vam <a href="mailto:contact@site.com"><strong>contact@site.com</strong></a></p>
-                </div> end of footer-col -->
+                </div>  -->
             </div> <!-- end of col -->
         </div> <!-- end of row -->
     </div> <!-- end of container -->
@@ -510,12 +584,181 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-6">
-                <p class="p-small">Copyright © Hirelines.io</a></p>
+                <p class="p-small" style="text-align: left;">Copyright © Hirelines.io</a></p>
             </div>
         </div> <!-- enf of row -->
     </div> <!-- end of container -->
 </div> <!-- end of copyright --> 
 <!-- end of copyright -->
+
+
+<style>
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem;
+      height: 100vh;
+      background: url('static/lib/homePage/images/hero.jpg') no-repeat center center/cover;
+      position: relative;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    /* Overlay for better readability */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* background: rgba(0, 0, 0, 0.5); */
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      z-index: 2;
+      position: relative;
+      text-shadow: 2px 2px 5px rgba(214, 240, 253, 0.7);
+      color: var(--primary-color);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      z-index: 2;
+      position: relative;
+      text-shadow: 2px 2px 5px rgba(214, 240, 253, 0.7);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .btn-outline-lg {
+      transition: background-color 0.3s, color 0.3s;
+      z-index: 2;
+      position: relative;
+    }
+
+    .btn-outline-lg:hover {
+      background-color: #fff;
+      color: #000;
+    }
+
+    .form-div {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-btn {
+        border-color: var(--primary-color);
+        color: #fff;
+        background: var(--primary-color);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .btn-outline-lg {
+        font-size: 1rem;
+        /* padding: 0.6rem 1.5rem; */
+      }
+
+      .hero {
+        justify-content: start;
+        background: url('static/lib/homePage/images/hero.jpg') no-repeat 66% center/cover !important;
+        padding: 12rem 2rem !important;
+      }
+    }
+</style>
+
+<style>
+    .client-logos {
+    text-align: center;
+    padding: 20px;
+}
+
+.logos-container {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center; 
+  gap: 20px; 
+}
+
+.logos-container img {
+  flex: 0 1 calc(25% - 20px); 
+  max-width: calc(25% - 20px); 
+  max-height: 100px; 
+  height: auto; 
+  object-fit: contain; 
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .logos-container {
+        flex-direction: column;
+    }
+
+    .logos-container img {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+  .logos-container img {
+    flex: 0 1 100%; /* 1 logo per row for small screens */
+  }
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  thead {
+    background-color: #274699;
+    color: white;
+  }
+  th, td {
+    padding: 15px;
+    text-align: left;
+    font-size: 1rem;
+  }
+  tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+  }
+
+  .note {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 20px;
+  }
+
+  .right-content {
+    margin-top: 2rem;
+  }
+
+</style>
+
 
 <script>
     (function () {
@@ -536,5 +779,21 @@
             });
     })();
 </script>
+
+<script>
+    document.querySelector('.get-start-btn').addEventListener('click', function (e) {
+      e.preventDefault(); // Prevent page scroll
+      const content = document.getElementById('webLandingContent');
+      content.style.display = 'flex'; // Show the form
+    });
+  
+    // Hide the form when clicking outside of it
+    document.getElementById('webLandingContent').addEventListener('click', function (e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+</script>
+
 
 <script src="{% static 'js/homepage.js' %}"></script>

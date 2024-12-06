@@ -643,7 +643,7 @@ def userLst(request):
         
 
         return render(request, "portal_index.html", {"template_name": 'usersLst.html','menuItemList':menuItemList
-                                                     , 'usersDataLst':usersData['usrs '], 'rolesLst':usersData['roles']})
+                                                     , 'usersDataLst':usersData['usrs'], 'rolesLst':usersData['roles']})
     
     except Exception as e:
         raise
@@ -715,5 +715,37 @@ def companyPage(request):
         return render(request, "portal_index.html", {"template_name": 'company_data.html','menuItemList':menuItemList,
                                                      'company_types':company_types,'company_data':company_data})
     
+    except Exception as e:
+        raise
+
+
+def demoPage(request):
+    try:
+        
+        demo_video = getConfig()['APP_CONFIG']['demo_videoid']
+
+        return render(request, "web_index.html", {"template_name": 'demo.html','demo_video':demo_video})
+
+    except Exception as e:
+        raise
+
+
+
+def termsAndConditionsPage(request):
+    try:
+        
+
+        return render(request, "tnc.html")
+
+    except Exception as e:
+        raise
+
+
+def privacyPolicyPage(request):
+    try:
+        
+
+        return render(request, "privacy_policy.html")
+
     except Exception as e:
         raise

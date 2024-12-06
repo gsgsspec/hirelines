@@ -31,6 +31,7 @@ class CompanyData(models.Model):
     contactperson = models.CharField(max_length=50, null=True, blank=True) 
     companytype = models.CharField(max_length=100, null=True, blank=True)
     registerationtime = models.DateTimeField(null=True, blank=True)
+    demorequest = models.CharField(max_length=1, null=True, blank=True) 
 
     class Meta:
         db_table = 'companydata'

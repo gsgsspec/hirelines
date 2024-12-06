@@ -18,11 +18,11 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
-        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport
+        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, demoRequestDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -473,7 +473,7 @@ def evaluationView(request):
             acert_domain = getConfig()['DOMAIN']['acert']
             endpoint = '/api/evaluate-papers'
             url = urljoin(acert_domain, endpoint)
-            
+            print('1')
             company_paper_ids = list(Workflow.objects.filter(companyid=user_company).values_list("paperid",flat=True))
             company_papers={
                 "request_for":"get_evaluation_papers",
@@ -501,6 +501,8 @@ def evaluationView(request):
             acert_domain = getConfig()['DOMAIN']['acert']
             endpoint = '/api/evaluate-papers'
             url = urljoin(acert_domain, endpoint)
+
+            print('2')
             
             company_paper_ids = list(Workflow.objects.filter(companyid=user_company).values_list("paperid",flat=True))
             
@@ -544,6 +546,8 @@ def evaluationView(request):
                         response['statusCode'] = 0
             
             if dataObjs["request_for"] == "send_evaluation_result":
+
+                print('3')
                 
                 dataObjs["enc_company_id"]=enc_company_id
                 dataObjs["company_paper_ids"]=company_paper_ids
@@ -568,7 +572,8 @@ def evaluationView(request):
     except Exception as e:
         response['data'] = 'Error in evaluationquestionsView'
         response['error'] = str(e)
-        # raise
+        print(str(e))
+        raise
         # logging.error("Error in evaluationquestionsView : ", str(e))
     return JsonResponse(response)
 
@@ -1165,4 +1170,50 @@ def updateCompany(request):
         response['data'] = 'Error in update emails'
         response['error'] = str(e)
     
+    return JsonResponse(response)
+
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def demoUser(request):
+    response = {
+        'data':None,
+        'error': None,
+        'statusCode':1
+    }
+    try:
+        if request.method == 'POST':
+            dataObjs = json.loads(request.POST.get('data'))
+            demo_id = demoUserService(dataObjs)
+            response['data'] = demo_id
+            response['statusCode'] = 0
+    except Exception as e:
+        response['data'] = 'Error in adding demo user'
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def demoRequest(request):
+    response = {
+        'data':None,
+        'error': None,
+        'statusCode':1
+    }
+    try:
+        if request.method == 'POST':
+            dataObjs = json.loads(request.POST.get('data'))
+            demoRequestDB(dataObjs)
+            response['data'] = "Demo requested"
+            response['statusCode'] = 0
+    except Exception as e:
+        response['data'] = 'Error in requesting demo'
+        response['error'] = str(e)
     return JsonResponse(response)
