@@ -7,3 +7,17 @@ lowcredits_warning = 300
 reg_stop_warning = 100
 
 ============================================================
+
+
+06-Dec-2024==================Srinivas=======================
+
+credits notification flag 
+
+ALTER TABLE `hirelines`.`account` 
+ADD COLUMN `lowcreditsnotification` VARCHAR(1) NULL DEFAULT NULL AFTER `balance`;
+
+
+============================================================
+
+
+
