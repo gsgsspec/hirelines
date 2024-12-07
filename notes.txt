@@ -20,4 +20,7 @@ ADD COLUMN `lowcreditsnotification` VARCHAR(1) NULL DEFAULT NULL AFTER `balance`
 ============================================================
 
 
-
+USE hirelines;
+ALTER TABLE brules
+ADD COLUMN hold CHAR(1) NULL,
+ADD COLUMN holdpercentage INT NULL;
