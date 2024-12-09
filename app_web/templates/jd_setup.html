@@ -142,17 +142,18 @@
 
         <div class="row g-2" id="holdContainer">
           <div class="col mb-0" style="margin-right: 0; display: flex; flex-direction: column;">
-            <label for="testHold" class="form-label px-0">Hold</label>
+            <label for="testHold" class="form-label px-0">Hold Candidates</label>
               <div class="form-check form-switch p-0 mb-2"> 
-                <input class="form-check-input" type="checkbox" id="testHold" style="height: 2em; width: 4em; margin-left: 0.5rem;" onclick="enableOrDisableHold()"> 
+                <input class="form-check-input" type="checkbox" id="testHold" style="height: 2em; width: 4em; margin-left: 0rem;" onclick="enableOrDisableHold()"> 
               </div>
 
               <span id="holdInputContainer" style="display: none;">
-                <label for="emailWithTitle" class="form-label m-0" >Hold Percentage </label> 
+                <label for="emailWithTitle" class="form-label m-0" >Hold ( percentage ) </label> 
                 <span hidden id="hold_validator" class="validator_font_color mx-3">Please Enter Hold Percentage</span>
                 <br>
                 <span class="">
-                  <small class="form-label">( If candidate will score less than Promote Percentage can't promote to next round )</small>
+                  <!-- <small class="form-label">( If candidate will score less than Promote Percentage can't promote to next round )</small> -->
+                  <small class="form-label">( HR Admins or HR Executives may promote or reject candidates based on their performance )</small>
                 </span>
                 
                 <input type="number" id="holdPercentage" class="form-control mt-2" placeholder="" value="50" />

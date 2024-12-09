@@ -643,9 +643,6 @@ def interviewRemarkSaveDB(dataObjs):
 
 def saveStarQuestion(dataObjs):
     try:
-        print('=======================')
-        print('dataObjs :: ',dataObjs)
-
         if dataObjs['testCardId']:
             workFlowData = Workflow.objects.filter(id = dataObjs['testCardId']).last()
             if workFlowData:
@@ -660,12 +657,11 @@ def saveStarQuestion(dataObjs):
 
         url = urljoin(acert_domain, endpoint)
 
-        company_data = {
-            'data':dataObjs,
-            'social_links': ''
+        startQuestionData = {
+            'data':dataObjs
         }
 
-        send_company_data = requests.post(url, json=company_data)
+        requests.post(url, json=startQuestionData)
             
     except Exception as e:
         raise
