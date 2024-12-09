@@ -216,10 +216,10 @@ function filter_data(pid, ptid) {
                     anser_skip_resp = '<div style="padding-top:10px;padding-left:12px; color:red;">' + '  ' + QUESTIONS_LIST[n]['anser_skip_resp'] + '</div>';
                 }
                 if (QUESTIONS_LIST[n]["question_type_code"] == "M") {
-                    question_options_div = '<div class="options-grid-container p-10" id="question_options_' + QUESTIONS_LIST[n]['id'] + '"></div>'
+                    question_options_div = '<div class="options-grid-container p-10 mt-3 mb-3 custom-ml-3" id="question_options_' + QUESTIONS_LIST[n]['id'] + '"></div>'
                 }
                 if (QUESTIONS_LIST[n]["question_type_code"] == "B") {
-                    question_options_div = '<div class="options-grid-container p-10" id="question_options_' + QUESTIONS_LIST[n]['id'] + '"></div>'
+                    question_options_div = '<div class="options-grid-container p-10 mt-3 mb-3 custom-ml-3" id="question_options_' + QUESTIONS_LIST[n]['id'] + '"></div>'
                 }
                 if (QUESTIONS_LIST[n]['question_type_code'] == "P") {
                     question_options_div = '<p style="padding:13px">' + '<b>Answer :  </b>  ' + QUESTIONS_LIST[n]['question_answer'] + '</p>';
@@ -282,11 +282,16 @@ function filter_data(pid, ptid) {
                     accord_style = ''
                 }
 
+                var star
+                star = ('&ensp;&ensp;') // empty
+                if(QUESTIONS_LIST[n]['star_question'] == 'Y'){
+                    star = ('<i class="fas fa-star" style="color: #f25c05 !important;"></i>')
+                }
                 
                 $("#questions").append(
                     '<button class="accordion" id="questions" name="eval_ques_' + question_sno + '">' + accord_style +
-                    '<div class="w-100p text-left " style="font-weight:600">' + question_sno + '.' + ' ' + QUESTIONS_LIST[n]["question"] +
-                    '<i class="float-right bx bxs-chevron-right"></i>' +
+                    '<div class="w-100p text-left " style="font-weight:600">' + star +'&ensp;' + question_sno + '.' + ' ' + QUESTIONS_LIST[n]["question"] +
+                    '<i class="float-right acc_icon bx bxs-chevron-right"></i>' +
                     '</div>' +
 
                     '</button>' +
@@ -535,7 +540,7 @@ function send_evaluation_result(pid_) {
 
 function accord() {
     $(this).toggleClass("sel-eval-question");
-    const icon = $(this).find('i');
+    const icon = $(this).find('.acc_icon');
 
     // Toggle classes for the icon
     if (icon.hasClass('bxs-chevron-right')) {

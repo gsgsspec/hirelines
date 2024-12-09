@@ -47,7 +47,9 @@
   border: 1px solid black;
 
 }
-
+.custom-ml-3{
+  margin-left: 1rem !important;
+}
 .rating input[type="radio"]:checked+label {
   background-color: #20c1bf;
   color: #fff;
