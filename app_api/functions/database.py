@@ -297,7 +297,10 @@ def saveJdNewTest(dataObjs,compyId):
             save_bruls.save()
             workFlowDetails['promot'] = save_bruls.passscore
             workFlowDetails['hold'] = dataObjs['holdYesOrNo']
-            workFlowDetails['holdpercentage'] = dataObjs['holdvalue']
+            workFlowDetails['holdpercentage'] = ''
+            if 'holdvalue' in dataObjs:
+                if dataObjs['holdvalue']:
+                    workFlowDetails['holdpercentage'] = dataObjs['holdvalue']
 
             return [workFlowDetails]
 
