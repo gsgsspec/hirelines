@@ -964,12 +964,14 @@ function showQuestionConatainer(event) { // Where ever we click on the use Templ
                 
                 var selectedLibrary__ = document.getElementById(`selectedLibrary_${testId}`).dataset['libraryid'];
 
+                // this function create a paper save Paper in acert
                 var paperCreatedData = createPaper(selectedLibrary__, testId, 'useTemplate');
                 paperCreatedData.then(
                     (responseData) => {
                         // this will excuite when use click on uselibrary button 
                         // it will create HTML and show on static and Dynamic Questions on webapge
-                        createQuestionsContainer(testIdStoreContainer, selectedLibrary__, responseData);
+                        // console.log('responseData :: ',responseData['starQuestionsLst']);
+                        createQuestionsContainer(testIdStoreContainer, selectedLibrary__, responseData, responseData['starQuestionsLst']);
                     }
                 ).catch(
                     (error) => {
@@ -986,9 +988,6 @@ function showQuestionConatainer(event) { // Where ever we click on the use Templ
 // it will create HTML and show on static and Dynamic Questions on webapge
 function createQuestionsContainer(testId, librarieId, selectedPaper, starQuestionList) { 
 
-    // console.log('Fst selectedPaper :: ',selectedPaper);
-    // console.log('starQuestionList',starQuestionList);
-    
     testsList[testId]['paperlibraryid'] = librarieId
     
     var selectedLibraryId;
@@ -1224,6 +1223,7 @@ function createQuestionsContainer(testId, librarieId, selectedPaper, starQuestio
                     var dynamicClone = questionContainer.cloneNode(true);
                     
                     var staticCheckbox = staticClone.querySelector('input[type="checkbox"]');
+
                     if (staticCheckbox) {
                         staticCheckbox.checked = staticCheckbox__;
                         staticCheckbox.dataset['question_type'] = 'S'; // "S" Static type question
@@ -1238,8 +1238,6 @@ function createQuestionsContainer(testId, librarieId, selectedPaper, starQuestio
                         dynamicCheckBoxContainer.style.width = 'max-content'
                         dynamicStarquestion.remove()
                     } 
-
-                    // console.log(':::',dynamicClone.childNodes);
 
                     if (dynamicCheckbox) {
                         dynamicCheckbox.checked = dynamicCheckbox__;
@@ -1397,30 +1395,38 @@ function selectedPaperQuestionsCheck(selectedPaper, testId, starQuestionList){
         dynamicCountElem.value = selectedPaper['dynamicQuestionsInpt']
     }
 
-    for (var starQuestion  = 0; starQuestion < starQuestionList.length; starQuestion++ ){
-        var staticstarQuestionActiveOrInactive = document.getElementById('staticstarQuestion_'+starQuestionList[starQuestion]['questionId']+'_'+testId)
-        
-        if(starQuestionList[starQuestion]['star'] == 'Y'){
-            staticstarQuestionActiveOrInactive.classList.remove('far'); 
-            staticstarQuestionActiveOrInactive.classList.add('fas');
-            staticstarQuestionActiveOrInactive.dataset['star'] = 'Y'
-        }
-        else{
-            staticstarQuestionActiveOrInactive.classList.remove('fas');
-            staticstarQuestionActiveOrInactive.classList.add('far');
-            staticstarQuestionActiveOrInactive.dataset['star'] = 'N'
-        }
+    if(starQuestionList){
 
-        // this star question was not in paper , this is library question so we can't make any change to this question 
-        if(starQuestionList[starQuestion]['starDisable'] == 'Y'){
-            staticstarQuestionActiveOrInactive.dataset['disable'] = 'Y'
-            staticstarQuestionActiveOrInactive.style.color = 'gray'
-            staticstarQuestionActiveOrInactive.style.cursor = 'not-allowed';
-
-        }
-        // this is a star question from Paper
-        else{
-            staticstarQuestionActiveOrInactive.dataset['disable'] = 'N'
+        for (var starQuestion  = 0; starQuestion < starQuestionList.length; starQuestion++ ){
+            var staticstarQuestionActiveOrInactive = document.getElementById('staticstarQuestion_'+starQuestionList[starQuestion]['questionId']+'_'+testId)
+            
+            if (staticstarQuestionActiveOrInactive){
+    
+                if(starQuestionList[starQuestion]['star'] == 'Y'){
+                    staticstarQuestionActiveOrInactive.classList.remove('far'); 
+                    staticstarQuestionActiveOrInactive.classList.add('fas');
+                    staticstarQuestionActiveOrInactive.dataset['star'] = 'Y'
+                }
+                else{
+                    staticstarQuestionActiveOrInactive.classList.remove('fas');
+                    staticstarQuestionActiveOrInactive.classList.add('far');
+                    staticstarQuestionActiveOrInactive.dataset['star'] = 'N'
+                }
+    
+                // this star question was not in paper , this is library question so we can't make any change to this question 
+                if(starQuestionList[starQuestion]['starDisable'] == 'Y'){
+                    staticstarQuestionActiveOrInactive.dataset['disable'] = 'Y'
+                    staticstarQuestionActiveOrInactive.style.color = 'gray'
+                    staticstarQuestionActiveOrInactive.style.cursor = 'not-allowed';
+    
+                }
+                // this is a star question from Paper
+                else{
+                    staticstarQuestionActiveOrInactive.dataset['disable'] = 'N'
+                }
+    
+            }
+    
         }
 
     }
