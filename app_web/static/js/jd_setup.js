@@ -393,6 +393,8 @@ function createNewTestModalOpen(testType){
     // Hidding validators
     document.getElementById('test_name_validator').hidden = true 
     document.getElementById('promot_validator').hidden  = true
+    document.getElementById('holdInputContainer').style.display = 'none'
+    document.getElementById('testHold').checked = false;
 
     var testName
     if (testType == 'screening'){
