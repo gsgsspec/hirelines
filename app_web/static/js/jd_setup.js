@@ -196,6 +196,7 @@ function createWorkFlowContainer(data){
 }
 
 
+// This function html for showing libraries list
 function AppendSectionsAndQuestions(data, TestCardId) {
 
     TestWithLibrariesAndQuestions[TestCardId] = data;
@@ -281,9 +282,13 @@ function AppendSectionsAndQuestions(data, TestCardId) {
                 if (LibraryQuestionsList[ques].starquestion == 'Y'){
                     questionStarContainer.innerHTML = ('<i class="fas fa-star"></i>')
                 }
-                
+
                 questionContainer.append(questionText);
-                questionContainer.append(questionStarContainer);
+
+                // interview questions does not have star Question feature 
+                if(LibraryQuestionsList[ques].question_type != 'I'){
+                    questionContainer.append(questionStarContainer);
+                }
 
                 questionLibraryContainer.append(questionContainer);
 
