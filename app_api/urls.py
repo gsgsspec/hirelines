@@ -48,6 +48,5 @@ urlpatterns = [
     path('delete-candidate',views.deleteCandidate),
     path('update-candidate-workflow',views.updateCandidateWorkflow),
 
-
     path('make-star-question',views.makeAstarQuestion),
 ]
