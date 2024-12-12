@@ -155,8 +155,9 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                     if (credits_status ==  "N") or (credits_status == "L"):
                         if company_account.lowcreditsnotification != "Y":
                             send_lowcredits_notification = "Y"
-                            company_account.lowcreditsnotification = "Y"
-                            company_account.save()
+                            company_account_ = Account.objects.get(companyid=cid)
+                            company_account_.lowcreditsnotification = "Y"
+                            company_account_.save()
 
                             hr_admin_label = "HR-Admin"
                             hradmin_emails_list = list(User.objects.filter(companyid=cid,role__contains=hr_admin_label,status="A").values_list("email",flat=True))

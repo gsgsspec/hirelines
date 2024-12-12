@@ -1880,12 +1880,15 @@ def changeUserstatusService(company_id, user_data):
 
 def deductCreditsService(company_id, paper_type, paper_id=None):
     try:
+
         company_account = Account.objects.get(companyid=company_id)
         company_credits = CompanyCredits.objects.get(
             companyid=company_id, transtype=paper_type
         )
+
         company_account.balance = company_account.balance - company_credits.credits
         company_account.save()
+
         workflow_data = Workflow.objects.filter(
             companyid=company_id, papertype=paper_type
         ).last()
