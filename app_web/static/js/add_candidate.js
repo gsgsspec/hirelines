@@ -2,87 +2,86 @@ document.getElementById("save-data").onclick = function () {
 
     $('#candidate-data').unbind('submit').bind('submit', function (event) {
         event.preventDefault(); 
-    })
 
-    $("#save-data").prop("disabled", true);
+        $("#save-data").prop("disabled", true);
+    
+        dataObjs = {
+            'firstname': $('#firstname').val(),
+            'lastname': $('#lastname').val(),
+            'email': $('#email').val(),
+            'mobile': $('#mobile').val(),
+            'jd': $('#jd').val(),
+            'begin-from': $('#begin-from').val(),
+        }
 
+        var final_data = {
+            'data': JSON.stringify(dataObjs),
+            csrfmiddlewaretoken: CSRF_TOKEN,
+        }
 
-    dataObjs = {
-        'firstname': $('#firstname').val(),
-        'lastname': $('#lastname').val(),
-        'email': $('#email').val(),
-        'mobile': $('#mobile').val(),
-        'jd': $('#jd').val(),
-        'begin-from': $('#begin-from').val(),
-    }
+        $.post(CONFIG['portal'] + "/api/add-candidate", final_data, function (res) {
+            if (res.statusCode == 0) {
+                var candidateData = res.data
 
-    var final_data = {
-        'data': JSON.stringify(dataObjs),
-        csrfmiddlewaretoken: CSRF_TOKEN,
-    }
+                if (candidateData == "insufficient_credits") {
 
-    $.post(CONFIG['portal'] + "/api/add-candidate", final_data, function (res) {
-        if (res.statusCode == 0) {
-            var candidateData = res.data
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Insufficient Credits',
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#274699'
+                    })
 
-            if (candidateData == "insufficient_credits") {
+                    $("#save-data").prop("disabled", false);
 
+                    return 
+                    
+                }
+
+                if (candidateData == "candidate_already_registered") {
+
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Candidate already registered for this jd',
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#274699'
+                    })
+
+                    $("#save-data").prop("disabled", false);
+
+                    return 
+                    
+                }
+
+                if(candidateData['papertype'] == 'I'){
+                    window.location.href = '/interview-schedule/'+ candidateData['candidateid']
+                } else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Candidate added successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setTimeout(function () { window.location.href = '/candidates' }, 2000);
+                }
+            }
+            else{
+                $("#save-data").prop("disabled", false);
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
-                    title: 'Insufficient Credits',
-                    showConfirmButton: true,
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#274699'
-                })
-
-                $("#save-data").prop("disabled", false);
-
-                return 
-                
-            }
-
-            if (candidateData == "candidate_already_registered") {
-
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Candidate already registered for this jd',
-                    showConfirmButton: true,
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#274699'
-                })
-
-                $("#save-data").prop("disabled", false);
-
-                return 
-                
-            }
-
-            if(candidateData['papertype'] == 'I'){
-                window.location.href = '/interview-schedule/'+ candidateData['candidateid']
-            } else {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'Candidate added successfully',
+                    title: 'Error in saving the candidate details',
+                    text: 'Please try again after some time',
                     showConfirmButton: false,
                     timer: 1500
                 })
-                setTimeout(function () { window.location.href = '/candidates' }, 2000);
             }
-        }
-        else{
-            $("#save-data").prop("disabled", false);
-            Swal.fire({
-                position: 'center',
-                icon: 'error',
-                title: 'Error in saving the candidate details',
-                text: 'Please try again after some time',
-                showConfirmButton: false,
-                timer: 1500
-            })
-        }
+        })
     })
 }
 

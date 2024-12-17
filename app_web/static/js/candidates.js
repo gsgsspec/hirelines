@@ -75,3 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
         checkbox.addEventListener('change', handleCheckboxChange);
     });
 });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('candidates-loader');
+
+    window.addEventListener('load', () => {
+        loader.style.display = 'none';
+    });
+});
