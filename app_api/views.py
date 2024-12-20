@@ -18,7 +18,7 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
-        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService
+        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
@@ -1286,6 +1286,28 @@ def updateCandidateWorkflow(request):
 
     except Exception as e:
         response['data'] = 'Error in updating candidate workflow data'
+        response['error'] = str(e)
+    
+    return JsonResponse(response)
+
+
+
+@api_view(['GET'])
+def getDashboardGraphData(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "GET":
+            company_id = getCompanyId(request.user)
+            dashboard_data = dashBoardGraphDataService(company_id)
+            response['data'] = dashboard_data
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getting dashboard data'
         response['error'] = str(e)
     
     return JsonResponse(response)

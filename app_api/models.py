@@ -429,3 +429,31 @@ class CompanyCredits(models.Model):
 
     class Meta:
         db_table = 'companycredits'
+
+
+class JdAnalysis(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    sourcecode = models.CharField(max_length=5,null=True)
+    papertype = models.CharField(max_length=1, null=True)
+    registration = models.IntegerField(null=True)
+    submission = models.IntegerField(null=True)
+    efficiency = models.IntegerField(null=True)
+    durationmin = models.IntegerField(null=True)
+    durationmax = models.IntegerField(null=True)
+    durationavg = models.IntegerField(null=True)
+    jobid = models.IntegerField(null=True)
+    leadtime = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'jdanalysis'
+
+
+class Source(models.Model):
+    id = models.AutoField(primary_key=True)
+    code = models.CharField(max_length=5, null=True)
+    label = models.CharField(max_length=50, null=True)
+    companyid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'source'

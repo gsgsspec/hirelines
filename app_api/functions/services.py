@@ -3,8 +3,8 @@ import requests
 import string
 import secrets
 import ast
-from django.db.models import Q
-from datetime import datetime, timedelta
+from django.db.models import Q, Count, Avg
+from datetime import datetime, timedelta, date
 from django.utils import timezone
 from django.shortcuts import redirect
 from urllib.parse import urljoin
@@ -41,7 +41,9 @@ from app_api.models import (
     InterviewMedia,
     Brules,
     Branding,
-    Role
+    Role,
+    JdAnalysis,
+    Source
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -2150,6 +2152,224 @@ def updateCandidateWorkflowService(dataObjs):
                         return 2
 
             return 0
+
+    except Exception as e:
+        raise
+
+
+
+def dashBoardGraphDataService(companyid):
+    try:
+
+        dashboard_data = {
+            'line_graph_data': None,
+            'jd_reg_data': None,
+        }
+
+        company = Company.objects.filter(id=companyid).last()
+
+        if company:
+
+            # JD Registrations Data - Bar graph
+
+            job_desc_ids = list(JobDesc.objects.filter(companyid=company.id).order_by('-id').values_list('id', flat=True)[:5])
+
+            job_descs = JobDesc.objects.filter(id__in=job_desc_ids)
+
+            jd_reg_data = {"jdtitle":[],"screening_count":[],"coding_count":[],"interview_count":[],"offered_count":[]}
+            
+            jd_titles = []
+            screening_count = []
+            coding_count = []
+            interview_count = []
+            offered_count = []
+
+            for job_data in job_descs:
+                
+                jd_analysis = JdAnalysis.objects.filter(companyid=company.id,jobid=job_data.id)
+
+                sc_reg_count = 0
+                cd_reg_count = 0
+                int_reg_count = 0
+                offer_count = 0
+
+                if jd_analysis :
+                    for analysis_data in jd_analysis:
+                        if analysis_data.papertype == 'S':
+                            sc_reg_count += analysis_data.registration
+                        elif analysis_data.papertype == 'E':
+                            cd_reg_count += analysis_data.registration
+                        elif analysis_data.papertype == 'I':
+                            int_reg_count += analysis_data.registration
+                            offer_count += analysis_data.efficiency or 0
+
+                job_desc = JobDesc.objects.get(id=job_data.id)
+
+                jd_titles.append(job_desc.title)
+                screening_count.append(sc_reg_count)
+                coding_count.append(cd_reg_count)
+                interview_count.append(int_reg_count)
+                offered_count.append(offer_count)
+
+            jd_reg_data['jdtitle'] = jd_titles
+            jd_reg_data['screening_count'] = screening_count
+            jd_reg_data['coding_count'] = coding_count
+            jd_reg_data['interview_count'] = interview_count
+            jd_reg_data['offered_count'] = offered_count
+
+
+            # line graph data or day wise registrations
+
+            line_graph = {"dates": [], "screening": [], "coding": [], "interview": []}
+
+            current_date = timezone.now().date()
+            start_date = current_date - timedelta(days=15)
+            date_range = [start_date + timedelta(days=i) for i in range(16)]
+
+            date_map = {date.strftime("%Y-%m-%d"): {"screening": 0, "coding": 0, "interview": 0} for date in date_range}
+
+            queryset = (
+                Registration.objects.filter(registrationdate__gte=start_date,companyid=company.id)
+                .values('papertype', 'registrationdate')
+                .annotate(count=Count('id'))
+            )
+
+            for entry in queryset:
+                date_key = entry['registrationdate'].strftime("%Y-%m-%d")
+                papertype = entry['papertype']
+                
+                if date_key in date_map:
+                    if papertype == 'S':  # Screening
+                        date_map[date_key]["screening"] += entry['count']
+                    elif papertype == 'E':  # Coding
+                        date_map[date_key]["coding"] += entry['count']
+                    elif papertype == 'I':  # Interview
+                        date_map[date_key]["interview"] += entry['count']
+
+            line_graph["dates"] = [date.strftime("%d-%m-%Y") for date in date_range]
+            line_graph["screening"] = [date_map[date]["screening"] for date in date_map]
+            line_graph["coding"] = [date_map[date]["coding"] for date in date_map]
+            line_graph["interview"] = [date_map[date]["interview"] for date in date_map]
+
+
+            dashboard_data['line_graph_data'] = line_graph
+            dashboard_data['jd_reg_data'] = jd_reg_data
+
+        return dashboard_data
+
+    except Exception as e:
+        print(str(e))
+        raise
+
+
+def getDashboardData(company_id):
+    try:
+
+        dashboard_data = {
+            'durations_data':None,
+            'sources_data':None
+        }
+
+        company = Company.objects.filter(id=company_id).last()
+
+        if company:
+            
+            # Duration data
+
+            durations_data = {
+                'screening_min':0,
+                'screening_avg':0,
+                'screening_max':0,
+                'coding_min':0,
+                'coding_avg':0,
+                'coding_max':0,
+                'interview_min':0,
+                'interview_avg':0,
+                'interview_max':0,
+                'screening_leadtime':0,
+                'coding_leadtime':0,
+                'interview_leadtime':0
+            }
+
+            papertype_mapping = {
+                'S': 'screening',
+                'E': 'coding',
+                'I': 'interview'
+            }
+
+            paperwise_duration = JdAnalysis.objects.filter(companyid=company.id).values('papertype').annotate(
+                avg_duration_min=Avg('durationmin'),
+                avg_duration_avg=Avg('durationavg'),
+                avg_duration_max=Avg('durationmax'),
+                avg_leadtime=Avg('leadtime'),
+            )
+
+            for duration_data in paperwise_duration:
+
+                key_prefix = papertype_mapping.get(duration_data['papertype'])
+
+                if key_prefix:
+                    
+                    durations_data[f'{key_prefix}_min'] = int(duration_data['avg_duration_min']  or 0)
+                    durations_data[f'{key_prefix}_avg'] = int(duration_data['avg_duration_avg']  or 0)
+                    durations_data[f'{key_prefix}_max'] = int(duration_data['avg_duration_max']  or 0)
+                    durations_data[f'{key_prefix}_leadtime'] = int(duration_data['avg_leadtime']  or 0)
+
+            # Sources Data
+
+            company_sources = Source.objects.filter(companyid=company_id)
+
+            if company_sources:
+
+                sources_data = []
+
+                for source in company_sources:
+
+                    source_data = JdAnalysis.objects.filter(companyid=company_id,sourcecode=source.code)
+
+                    screening_count = 0
+                    screening_efficiency = 0
+                    coding_count = 0
+                    coding_efficiency = 0
+                    interview_count = 0
+                    interview_efficiency = 0
+
+                    for data in source_data:
+
+                        if data.papertype == 'S':
+                            screening_count += data.registration or 0
+                            screening_efficiency += data.efficiency or 0
+
+                        if data.papertype == 'E':
+                            coding_count += data.registration or 0
+                            coding_efficiency += data.efficiency or 0
+
+
+                        if data.papertype == 'I':
+                            interview_count += data.registration or 0
+                            interview_efficiency += data.efficiency or 0
+
+
+                    screening_efficiency_percentage = (screening_efficiency / screening_count) * 100 if screening_count != 0 else 0
+                    coding_efficiency_percentage = (coding_efficiency / coding_count) * 100 if coding_count != 0 else 0
+                    interview_efficiency_percentage = (interview_efficiency / interview_count) * 100 if interview_count != 0 else 0
+                    
+                    sources_data.append({
+                        'source_label': source.label,
+                        'screening_count':screening_count,
+                        'coding_count':coding_count,
+                        'interview_count':interview_count,
+                        'screening_efficiency_percentage': int(screening_efficiency_percentage),
+                        'coding_efficiency_percentage': int(coding_efficiency_percentage),
+                        'interview_efficiency_percentage': int(interview_efficiency_percentage),
+                        'offered': interview_efficiency
+                    })
+                
+                dashboard_data['sources_data'] = sources_data
+
+            dashboard_data['durations_data'] = durations_data
+
+            return dashboard_data
 
     except Exception as e:
         raise
