@@ -2279,15 +2279,21 @@ def getDashboardData(company_id):
                 'screening_min':0,
                 'screening_avg':0,
                 'screening_max':0,
+                'screening_min_lt':0,
+                'screening_avg_lt':0,
+                'screening_max_lt':0,
                 'coding_min':0,
                 'coding_avg':0,
                 'coding_max':0,
+                'coding_min_lt':0,
+                'coding_avg_lt':0,
+                'coding_max_lt':0,
                 'interview_min':0,
                 'interview_avg':0,
                 'interview_max':0,
-                'screening_leadtime':0,
-                'coding_leadtime':0,
-                'interview_leadtime':0
+                'interview_min_lt':0,
+                'interview_avg_lt':0,
+                'interview_max_lt':0,
             }
 
             papertype_mapping = {
@@ -2300,7 +2306,9 @@ def getDashboardData(company_id):
                 avg_duration_min=Avg('durationmin'),
                 avg_duration_avg=Avg('durationavg'),
                 avg_duration_max=Avg('durationmax'),
-                avg_leadtime=Avg('leadtime'),
+                avg_leadtime_min=Avg('leadtimemin'),
+                avg_leadtime_avg=Avg('leadtimeavg'),
+                avg_leadtime_max=Avg('leadtimemax'),
             )
 
             for duration_data in paperwise_duration:
@@ -2309,10 +2317,12 @@ def getDashboardData(company_id):
 
                 if key_prefix:
                     
-                    durations_data[f'{key_prefix}_min'] = int(duration_data['avg_duration_min']  or 0)
-                    durations_data[f'{key_prefix}_avg'] = int(duration_data['avg_duration_avg']  or 0)
-                    durations_data[f'{key_prefix}_max'] = int(duration_data['avg_duration_max']  or 0)
-                    durations_data[f'{key_prefix}_leadtime'] = int(duration_data['avg_leadtime']  or 0)
+                    durations_data[f'{key_prefix}_min'] = format_duration(duration_data['avg_duration_min']) if duration_data['avg_duration_min'] else 0
+                    durations_data[f'{key_prefix}_avg'] = format_duration(duration_data['avg_duration_avg']) if duration_data['avg_duration_avg'] else 0
+                    durations_data[f'{key_prefix}_max'] = format_duration(duration_data['avg_duration_max']) if duration_data['avg_duration_max'] else 0
+                    durations_data[f'{key_prefix}_min_lt'] = format_duration(duration_data['avg_leadtime_min']) if duration_data['avg_leadtime_min'] else 0
+                    durations_data[f'{key_prefix}_avg_lt'] = format_duration(duration_data['avg_leadtime_avg']) if duration_data['avg_leadtime_avg'] else 0
+                    durations_data[f'{key_prefix}_max_lt'] = format_duration(duration_data['avg_leadtime_max']) if duration_data['avg_leadtime_max'] else 0
 
             # Sources Data
 
@@ -2369,5 +2379,44 @@ def getDashboardData(company_id):
 
             return dashboard_data
 
+    except Exception as e:
+        raise
+
+
+
+def format_duration(minutes):
+    try:
+
+        minutes = int(minutes)  # Ensure it's an integer
+    
+        if minutes < 60:
+            return f"{minutes} minutes"
+        
+        elif minutes < 1440:  # 1440 minutes = 1 day
+        
+            hours = minutes // 60
+            remaining_minutes = minutes % 60
+            hour_str = "hour" if hours == 1 else "hours"
+        
+            return f"{hours} {hour_str} {remaining_minutes} minutes" if remaining_minutes else f"{hours} {hour_str}"
+        
+        else:
+            days = minutes // 1440
+            remaining_minutes = minutes % 1440
+            hours = remaining_minutes // 60
+            remaining_minutes = remaining_minutes % 60
+            
+            day_str = "day" if days == 1 else "days"
+            hour_str = "hour" if hours == 1 else "hours"
+            result = f"{days} {day_str}"
+            
+            if hours:
+                result += f" {hours} {hour_str}"
+            
+            if remaining_minutes:
+                result += f" {remaining_minutes} minutes"
+
+            return result
+    
     except Exception as e:
         raise

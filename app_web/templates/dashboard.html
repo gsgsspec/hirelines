@@ -82,10 +82,9 @@
                 <div class="card mb-3" style="border: 1px solid var(--screening-color);">
                     <div class="card-body">
                         <h4 class="card-title screening-clr"><i class="fas fa-clipboard-check"></i> &nbsp; Screening</h4>
-                        <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.screening_min }} min</p>
-                        <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.screening_avg }} min</p>
-                        <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.screening_max }} min</p>
-                        <h5 class="screening-clr">Average Lead Time : {{ dashboard_data.durations_data.screening_leadtime }} days</h5>
+                        <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.screening_min }}</p>
+                        <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.screening_avg }}</p>
+                        <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.screening_max }}</p>
                     </div>
                 </div>
             </div>
@@ -94,10 +93,9 @@
                 <div class="card mb-3"  style="border: 1px solid var(--coding-color);">
                   <div class="card-body">
                     <h4 class="card-title coding-clr"><i class="fas fa-code"></i> &nbsp; Coding</h4>
-                    <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.coding_min }} min</p>
-                    <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.coding_avg }} min</p>
-                    <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.coding_max }} min</p>
-                    <h5 class="coding-clr">Average Lead Time : {{ dashboard_data.durations_data.coding_leadtime }} days</h5>
+                    <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.coding_min }}</p>
+                    <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.coding_avg }}</p>
+                    <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.coding_max }}</p>
                   </div>
                 </div>
             </div>
@@ -106,10 +104,9 @@
                 <div class="card mb-3"  style="border: 1px solid var(--interview-color);">
                     <div class="card-body">
                     <h4 class="card-title interview-clr"><i class="fas fa-chalkboard-teacher"></i> &nbsp;  Interview</h4>
-                    <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.interview_min }} min</p>
-                    <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.interview_avg }} min</p>
-                    <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.interview_max }} min</p>
-                    <h5 class="interview-clr">Average Lead Time : {{ dashboard_data.durations_data.interview_leadtime }} days</h5>
+                    <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.interview_min }}</p>
+                    <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.interview_avg }}</p>
+                    <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.interview_max }}</p>
                     </div>
                 </div>
             </div>
@@ -118,6 +115,50 @@
     </div>
 </div>
 
+
+
+<div class="card mb-3">
+    <div class="card-title-table">
+        <h4 class="card-header"><i class="far fa-calendar-alt"></i> &nbsp; Lead time</h4>
+    </div>
+    <div style="padding: 1rem;">
+        <div class="row">
+            <div class="col-md-6 col-lg-4">
+                <div class="card mb-3" style="border: 1px solid var(--screening-color);">
+                    <div class="card-body">
+                        <h4 class="card-title screening-clr"><i class="fas fa-clipboard-check"></i> &nbsp; Screening</h4>
+                        <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.screening_min_lt }}</p>
+                        <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.screening_avg_lt }}</p>
+                        <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.screening_max_lt }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card mb-3"  style="border: 1px solid var(--coding-color);">
+                  <div class="card-body">
+                    <h4 class="card-title coding-clr"><i class="fas fa-code"></i> &nbsp; Coding</h4>
+                    <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.coding_min_lt }}</p>
+                    <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.coding_avg_lt }}</p>
+                    <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.coding_max_lt }}</p>
+                  </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card mb-3"  style="border: 1px solid var(--interview-color);">
+                    <div class="card-body">
+                    <h4 class="card-title interview-clr"><i class="fas fa-chalkboard-teacher"></i> &nbsp;  Interview</h4>
+                    <p class="card-text duration-content">Min : {{ dashboard_data.durations_data.interview_min_lt }}</p>
+                    <p class="card-text duration-content">Avg : {{ dashboard_data.durations_data.interview_avg_lt }}</p>
+                    <p class="card-text duration-content">Max : {{ dashboard_data.durations_data.interview_max_lt }}</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
 
 <style>
 

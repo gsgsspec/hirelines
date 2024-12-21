@@ -439,11 +439,13 @@ class JdAnalysis(models.Model):
     registration = models.IntegerField(null=True)
     submission = models.IntegerField(null=True)
     efficiency = models.IntegerField(null=True)
-    durationmin = models.IntegerField(null=True)
-    durationmax = models.IntegerField(null=True)
-    durationavg = models.IntegerField(null=True)
+    durationmin = models.IntegerField(null=True) # in minutes
+    durationmax = models.IntegerField(null=True) # in minutes
+    durationavg = models.IntegerField(null=True) # in minutes
     jobid = models.IntegerField(null=True)
-    leadtime = models.IntegerField(null=True)
+    leadtimemin = models.IntegerField(null=True) # in minutes
+    leadtimemax = models.IntegerField(null=True) # in minutes
+    leadtimeavg = models.IntegerField(null=True) # in minutes
 
     class Meta:
         db_table = 'jdanalysis'
