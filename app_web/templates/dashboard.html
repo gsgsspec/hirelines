@@ -1,48 +1,10 @@
 {% load static %}
-<!-- 
-<div>
-    <h5> Careers Page</h5>
-    <div class="col-lg-12 col-md-12 source-div">
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block screening-clr screening-bgclr"><i class="fas fa-clipboard-check"></i> &nbsp; Screening</span>
-                    <div class="card-body">
-                        <h3 class="card-title mb-2">100</h3>
-                        <small class="p-clr fw-semibold">50%</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block coding-clr coding-bgclr"><i class="fas fa-code"></i> &nbsp; Coding</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1">50</h3>
-                        <small class="p-clr fw-semibold">8%</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block interview-clr interview-bgclr"><i class="fas fa-chalkboard-teacher"></i> &nbsp;  Interview</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1">4</h3>
-                        <small class="p-clr fw-semibold">50%</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #0d9488;background-color:#e0f7f9;"><i class="far fa-envelope"></i> Offered</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1">2</h3>
-                        <small class="p-clr fw-semibold"> </small>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+<div class="candidates-loader-wrapper" id="dashboard-loader">
+    <div class="candidates-loader">
+        <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 512 512"><path fill="#274699" d="M496 384H64V80c0-8.8-7.2-16-16-16H16C7.2 64 0 71.2 0 80v336c0 17.7 14.3 32 32 32h464c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zM464 96H345.9c-21.4 0-32.1 25.9-17 41l32.4 32.4L288 242.8l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0l-68.7 68.7c-6.3 6.3-6.3 16.4 0 22.6l22.6 22.6c6.3 6.3 16.4 6.3 22.6 0L192 237.3l73.4 73.4c12.5 12.5 32.8 12.5 45.3 0l96-96 32.4 32.4c15.1 15.1 41 4.4 41-17V112c0-8.8-7.2-16-16-16z"/></svg>
     </div>
-</div> -->
+</div>
 
 {% for source_data in dashboard_data.sources_data %}
 <div>

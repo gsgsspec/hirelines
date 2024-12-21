@@ -2251,7 +2251,6 @@ def dashBoardGraphDataService(companyid):
             line_graph["coding"] = [date_map[date]["coding"] for date in date_map]
             line_graph["interview"] = [date_map[date]["interview"] for date in date_map]
 
-
             dashboard_data['line_graph_data'] = line_graph
             dashboard_data['jd_reg_data'] = jd_reg_data
 
@@ -2343,7 +2342,6 @@ def getDashboardData(company_id):
                         if data.papertype == 'E':
                             coding_count += data.registration or 0
                             coding_efficiency += data.efficiency or 0
-
 
                         if data.papertype == 'I':
                             interview_count += data.registration or 0

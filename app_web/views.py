@@ -77,9 +77,6 @@ def dashboardPage(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    # if checkCompanyTrailPeriod(request.user):
-    #     return redirect('/trial-expired')
-
     try:
 
         user_mail = request.user
@@ -93,8 +90,6 @@ def dashboardPage(request):
         company_id = getCompanyId(request.user)
         
         dashboard_data = getDashboardData(company_id)
-
-        print('dashboard_data',dashboard_data)
 
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]

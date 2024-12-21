@@ -166,69 +166,10 @@ $(document).ready(function () {
 })
 
 
+document.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('dashboard-loader');
 
-
-// const data = {
-//     labels: ['Python', 'Java', 'C', 'C++', 'Kubernatives'], 
-//     datasets: [
-//         {
-//             label: 'Screening',
-//             data: [12, 19, 3, 5, 7],
-//             backgroundColor: 'rgba(135, 99, 238, 0.5)',
-//             borderColor: 'rgba(135, 99, 238, 1)',
-//             borderWidth: 1,
-//             barPercentage: 0.8,
-//             categoryPercentage: 0.6 
-//         },
-//         {
-//             label: 'Coding',
-//             data: [7, 11, 5, 8, 3],
-//             backgroundColor: 'rgba(0, 212, 98, 0.5)',
-//             borderColor: 'rgba(0, 212, 98, 1)',
-//             borderWidth: 1,
-//             barPercentage: 0.8,
-//             categoryPercentage: 0.6
-//         },
-//         {
-//             label: 'Interview',
-//             data: [10, 14, 6, 9, 4],
-//             backgroundColor: 'rgba(31, 104, 243, 0.5)',
-//             borderColor: 'rgba(31, 104, 243, 1)',
-//             borderWidth: 1,
-//             barPercentage: 0.8,
-//             categoryPercentage: 0.6
-//         },
-//         {
-//             label: 'Offered',
-//             data: [4, 8, 15, 3, 9],
-//             backgroundColor: 'rgba(13, 148, 136, 0.5)',
-//             borderColor: 'rgba(13, 148, 136, 1)',
-//             borderWidth: 1,
-//             barPercentage: 0.8,
-//             categoryPercentage: 0.6
-//         }
-//     ]
-// };
-
-// const options = {
-//     responsive: true,
-//     plugins: {
-//         legend: {
-//             position: 'top',
-//         },
-//     },
-//     scales: {
-//         x: {
-//             stacked: false
-//         },
-//         y: {
-//             beginAtZero: true
-//         }
-//     }
-// };
-
-// new Chart(jdBarChart, {
-//     type: 'bar',
-//     data: data,
-//     options: options
-// });
+    window.addEventListener('load', () => {
+        loader.style.display = 'none';
+    });
+});
