@@ -1420,13 +1420,28 @@ def getCandidateWorkflowData(cid):
 
             jd = JobDesc.objects.get(id=candidate.jobid)
 
+            source_label = ""
+
+            if candidate.source:
+
+                source = Source.objects.filter(companyid=candidate.companyid,code=candidate.source).last()
+                
+                if source:
+                    source_label = f"{source.code} - {source.label}"
+
+            else:
+                source_label = "NA"
+
+
             candidate_info = {
                 "cid": candidate.id,
                 "c_code": candidate.candidateid,
-                "name": f"{candidate.firstname} {candidate.lastname}",
+                "firstname": candidate.firstname,
+                "lastname": candidate.lastname,
                 "email": candidate.email,
                 "mobile": candidate.mobile,
                 "jd": jd.title,
+                "source_label":source_label
             }
 
             candidate_data["candidate_info"] = candidate_info
@@ -2418,5 +2433,29 @@ def format_duration(minutes):
 
             return result
     
+    except Exception as e:
+        raise
+
+
+
+def getCompanySourcesData(company_id):
+    try:
+
+        sources = Source.objects.filter(companyid=company_id)
+
+        if sources:
+
+            sources_data = []
+
+            for source in sources:
+
+                sources_data.append({
+                    "id":source.id,
+                    "code": source.code,
+                    "label":source.label
+                })
+
+            return sources_data
+
     except Exception as e:
         raise

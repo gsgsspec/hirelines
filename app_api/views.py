@@ -23,7 +23,8 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
-from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB
+from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
+    updateCandidateInfoDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -1308,6 +1309,51 @@ def getDashboardGraphData(request):
 
     except Exception as e:
         response['data'] = 'Error in getting dashboard data'
+        response['error'] = str(e)
+    
+    return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def updateSourceData(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            company_id = getCompanyId(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            updateSourcesDataDB(dataObjs,company_id)
+            response['data'] = "Sources Data Updated"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getting dashboard data'
+        response['error'] = str(e)
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateCandidateInfo(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            company_id = getCompanyId(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            updateCandidateInfoDB(dataObjs,company_id)
+            response['data'] = "Candidate info Updated"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updating candidate info'
         response['error'] = str(e)
     
     return JsonResponse(response)

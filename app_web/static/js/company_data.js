@@ -35,7 +35,8 @@ document.getElementById("update-data").onclick = function () {
             showSuccessMessage('Company Details Updated');
             $("#update-data").prop("disabled", false);
         } else {
-            showFailureMessage('Error in updating  the Email Template. Please try again after some time')
+            showFailureMessage('Error in updating  the Email Template. Please try again after some time');
+            $("#update-data").prop("disabled", false);
         }
     })
 }

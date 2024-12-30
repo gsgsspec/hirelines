@@ -94,7 +94,8 @@ hirelines_registration_script ="""
         "firstname": firstName,
         "lastname": lastName,
         "email": email,
-        "mobile": mobile
+        "mobile": mobile,
+        "source-code": "CARER"
     };
     register_candidate(payload);
 }

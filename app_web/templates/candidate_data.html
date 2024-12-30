@@ -4,6 +4,9 @@
     <div class="card mb-4">
       <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="mb-0">Candidate Info</h5>
+        <div style="text-align: right;font-size: 1.3rem;cursor: pointer;" data-bs-toggle="tooltip" id="editIcon" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<span>Edit</span>">
+          <i class="fas fa-edit p-clr"></i>
+        </div>
       </div>
       <div class="card-body">
         <div class="table-responsive text-nowrap">
@@ -15,7 +18,7 @@
               </tr>
               <tr>
                 <td> <strong> Name </strong></td>
-                <td>{{ candidate_info.name }}</td>
+                <td>{{ candidate_info.firstname }} {{ candidate_info.lastname }}</td>
               </tr>
               <tr>
                 <td> <strong> Email </strong></td>
@@ -28,6 +31,10 @@
               <tr>
                 <td> <strong> Job Description </strong></td>
                 <td> {{ candidate_info.jd }}</td>
+              </tr>
+              <tr>
+                <td> <strong> Source </strong></td>
+                <td> {{ candidate_info.source_label }}</td>
               </tr>
             </tbody>
           </table>
@@ -117,6 +124,40 @@
           {% endif %}
         </div>
       </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalCenterTitle">Edit Candidate</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="candidate-update-form">
+        <div class="modal-body">
+          <div class="row g-2">
+            <div class="col mb-3">
+              <label class="form-label">First name</label>
+              <input type="text" id="c-firstname" class="form-control" placeholder="Firstname" maxlength="100" value="{{ candidate_info.firstname }}" required>
+            </div>
+            <div class="col mb-0">
+              <label class="form-label">Last name</label>
+              <input type="text" id="c-lastname" class="form-control" placeholder="Lastname" maxlength="100" value="{{ candidate_info.lastname }}" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col mb-3">
+              <label class="form-label">Mobile</label>
+              <input type="text" id="c-mobile" class="form-control" placeholder="Mobile" maxlength="40" value="{{ candidate_info.mobile }}" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" id="update-candidate">Update changes</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

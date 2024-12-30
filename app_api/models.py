@@ -57,6 +57,7 @@ class Candidate(models.Model):
     jobid = models.IntegerField(null=True)
     status = models.CharField(max_length=1, null=True)  # P - Pending , S - Selected, R - Rejected 
     deleteflag = models.CharField(max_length=1, null=True) # Y - Marked as deleted
+    source = models.CharField(max_length=5,null=True)
 
     class Meta:
             db_table = 'candidate'

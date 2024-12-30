@@ -480,3 +480,7 @@ table.dataTable thead th, table.dataTable thead td {
     transform: rotate(360deg);
   }
 }
+
+.hidden {
+  display: none;
+}

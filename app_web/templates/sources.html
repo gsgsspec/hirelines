@@ -1,0 +1,44 @@
+{% load static %}
+<div class="container-center">
+    <div class="col-9">
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">Sources</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-3">
+                        <label class="col-sm-3 col-form-label text-end">Code</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="col-sm-3 col-form-label text-start" style="padding-left: 0.4rem;">Label</label>
+                    </div>
+                </div>
+                <form id="sources-data">
+                    {% for source in sources_data %}
+                        <div class="row mb-3 sources-cls">
+                            <label class="col-sm-1 col-form-label text-end" style="font-weight: bold;">{{ forloop.counter }}</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="code_{{source.id}}" placeholder="Code" value="{{ source.code }}" disabled>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="input-group input-group-merge">
+                                    <input type="text" class="form-control" id="label_{{source.id}}" minlength="5" maxlength="50" placeholder="Label" value="{{ source.label }}" required>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="row justify-content-end">
+                        <div class="col-sm-10 text-end">
+                            <button id="update-sources" type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/sources.js' %}"></script>

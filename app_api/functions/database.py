@@ -8,7 +8,7 @@ from app_api.functions.enc_dec import decrypt_code
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
-    IvFeedback, Email_template, Branding
+    IvFeedback, Email_template, Branding, Source
 
 
 def addCompanyDataDB(dataObjs):
@@ -37,6 +37,26 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
         if (not check_candidate_registered) or (check_candidate_registered == "N"):
             
             if company_account.balance >= company_credits.credits:
+
+                source_code = ""
+
+                if "source-code" in dataObjs:
+                    
+                    source = Source.objects.filter(companyid=cid,code=dataObjs['source-code']).last()
+                    
+                    if source:
+                        source_code = source.code
+
+                    else:
+                        new_source = Source(
+                            companyid=cid,
+                            code = dataObjs['source-code'],
+                            label = dataObjs['source-code']
+                        )
+                        new_source.save()
+
+                        source_code = new_source.code
+                    
                 candidate = Candidate(
                     firstname = dataObjs["firstname"],
                     lastname = dataObjs["lastname"],
@@ -44,6 +64,7 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                     email = dataObjs["email"],
                     mobile = dataObjs["mobile"],
                     jobid = dataObjs["jd"],
+                    source = source_code,
                     registrationdate = datetime.now(),
                     status = 'P'
                 )
@@ -754,6 +775,40 @@ def deleteCandidateDB(dataObjs):
                 if candidate:
                     candidate.deleteflag = "Y"
                     candidate.save()
+
+    except Exception as e:
+        raise
+
+
+def updateSourcesDataDB(dataObjs, company_id):
+    try:
+
+        sources_data = dataObjs['sources_data']
+
+        for source in sources_data:
+
+            company_source = Source.objects.filter(companyid=company_id,code=source['code']).last()
+            if company_source:
+                company_source.label = source['label']
+                company_source.save()
+
+
+    except Exception as e:
+        raise
+
+
+def updateCandidateInfoDB(dataObjs, company_id):
+    try:
+        print('dataObjs',dataObjs)
+
+        candidate = Candidate.objects.filter(candidateid=dataObjs['cid'],companyid=company_id).last()
+
+        if candidate:
+            candidate.firstname = dataObjs['firstname']
+            candidate.lastname = dataObjs['lastname']
+            candidate.mobile = dataObjs['mobile']
+
+            candidate.save()
 
     except Exception as e:
         raise

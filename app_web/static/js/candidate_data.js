@@ -1,3 +1,63 @@
+document.getElementById('editIcon').addEventListener('click', function () {
+    var myModal = new bootstrap.Modal(document.getElementById('modalCenter'));
+    myModal.show();
+});
+
+
+document.getElementById("update-candidate").onclick = function () {
+    $('#candidate-update-form').unbind('submit').bind('submit', function (event) {
+        event.preventDefault();
+
+        $("#update-candidate").prop("disabled", true);
+
+        dataObj = {
+            'firstname': $('#c-firstname').val(),
+            'lastname': $('#c-lastname').val(),
+            'mobile': $('#c-mobile').val(),
+            'cid': candidate_code,
+        }
+
+        var final_data = {
+            'data': JSON.stringify(dataObj),
+            csrfmiddlewaretoken: CSRF_TOKEN,
+        }
+
+        $.post(CONFIG['portal'] + "/api/update-candidate-info", final_data, function (res) {
+
+            if (res.statusCode == 0) {
+
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Canididate info updated',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+
+                setTimeout(function () { window.location.reload();}, 2000);
+
+                $("#update-candidate").prop("disabled", false);
+
+
+            } else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error in updating Candidate info',
+                    text: 'Please try again after some time',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+                $("#update-candidate").prop("disabled", false);
+            }
+        })
+
+    })
+}
+
+
+
 async function getReportData(cid) {
     
     var url = CONFIG['portal'] + "/api/get-candidate-report";
@@ -74,7 +134,7 @@ document.getElementById("notify").onclick = function () {
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
-                    title: 'Error in notifying the Canidate',
+                    title: 'Error in notifying the Candidate',
                     text: 'Please try again after some time',
                     showConfirmButton: false,
                     timer: 1500
@@ -223,5 +283,3 @@ function updateCandidateWorkflow(regId){
 
 
 }
-
-
