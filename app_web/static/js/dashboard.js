@@ -51,6 +51,7 @@ $(document).ready(function () {
                 data: lineChartData,
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             position: 'top',
@@ -74,7 +75,7 @@ $(document).ready(function () {
                         y: {
                             title: {
                                 display: true,
-                                text: 'Count'
+                                text: 'Registrations'
                             },
                             beginAtZero: true
                         }
@@ -135,6 +136,7 @@ $(document).ready(function () {
                 data: jdBarChartdata,
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             position: 'top',
@@ -146,7 +148,7 @@ $(document).ready(function () {
                             ticks: {
                                 callback: function(value, index, ticks) {
                                     const label = this.getLabelForValue(value); // Get the label for the value
-                                    const maxLength = 30; // Set max length for the label
+                                    const maxLength = 20; // Set max length for the label
                                     return label.length > maxLength ? label.substring(0, maxLength) + '...' : label;
                                 },
                             },
@@ -173,3 +175,66 @@ document.addEventListener('DOMContentLoaded', () => {
         loader.style.display = 'none';
     });
 });
+
+
+// function showFullPage() {
+//     $('#layout-menu').css('display', '')
+//     $('#web-page').addClass('layout-menu-fixed')
+//     $('#display_icon').css('display', 'none')
+//     $('#hide_icon').css('display', 'block')
+// }
+
+
+// function hideFullPage() {
+//     $('#layout-menu').css('display', 'none')
+//     $('#web-page').removeClass('layout-menu-fixed')
+//     $('#display_icon').css('display', 'block')
+//     $('#hide_icon').css('display', 'none')
+// }
+
+// if (window.innerWidth > 900) {
+//     $('#layout-menu').css('display', 'none');
+// }
+
+// $('#web-page').removeClass('layout-menu-fixed')
+
+
+
+$(document).ready(function() {
+
+    $('.counter').each(function () {
+        $(this).prop('Counter',0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 2000,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now));
+            }
+        });
+    }); 
+
+});  
+
+
+
+window.onload = function() {
+    // Select all elements with the class 'animate-on-load'
+    const elementsToAnimate = document.querySelectorAll('.animate-on-load');
+
+    // Add animation classes to each element based on their data-animation attribute
+    elementsToAnimate.forEach(function(element) {
+        const animationType = element.getAttribute('data-animation'); // Get animation type
+
+        // Add base animation class
+        element.classList.add('animate__animated');
+
+        // Add specific animation class based on the data-animation attribute
+        if (animationType) {
+            element.classList.add(`animate__${animationType}`);
+        }
+
+        // Optionally, add delay classes based on a custom attribute or class
+        // element.classList.add('animate__delay-1s');
+    });
+}

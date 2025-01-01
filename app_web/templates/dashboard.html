@@ -1,5 +1,11 @@
 {% load static %}
 
+<!-- <div id="display_icon" style="display:block;cursor:pointer" onclick='showFullPage()'><i class="bx bx-menu bx-sm"></i></div>
+<div id="hide_icon" style="display:none;cursor:pointer" onclick='hideFullPage()'><i class="bx bx-menu bx-sm"></i></div> -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
 <div class="candidates-loader-wrapper" id="dashboard-loader">
     <div class="candidates-loader">
         <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 512 512"><path fill="#274699" d="M496 384H64V80c0-8.8-7.2-16-16-16H16C7.2 64 0 71.2 0 80v336c0 17.7 14.3 32 32 32h464c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zM464 96H345.9c-21.4 0-32.1 25.9-17 41l32.4 32.4L288 242.8l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0l-68.7 68.7c-6.3 6.3-6.3 16.4 0 22.6l22.6 22.6c6.3 6.3 16.4 6.3 22.6 0L192 237.3l73.4 73.4c12.5 12.5 32.8 12.5 45.3 0l96-96 32.4 32.4c15.1 15.1 41 4.4 41-17V112c0-8.8-7.2-16-16-16z"/></svg>
@@ -8,14 +14,14 @@
 
 {% for source_data in dashboard_data.sources_data %}
 <div>
-    <h5>{{ source_data.source_label }}</h5>
-    <div class="col-lg-12 col-md-12 source-div">
+    <h5 class="p-clr">{{ source_data.source_label }}</h5>
+    <div class="col-lg-12 col-md-12 source-div animate-on-load" data-animation="zoomIn">
         <div class="row">
             <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
+                <div class="card h-100 animate__animated">
                     <span class="source-fs source-heading fw-semibold d-block" style="color: #8763ee;background-color: #efebfd;"><i class="fas fa-clipboard-check"></i> &nbsp; Screening</span>
                     <div class="card-body">
-                        <h3 class="card-title mb-2">{{ source_data.screening_count }}</h3>
+                        <h3 class="card-title mb-2 counter">{{ source_data.screening_count }}</h3>
                         <small class="p-clr fw-semibold">{{ source_data.screening_efficiency_percentage }}%</small>
                     </div>
                 </div>
@@ -24,7 +30,7 @@
                 <div class="card h-100">
                     <span class="source-fs source-heading fw-semibold d-block" style="color: #00d462;background-color: #defaeb;"><i class="fas fa-code"></i> &nbsp; Coding</span>
                     <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1">{{ source_data.coding_count }}</h3>
+                        <h3 class="card-title text-nowrap mb-1 counter">{{ source_data.coding_count }}</h3>
                         <small class="p-clr fw-semibold">{{ source_data.coding_efficiency_percentage }}%</small>
                     </div>
                 </div>
@@ -33,7 +39,7 @@
                 <div class="card h-100">
                     <span class="source-fs source-heading fw-semibold d-block" style="color: #1f68f3;background-color:#e2ebfd;"><i class="fas fa-chalkboard-teacher"></i> &nbsp;  Interview</span>
                     <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1">{{ source_data.interview_count }}</h3>
+                        <h3 class="card-title text-nowrap mb-1 counter">{{ source_data.interview_count }}</h3>
                         <small class="p-clr fw-semibold">{{ source_data.interview_efficiency_percentage }}%</small>
                     </div>
                 </div>
@@ -42,7 +48,7 @@
                 <div class="card h-100">
                     <span class="source-fs source-heading fw-semibold d-block" style="color: #0d9488;background-color:#e0f7f9;"><i class="far fa-envelope"></i> Offered</span>
                     <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1">{{ source_data.offered }}</h3>
+                        <h3 class="card-title text-nowrap mb-1 counter">{{ source_data.offered }}</h3>
                         <small class="p-clr fw-semibold"> </small>
                     </div>
                 </div>
@@ -56,7 +62,7 @@
     <div class="card-title-table">
         <h4 class="card-header">Registrations</h4>
     </div>
-    <div class="line-chat-section">
+    <div class="line-chat-section" style="height: 400px;">
         <canvas id="top-jds-bar-chart"></canvas>
     </div>
 </div>
@@ -65,7 +71,7 @@
     <div class="card-title-table">
         <h4 class="card-header"><iconify-icon icon="fe:line-chart" width="30" height="30" style="vertical-align: text-top;"></iconify-icon>&nbsp; Activity chart</h4>
     </div>
-    <div class="line-chat-section">
+    <div class="line-chat-section" style="height: 400px;">
         <canvas id="linechart"></canvas>
     </div>
 </div>
@@ -116,7 +122,6 @@
 </div>
 
 
-
 <div class="card mb-3">
     <div class="card-title-table">
         <h4 class="card-header"><i class="far fa-calendar-alt"></i> &nbsp; Lead time</h4>
@@ -155,7 +160,6 @@
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 </div>
