@@ -6,7 +6,7 @@ from app_api.functions.enc_dec import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
-    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData
+    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -77,9 +77,6 @@ def dashboardPage(request):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    # if checkCompanyTrailPeriod(request.user):
-    #     return redirect('/trial-expired')
-
     try:
 
         user_mail = request.user
@@ -89,13 +86,16 @@ def dashboardPage(request):
 
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
+
+        company_id = getCompanyId(request.user)
         
+        dashboard_data = getDashboardData(company_id)
 
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
 
         if menuItemObjList:
-            return render(request, "portal_index.html", {"template_name": "dashboard.html", 'menuItemList': menuItemList })
+            return render(request, "portal_index.html", {"template_name": "dashboard.html", 'menuItemList': menuItemList,'dashboard_data':dashboard_data })
     
         else:
             return redirect('../')
@@ -134,7 +134,6 @@ def emailTemplatesPage(request):
 
     except Exception as e:
         raise
-
 
 
 def candidatesPage(request):
@@ -350,7 +349,11 @@ def addCandidatePage(request):
 
         jds_list = getCompanyJdData(company_id)
 
-        return render(request, "portal_index.html", {"template_name": 'add_candidate.html','menuItemList': menuItemList,'jds_data':jds_list})
+        sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+
+        print('sources_data',sources_data)
+
+        return render(request, "portal_index.html", {"template_name": 'add_candidate.html','menuItemList': menuItemList,'jds_data':jds_list,'sources_data':sources_data})
 
     except Exception as e:
         raise
@@ -748,5 +751,27 @@ def privacyPolicyPage(request):
 
         return render(request, "privacy_policy.html")
 
+    except Exception as e:
+        raise
+
+
+
+def sourcesPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        sources_data = getCompanySourcesData(user_data.companyid)
+
+        return render(request, "portal_index.html", {"template_name": 'sources.html','menuItemList':menuItemList,'sources_data':sources_data})
+    
     except Exception as e:
         raise

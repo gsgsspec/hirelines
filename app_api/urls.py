@@ -48,6 +48,8 @@ urlpatterns = [
     path('req-demo',views.demoRequest),
     path('delete-candidate',views.deleteCandidate),
     path('update-candidate-workflow',views.updateCandidateWorkflow),
-
+    path('dashboard-graph-data',views.getDashboardGraphData),
     path('make-star-question',views.makeAstarQuestion),
+    path('update-candidate-info',views.updateCandidateInfo),
+    path('update-source-data',views.updateSourceData),
 ]

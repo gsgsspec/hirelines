@@ -15,6 +15,7 @@ var menuItemsUrls = {
     'feedback': ['/feedbacks', '/interviewer-feedback'],
     'reports': ['/reports', '/credits-usage'],
     'company': ['/company-data'],
+    'sources': ['/sources'],
     'logout': ['/']
 };
 

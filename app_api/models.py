@@ -57,6 +57,7 @@ class Candidate(models.Model):
     jobid = models.IntegerField(null=True)
     status = models.CharField(max_length=1, null=True)  # P - Pending , S - Selected, R - Rejected 
     deleteflag = models.CharField(max_length=1, null=True) # Y - Marked as deleted
+    source = models.CharField(max_length=5,null=True)
 
     class Meta:
             db_table = 'candidate'
@@ -429,3 +430,33 @@ class CompanyCredits(models.Model):
 
     class Meta:
         db_table = 'companycredits'
+
+
+class JdAnalysis(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    sourcecode = models.CharField(max_length=5,null=True)
+    papertype = models.CharField(max_length=1, null=True)
+    registration = models.IntegerField(null=True)
+    submission = models.IntegerField(null=True)
+    efficiency = models.IntegerField(null=True)
+    durationmin = models.IntegerField(null=True) # in minutes
+    durationmax = models.IntegerField(null=True) # in minutes
+    durationavg = models.IntegerField(null=True) # in minutes
+    jobid = models.IntegerField(null=True)
+    leadtimemin = models.IntegerField(null=True) # in minutes
+    leadtimemax = models.IntegerField(null=True) # in minutes
+    leadtimeavg = models.IntegerField(null=True) # in minutes
+
+    class Meta:
+        db_table = 'jdanalysis'
+
+
+class Source(models.Model):
+    id = models.AutoField(primary_key=True)
+    code = models.CharField(max_length=5, null=True)
+    label = models.CharField(max_length=50, null=True)
+    companyid = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'source'

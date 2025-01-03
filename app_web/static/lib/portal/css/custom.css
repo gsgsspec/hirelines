@@ -429,3 +429,58 @@ table.dataTable thead th, table.dataTable thead td {
   border-bottom: 1px dashed var(--primary-color);
   padding: 1rem 1.5rem;
 }
+
+
+.candidates-loader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1000;
+}
+
+.candidates-loader {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.candidates-loader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 5px solid rgb(39 70 153 / 31%);
+  border-top: 5px solid var(--primary-color);
+  border-radius: 50%;
+  animation: candidate-loader-spin 1s linear infinite;
+}
+
+.candidates-loader svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+
+@keyframes candidate-loader-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hidden {
+  display: none;
+}
