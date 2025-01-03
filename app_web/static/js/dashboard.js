@@ -217,19 +217,15 @@ $(document).ready(function() {
 });  
 
 
-
 window.onload = function() {
-    // Select all elements with the class 'animate-on-load'
+
     const elementsToAnimate = document.querySelectorAll('.animate-on-load');
 
-    // Add animation classes to each element based on their data-animation attribute
     elementsToAnimate.forEach(function(element) {
         const animationType = element.getAttribute('data-animation'); // Get animation type
 
-        // Add base animation class
         element.classList.add('animate__animated');
 
-        // Add specific animation class based on the data-animation attribute
         if (animationType) {
             element.classList.add(`animate__${animationType}`);
         }

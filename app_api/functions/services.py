@@ -1579,7 +1579,14 @@ def generateCandidateReport(cid):
             )
             updated_report = updated_report.replace("{#jd_title#}", jd.title)
             updated_report = updated_report.replace("{#comapany_logo#}", str(branding.logourl) if str(branding.logourl) else "")
-            print('branding.logourl',branding.logourl)
+
+            source_label = "NA"
+
+            if candidate.source:
+                source_label = Source.objects.filter(companyid=candidate.companyid,code=candidate.source).last().label
+            
+            updated_report = updated_report.replace("{#c_source#}", source_label)
+
             call_schedule = CallSchedule.objects.filter(candidateid=candidate.id).last()
             if call_schedule:
 
