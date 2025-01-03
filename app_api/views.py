@@ -1,3 +1,4 @@
+import ast
 from datetime import datetime
 import json
 import logging
@@ -228,6 +229,58 @@ def getJdWorkflow(request):
         response['data'] = 'Error in getting jd worflow'
         response['error'] = str(e)
         raise
+    return JsonResponse(response)
+
+
+# @csrf_exempt
+@api_view(['GET','POST'])
+@authentication_classes([])
+@permission_classes([])
+def getJdQuestionsView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            # user = auth_user(request.user)
+            # user_company = user.companyid
+            # enc_company_id = encrypt_code(user_company)
+            
+            acert_domain = getConfig()['DOMAIN']['acert']
+            endpoint = '/api/jd-screening-questions'
+            url = urljoin(acert_domain, endpoint)
+            dataObjs = json.loads(request.POST.get('data'))
+
+            # print("getJdQuestionsView dataObjs",dataObjs)
+            jd_data = JobDesc.objects.filter(id=dataObjs["jd_id"]).values("skillset","location","expmin","expmax").last()
+            
+            skills_list=[]
+            skill_set = ast.literal_eval(jd_data["skillset"])
+            for skill in skill_set:
+                skill = ", ".join(skill.keys())
+                skills_list.append(skill)
+            jd_data['skillset'] = skills_list
+            get_evaluation_submissions = requests.post(url, json = jd_data, verify = False)
+            response_content = get_evaluation_submissions.content
+
+            if response_content:
+                
+                json_data = json.loads(response_content.decode('utf-8'))
+
+                acert_data = json_data['data']
+                jd_questions = acert_data
+                if json_data['statusCode'] == 0:
+                    response['data'] = jd_questions
+                    response['statusCode'] = 0
+            
+            
+    except Exception as e:
+        response['data'] = 'Error in getJdQuestionsView'
+        response['error'] = str(e)
+        # raise
+        # logging.error("Error in getJdQuestionsView : ", str(e))
     return JsonResponse(response)
 
 

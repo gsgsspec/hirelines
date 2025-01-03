@@ -10,6 +10,7 @@ urlpatterns = [
     path('jd-add-or-update-test',views.jdAddTest),
     path('login-user',views.loginUser),
     path('get-jd-workflow',views.getJdWorkflow),
+    path('get-jd-screening-questions',views.getJdQuestionsView),
     path('add-candidate',views.addCandidate),
     path('interview-scheduling/<int:cid>',views.interviewScheduling),
     path('schedule-interview',views.scheduleInterviewView),
