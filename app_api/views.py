@@ -233,10 +233,7 @@ def getJdWorkflow(request):
     return JsonResponse(response)
 
 
-# @csrf_exempt
 @api_view(['GET','POST'])
-@authentication_classes([])
-@permission_classes([])
 def getJdQuestionsView(request):
     response = {
         'data': None,
@@ -245,8 +242,8 @@ def getJdQuestionsView(request):
     }
     try:
         if request.method == "POST":
-            # user = auth_user(request.user)
-            # user_company = user.companyid
+            user = auth_user(request.user)
+            user_company = user.companyid
             # enc_company_id = encrypt_code(user_company)
             
             acert_domain = getConfig()['DOMAIN']['acert']
@@ -255,7 +252,7 @@ def getJdQuestionsView(request):
             dataObjs = json.loads(request.POST.get('data'))
 
             # print("getJdQuestionsView dataObjs",dataObjs)
-            jd_data = JobDesc.objects.filter(id=dataObjs["jd_id"]).values("skillset","location","expmin","expmax").last()
+            jd_data = JobDesc.objects.filter(id=dataObjs["jd_id"],companyid=user_company).values("skillset","location","expmin","expmax").last()
             
             skills_list=[]
             skill_set = ast.literal_eval(jd_data["skillset"])
