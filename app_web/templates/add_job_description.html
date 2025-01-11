@@ -1,222 +1,4 @@
 {% load static %}
-<!-- 
-<div class="card">
-    <div class="card-title-table">
-        <h4 class="card-header">Add Job Description</h4>
-    </div>
-    <div class="row p-3">
-      <div class="col-md-6">
-        <div class="card mb-4">
-          <div class="card-body">
-            <div class="mb-3">
-              <label for="exampleFormControlSelect1" class="form-label">Select Job Description</label>
-              <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                <option value="1">Python Developer 0 - 2 years</option>
-                <option value="2">Python Developer 2 - 4 years</option>
-                <option value="3">Java Developer 0 - 2 years</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlSelect1" class="form-label">Role</label>
-              <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                <option value="1">Python Developer 0 - 2 years</option>
-                <option value="2">Python Developer 2 - 4 years</option>
-                <option value="3">Java Developer 0 - 2 years</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Description</label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Budget</label>
-              <div style="display: flex; justify-content: start; ">
-                <input
-                type="number"
-                class="form-control w-25 mr-2"
-                id="min_experince"
-                placeholder="LPA"
-                aria-describedby="defaultFormControlHelp"
-                style="margin-right: 1rem;"
-              />
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="exampleFormControlTextarea1" class="form-label">Experinces</label>
-              <div style="display: flex; justify-content: start; ">
-                <input
-                type="number"
-                class="form-control w-25 mr-2"
-                id="min_experince"
-                placeholder="Min - Exp"
-                aria-describedby="defaultFormControlHelp"
-                style="margin-right: 1rem;"
-              />
-              <input
-                type="number"
-                class="form-control w-25"
-                id="max_experince"
-                placeholder="Max - Exp"
-                aria-describedby="defaultFormControlHelp"
-              />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-</div>
-
-<style>
-  .jd_card_border{
-    border: 0.8px solid #b5b2b261;
-    border-radius: 10px;
-  }
-</style> -->
-
-<!-- <div class="content-wrapper">
-  <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="row">
-      <div class="col-xxl">
-        <div class="container-center">
-          <div class="card mb-4 w-75">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <h5 class="mb-0">Add Job Description</h5>
-            </div>
-            <div class="card-body">
-              <form id="addJD">
-
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label">Job Descriptions</label>
-                  <div class="col-sm-9">
-                    <select class="form-select" id="jdLibrary" required onchange="fillJdData()">
-                      <option value="0" disabled selected>Please Select Job Description</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label for="JobDescription" class="col-sm-2 col-form-label">Description</label>
-                  <div class="col-sm-9 ">
-                    <textarea class="form-control" id="JobDescription" rows="3"></textarea>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="jdRole">Role</label>
-                  <div class="col-sm-9">
-                    <select class="form-select" id="jdRole" aria-label="Default select example">
-                      <option value="0"></option>
-                      <option value="Development">Development</option>
-                      <option value="Testing">Testing</option>
-                      <option value="Deployment">Deployment</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label for="min_experince" class="col-sm-2 col-form-label">Experinces</label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input
-                    type="number"
-                    class="form-control w-25 mr-2"
-                    id="min_experince"
-                    placeholder=""
-                    aria-describedby="defaultFormControlHelp"
-                    style="margin-right: 1rem;"
-                  />
-                  <input
-                    type="number"
-                    class="form-control w-25"
-                    id="max_experince"
-                    placeholder=""
-                    aria-describedby="defaultFormControlHelp"
-                  />
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Budget <small>(LPA)</small></label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input
-                    type="number"
-                    class="form-control w-25 mr-2"
-                    id="jdBudget"
-                    placeholder=""
-                    aria-describedby="defaultFormControlHelp"
-                    style="margin-right: 1rem;"
-                  />
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">No of Positions</label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input
-                    type="number"
-                    class="form-control w-25 mr-2"
-                    id="jdNoPositions"
-                    placeholder="Members count.."
-                    aria-describedby="defaultFormControlHelp"
-                    style="margin-right: 1rem;"
-                  />
-                  </div>
-                </div>
-  
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="jdWorkLocation">Work Location</label>
-                  <div class="col-sm-9">
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="jdWorkLocation"
-                      placeholder=""
-                    />
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label for="jdSkills" class="col-sm-2 col-form-label">Skill Set</label>
-                  <div class="col-sm-9">
-                    <textarea class="form-control" id="jdSkills" rows="3"></textarea>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Any Special Notes <small>(optional)</small></label>
-                  <div class="col-sm-9">
-                    <textarea
-                      id="JdanySpecialNotes"
-                      class="form-control"
-                      placeholder="Any Special instruction"
-                      aria-describedby="basic-icon-default-message2"
-                      rows="3"
-                    ></textarea>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <div class="col-sm-9 row align-items-center px-0">
-                    <div class="px-0" hidden id="validater"> Job Description add Successfully </div>
-                  </div>
-                  <div class="col-sm-2 row justify-content-end px-0 my-0">
-                    <button type="submit" id="submitJd" class="btn btn-primary">Done</button>
-                  </div>
-                </div>
-
-              </form>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-   
-    </div>
-  </div>
-</div>
-<script src="{% static 'js/add_job_description.js' %}"></script> -->
-
-
 <div class="content-wrapper">
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
@@ -227,34 +9,26 @@
             <div class="card-header d-flex align-items-center justify-content-between">
               <h5 class="mb-0">Add Job Description</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
               <form id="addJD">
                 
                 <!-- Search Job Description with Suggestions -->
-                <div class="row mb-3 container-center">
+                <!-- <div class="row mb-3 container-center">
                   <label class="col-sm-2 col-form-label" for="searchJobDescription">Search JD</label>
                   <div class="col-sm-9 position-relative">
                     <input type="form-control" id="searchJobDescription" class="form-control" placeholder="Search Job Description" autocomplete="off">
-                    <!-- <input class="form-control" type="search" id="searchJobDescription"> -->
                     <div class="prompt-message text-muted" id="promptMessage" style="font-size: 12px; margin-top: 5px;">Please enter atleast 3 characters to search for a JD requirement.</div>
                     <div class="suggestions-box border" id="suggestionsBox" style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;"></div>
-                  </div>
-
-                  <!-- <div class="col-md-10"> -->
-                    <!-- <input class="form-control" type="search" id="searchJobDescription"> -->
-                  <!-- </div> -->
+                  </div> -->
 
                 </div>
-
-                <!-- Job Description Dropdown -->
-                <!-- <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label">Job Descriptions</label>
-                  <div class="col-sm-9">
-                    <select class="form-select" id="jdLibrary" required onchange="fillJdData()">
-                      <option value="0" disabled selected>Please Select Job Description</option>
-                    </select>
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label" for="searchJobDescription">JD Title</label>
+                  <div class="col-sm-9 position-relative">
+                    <input type="form-control" id="jdTitle" class="form-control" placeholder="Job Description Title" autocomplete="off">
                   </div>
-                </div> -->
+
+                </div>
 
                 <!-- Your Existing Form Fields -->
                 <div class="row mb-3 container-center">
@@ -272,6 +46,7 @@
                       <option value="Development">Development</option>
                       <option value="Testing">Testing</option>
                       <option value="Deployment">Deployment</option>
+                      <option value="Administrator">Administrator</option>
                     </select>
                   </div>
                 </div>
@@ -279,36 +54,45 @@
                 <div class="row mb-3 container-center">
                   <label for="min_experince" class="col-sm-2 col-form-label">Experiences</label>
                   <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input type="number" class="form-control w-25 mr-2" id="min_experince" placeholder="" style="margin-right: 1rem; height: max-content;" />
-                    <input type="number" class="form-control w-25" id="max_experince" placeholder="" style="height: max-content;" />
+                    <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="min_experince" placeholder="Min" style="margin-right: 1rem; height: max-content;" />
+                    <input type="number" class="form-control w-25 custm-sm-input-width" id="max_experince" placeholder="Max" style="height: max-content;" />
                   </div>
                 </div>
 
                 <div class="row mb-3 container-center">
                   <label for="jdBudget" class="col-sm-2 col-form-label">Budget <small>(LPA)</small></label>
                   <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input type="number" class="form-control w-25 mr-2" id="jdBudget" placeholder="" style="margin-right: 1rem; height: max-content;"  />
+                    <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="jdBudget" placeholder="" style="margin-right: 1rem; height: max-content;"  />
                   </div>
                 </div>
 
                 <div class="row mb-3 container-center">
                   <label for="jdNoPositions" class="col-sm-2 col-form-label">No of Positions</label>
                   <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input type="number" class="form-control w-25 mr-2" id="jdNoPositions" placeholder="Members count.." style="margin-right: 1rem; height: max-content;" />
+                    <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="jdNoPositions" placeholder="Members count.." style="margin-right: 1rem; height: max-content;" />
                   </div>
                 </div>
 
                 <div class="row mb-3 container-center">
                   <label class="col-sm-2 col-form-label" for="jdWorkLocation">Work Location</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" id="jdWorkLocation" placeholder="" />
+                    <input type="text" class="form-control" id="jdWorkLocation" />
                   </div>
                 </div>
 
                 <div class="row mb-3 container-center">
-                  <label for="jdSkills" class="col-sm-2 col-form-label">Skill Set</label>
+                  <label class="col-sm-2 col-form-label" for="">Add Skill</label>
+                  <div class="autocomplete col-sm-9">
+                    <input class="form-control custm-sm-input-width" id="searchNewSkill" type="text" name="" placeholder="Add New Skill">
+                    <div class="suggestions-box border" id="suggestionsBox" style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;"></div>
+                  </div>
+                </div>
+
+                <div class="row mb-3 container-center" id="jdSkillsContainer">
+                  <label for="jdSkills" class="col-sm-2 col-form-label"></label>
                   <div class="col-sm-9">
-                    <textarea class="form-control" id="jdSkills" rows="3"></textarea>
+                    <div class="skillsListContainer" id="skillsListMainContainer">
+                    </div>
                   </div>
                 </div>
 
@@ -319,11 +103,6 @@
                   </div>
                 </div>
 
-                <!-- <div class="row mb-3 container-center">
-                  <div class="col-sm-9 row align-items-center px-0">
-                    <div class="px-0 success" id="validater" style="color: green;"> <i class="fas fa-check-circle"></i> &nbsp; Job Description created redirecting to jd setup</div>
-                  </div>
-                </div> -->
                 <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
                   <div class="px-0 my-0" style="display: flex;justify-content: end; width: max-content; padding-right: 2.5rem !important;">
                     <button type="button" id="restJdForm" class="btn btn-secondary" style="margin-right: 10px;  padding: 0.2625rem 1rem;" onclick="resetJd()">Reset</button>
@@ -349,26 +128,101 @@
 </div>
 
 <style>
-  #suggestionsBox{
-    width: 96% !important;
-    border-radius: 7px;
-    margin-top: 5px;
-  }
-  .search_item:hover{
-    background-color: var(--light-primary-color);
-  }
-  #searchJobDescription {
-    text-align: left; /* Ensure text is aligned to the left */
+#suggestionsBox{
+  width: 200px !important;
+  border-radius: 7px;
+  margin-top: 5px;
+}
+.search_item:hover{
+  background-color: var(--primary-color);
+  color: #fff;
+}
+#searchJobDescription {
+  text-align: left; /* Ensure text is aligned to the left */
 }
 #searchJobDescription {
     text-align: left;  /* Ensures the text is always aligned left */
     padding-left: 5px; /* Optional: Adds a little space from the left edge */
 }
+/* skill search bar */
+/*the container must be positioned relative:*/
+.autocomplete {
+  position: relative;
+  display: inline-block;
+}
 
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+  cursor: pointer;
+}
 
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 110%;
+  left: 12px;
+  right: 0;
+  height: 120px;
+  overflow-y: scroll;
+  width: 200px;
+  border-radius: 0.5rem;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff; 
+  border-bottom: 1px solid #d4d4d4; 
+}
+
+/*when hovering an item:*/
+.autocomplete-items div:hover {
+  background-color: #e9e9e9; 
+}
+
+/*when navigating through the items using the arrow keys:*/
+.autocomplete-active {
+  background-color: DodgerBlue !important; 
+  color: #ffffff; 
+}
+.custm-sm-input-width{
+  width: 200px !important;
+}
+
+.skillIteamContainer{
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  padding: 0.4rem 0.7rem;
+  border: lightgrey solid 0.5px;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem 0 rgba(133, 146, 163, 0.4);
+  cursor: pointer;
+}
+.skillTitle{
+  text-transform: capitalize;
+}
+
+.skillsListContainer{
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  flex-wrap: wrap;
+  width: 100%; 
+  height: auto;
+  border: 0.5px lightgray solid; 
+  border-radius: 0.5rem;
+}
+.customremovecls{
+  border: 0.5px solid lightgray;
+  border-radius: 0.2rem;
+  padding: 2px 5px;
+}
 </style>
+<script src="{% static 'js/tech_list.js' %}"></script>
 <script src="{% static 'js/add_job_description.js' %}"></script>
-<!-- Include JavaScript for Search and Suggestions -->
-<script>
-
-</script>

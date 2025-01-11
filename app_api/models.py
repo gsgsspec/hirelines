@@ -187,6 +187,7 @@ class Workflow(models.Model):
     order = models.IntegerField(null=True)
     papertitle = models.CharField(max_length=120, null=True, blank=True)
     paperlibraryid = models.IntegerField(null=True)
+    teststatus = models.CharField(max_length=1, null=True) # A - Active, I - Inactive
 
     class Meta:
         db_table = 'workflow'

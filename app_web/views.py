@@ -279,6 +279,30 @@ def update_jobdescription(request,update_jd_id):
 
 
 # this function render's inside html pages
+# def jobDescriptionSetUp(request,jd_id): 
+#     try:
+#         user_mail = request.user
+#         user_data = auth_user(user_mail)
+#         user_role = user_data.role
+#         companyId = getCompanyId(user_mail)
+
+#         menuItemList = get_functions_service(user_role)
+#         currentPath = get_current_path(request.path)
+#         jd_details = jdDetails(jd_id, companyId)
+#         enc_jdid = encrypt_code(jd_id)
+#         hirelines_integration_script_enc = hirelines_integration_script.replace("#enc_jdid#",enc_jdid)
+#         hirelines_integration_function_enc = hirelines_integration_function.replace("#enc_jdid#",enc_jdid)
+#         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+#                         child['menuItemLink'] == currentPath]
+        
+#         return render(request, "portal_index.html", {"template_name": 'jd_setup.html', 'menuItemList': menuItemList,'jd_details':jd_details,
+#                                                      "hirelines_integration_script_enc":hirelines_integration_script_enc,
+#                                                      "hirelines_integration_function_enc":hirelines_integration_function_enc})
+#     except Exception as e:
+#         raise
+
+
+# this function render's inside html pages
 def jobDescriptionSetUp(request,jd_id): 
     try:
         user_mail = request.user
@@ -295,11 +319,12 @@ def jobDescriptionSetUp(request,jd_id):
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         
-        return render(request, "portal_index.html", {"template_name": 'jd_setup.html', 'menuItemList': menuItemList,'jd_details':jd_details,
+        return render(request, "portal_index.html", {"template_name": 'jd_setup_new.html', 'menuItemList': menuItemList,'jd_details':jd_details,
                                                      "hirelines_integration_script_enc":hirelines_integration_script_enc,
                                                      "hirelines_integration_function_enc":hirelines_integration_function_enc})
     except Exception as e:
         raise
+
 
 
 def brandingPage(request):

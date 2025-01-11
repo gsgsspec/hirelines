@@ -24,6 +24,7 @@ urlpatterns = [
     path('job-descriptions',views.jobDescription),
     path('add-job-description',views.Addjobdescription),
     path('update-job-description/<int:update_jd_id>',views.update_jobdescription),
+    # path('job-description-set-up/<int:jd_id>',views.jobDescriptionSetUp),
     path('job-description-set-up/<int:jd_id>',views.jobDescriptionSetUp),
     path('candidate-call/<str:room_id>', views.candidateSideMeetingPage),
     path('candidate-data/<int:cid>',views.candidateData),

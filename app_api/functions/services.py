@@ -305,6 +305,46 @@ def companyUserLst(companyID):
         raise
 
 
+def updateJdDataService(addjdData):
+    try:
+        jdData = JobDesc.objects.filter(id=addjdData['JdID']).last()
+        if jdData:
+            
+            # modifiedSkillList = []
+            # # Check if skillLst is a list-like string or a plain CSV string
+            # parsed_skillLst = ast.literal_eval(jdData.skillset)  # Try parsing as a list of dictionaries
+
+            # print('parsed_skillLst :: ',parsed_skillLst)
+
+            # for skill in parsed_skillLst:
+            #     key = list(skill.keys())[0]  # Extract the first key
+            #     subSkills = skill[key].split(',') if ',' in skill[key] else [skill[key]]
+
+            #     for subSkill in subSkills:
+            #         modifiedSkillList.append(subSkill.strip()) 
+
+            jdDataDict = {
+                "id": jdData.id,
+                "title": "" if jdData.title is None else jdData.title,
+                "role": "" if jdData.role is None else jdData.role,
+                "description": "" if jdData.description is None else jdData.description,
+                "expmin": "" if jdData.expmin is None else jdData.expmin,
+                "expmax": "" if jdData.expmax is None else jdData.expmax,
+                "department": "" if jdData.department is None else jdData.department,
+                "location": "" if jdData.location is None else jdData.location,
+                "budget": "" if jdData.budget is None else jdData.budget,
+                "skillset": "" if jdData.skillset is None else jdData.skillset.strip(),
+                "skillnotes": "" if jdData.skillnotes is None else jdData.skillnotes,
+                "expjoindate": "" if jdData.expjoindate is None else jdData.expjoindate,
+                "positions": "" if jdData.positions is None else jdData.positions,
+                "status": "" if jdData.status is None else jdData.status,
+            }
+            return jdDataDict
+
+    except Exception as e:
+        raise
+
+
 def updateJdServices(addjdData, companyID, hrEmail):
     try:
         saveUpdateJd(addjdData, companyID, hrEmail)
@@ -660,16 +700,102 @@ def getCompanyJDsList(companyId):
         raise
 
 
+# def jdDetails(jdId, companyId):
+#     try:
+#         # Get the last JobDesc object for the provided jdId
+#         jdData = JobDesc.objects.filter(id=jdId).last()
+#         selectedInterviewerLst = []
+#         total_interviewers_lst = []
+#         if jdData:
+#             # Manually create the dictionary with conditions for None values
+
+#             interviewes_lst = User.objects.filter(status="A", companyid=companyId).values("id", "name")
+
+#             for interviewer in interviewes_lst:
+#                 if interviewer:
+#                     total_interviewers_lst.append({"id": interviewer["id"], "name": interviewer["name"]})
+
+#                 selectedInterviewerLst = []
+#                 if jdData.interviewers:
+#                     jd_interviewers = ast.literal_eval(jdData.interviewers)
+#                     for selectedInterviewer in jd_interviewers:
+#                         if selectedInterviewer:
+#                             userData = list(User.objects.filter(id=selectedInterviewer).values("id", "name"))
+#                             if userData:
+#                                 if selectedInterviewer:
+#                                     selectedInterviewerLst.append(
+#                                         {
+#                                             "id": userData[0]["id"],
+#                                             "name": userData[0]["name"],
+#                                         }
+#                                     )
+
+#             jdDataDict = {
+#                 "id": jdData.id,
+#                 "jdlibraryid": 0 if jdData.jdlibraryid is None else jdData.jdlibraryid,
+#                 "title": "" if jdData.title is None else jdData.title,
+#                 "role": "" if jdData.role is None else jdData.role,
+#                 "description": "" if jdData.description is None else jdData.description,
+#                 "expmin": "" if jdData.expmin is None else jdData.expmin,
+#                 "expmax": "" if jdData.expmax is None else jdData.expmax,
+#                 "department": "" if jdData.department is None else jdData.department,
+#                 "location": "" if jdData.location is None else jdData.location,
+#                 "budget": "" if jdData.budget is None else jdData.budget,
+#                 "skillset": "" if jdData.skillset is None else jdData.skillset,
+#                 "skillnotes": "" if jdData.skillnotes is None else jdData.skillnotes,
+#                 "interviewers": (
+#                     "" if jdData.interviewers is None else jdData.interviewers
+#                 ),
+#                 "expjoindate": "" if jdData.expjoindate is None else jdData.expjoindate,
+#                 "positions": "" if jdData.positions is None else jdData.positions,
+#                 "createdby": "" if jdData.createdby is None else jdData.createdby,
+#                 "status": "" if jdData.status is None else jdData.status,
+#                 "companyid": "" if jdData.companyid is None else jdData.companyid,
+#                 "interviewes_lst": total_interviewers_lst,
+#                 "selectedInterviewerLst": selectedInterviewerLst,
+#             }
+#             return jdDataDict
+#         return None  # Return None if no data is found
+#     except Exception as e:
+#         raise
+
 def jdDetails(jdId, companyId):
     try:
         # Get the last JobDesc object for the provided jdId
         jdData = JobDesc.objects.filter(id=jdId).last()
+        workFlowDetails = []
+        
+        # skillLst = jdData.skillset.split(',')
+        skillLst = jdData.skillset
+
+        if skillLst:
+            modifiedSkillList = []
+
+            # Check if skillLst is a list-like string or a plain CSV string
+            print('skillLst :: ',skillLst)
+            parsed_skillLst = ast.literal_eval(skillLst)  # Try parsing as a list of dictionaries
+
+
+            for skill in parsed_skillLst:
+                key = list(skill.keys())[0]  # Extract the first key
+                subSkills = skill[key].split(',') if ',' in skill[key] else [skill[key]]
+
+                for subSkill in subSkills:
+                    modifiedSkillList.append(subSkill.strip())  # Clean and append each sub-skill
+
         selectedInterviewerLst = []
         total_interviewers_lst = []
         if jdData:
             # Manually create the dictionary with conditions for None values
 
             interviewes_lst = User.objects.filter(status="A", companyid=companyId).values("id", "name")
+            workFlowDetails = Workflow.objects.filter(jobid=jdId, teststatus='A').values()
+            workFlowList = {}
+
+            for workFlowData in workFlowDetails:
+                # Replace None values with empty strings
+                cleanData = {key: (value if value is not None else '') for key, value in workFlowData.items()}
+                workFlowList[workFlowData['id']] = cleanData
 
             for interviewer in interviewes_lst:
                 if interviewer:
@@ -713,6 +839,8 @@ def jdDetails(jdId, companyId):
                 "companyid": "" if jdData.companyid is None else jdData.companyid,
                 "interviewes_lst": total_interviewers_lst,
                 "selectedInterviewerLst": selectedInterviewerLst,
+                "skillsList": modifiedSkillList,
+                "workFlowDetails": workFlowList,
             }
             return jdDataDict
         return None  # Return None if no data is found
@@ -758,6 +886,51 @@ def saveInterviewersService(user, dataObjs):
         raise
 
 
+# def workFlowDataService(data, cmpyId):
+#     try:
+#         intervierDeatils = User.objects.filter(
+#             status="A", role="Interviewer", companyid=cmpyId
+#         )
+#         interviewersLst = []
+
+#         for interviewer in intervierDeatils:
+#             interviewerData = {}
+#             interviewerData["userId"] = interviewer.id
+#             interviewerData["name"] = interviewer.name
+#             interviewersLst.append(interviewerData)
+
+#         papersDetails = []
+#         papersDetails = Workflow.objects.filter(jobid=data).values()
+
+#         for test in papersDetails:
+#             brulesDetails = Brules.objects.filter(
+#                 workflowid=test["id"],
+#                 jobdescid=test["jobid"],
+#                 companyid=test["companyid"],
+#             ).last()
+
+#             if brulesDetails:
+#                 test["promot"] = brulesDetails.passscore
+#                 test["hold"] = brulesDetails.hold
+#                 test["holdpercentage"] = brulesDetails.holdpercentage
+
+#         jdData = list(JobDesc.objects.filter(id=data).values())
+
+#         JdStatus = None
+#         selectedJdInterviewers = ''
+#         if len(jdData) > 0:
+#             JdStatus = jdData[0]['status']
+#             print('==========================')
+#             print('jdData :: ',jdData[0]['skillset'])
+            
+#             if jdData[0]['interviewers']:
+#                 selectedJdInterviewers = ast.literal_eval(jdData[0]['interviewers'])
+            
+#         return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus, 'selectedJDInterviewers':selectedJdInterviewers}
+#     except Exception as e:
+#         raise
+
+
 def workFlowDataService(data, cmpyId):
     try:
         intervierDeatils = User.objects.filter(
@@ -792,11 +965,63 @@ def workFlowDataService(data, cmpyId):
         selectedJdInterviewers = ''
         if len(jdData) > 0:
             JdStatus = jdData[0]['status']
+
+            jdSkillsList = []
+            skillList = jdData[0]['skillset'].split(',')
+            for skill in skillList:
+                jdSkillsList.append(skill.strip())
             
             if jdData[0]['interviewers']:
                 selectedJdInterviewers = ast.literal_eval(jdData[0]['interviewers'])
             
-        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus, 'selectedJDInterviewers':selectedJdInterviewers}
+        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus, 'selectedJDInterviewers':selectedJdInterviewers,'skillsLst':jdSkillsList}
+    except Exception as e:
+        raise
+
+
+def skillsWithTopicsWithSubtopicsWithQuestionsService(dataObjs):
+    try:
+         # Extract skills list from input
+        skillList = dataObjs.get('skillsSetLst', [])
+        if not skillList:
+            print("Error: 'skillsSetLst' is empty or missing.")
+            return
+
+        # Construct API endpoint
+        acert_domain = getConfig()["DOMAIN"]["acert"]
+        endpoint = "/api/getTopicAndSubtopicAndQuestions"
+        url = urljoin(acert_domain, endpoint)
+
+        # Prepare request payload
+        startQuestionData = {
+            'data': skillList
+        }
+
+        # Make the POST request
+        response = requests.post(url, json=startQuestionData)
+
+        # Check for HTTP errors
+        response.raise_for_status()
+
+        # Decode the response content
+        response_content = response.content
+        if response_content:
+            # Parse JSON data
+            json_data = json.loads(response_content.decode("utf-8"))
+            return json_data
+        else:
+            print("Response content is empty.")
+            return None
+
+    except requests.exceptions.RequestException as e:
+        print(f"HTTP request failed: {e}")
+    except json.JSONDecodeError as e:
+        print(f"Failed to decode JSON: {e}")
+    except KeyError as e:
+        print(f"Configuration error: Missing key {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
     except Exception as e:
         raise
 

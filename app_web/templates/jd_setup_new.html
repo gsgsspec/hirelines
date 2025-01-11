@@ -1,0 +1,1100 @@
+{% load static %}
+
+<div class="candidates-loader-wrapper" id="candidates-loader" style="background-color: rgba(255, 255, 255, 1);">
+  <div class="candidates-loader">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="#274699" d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"/></svg>
+  </div>
+</div>
+
+<div class="content-wrapper">
+  <div class="container-xxl flex-grow-1 container-p-y pt-0" style="padding-right: 0; padding-left: 1rem;">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+      <div class="d-flex align-items-center justify-content-center">
+          <h4 class="m-0" style="width: max-content;" id="JDTitle">
+            {{ jd_details.title }} 
+            <!-- <div class="avatar avatar-online mx-3"></div>  -->
+          </h4>
+      </div>
+
+      <div style="width: max-content;">
+
+          <button type="button" class="btn btn-outline-primary mx-2" onclick="openPublishJd()">
+            <i class='bx bx-up-arrow-circle' style="margin-top: -4px;"></i> &nbsp; <span id="JdStatusShowElement">Publish</span>
+          </button>
+        
+          <div class="btn-group" role="group" aria-label="First group">
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('screening')" title="Screening Test" data-bs-toggle="modal" data-bs-target="#modalCenter">
+              <i class="fas fa-clipboard-check"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('coding')" title="Coding Test"  data-bs-toggle="modal" data-bs-target="#modalCenter">
+              <i class='fas fa-code'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('interview')" title="interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
+              <i class='fas fa-chalkboard-teacher'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#InterviewPanel" title="Add Interviewers">
+              <i class='fas fa-users'></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" onclick="OpenIntegrationModal()" title="Integration Script">
+              <i class='bx bxs-cog'></i>
+            </button>
+          </div>
+
+      </div>
+
+    </div>
+
+    <!-- Jd Testes show here -->
+    <div class="row mt-3" id="testCards"></div>
+
+    <!-- Librarys container -->
+    <div class="row mt-3 bg-menu-theme custm_border_radius pt-3" id="TestCardQuestionsContainersList">
+
+    </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Test code start -->
+
+
+<!-- Test code end -->
+
+
+<!-- Modals start -->
+<div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalCenterTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-2 pb-2">
+        <div class="row">
+          <div class="col mb-3">
+            <label for="testType" class="form-label">Test Name</label> <span hidden id="test_name_validator"
+              class="validator_font_color mx-3">Please Enter Screening Test Name</span>
+            <input type="text" id="testType" class="form-control" placeholder="Test Name" value="Screening - 1"
+              data-test_type="hell" />
+          </div>
+        </div>
+        <div class="row g-2" id="promotLevelContainer">
+          <div class="col mb-3">
+            <label for="emailWithTitle" class="form-label">Promote</label>&nbsp;<small class="form-label">( percentage
+              )</small><span hidden id="promot_validator" class="validator_font_color mx-3">Please Enter Promote percentage</span>
+            <input type="number" id="promot_level" class="form-control" placeholder="" value="60" />
+          </div>
+        </div>
+
+        <div class="row g-2" id="holdContainer">
+          <div class="col mb-0" style="margin-right: 0; display: flex; flex-direction: column;">
+            <label for="testHold" class="form-label px-0">Hold Candidates</label>
+              <div class="form-check form-switch p-0 mb-2"> 
+                <input class="form-check-input" type="checkbox" id="testHold" style="height: 2em; width: 4em; margin-left: 0rem;" onclick="enableOrDisableHold()"> 
+              </div>
+
+              <span id="holdInputContainer" style="display: none;">
+                <label for="emailWithTitle" class="form-label m-0" >Hold ( percentage ) </label> 
+                <span hidden id="hold_validator" class="validator_font_color mx-3">Please Enter Hold Percentage</span>
+                <br>
+                <span class="">
+                  <!-- <small class="form-label">( If candidate will score less than Promote Percentage can't promote to next round )</small> -->
+                  <small class="form-label">( HR Admins or HR Executives may promote to next round or reject candidates based on their performance )</small>
+                </span>
+                
+                <input type="number" id="holdPercentage" class="form-control mt-2" placeholder="" value="50" />
+              </span>
+
+          </div>
+          <span id="holdInfo" class="form-label" style="text-transform: capitalize; font-weight: 700; color: #ff3e1dd9;"> Below the Promote percentage candidate will be rejected </span>
+          <!-- Below the Promote percentage candidate will be rejected -->
+          <!-- <span id="infoCandidatetHold" class="form-label" style="text-transform: capitalize; font-weight: 700; color: #ff3e1dd9;">Below the Hold percentage candidate will be rejected</span> -->
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" onclick="saveOrUpdateTest()" id="saveJdTest">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modals end -->
+
+<!-- JD integration script modal start -->
+<div class="modal fade" id="jd_integration_modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="jd_integration_modal_title">Careers-Hirelines Integration Script</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <li class="form-label">Script tag to be added under `&lt;head&gt;&lt;/head&gt;` tag</li>
+        <textarea class="form-control" rows="4" id="scriptTextarea" style="overflow: hidden;" disabled>
+          {{ hirelines_integration_script_enc }}
+        </textarea>
+        <br>
+        <li class="form-label">Add this function at posting candidate job application (under related .js or script tags)
+        </li>
+        <textarea class="form-control" rows="4" id="functionTextarea" style="overflow: hidden;" disabled>
+          {{ hirelines_integration_function_enc }}
+        </textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="script_copy_btn"><i
+            class='bx bxs-copy icons_custm_weight'></i>&ensp;Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- JD integration script modal end -->
+
+<!-- Test delete conformation modal start -->
+
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="modalToggle" aria-labelledby="conformationForDelete" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="conformationForDelete">Are you sure you want to delete?</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -1.25rem;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal" id="delectCancelBtn">Cancel</button>
+                  <button onclick="deleteTest()" id="deleteTestConformation" data-deletetestid="" class="btn btn-primary">
+                      Delete
+                  </button>
+                  <button id="deleteCloseBtn" data-deletetestid="" data-bs-dismiss="modal" class="btn btn-primary" hidden>
+                    Close
+                </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Test delete conformation modal end -->
+
+<!-- carrer page integration modal start -->
+
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="integrationValidationJd" aria-labelledby="carrersPageIntegrationValidation" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="carrersPageIntegrationValidation"></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2rem;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button id="" class="btn btn-primary" data-bs-dismiss="modal">
+                      Ok
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- carrer page integration modal end -->
+
+<!-- Interview Panile start -->
+<div class="modal fade" id="InterviewPanel" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel3">Interview Panel</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body pb-2">
+
+        <div id="interviewPanelContainer">
+          {% for asgn_interviewer in jd_details.selectedInterviewerLst %}
+              <div class="form-group row interview-panel align-items-center" id="panel_{{ forloop.counter }}">
+                  {% if forloop.first %}
+                      <div class="col-xl-3 col-form-label">Add Interviewers</div>
+                  {% else %}
+                      <div class="col-xl-3 col-form-label"></div>
+                  {% endif %}
+                  <div class="col-xl-6">
+                      <select class="custom-select custom-select-sm interviewer-select form-select my-2" required="">
+                          <option value="" disabled>Select Interviewer</option>
+                          {% for interviewer in jd_details.interviewes_lst  %}
+                              {% if asgn_interviewer.id == interviewer.id %}
+                              <option value="{{ interviewer.id }}" selected>{{ interviewer.name }}</option>
+                              {% else %}
+                              <option value="{{ interviewer.id}}">{{ interviewer.name }}</option>
+                              {% endif %}
+                          {% endfor %}
+                      </select>
+                  </div>
+                  {% if forloop.first %}
+                  {% else %}
+                      <div class="col-xl-1">
+                          <button type="button" class="btn btn remove-panel-button border interviewDelBtnBorder" style="padding: 0.4375rem 1rem;">
+                            <i class="far fa-trash-alt text-danger"></i>
+                          </button>
+                      </div>
+                  {% endif %}
+              </div>
+          {% empty %}
+
+            <div id="interviewPanelContainer">
+              <div class="form-group row interview-panel align-items-center" id="panel_3">
+                      <div class="col-xl-3 col-form-label">Interview Panel</div>
+                  <div class="col-xl-6">
+                    <select class="custom-select custom-select-sm interviewer-select form-select my-2" required="">
+                      <option value="" disabled selected>Select Interviewer</option>
+                      {% for interviewer in jd_details.interviewes_lst  %}
+                          <option value="{{ interviewer.id}}">{{ interviewer.name }}</option>
+                      {% endfor %}
+                  </select>
+                  </div>
+                      <div class="col-xl-1">
+                      </div>
+              </div>
+            </div>
+
+          {% endfor %}
+        </div>
+
+        <div class="form-group row cust-add-interview-container align-items-center justify-content-end pt-3">
+          <label class="col-xl-3 col-form-label"></label>
+          <button type="button" id="addInterviewerButton" class="btn btn-primary" style="margin-left:15px; width: max-content;">Add Interviewer</button>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" style="padding: 0.5rem 1.7rem !important;" onclick="saveInterviewers()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Interview Panile End -->
+
+<!-- Jd Publish Conformation Modal start -->
+
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="JdPublishConformation" aria-labelledby="conformationPublish" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="conformationPublish">One's Publish you can not edit or delete the any test</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="publishConformationCloseBtn"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button onclick="publishJd()" id="publishJdConform" class="btn btn-primary">
+                      Publish
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Jd Publish Conformation Modal End -->
+
+<!-- Validation Modal start -->
+  
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="publishValidationModal" aria-labelledby="PublishValidators" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="PublishValidators">One's Publish you can not edit or delete the any test</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -1.25rem!important;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button onclick="closeModals()" id="ValidationBtn" class="btn btn-primary">
+                      Select Library
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Validation Modal end -->
+
+<!-- Interview Validation Modal start -->
+  
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="InterviewValidationModal" aria-labelledby="InterviewValidators" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="InterviewValidators">Please create interview panel</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -1.25rem !important;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> -->
+                  <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal" onclick="openInterviewpPanel()">
+                      Close
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Interview Validation Modal end -->
+
+
+<!-- Jd Publish Validation Modal start -->
+  
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="jdPublishValidators" aria-labelledby="jdPublishValidators" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="InterviewValidators">Alteast One test has to be add to Publish JD</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2.25rem !important;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal">
+                      Close
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Jd Publish Validation Modal end -->
+
+
+<!-- Dynamic QUestions Validation Modal start -->
+  
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="dynamicQuestionsValidators" aria-labelledby="dynamicQuestionsValidators" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header" style="flex-direction: column;">
+                  <h5 class="modal-title" id="dynamicQuestionsValidator"></h5>
+                  <input type="text" class="form-control" name="" id="DynquestionsCount" hidden style="width: 100px;">
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -2.25rem !important;"></button>
+              </div>
+              <div class="modal-body" style="padding: 0.5rem;"></div>
+              <div class="modal-footer">
+                  <!-- <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> -->
+                  <button id="ValidationBtn" class="btn btn-primary" data-bs-dismiss="modal">
+                      Save
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Dynamic QUestions Validation Modal end -->
+
+<!-- Create Paper status validation modal start -->
+
+<div class="col-lg-4 col-md-6">
+  <div class="modal fade" id="createPaperStatusValidation" aria-labelledby="carrersPageIntegrationValidation" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="max-width: 25rem;">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="carrersPageIntegrationValidation"> 
+                    Can't Edit once JD is published 
+                    <br>
+                    <small>For support please contact us</small>
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -3.25rem;"></button>
+              </div>
+              <!-- <div class="modal-body"><small>For support please contact us</small></div> -->
+              <div class="modal-footer">
+                  <button id="" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Create Paper status validation modal end -->
+
+<script>
+  var jdlibraryid = "{{jd_details.jdlibraryid}}";
+  var jdId = '{{jd_details.id}}';
+  var interviewersList = {{ jd_details.interviewes_lst|safe }}
+  var skillLst = {{ jd_details.skillsList|safe }}
+  var workFlowDetails = {{ jd_details.workFlowDetails|safe }};
+</script>
+
+<style>
+  .active-skill {
+    background-color: var(--primary-color) !important; /* Blue background */
+    color: #fff !important; /* White text */
+    border: none !important;
+    outline: none !important;
+  }
+
+  .inactive-skill {
+    border: 0.8px solid lightgray;
+    border-radius: 1rem;
+    color: gray;
+    margin: 0.5rem 0.5rem;
+    padding: 0.3rem 0.8rem;
+    background: #fff;
+  }
+
+  .no-data-skill {
+    border: 0.8px solid rgb(111 111 111);
+    border-radius: 1rem;
+    color: gray;
+    margin: 0.5rem 0.5rem;
+    padding: 0.3rem 0.8rem;
+    background: #e6e6e6;
+    cursor: not-allowed !important;
+  }
+
+  .skillItems {
+      margin: 5px !important;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      color: #333;
+  }
+
+  .skillItems:hover {
+      background-color: #f1f1f1;
+  }
+
+  .customStarCursor{
+    cursor: pointer;
+    color: var(--primary-color);
+  }
+</style>
+
+
+<style>
+  /* .active-skill {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+  } */
+  .icons_custm_weight {
+    font-weight: 500;
+  }
+  .custm_blockquote-footer {
+    font-size: 85%;
+    margin-top: -1rem;
+  }
+
+  .validator_font_color {
+    color: red;
+  }
+
+  .cust_cursor {
+    cursor: pointer;
+  }
+
+  .custm_border_radius {
+    border-radius: 10px;
+  }
+
+  .Librarys_container {
+    width: 350px;
+    height: 400px;
+    background-color: var(--light-primary-color);
+    border-radius: 10px;
+  }
+
+  .library_labeles_container {
+    display: flex;
+  }
+
+  .Librarys_label_container {
+    width: 293px;
+  }
+
+  .Librarys_questions_container {
+    height: 350px;
+  }
+
+  .library_sub_container {
+    display: flex;
+  }
+
+  .active_selected_library {
+    color: var(--primary-color) !important;
+    background-color: #fff !important;
+    border-radius: 0.375rem;
+    font-weight: 600;
+  }
+
+  .each_question_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .library_seprator {
+    color: #000;
+    font-weight: 600;
+    border-bottom: 0.5px solid #fff;
+  }
+
+  .custm_margin_to_selected_library {
+    margin-right: 0.5rem !important;
+    margin-left: 0.5rem !important;
+  }
+
+  .library_title {
+    font-weight: 600;
+  }
+
+  .hrElement {
+    /* border-top: 1px solid #dbdbe1 !important; */
+    height: 0.5px !important;
+    border-color: #dbdbe1 !important;
+    margin: 0.3rem !important;
+  }
+
+  .custm-edit-icon {
+    padding: 10px;
+    border-radius: 7px;
+    color: gray;
+    border: 0.8px solid lightgray;
+  }
+
+  .add-test-name-cust {
+    color: #79829a;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .flash-border {
+    border: 2px solid #adadae;
+    /* Border color */
+    box-shadow: 0 0 10px #adadae, 0 0 20px #adadae;
+    /* Glow effect */
+    animation: fadeGlow 0.5s ease;
+    /* Animation for fading in */
+  }
+
+  @keyframes fadeGlow {
+    0% {
+      border-color: #adadae;
+      box-shadow: 0 0 10px #adadae, 0 0 20px #adadae;
+    }
+
+    50% {
+      border-color: transparent;
+      /* Fade the border color */
+      box-shadow: 0 0 5px #adadae, 0 0 10px #adadae;
+      /* Reduce glow */
+    }
+
+    100% {
+      border-color: #adadae;
+      /* Bring back the border color */
+      box-shadow: 0 0 10px #adadae, 0 0 20px #adadae;
+      /* Full glow */
+    }
+  }
+  .use_template_cust_btn{
+    padding-bottom: 0.3rem;
+    padding-top: 0.3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .questions_container_selected_title{ 
+    padding-left: 1rem !important;      /* Equivalent to style.paddingLeft = '1rem' */
+    margin-bottom: 0rem !important; 
+  }
+  .selectedLibraryTitltandUserTemplateContainer{
+    display: flex;                  
+      justify-content: space-between;
+      align-items: center;         
+      padding-bottom: 0.8rem;   
+  }
+  
+  .question_container_header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 1rem;
+    padding-top: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 0.5rem;
+  }
+  .static_or_dynamic_text_container_headings{
+    width: max-content;
+    color: var(--secondary-color);
+    /* text-decoration: underline; */
+  }
+  .staticQuestionsContainer{
+    margin-bottom: 1.7rem;
+    padding-right: 1.5rem;
+  }
+  .dynamicQuestionsContainer{
+    margin-bottom: 1.7rem;
+    padding-right: 1.5rem;
+  }
+  .titleAndContainerDynamic{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .inputCustWidth{
+    width: 20%;
+  }
+  .titleInputContainer{
+    display: flex;
+    justify-content:flex-end;
+    align-items: center;
+  }
+  .deleteFontIcon{
+    color: #ff3e1dd9;
+    width: max-content;
+    padding: 8px;
+    border-radius: 7px;
+    border: 0.8px solid #ff3e1dd9;
+    margin-left: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+.cust_cursor {
+    cursor: pointer;
+}
+
+.card {
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custm-edit-icon, .deleteFontIcon i {
+    font-size: 1.2rem;
+}
+
+.text-dark {
+    color: #333;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* New styling for bottom icons */
+.card .border-top {
+    border-top: 1px solid #e0e0e0;
+}
+
+.d-flex.justify-content-between {
+    padding-top: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card {
+        padding: 1rem;
+    }
+}
+
+/* AII Animations */
+
+/* Animation for fading in */
+.fade-in {
+    animation: fadeIn 0.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animation for fading out */
+.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Slide down animation */
+.slide-down {
+    animation: slideDown 0.5s ease-in forwards;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Slide up animation */
+.slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slide-down {
+    animation: slideDown 0.5s forwards;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.flash-border {
+    animation: flashBorder 0.5s forwards;
+}
+
+@keyframes flashBorder {
+    0% { border: 2px solid transparent; }
+    50% { border: 2px solid yellow; }
+    100% { border: 2px solid transparent; }
+}
+
+/* Animation for fading in elements */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation for sliding in elements */
+.slide-in {
+    animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+/*  test cards */
+.unActiveTestCard{
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+  border: none;
+}
+
+/* Style for screen tests */
+.activeTestCars-screen-test {
+    border: 1px solid #8763ee; /* screenMainColor */
+    box-shadow: 0 2px 6px 0 rgba(79, 80, 82, 0.56);
+}
+
+/* Style for coding tests */
+.activeTestCars-coding-test {
+    border: 1px solid #00d462; /* codingMainColor */
+    box-shadow: 0 2px 6px 0 rgba(79, 80, 82, 0.56);
+}
+
+/* Style for interview tests */
+.activeTestCars-interview-test {
+    border: 1px solid #1f68f3; /* interviewMainColor */
+    box-shadow: 0 2px 6px 0 rgba(79, 80, 82, 0.56);
+}
+.interviewDelBtnBorder{
+  border-color: #ff3e1dd9 !important;
+}
+.cust-add-interview-container{
+  width: 101%;
+}
+.margin-top-adjust_one {
+    margin-top: -1.25rem !important;
+}
+.margin-top-adjust_two {
+    margin-top: -3.25rem !important;
+}
+.margin-top-adjust_three {
+    margin-top: -3.25rem !important;
+}
+.testCardQuestionsHeadingContainer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.testCardQuestionsFirstContainer-first-child{
+  display: flex;
+  align-items: center;
+}
+.btn-custom-margin-left{
+  margin-left: 0.5rem;
+}
+.text-align-custom-left-margin{
+  margin-left: 0.5rem;
+}
+.switch-btw-screening{
+  display: flex;
+  width: max-content;
+  padding: 0.5rem 0.6rem;
+  border: 0.5px lightgray solid;
+  border-radius: 0.5rem;
+}
+.screeningTestTab{
+  width: 150px;
+  margin-right: 0.5rem;
+  padding: 0.2rem 0.3rem;
+  border: 0.5px lightgray solid;
+  border-radius: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.active-screeningTab{
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+}
+.screeningTabsContainer{
+  margin-top: 0.5rem;
+}
+/* .skillsListMainContainer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: max-content;
+  max-height: 150px;
+  overflow: scroll;
+  overflow-x: hidden;
+  background: rgb(255,255,255);
+  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%, rgba(255,255,255,0) 100%);
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+} */
+
+.skillsListMainContainer {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%, rgba(255,255,255,0) 100%);
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.skillsTopicsMainContainer {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%, rgba(255,255,255,0) 100%);
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.skillsSubTopicsMainContainer {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%, rgba(255,255,255,0) 100%);
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+
+.skillsList{
+  width: 96%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.skillItems{
+  border: 0.8px solid lightgray;
+  border-radius: 1rem;
+  color: gray;
+  margin: 0.5rem 0.5rem;
+  padding: 0.3rem 0.8rem;
+  background: #fff;
+}
+.skillItems:nth-child(1){
+  margin-left:0rem;
+}
+
+.chevron-arrow{
+  padding: 10px;
+}
+
+.complexityContainerHeaderCls{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.complexityDynamicContainer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.customQuestionContainer{
+  margin: 1rem 0rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.questionElements{
+  width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dynamicInpt{
+  width: 80px;
+}
+
+.dynamicinptLabel{
+  margin-right: 0.5rem;
+  margin-bottom: 0;
+}
+
+.complexityMainContainerCls{
+  /* border: 0.8px solid lightgray; */
+  /* border-radius: 0.5rem; */
+  padding: 0.5rem 0.5rem;
+  margin: 0.5rem 0rem;
+}
+
+.skillsAndQuestionsContainerSeprater{
+  height: 0.1px !important;
+  background-color: var(--primary-color);
+}
+
+.containersSepratersCustomCls{
+  height : 0.5px;
+  width : 100%;
+  background-color:#d9dee3;
+}
+
+/* .starCongratesGif{
+  background-image: url('/static/img/illustrations/congratulations-7600-ezgif.com-gif-maker.gif');
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 2;
+} */
+
+/* .blastGif{
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  height: 30px;
+  width: 30px;
+} */
+
+.customHr{
+  height: 0.5px;
+  width: 100%;
+  background-color: #d9dee3;
+  margin: 1rem 0;
+}
+
+.showMoreText{
+  padding: 0.2rem 0.7rem;
+  text-transform: capitalize;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.showMoreMainContainer{
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  margin: 0.5rem 0rem;
+}
+.questionTypeLabels{
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  margin-top: 1rem;
+}
+
+.qStaticLabel{
+  /* margin-right: 1rem; */
+  margin-bottom: 0px !important;
+}
+
+.qDynamicLabel{
+  margin-left: 1rem;
+  margin-bottom: 0px !important;
+}
+
+</style>
+<script src="{% static 'lib/portal/assets/js/ui-popover.js' %}"></script>
+<script src="/static/config/config.js"></script>
+<script src="{% static 'js/jd_setup_new.js' %}"></script>
+<script src="{% static 'lib/portal/assets/js/extended-ui-perfect-scrollbar.js' %}"></script>

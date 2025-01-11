@@ -301,6 +301,7 @@ def saveJdNewTest(dataObjs,compyId):
                     paperid = None,
                     papertype = testType,
                     papertitle = dataObjs['testName'] if 'testName' in dataObjs else None,
+                    teststatus = 'A'
                     )
             savedWorkFlowDetails.save()
             
@@ -338,8 +339,9 @@ def saveJdNewTest(dataObjs,compyId):
                     workFlowDetails['holdpercentage'] = dataObjs['holdvalue']
 
             return [workFlowDetails]
-
-        if dataObjs['createOrUpdate'] == 'update': # it will update the existing Test
+        
+        # it will update the existing Test.
+        if dataObjs['createOrUpdate'] == 'update': 
             
             holdStatus = None
             if 'holdYesOrNo' in dataObjs:
@@ -493,10 +495,11 @@ def saveInterviewersJD(dataObjs):
 # Saving the Job descritption Deatils
 def saveAddJD(dataObjs,compyId,hrEmail):
     try:
+        # skillsArry = str(dataObjs['skills']).replace('[', '').replace(']', '').replace("'", '').replace('"', '')
         hrDeatils = User.objects.filter(email=hrEmail).last()
         if hrDeatils is not None:
             saveJd = JobDesc(
-                jdlibraryid = dataObjs['jdLibraryId'] if dataObjs['jdLibraryId'] else None,
+                # jdlibraryid = dataObjs['jdLibraryId'] if dataObjs['jdLibraryId'] else None,
                 title       = dataObjs['title'] if dataObjs['title'] else None,
                 description = dataObjs['jobDesc'] if dataObjs['jobDesc'] else None,
                 role        = dataObjs['role'] if dataObjs['role'] else None,
@@ -507,7 +510,7 @@ def saveAddJD(dataObjs,compyId,hrEmail):
                 budget      = dataObjs['budget'] if dataObjs['budget'] else None,
                 positions   = dataObjs['noPositions'] if dataObjs['noPositions'] else None,
                 createdby   = hrDeatils.id if hrDeatils.id else None,
-                skillset    = dataObjs['skills'] if dataObjs['skills'] else None, 
+                skillset    = dataObjs['skills'], 
                 skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None, 
                 companyid   = compyId if compyId else None,
                 status      = 'D',
@@ -523,11 +526,10 @@ def saveAddJD(dataObjs,compyId,hrEmail):
 def saveUpdateJd(dataObjs, compyId, hrEmail):
     try:
         hrDetails = User.objects.filter(email=hrEmail).last()
-        print('========================')
-        print(dataObjs)
         if hrDetails is not None:
             # Check if the JobDesc with the given jdLibraryId exists
             jobDesc = JobDesc.objects.filter(id = dataObjs['JdID']).first()
+            # skillsArry = str(dataObjs['skills']).replace('[', '').replace(']', '').replace("'", '').replace('"', '')
             if jobDesc:
                 # Update the fields only if the JobDesc exists
                 jobDesc.title       = dataObjs['title'] if dataObjs['title'] else None
@@ -538,7 +540,7 @@ def saveUpdateJd(dataObjs, compyId, hrEmail):
                 jobDesc.location    = dataObjs['workLocation'] if dataObjs['workLocation'] else None
                 jobDesc.budget      = dataObjs['budget'] if dataObjs['budget'] else None
                 jobDesc.positions   = dataObjs['noPositions'] if dataObjs['noPositions'] else None
-                jobDesc.skillset    = dataObjs['skills'] if dataObjs['skills'] else None
+                jobDesc.skillset    = dataObjs['skills']
                 jobDesc.skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None
                 jobDesc.companyid   = compyId if compyId else None
                 jobDesc.createdby   = hrDetails.id if hrDetails.id else None

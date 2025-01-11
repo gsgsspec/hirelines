@@ -18,7 +18,7 @@ from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, \
+from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService
 
@@ -186,7 +186,28 @@ def addJD(request):
             response['data'] = jdData
             response['statusCode'] = 0
     except Exception as e:
-        response['data'] = 'Error in adding company data'
+        response['data'] = 'Error in Saving JD Data'
+        response['error'] = str(e)
+        raise
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def jdUpdateData(request):
+    response = {
+        'data':None,
+        'error': None,
+        'statusCode':1
+    }
+    try:
+        if request.method == 'POST':
+            dataObjs = json.loads(request.POST.get('data'))
+            companyID = getCompanyId(request.user)
+            jdDataDict = updateJdDataService(dataObjs)
+            response['data'] = jdDataDict
+            response['statusCode'] = 0
+    except Exception as e:
+        response['data'] = 'Error in getting JD data'
         response['error'] = str(e)
         raise
     return JsonResponse(response)
@@ -206,7 +227,7 @@ def updateJD(request):
             updateJdServices(dataObjs,companyID,request.user)
             response['statusCode'] = 0
     except Exception as e:
-        response['data'] = 'Error in adding company data'
+        response['data'] = 'Error in JD Updata data'
         response['error'] = str(e)
         raise
     return JsonResponse(response)
@@ -274,7 +295,6 @@ def getJdQuestionsView(request):
                     response['data'] = jd_questions
                     response['statusCode'] = 0
             
-            
     except Exception as e:
         response['data'] = 'Error in getJdQuestionsView'
         response['error'] = str(e)
@@ -312,6 +332,31 @@ def addCandidate(request):
     return JsonResponse(response)
 
 
+# @api_view(['POST'])
+# def workFlowData(request):
+#     response = {
+#         'data': None,
+#         'error': None,
+#         'statusCode': 1
+#     }
+#     try:
+#         if request.method == "POST":
+#             dataObjs = json.loads(request.POST.get('data'))
+#             user_email = request.user
+#             company_id = getCompanyId(user_email)
+#             workflowData = workFlowDataService(dataObjs,company_id)
+#             response['data'] = workflowData
+#             response['statusCode'] = 0
+#         else:
+#             return HttpResponseForbidden('Request Blocked')
+       
+#     except Exception as e:
+#         response['data'] = 'Error in saving Job Description'
+#         response['error'] = str(e)
+#         raise
+
+#     return JsonResponse(response)
+
 @api_view(['POST'])
 def workFlowData(request):
     response = {
@@ -336,7 +381,6 @@ def workFlowData(request):
         raise
 
     return JsonResponse(response)
-
 
 
 @api_view(['GET'])
@@ -1228,6 +1272,27 @@ def makeAstarQuestion(request):
 
     except Exception as e:
         response['data'] = 'Error in update emails'
+        response['error'] = str(e)
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def skillsWithTopicwithSubtopics(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            skillsData = skillsWithTopicsWithSubtopicsWithQuestionsService(dataObjs)
+            response['data'] = skillsData
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = "error while getting the topics for skills"
         response['error'] = str(e)
     
     return JsonResponse(response)

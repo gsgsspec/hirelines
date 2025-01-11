@@ -3,6 +3,7 @@ from app_api import views
 
 urlpatterns = [
     path('add-jd', views.addJD),
+    path('update-jd-data', views.jdUpdateData),
     path('update-jd', views.updateJD),
     path('add-companydata', views.addCompanyData),
     # path('add-jd-candidate', views.addJDCandidate),
@@ -10,10 +11,11 @@ urlpatterns = [
     path('jd-add-or-update-test',views.jdAddTest),
     path('login-user',views.loginUser),
     path('get-jd-workflow',views.getJdWorkflow),
-    path('get-jd-screening-questions',views.getJdQuestionsView),
+    path('get-jd-screening-questions',views.getJdQuestionsView), #
     path('add-candidate',views.addCandidate),
     path('interview-scheduling/<int:cid>',views.interviewScheduling),
     path('schedule-interview',views.scheduleInterviewView),
+    # path('work-flow-data',views.workFlowData),
     path('work-flow-data',views.workFlowData),
     path('candidate-registration-cdn/<str:enc_jdid>/',views.candidateRegistrationCDNForm),
     path('register-candidate',views.registerCandidate),
@@ -54,5 +56,6 @@ urlpatterns = [
     path('update-source-data',views.updateSourceData),
     path('candidate-upload-file',views.candidateUploadFile),
     path('confirmed-candidates-data',views.confirmedCandidateData),
-    path('display-dashboardflag',views.updateDashboardDisplayFlag)
+    path('display-dashboardflag',views.updateDashboardDisplayFlag),
+    path('skills-topics-subtopics-withquestions',views.skillsWithTopicwithSubtopics),
 ]
