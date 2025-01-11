@@ -799,7 +799,6 @@ def updateSourcesDataDB(dataObjs, company_id):
 
 def updateCandidateInfoDB(dataObjs, company_id):
     try:
-        print('dataObjs',dataObjs)
 
         candidate = Candidate.objects.filter(candidateid=dataObjs['cid'],companyid=company_id).last()
 
@@ -809,6 +808,19 @@ def updateCandidateInfoDB(dataObjs, company_id):
             candidate.mobile = dataObjs['mobile']
 
             candidate.save()
+
+    except Exception as e:
+        raise
+
+
+def updateDashboardDisplayFlagDB(dataObjs, company_id):
+    try:
+
+        job_desc = JobDesc.objects.filter(id=dataObjs['jobid'],companyid=company_id).last()
+        
+        if job_desc:
+            job_desc.dashboardflag = dataObjs['dashboard-display']
+            job_desc.save()
 
     except Exception as e:
         raise

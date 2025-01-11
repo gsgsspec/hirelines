@@ -1,8 +1,11 @@
+import os
 import json
 import requests
 import string
 import secrets
 import ast
+import time
+import pandas as pd
 from django.db.models import Q, Count, Avg
 from datetime import datetime, timedelta, date
 from django.utils import timezone
@@ -55,6 +58,9 @@ from app_api.functions.database import (
 from app_api.functions.mailing import sendEmail
 from django.forms.models import model_to_dict
 from .constants import const_candidate_status, const_paper_types
+from .excel_mapping import validate_excel_with_json
+from hirelines import settings
+from .database import addCandidateDB
 
 
 def addCompanyDataService(dataObjs):
@@ -247,11 +253,13 @@ def getJobDescData(jid, company_id):
             ).exclude(candidateid__in=deleted_candidate_ids).count()
 
             jd_data = {
+                "jobid":job_desc.id,
                 "title": job_desc.title,
                 "screening_tests": screening_tests,
                 "coding_tests": coding_tests,
                 "interviews": interviews,
                 "offer_letters": offer_letters,
+                "display_flag": job_desc.dashboardflag if job_desc.dashboardflag else "N"
             }
             return jd_data
 
@@ -450,7 +458,7 @@ def getCandidatesData(userid):
             c_status = const_candidate_status.get(candidate.status, "")
 
             job_desc = JobDesc.objects.filter(id=candidate.jobid).last()
-
+            
             candidates_list.append(
                 {
                     "id": candidate.id,
@@ -2194,9 +2202,15 @@ def dashBoardGraphDataService(companyid):
 
             # JD Registrations Data - Bar graph
 
-            job_desc_ids = list(JobDesc.objects.filter(companyid=company.id).order_by('-id').values_list('id', flat=True)[:5])
+            # job_desc_ids = list(JobDesc.objects.filter(companyid=company.id).exclude(status__in=['D','I']).values_list('id', flat=True)[:5])
 
-            job_descs = JobDesc.objects.filter(id__in=job_desc_ids)
+            jd_ids_with_dashboard = list(JobDesc.objects.filter(companyid=company.id, dashboardflag='Y').exclude(status__in=['D', 'I']).order_by('-createdon').values_list('id', flat=True)[:5])
+
+            if len(jd_ids_with_dashboard) < 5:
+                jd_ids_with_dashboard += list(JobDesc.objects.filter(companyid=company.id).exclude(status__in=['D', 'I']).exclude(id__in=jd_ids_with_dashboard) .order_by('-createdon').values_list('id', flat=True)[:(5 - len(jd_ids_with_dashboard))])
+
+            
+            job_descs = JobDesc.objects.filter(id__in=jd_ids_with_dashboard).order_by('-createdon')
 
             jd_reg_data = {"jdtitle":[],"screening_count":[],"coding_count":[],"interview_count":[],"offered_count":[]}
             
@@ -2463,6 +2477,87 @@ def getCompanySourcesData(company_id):
                 })
 
             return sources_data
+
+    except Exception as e:
+        raise
+
+
+
+def mapUploadedCandidateFields(user,fileObjs):
+    try:
+        
+        uploaded_excel = fileObjs.get('file')
+
+        if uploaded_excel:
+
+            excel_filename = os.path.splitext(uploaded_excel.name)
+            excel_extension = excel_filename[1]
+
+            user_file_name = f"abc_{excel_extension}"
+            excel_path = os.path.join(settings.MEDIA_ROOT,'uploads','candidate_upload',user_file_name)
+
+            with open(excel_path, 'wb+') as user_file:
+                for chunk in uploaded_excel.chunks():
+                    user_file.write(chunk)
+
+            file_path = "C:/Srikanth/projects/hirelines/app_api/functions/data_configs/mapping.json"
+            mappings_data = validate_excel_with_json(file_path,excel_path)
+
+            print('mappings_data',mappings_data)
+            return mappings_data
+
+    except Exception as e:
+        raise
+
+
+
+def processAddCandidateService(company_id,dataObjs,user_id):
+    try:
+
+        excel_file_path = "C:/Srikanth/projects/hirelines/media/uploads/candidate_upload/abc_.xlsx"
+
+        df = pd.read_excel(excel_file_path)
+
+        # Extract column index mapping from the dataObjs
+        column_mapping = dataObjs['columns-data']
+
+        jd_id = dataObjs['jd']
+        begin_from = Workflow.objects.filter(jobid=jd_id).first().paperid
+        source_code = dataObjs['source-code']
+
+        # Loop through each row of the DataFrame and extract the necessary fields
+        for index, row in df.iterrows():
+            # Using the column mapping to get the correct values
+            first_name = row.iloc[column_mapping.get('First Name', -1)] if column_mapping.get('First Name', -1) != -1 else None
+            last_name = row.iloc[column_mapping.get('Last Name', -1)] if column_mapping.get('Last Name', -1) != -1 else None
+            email = row.iloc[column_mapping.get('Email', -1)] if column_mapping.get('Email', -1) != -1 else None
+            mobile = row.iloc[column_mapping.get('Mobile', -1)] if column_mapping.get('Mobile', -1) != -1 else None
+
+            # Validate the extracted fields (can be expanded as needed)
+            if not first_name or not email:
+                print(f"Skipping row {index + 1} due to missing essential data")
+                continue
+            
+            candidate_data = {
+                'firstname': first_name ,
+                'lastname': last_name,
+                'email': email,
+                'mobile': mobile,
+                'jd': dataObjs['jd'],
+                'begin-from': begin_from,
+                'source-code': source_code
+            }
+
+
+            # c_data = addCandidateDB(candidate_data,company_id,None,user_id)
+
+            print('c_data',c_data)
+
+            # Example of processing candidate data (e.g., save to database)
+            print(f"Adding candidate: {first_name} {last_name}, Email: {email}, Mobile: {mobile}")
+
+            # Your logic for saving to the database or performing further processing goes here
+            # Example: save_candidate_to_db(company_id, first_name, last_name, email, mobile)
 
     except Exception as e:
         raise

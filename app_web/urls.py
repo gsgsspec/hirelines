@@ -34,9 +34,10 @@ urlpatterns = [
     path('tnc',views.termsAndConditionsPage),
     path('privacy-policy',views.privacyPolicyPage),
     path('sources',views.sourcesPage),
-
     path("company-data",views.companyPage),
+    path("upload-candidates",views.uploadCandidatesPage),
     
+
     # Company data page
     path("cmp-reg", views.homePage),
     

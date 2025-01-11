@@ -775,3 +775,27 @@ def sourcesPage(request):
     
     except Exception as e:
         raise
+
+
+def uploadCandidatesPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        company_id = getCompanyId(user_mail)
+
+        jds_list = getCompanyJdData(company_id)
+        sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+        
+        return render(request, "portal_index.html", {"template_name": 'candidate_upload.html','menuItemList':menuItemList,'sources_data':sources_data,
+                                                     'jds_data':jds_list})
+    
+    except Exception as e:
+        raise

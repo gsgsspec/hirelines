@@ -24,3 +24,10 @@ USE hirelines;
 ALTER TABLE brules
 ADD COLUMN hold CHAR(1) NULL,
 ADD COLUMN holdpercentage INT NULL;
+
+
+10-Jan-2025=====================Srikanth=========================
+
+alter table hirelines.jobdesc add column dashboardflag varchar(1) null ;
+
+============================================================

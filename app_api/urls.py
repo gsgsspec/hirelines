@@ -52,4 +52,7 @@ urlpatterns = [
     path('make-star-question',views.makeAstarQuestion),
     path('update-candidate-info',views.updateCandidateInfo),
     path('update-source-data',views.updateSourceData),
+    path('candidate-upload-file',views.candidateUploadFile),
+    path('confirmed-candidates-data',views.confirmedCandidateData),
+    path('display-dashboardflag',views.updateDashboardDisplayFlag)
 ]

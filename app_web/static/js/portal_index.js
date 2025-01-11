@@ -5,7 +5,7 @@ var menuItemsUrls = {
     'questionnaire': ['/questionnaire', '/add-category', '/add-report-data', '/edit-category', '/section-edit', '/section-add'],
     'branding': ['/branding'],
     'email-templates': ['/email-templates','/update-emailtemp'],
-    'candidates': ['/candidates', '/add-candidate', 'interview-schedule', '/candidate-data'],
+    'candidates': ['/candidates', '/add-candidate', 'interview-schedule', '/candidate-data','/upload-candidates'],
     'branding': ['/branding'],
     'reports': ['/reports', '/jd'],
     'job-descriptions' : ['/job-descriptions','/add-job-description','/job-description-set-up','/update-job-description','/jd'],

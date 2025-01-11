@@ -3,6 +3,7 @@ from datetime import datetime
 import json
 import logging
 import time
+import threading
 from urllib.parse import urljoin
 
 import requests
@@ -19,13 +20,13 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
-        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService
+        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
-    updateCandidateInfoDB
+    updateCandidateInfoDB, updateDashboardDisplayFlagDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -1404,6 +1405,82 @@ def updateCandidateInfo(request):
 
     except Exception as e:
         response['data'] = 'Error in updating candidate info'
+        response['error'] = str(e)
+    
+    return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def candidateUploadFile(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            company_id = getCompanyId(request.user)
+            fileObjs = request.FILES
+            mapping_response = mapUploadedCandidateFields(request.user,fileObjs)
+            response['data'] = mapping_response
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in excel mapping response data'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def confirmedCandidateData(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            company_id = getCompanyId(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            user = auth_user(request.user)
+            thread = threading.Thread(target=processAddCandidateService, args=(company_id, dataObjs, user.id))
+            thread.daemon = True
+            thread.start()
+            # data = confirmedCandidateDataService(dataObjs)
+            # response['data'] = data
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in confirmed candidate data service'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+
+
+@api_view(['POST'])
+def updateDashboardDisplayFlag(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            company_id = getCompanyId(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            updateDashboardDisplayFlagDB(dataObjs,company_id)
+            response['data'] = "Data Updated"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updating dashboard display data'
         response['error'] = str(e)
     
     return JsonResponse(response)

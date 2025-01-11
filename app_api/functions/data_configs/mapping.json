@@ -1,0 +1,36 @@
+{
+    "column_mappings": {
+
+        "First Name": {
+            "validations": {
+                "pattern": "^[a-zA-Z]+([ '-][a-zA-Z]+)*$",
+                "min_length": 2,
+                "max_length": 50,
+                "accuracy": 50
+            }
+        },
+        
+        "Last Name": {
+            "validations": {
+                "pattern": "^[a-zA-Z]+([ '-][a-zA-Z]+)*$",
+                "min_length": 2,
+                "max_length": 50,
+                "accuracy": 50
+            }
+        },
+
+        "Email": {
+            "validations": {
+                "pattern": "^[\\w.-]+@[\\w.-]+\\.\\w+$"
+            }
+        },
+
+        "Mobile": {
+            "validations": {
+                "pattern": "^[0-9]{10}$",
+                "min_length": 10,
+                "max_length": 10
+            }
+        }
+    }
+}

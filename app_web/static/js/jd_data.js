@@ -85,7 +85,7 @@ if (screening_count === 0 && coding_count === 0 && interview_count === 0 && offe
           backgroundColor: "#f4f6f9",  // Light background color for contrast
           data: [{
             type: "funnel",
-            indexLabelFontSize: 16,
+            indexLabelFontSize: 20,
             toolTipContent: "<b>{label}</b>: {y} candidates",
             indexLabel: "{y}",
             indexLabelPlacement: "inside", // Centers labels
@@ -106,3 +106,25 @@ if (screening_count === 0 && coding_count === 0 && interview_count === 0 && offe
         chart.render();
     }
 }
+
+
+$('#dashboard-display').on('change', function() {
+    var isChecked = $(this).prop('checked');
+
+    var status = isChecked ? 'Y' : 'N';
+
+    dataObjs = {
+        'dashboard-display':status,
+        'jobid':jobId
+    }
+
+    var final_data = {
+        'data': JSON.stringify(dataObjs),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    }
+
+    $.post(CONFIG['portal'] + "/api/display-dashboardflag", final_data, function (res) {
+     
+    })
+
+})

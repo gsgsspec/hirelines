@@ -9,20 +9,24 @@
     </div>
     <div id="display_icon" style="display:block;cursor:pointer" onclick='showFullPage()'><i class="bx bx-menu bx-sm"></i></div>
     <div id="hide_icon" style="display:none;cursor:pointer" onclick='hideFullPage()'><i class="bx bx-menu bx-sm"></i></div>
-    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse"> <h3 class="course_title_heading" style="margin: 0px;"> {{jd_data.title}} </h3>
+    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+        <h3 class="course_title_heading" style="margin: 0px;"> {{jd_data.title}} </h3>
     </div>
+    
 </nav>
+
+<div class="d-flex justify-content-end mt-3">
+    <label class="form-check-label">Display in dashboard &nbsp;</label>
+    <div class="form-check form-switch mb-2">
+        <input class="form-check-input cursor-pointer" type="checkbox" id="dashboard-display" {% if jd_data.display_flag == "Y" %} checked {% else %} {% endif %}>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-md-6 col-xl-6">
-        <div class="mt-5">
+        <div class="mt-2">
             <div class="image-container">
                 <div id="funnelChartContainer" style="height: 400px; width: 80%;"></div>
-                <!-- <span class="positioned-number">{{jd_data.screening_tests}}</span>
-                <span class="positioned-number">{{jd_data.coding_tests}}</span>
-                <span class="positioned-number">{{jd_data.interviews}}</span>
-                <span class="positioned-number">{{jd_data.offer_letters}}</span>
-                <img src="{% static 'lib/portal/assets/img/illustrations/funnel_no_icons.svg' %}" alt="funnel-icon" class="img-fluid"> -->
                 <div id="noCandidatesMessage" class="no-candidates-message" style="display:none;">
                     No Candidates Registered
                 </div>
@@ -30,7 +34,7 @@
         </div>
     </div>
     <div class="col-md-6 col-xl-6">
-        <div class="row mt-5 text-center">
+        <div class="row mt-2 text-center  animate__animated animate__zoomIn">
             <div class="col-md-6 col-xl-6">
                 <div class="card text-white mb-3" style="background-color: #17b0e3;">
                     <div class="card-body">
@@ -147,6 +151,9 @@
     </div>
 </div>
 
+<script>
+    
+</script>
 
 <style>
 
@@ -208,10 +215,11 @@
 
 </style>
 <script>
-screening_count = {{jd_data.screening_tests}};
-coding_count = {{jd_data.coding_tests}};
-interview_count = {{jd_data.interviews}};
-offer_count = {{jd_data.offer_letters}};
+    screening_count = {{jd_data.screening_tests}};
+    coding_count = {{jd_data.coding_tests}};
+    interview_count = {{jd_data.interviews}};
+    offer_count = {{jd_data.offer_letters}};
+    var jobId = {{jd_data.jobid}};
 </script>
 <script src="{% static 'js/jd_data.js' %}"></script>
 

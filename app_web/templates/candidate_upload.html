@@ -1,0 +1,97 @@
+{% load static %}
+<div class="container-center">
+    <div class="col-11">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">Job Description</label>
+                    <div class="col-sm-8">
+                      <select class="form-select" id="jd" required>
+                        <option selected disabled></option>
+                        {% for jd in jds_data %}
+                          <option value="{{ jd.id }}">{{ jd.title }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">Source code</label>
+                    <div class="col-sm-3">
+                        <!-- <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5" maxlength="5" pattern="[^ ]*" required> -->
+                        <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5"
+                            maxlength="5" pattern="^[a-zA-Z0-9]*$" required>
+                        <div id="existing-sources" class="existing-sources"></div>
+                        <span style="color: red;display: none;" id="code-error"><small>* Code should be of 5
+                                letters</small></span>
+                        <span style="color: red;display: none;" id="career-code-error"><small>* This code will be used
+                                for careers page</small></span>
+                    </div>
+                    <div class="col-sm-3" style="padding-left: 0px;">
+                        <label class="col-form-label p-clr" id="selected-source"></label>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">File</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="file" id="excelFile" accept=".xlsx, .xls" />
+                    </div>
+                </div>
+                <div class="row justify-content-start">
+                    <div class="col-sm-10 text-start">
+                      <button id="process-excel-file" type="submit" class="btn btn-primary">Process</button>
+                    </div>
+                </div>
+
+                <div id="confirmation-prompt" style="margin-top: 20px; margin-bottom: 20px;"></div>
+                <div id="table-container" class="table-responsive text-nowrap"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var sourcesData = JSON.parse('{{ sources_data|escapejs }}');
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#jd').select2({
+            placeholder: "Select Job Role",
+            allowClear: true
+        });
+    });
+</script>
+
+<script src="{% static 'js/candidate_upload.js' %}"></script>
+
+<style>
+
+    :root {
+        color-scheme: only dark;
+    }
+
+    .existing-sources {
+        border: 1px solid #ddd;
+        max-height: 150px;
+        overflow-y: auto;
+        position: absolute;
+        background: #fff;
+        z-index: 1000;
+        width: 20%;
+        display: none;
+        /* Hide by default */
+    }
+
+    .existing-sources div {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .existing-sources div:hover {
+        background: #f0f0f0;
+    }
+</style>
