@@ -31,3 +31,9 @@ ADD COLUMN holdpercentage INT NULL;
 alter table hirelines.jobdesc add column dashboardflag varchar(1) null ;
 
 ============================================================
+
+
+======================== PRATAP =================================
+
+ALTER TABLE `hirelines`.`workflow` 
+ADD COLUMN `teststatus` VARCHAR(1) NULL DEFAULT NULL AFTER `paperlibraryid`;
