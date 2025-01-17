@@ -90,7 +90,7 @@ if (screening_count === 0 && coding_count === 0 && interview_count === 0 && offe
             indexLabel: "{y}",
             indexLabelPlacement: "inside", // Centers labels
             indexLabelFontColor: "white",  // White font for contrast in each layer
-            neckWidth: "20%",  // Narrow neck for the funnel shape
+            neckWidth: "30%",  // Narrow neck for the funnel shape
             neckHeight: "30%", // Tall neck to emphasize the funnel shape
             valueRepresents: "area",
             // showInLegend: true,
