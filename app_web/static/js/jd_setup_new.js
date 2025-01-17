@@ -30,6 +30,8 @@ var skillsTopicSubtopics
 // adding all questions in a seprate list's depends on the subtopic ids
 var allTestsQuestions = {};
 
+var questionHasToBeSelected = []
+
 
 $(document).ready(function () {
     Promise.all([
@@ -551,6 +553,8 @@ function skillsListShowInHtml(testId, skillData, PaperType) {
         genrateHtmlWithScreeningBasicQuestion(testId)
         
     }
+    
+    questionCheckAsSelected()
 
     clickOnFirstSkill(testId)
 
@@ -814,7 +818,19 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
             'onclick',
             `addQuestionsToList(${ques['questionId']},this.id)`
         );
-        
+
+        // let firstInpt = `<input type="checkbox" 
+        //     class="form-check-input mx-4" 
+        //     id="questionId_${ques['questionId']}_S" 
+        //     data-test-id="${test_Id}" 
+        //     data-skill="${skill_Id}" 
+        //     data-topic="${topicId}" 
+        //     data-subtopic="${subTopicId}" 
+        //     data-marks="${questionMarks}" 
+        //     data-complexity="${complexityType}" 
+        //     data-type="S" 
+        //     onclick="addQuestionsToList(${ques['questionId']},this.id)">`
+
         // Another checkbox
         let secondInpt = document.createElement('input');
         secondInpt.type = 'checkbox'; 
@@ -849,6 +865,16 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         var questionCheckBox = document.createElement('div')
         questionCheckBox.classList.add('questionElements')
         questionCheckBox.append(firstInpt, secondInpt, starContainer)
+
+        if(ques['paperQuestion'] == 'Y'){
+            
+            if(ques?.staticOrDynamic){
+                if(ques['staticOrDynamic'] == 'S'){
+                    questionHasToBeSelected.push(firstInpt.id)
+                }
+            }
+
+        }
 
         if(PaperType_ == 'S'){
             if(ques['questionType'] == 'M' || ques['questionType'] == 'B' || ques['questionType'] == 'P' || ques['questionType'] == 'A' || ques['questionType'] == 'V'){
@@ -907,6 +933,30 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
 }
 
+
+
+
+function questionCheckAsSelected(){
+    
+    for (let quesId = 0; quesId < questionHasToBeSelected.length; quesId++) {
+        let element = questionHasToBeSelected[quesId];
+
+        if(element){
+            
+            console.log(':: elem ',element);
+            var elementHasChecked = document.getElementById(element)
+            console.log(':: ',elementHasChecked);
+
+            if(elementHasChecked){
+                console.log('::',elementHasChecked);
+                elementHasChecked.checked = true;
+            }
+        }
+    }
+
+    questionHasToBeSelected = []
+
+}
 
 
 
@@ -1068,6 +1118,13 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
             'onclick',
             `addQuestionsToList(${ques['questionId']}, this.id)`
         );
+
+
+        if(ques['paperQuestion'] == 'Y'){
+            console.log('Done', secondInpt,ques['questionId']);
+            firstInpt.checked = true
+            secondInpt.checked = true
+        }
 
         // Simple star icon, you can replace it with a font icon or image
         var starContainer = document.createElement('span');
@@ -1504,7 +1561,7 @@ function activeScreeningTab(element){
                     console.log('try to show knowledge test screening question by hidding the basic test questions container but somthing went wrong');
                 }
                 // click first skill if there is no active skill.
-                clickOnFirstSkill(TestCardId)
+                // clickOnFirstSkill(TestCardId)
             }
 
         }
