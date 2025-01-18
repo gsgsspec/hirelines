@@ -340,8 +340,13 @@ function proceedToNextField() {
 
         // Log the confirmation
         console.log(`Field "${fieldName}" confirmed for column index ${columnIndex}`);
+        console.log(`Selected Columns :`,selectedColumns)
     } else {
         console.log(`Field "${fieldName}" could not be confirmed. Please ensure a valid column is selected.`);
+        alert(`Please select a valid column for the field "${fieldName}" before proceeding.`);
+
+        // Stop execution to prevent moving to the next field
+        return;
     }
 
     // Move to the next field
@@ -405,3 +410,27 @@ function sendConfirmedColumnsData(columnsData) {
     })
 
 }
+
+
+
+document.getElementById('reset-file').addEventListener('click', function () {
+    // Reset the file input
+    const fileInput = document.getElementById('excelFile');
+    fileInput.value = '';
+
+    // Clear any table or output generated
+    $('#table-container').html('');
+
+    // Reset any validation messages or prompts
+    $('#confirmation-prompt').html(''); // Clear confirmation prompts
+    $('#code-error').hide(); // Hide validation errors for source code input
+    $('#existing-sources').html('').hide(); // Clear and hide suggestions box
+
+    // Reset processing variables or states
+    selectedColumns = {};
+    usedColumns.clear();
+    currentFieldIndex = 0;
+
+    // Reset column highlights
+    $('table td, table th').css('background-color', ''); // Clear table highlights
+});
