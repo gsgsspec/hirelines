@@ -47,7 +47,8 @@ $(document).ready(function () {
 // sending skills to acert for topics and subtopics
 function getSkills() {
 
-    // Correctly define the skills object
+    // Sending Skills List And Tests with paper details
+
     var skills = {
         data: skillLst,  // Pass the actual list of skills
         testData: workFlowDetails  // Pass the actual list of skills
@@ -75,7 +76,7 @@ function getSkills() {
                         
                         // this function call when page loads or page referesh's.
                         // it create html with skills with topic with subtopic 
-                        skillsListShowInHtml(workflowData.id, res.data, workflowData.papertype); // Pass the correct response data
+                        skillsListShowInHtml(workflowData.id, res.data, workflowData.papertype);
                     }
                     else{
                         console.log('key condition faill');
@@ -504,7 +505,7 @@ function skillsListShowInHtml(testId, skillData, PaperType) {
                                             data-topicid="${topicId}"
                                             data-testid="${testId}" 
                                             >
-                                            ${subTopicName} -- ${subtopicQuestionsList.length}</button>`;
+                                            ${subTopicName}</button>`;
 
                     if (skillsSubTopicHtml) {
                         // Append topics to the respective skill container.
@@ -984,22 +985,27 @@ function questionCheckAsSelected(){
                         ElementComplexity = 'veryHigh'
                     }
 
-                    // checking questions are static questions are dynamic question
-                    // static questions
-                    if(ElementType == 'S'){
-                        // Push the question ID to the appropriate ElementQid array
-                        allTestsQuestions[ElementTestId]['staticQuestions'].push(ElementQid)
-                    }
-                    
-                    if(ElementType == 'D'){
-                        // Push the question ID to the appropriate ElementQid array
-                        allTestsQuestions[ElementTestId][ElementSubtopicId][ElementComplexity]['qIds'].push(ElementQid);
+                    if(ElementQid){
+
+                        // checking questions are static questions are dynamic question
+                        // static questions
+                        if(ElementType == 'S'){
+                            // Push the question ID to the appropriate ElementQid array
+                            allTestsQuestions[ElementTestId]['staticQuestions'].push(parseInt(ElementQid))
+                        }
+                        
+                        if(ElementType == 'D'){
+                            // Push the question ID to the appropriate ElementQid array
+                            allTestsQuestions[ElementTestId][ElementSubtopicId][ElementComplexity]['qIds'].push(parseInt(ElementQid));
+                        }
+    
+                        if(ElementType == 'screening'){
+                            // Push the question ID to the appropriate ElementQid array
+                            allTestsQuestions[ElementTestId]['staticQuestions'].push(parseInt(ElementQid))
+                        }
+
                     }
 
-                    if(ElementType == 'screening'){
-                        // Push the question ID to the appropriate ElementQid array
-                        allTestsQuestions[ElementTestId]['staticQuestions'].push(ElementQid)
-                    }
                     
                 }
                 else{
@@ -2378,7 +2384,7 @@ function publishJd(){
                     // Show Modal
                     document.getElementById('PublishValidators').innerText = res.data['paperTitle']+' '+'Does not Select any Library.'
                     $('#JdPublishConformation').modal('hide')
-                    $('#publishValidationModal').modal('show')
+                    // $('#publishValidationModal').modal('show')
                 }
                 else{
     
@@ -2766,8 +2772,6 @@ function addQuestionsToList(Qid, elementId) {
         }
 
     }
-
-    console.log(':::allTestsQuestions',allTestsQuestions);
 
 }
 
