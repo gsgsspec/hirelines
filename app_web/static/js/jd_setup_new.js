@@ -2702,9 +2702,9 @@ function addQuestionsToList(Qid, elementId) {
         else{
             
             // Push the question ID to the appropriate qIds array
-            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
+            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(String(Qid))
             if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
+                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(String(Qid));
                 
                 // if index not equal to minus one that means index value is found 
                 if (index !== -1) {
@@ -2726,10 +2726,11 @@ function addQuestionsToList(Qid, elementId) {
             allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.push(Qid);
         }
         else{
-
-            let checkQuestionInLst = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.includes(Qid)
+            
+            let checkQuestionInLst = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.includes(String(Qid))
             if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.indexOf(Qid);
+                let index = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.indexOf(String(Qid));
+                
                 if (index !== -1) {
                     // remove from the list
                     allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.splice(index, 1);
@@ -2751,9 +2752,9 @@ function addQuestionsToList(Qid, elementId) {
         else{
             
             // Push the question ID to the appropriate qIds array
-            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
+            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(String(Qid))
             if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
+                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(String(Qid));
                 
                 // if index not equal to minus one that means index value is found 
                 if (index !== -1) {
@@ -2822,10 +2823,6 @@ function savePaper(BtnElement) {
         var testTitle = document.getElementById(`testTitle_${testid_}`)
 
         var testid = Number(testid_);
-
-        console.log('testid_ :: ',testid_);
-        console.log('=======================================');
-        console.log('testsList :: ',testsList[testid_]['paperid']);
 
         dataObj = {
             'paperid'              :  testsList[testid_]['paperid'],
