@@ -342,7 +342,7 @@ def saveJdNewTest(dataObjs,compyId):
         
         # it will update the existing Test.
         if dataObjs['createOrUpdate'] == 'update': 
-            
+
             holdStatus = None
             if 'holdYesOrNo' in dataObjs:
                 holdStatus = dataObjs['holdYesOrNo']
@@ -364,16 +364,16 @@ def saveJdNewTest(dataObjs,compyId):
                         savedWorkFlowDetails.papertitle = dataObjs['testName']
                 
                 if 'createdPaperid' in dataObjs:
-                    if savedWorkFlowDetails.paperid == None:
-                        savedWorkFlowDetails.paperid = dataObjs['createdPaperid']
-                        brulesData.paperid = dataObjs['createdPaperid']
-                        brulesData.save()
+                    savedWorkFlowDetails.paperid = dataObjs['createdPaperid']
+                    savedWorkFlowDetails.save()
+
+                    brulesData.paperid = dataObjs['createdPaperid']
+                    brulesData.save()
                 
                 if 'libraryId' in dataObjs:
                     if dataObjs['libraryId']:
                         savedWorkFlowDetails.paperlibraryid = dataObjs['libraryId']
-
-                savedWorkFlowDetails.save()
+                        savedWorkFlowDetails.save()
 
                 passcore = ''
                 if 'promotPercentage' in dataObjs:

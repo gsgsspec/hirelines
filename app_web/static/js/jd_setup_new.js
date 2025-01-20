@@ -1,7 +1,10 @@
 var perviousSelectedTest = null
 var screeningBackgroundColor = '#efebfd'; var codingBackgroundColor = '#defaeb'; var interviewBackgroundColor = '#e2ebfd'
 var screenMainColor = '#8763ee'; var codingMainColor = '#00d462'; var interviewMainColor = '#1f68f3';
+
+// it contains paper id job id company id paper type promote percentage
 var testsList = {}
+
 var testCreateOrUpdate // store "create" or "update", if it create, it create a new test or update , it update the existing test 
 var cureentTestId
 var instialSelectTest = []
@@ -149,8 +152,6 @@ function workFlowData(){
 }
 
 
-
-
 function getAllBasicScreeningQuestions() {
     return new Promise((resolve, reject) => {
         const getQuestions = { jd_id: jdId };
@@ -295,9 +296,9 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
 // test card header test name paper data & save & create New question ETC..... 
 function TestCardQuestionContainerHeader(testId,PaperType,PaperTitle){
 
-    var createCustomQuestion
+    var createCustomQuestion = ''
     if(PaperType != 'E'){
-        createCustomQuestion = `<button id="CreateCustomQuestion_${testId}" class="btn btn-primary btn-custom-margin-left"> Create Question </button>`
+        // createCustomQuestion = `<button id="CreateCustomQuestion_${testId}" class="btn btn-primary btn-custom-margin-left"> Create Question </button>`
     }
     else{
         createCustomQuestion = ''
@@ -321,7 +322,7 @@ function TestCardQuestionContainerHeader(testId,PaperType,PaperTitle){
             </div>
 
             <button id="save_${testId}" class="btn btn-primary btn-custom-margin-left" data-testid="${testId}" onclick="savePaper(this.id)"> Save </button>
-            <button id="preview_${testId}" class="btn btn-primary btn-custom-margin-left"> Preview </button>
+            <button id="preview_${testId}" class="btn btn-primary btn-custom-margin-left" hidden> Preview </button>
             ${createCustomQuestion}
 
         </div>
@@ -807,7 +808,8 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         firstInpt.type = 'checkbox';  // Assuming you want checkboxes
         firstInpt.classList.add('form-check-input','mx-4')
         firstInpt.id = `questionId_${ques['questionId']}_S`
-        firstInpt.dataset['testId'] = test_Id
+        firstInpt.dataset['qid'] = ques['questionId']
+        firstInpt.dataset['testid'] = test_Id
         firstInpt.dataset['skill'] = skill_Id
         firstInpt.dataset['topic'] = topicId
         firstInpt.dataset['subtopic'] = subTopicId
@@ -836,7 +838,8 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         secondInpt.type = 'checkbox'; 
         secondInpt.classList.add('form-check-input','mx-4')
         secondInpt.id = `questionId_${ques['questionId']}_D`
-        secondInpt.dataset['testId'] = test_Id
+        secondInpt.dataset['qid'] = ques['questionId']
+        secondInpt.dataset['testid'] = test_Id
         secondInpt.dataset['skill'] = skill_Id
         secondInpt.dataset['topic'] = topicId
         secondInpt.dataset['subtopic'] = subTopicId
@@ -872,6 +875,11 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
                 if(ques['staticOrDynamic'] == 'S'){
                     questionHasToBeSelected.push(firstInpt.id)
                 }
+
+                if(ques['staticOrDynamic'] == 'D'){
+                    questionHasToBeSelected.push(secondInpt.id)
+                }
+
             }
 
         }
@@ -934,30 +942,76 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 }
 
 
-
-
 function questionCheckAsSelected(){
     
     for (let quesId = 0; quesId < questionHasToBeSelected.length; quesId++) {
         let element = questionHasToBeSelected[quesId];
 
         if(element){
-            
-            console.log(':: elem ',element);
             var elementHasChecked = document.getElementById(element)
-            console.log(':: ',elementHasChecked);
 
-            if(elementHasChecked){
-                console.log('::',elementHasChecked);
-                elementHasChecked.checked = true;
+            elementHasChecked.checked = true;
+
+            if(elementHasChecked.checked){
+                var elementData = elementHasChecked.dataset
+                if(elementData){
+                    var ElementTestId = elementData['testid']
+                    var ElementSubtopicId = elementData['subtopic']
+                    var ElementType = elementData['type']
+                    var ElementQid = elementData['qid']
+                    var ElementComplexity = elementData['complexity']
+
+                    if(!allTestsQuestions[ElementTestId]){
+                        allTestsQuestions[ElementTestId] = {'staticQuestions':[]};
+                    }
+
+                    // Check if the subTopic is present
+                    if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
+                        allTestsQuestions[ElementTestId][ElementSubtopicId] = {
+                            veryLow: { qCount: 0, qIds: [] },
+                            low: { qCount: 0, qIds: [] },
+                            medium: { qCount: 0, qIds: [] },
+                            high: { qCount: 0, qIds: [] },
+                            veryHigh: { qCount: 0, qIds: [] }
+                        };
+                    }
+
+                    if(ElementComplexity == 'verylow'){
+                        ElementComplexity = 'veryLow'
+                    }
+
+                    if(ElementComplexity == 'veryhigh'){
+                        ElementComplexity = 'veryHigh'
+                    }
+
+                    // checking questions are static questions are dynamic question
+                    // static questions
+                    if(ElementType == 'S'){
+                        // Push the question ID to the appropriate ElementQid array
+                        allTestsQuestions[ElementTestId]['staticQuestions'].push(ElementQid)
+                    }
+                    
+                    if(ElementType == 'D'){
+                        // Push the question ID to the appropriate ElementQid array
+                        allTestsQuestions[ElementTestId][ElementSubtopicId][ElementComplexity]['qIds'].push(ElementQid);
+                    }
+
+                    if(ElementType == 'screening'){
+                        // Push the question ID to the appropriate ElementQid array
+                        allTestsQuestions[ElementTestId]['staticQuestions'].push(ElementQid)
+                    }
+                    
+                }
+                else{
+                    console.log('Question data was not in the element');
+                }
             }
+
         }
     }
-
     questionHasToBeSelected = []
 
 }
-
 
 
 // make a normal question to star question , when every user click on the icon we change the dataset of the icon
@@ -974,7 +1028,6 @@ function markAsStarQuestion(question_id , subtopic_id, test_id){
     }
 
 }
-
 
 
 // it get's ten more questions
@@ -1082,7 +1135,7 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         if(ques['questionComplexity'] == 4){
             complex = 'heigh'
         }
-        if(ques['questionComplexity'] == 5){
+        if(ques['questionComplexity'] == 5){ 
             complex = 'veryheigh'
         }
 
@@ -1090,7 +1143,8 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         firstInpt.type = 'checkbox';  // Assuming you want checkboxes
         firstInpt.classList.add('form-check-input','mx-4')
         firstInpt.id = `questionId_${ques['questionId']}_S`
-        firstInpt.dataset['testId'] = TestCardId
+        firstInpt.dataset['qid'] = ques['questionId']
+        firstInpt.dataset['testid'] = TestCardId
         firstInpt.dataset['skill'] = skillId
         firstInpt.dataset['topic'] = topic_Id
         firstInpt.dataset['subtopic'] = subTopicId
@@ -1107,7 +1161,8 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         secondInpt.type = 'checkbox'; 
         secondInpt.classList.add('form-check-input','mx-4')
         secondInpt.id = `questionId_${ques['questionId']}_D`
-        secondInpt.dataset['testId'] = TestCardId
+        secondInpt.dataset['qid'] = ques['questionId']
+        secondInpt.dataset['testid'] = TestCardId
         secondInpt.dataset['skill'] = skillId
         secondInpt.dataset['topic'] = topic_Id
         secondInpt.dataset['subtopic'] = subTopicId
@@ -1187,7 +1242,9 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
             firstInpt.type = 'checkbox';
             firstInpt.classList.add('form-check-input', 'mx-2');
             firstInpt.id = `questionId_${ques['questionId']}`
+            firstInpt.dataset['qid'] = ques['questionId']
             firstInpt.dataset['type'] = 'screening'
+            firstInpt.dataset['testid'] = testId
             firstInpt.setAttribute(
                 'onclick',
                 `addQuestionsToList(${ques['questionId']},this.id)`
@@ -2603,7 +2660,7 @@ function addQuestionsToList(Qid, elementId) {
     var questionDataSet = questionElement_.dataset;
 
     // Extract attributes
-    let testCardId = questionDataSet['testId']; 
+    let testCardId = questionDataSet['testid']; 
     let questionType_ = questionDataSet['type']; 
     let subTopic_Id = questionDataSet['subtopic']; 
     let complexType = questionDataSet['complexity']?.toLowerCase(); 
@@ -2634,6 +2691,8 @@ function addQuestionsToList(Qid, elementId) {
         };
     }
 
+    // checking questions are static questions are dynamic question
+    // static questions
     if(questionType_ == 'S'){
 
         if(questionElement_.checked){
@@ -2658,6 +2717,8 @@ function addQuestionsToList(Qid, elementId) {
 
     }
 
+    // checking questions are static questions are dynamic question
+    // dynamic questions
     if(questionType_ == 'D'){
 
         if(questionElement_.checked){
@@ -2679,6 +2740,8 @@ function addQuestionsToList(Qid, elementId) {
 
     }
 
+    // checking questions are static questions are dynamic question
+    // jd basic screening questions
     if(questionType_ == 'screening'){
 
         if(questionElement_.checked){
@@ -2702,6 +2765,8 @@ function addQuestionsToList(Qid, elementId) {
         }
 
     }
+
+    console.log(':::allTestsQuestions',allTestsQuestions);
 
 }
 
@@ -2758,12 +2823,18 @@ function savePaper(BtnElement) {
 
         var testid = Number(testid_);
 
+        console.log('testid_ :: ',testid_);
+        console.log('=======================================');
+        console.log('testsList :: ',testsList[testid_]['paperid']);
+
         dataObj = {
-            'paperid'              :  561445,
+            'paperid'              :  testsList[testid_]['paperid'],
             'paperType'            :  paperType,
-            'paperTitle'           :  testTitle,
+            'paperTitle'           :  testTitle.innerText,
             'questionsData'        :  allTestsQuestions[testid]
         };
+
+        console.log('dataObj :: ',dataObj);
 
         var final_data = {
             "data": JSON.stringify(dataObj),
@@ -2773,7 +2844,7 @@ function savePaper(BtnElement) {
         // First AJAX call
         $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
 
-            if (res.statusCode === 0 && res.data) {
+            if (res.statusCode == 0 && res.data) {
                 var data = res.data;
                 selectedPaper = data;
 
@@ -2837,13 +2908,6 @@ function dynamicQuestionscountSave(inputElement){
         };
     }
 
-    console.log('after main ::', allTestsQuestions);
-    console.log('after sub ::', allTestsQuestions[testId]);
-
-    console.log('complexitytype  :: ',complexitytype);
     allTestsQuestions[testId][subTopic_Id][complexitytype]['qCount'] = dynamicInptElement.value
-
-    // allTestsQuestions[testId]
-    console.log('VALL ::', allTestsQuestions);
 
 }
