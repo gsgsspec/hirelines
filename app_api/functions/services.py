@@ -5,6 +5,7 @@ import string
 import secrets
 import ast
 import time
+import re
 import pandas as pd
 from django.db.models import Q, Count, Avg
 from datetime import datetime, timedelta, date
@@ -2708,7 +2709,7 @@ def getCompanySourcesData(company_id):
 
 
 
-def mapUploadedCandidateFields(user,fileObjs):
+def mapUploadedCandidateFields(company_id,user,fileObjs):
     try:
         
         uploaded_excel = fileObjs.get('file')
@@ -2718,17 +2719,22 @@ def mapUploadedCandidateFields(user,fileObjs):
             excel_filename = os.path.splitext(uploaded_excel.name)
             excel_extension = excel_filename[1]
 
-            user_file_name = f"abc_{excel_extension}"
+            formatted_company_id = str(company_id).zfill(3)
+
+            user_file_name = f"{formatted_company_id}_candidates{excel_extension}"
+
             excel_path = os.path.join(settings.MEDIA_ROOT,'uploads','candidate_upload',user_file_name)
 
             with open(excel_path, 'wb+') as user_file:
                 for chunk in uploaded_excel.chunks():
                     user_file.write(chunk)
 
-            file_path = "C:/Srikanth/projects/hirelines/app_api/functions/data_configs/mapping.json"
+            root_path = getConfig()["DIR"]['root_path']
+
+            file_path = f"{root_path}/app_api/functions/data_configs/mapping.json"
+
             mappings_data = validate_excel_with_json(file_path,excel_path)
 
-            print('mappings_data',mappings_data)
             return mappings_data
 
     except Exception as e:
@@ -2736,53 +2742,126 @@ def mapUploadedCandidateFields(user,fileObjs):
 
 
 
-def processAddCandidateService(company_id,dataObjs,user_id):
+def processAddCandidateService(company_id, dataObjs, user_id):
     try:
 
-        excel_file_path = "C:/Srikanth/projects/hirelines/media/uploads/candidate_upload/abc_.xlsx"
+        # Format the company ID to be 3 digits
+        formatted_company_id = str(company_id).zfill(3)
 
-        df = pd.read_excel(excel_file_path)
+        # Define the file storage directory
+        upload_dir = os.path.join(settings.MEDIA_ROOT, 'uploads', 'candidate_upload')
 
-        # Extract column index mapping from the dataObjs
-        column_mapping = dataObjs['columns-data']
+        # List all files in the directory
+        files = os.listdir(upload_dir)
 
-        jd_id = dataObjs['jd']
-        begin_from = Workflow.objects.filter(jobid=jd_id).first().paperid
-        source_code = dataObjs['source-code']
+        # Look for the file that matches the pattern
+        matching_file = None
+        for file_name in files:
+            if file_name.startswith(f"{formatted_company_id}_candidates"):
+                matching_file = file_name
+                break
 
-        # Loop through each row of the DataFrame and extract the necessary fields
-        for index, row in df.iterrows():
-            # Using the column mapping to get the correct values
-            first_name = row.iloc[column_mapping.get('First Name', -1)] if column_mapping.get('First Name', -1) != -1 else None
-            last_name = row.iloc[column_mapping.get('Last Name', -1)] if column_mapping.get('Last Name', -1) != -1 else None
-            email = row.iloc[column_mapping.get('Email', -1)] if column_mapping.get('Email', -1) != -1 else None
-            mobile = row.iloc[column_mapping.get('Mobile', -1)] if column_mapping.get('Mobile', -1) != -1 else None
+        if matching_file:
 
-            # Validate the extracted fields (can be expanded as needed)
-            if not first_name or not email:
-                print(f"Skipping row {index + 1} due to missing essential data")
-                continue
-            
-            candidate_data = {
-                'firstname': first_name ,
-                'lastname': last_name,
-                'email': email,
-                'mobile': mobile,
-                'jd': dataObjs['jd'],
-                'begin-from': begin_from,
-                'source-code': source_code
-            }
+            # Path to the Excel file
+            excel_file_path = os.path.join(upload_dir, matching_file)
 
+            # Read the Excel file into a pandas DataFrame
+            df = pd.read_excel(excel_file_path)
 
-            # c_data = addCandidateDB(candidate_data,company_id,None,user_id)
+            # Extract column index mapping from the dataObjs
+            column_mapping = dataObjs['columns-data']
 
-            print('c_data',c_data)
+            # Additional data needed
+            jd_id = dataObjs['jd']
+            begin_from = Workflow.objects.filter(jobid=jd_id).first().paperid
+            source_code = dataObjs['source-code']
 
-            # Example of processing candidate data (e.g., save to database)
-            print(f"Adding candidate: {first_name} {last_name}, Email: {email}, Mobile: {mobile}")
+            # List to hold status for each row
+            status_list = []
 
-            # Your logic for saving to the database or performing further processing goes here
-            # Example: save_candidate_to_db(company_id, first_name, last_name, email, mobile)
+            # Loop through each row of the DataFrame
+            for index, row in df.iterrows():
+                try:
+                    # Extract values using the column mapping
+                    first_name = row.iloc[column_mapping.get('First Name', -1)] if column_mapping.get('First Name', -1) != -1 else None
+                    last_name = row.iloc[column_mapping.get('Last Name', -1)] if column_mapping.get('Last Name', -1) != -1 else None
+                    email = row.iloc[column_mapping.get('Email', -1)] if column_mapping.get('Email', -1) != -1 else None
+                    mobile = row.iloc[column_mapping.get('Mobile', -1)] if column_mapping.get('Mobile', -1) != -1 else None
+
+                    # Handle NaN values
+                    first_name = None if pd.isna(first_name) else first_name
+                    last_name = None if pd.isna(last_name) else last_name
+                    email = None if pd.isna(email) else email
+                    mobile = None if pd.isna(mobile) else mobile
+
+                    # Initialize status message
+                    skip_reasons = []
+
+                    # Check for missing or invalid fields
+                    if not first_name:
+                        skip_reasons.append("Missing First Name")
+                    if not email:
+                        skip_reasons.append("Missing Email")
+                    elif not is_valid_email(email):
+                        skip_reasons.append("Invalid Email")
+
+                    # If there are any issues, skip the row and record the reasons
+                    if skip_reasons:
+                        status_list.append(f"Skipped: {', '.join(skip_reasons)}")
+                        print(f"Skipping row {index + 1}: {', '.join(skip_reasons)}")
+                        continue
+
+                    # Prepare candidate data
+                    candidate_data = {
+                        'firstname': first_name,
+                        'lastname': last_name,
+                        'email': email,
+                        'mobile': mobile,
+                        'jd': dataObjs['jd'],
+                        'begin-from': begin_from,
+                        'source-code': source_code
+                    }
+
+                    try:
+                        # Call the function and handle errors
+                        c_data = addCandidateDB(candidate_data, company_id, None, user_id)
+
+                        # Check the value of c_data and update the status accordingly
+                        if c_data == "insufficient_credits":
+                            status_list.append("Skipped: Insufficient Credits")
+                            print(f"Skipping row {index + 1}: Insufficient Credits")
+                        elif c_data == "candidate_already_registered":
+                            status_list.append("Skipped: Candidate Already Registered")
+                            print(f"Skipping row {index + 1}: Candidate Already Registered")
+                        else:
+                            print(f"Adding candidate: {first_name} {last_name}, Email: {email}, Mobile: {mobile}")
+                            status_list.append("Candidate is added")
+                    except Exception as db_error:
+                        # Handle any errors specifically from addCandidateDB
+                        print(f"Error adding candidate at row {index + 1}: {str(db_error)}")
+                        status_list.append(f"Skipped: Error adding candidate")
+
+                except Exception as row_error:
+                    # Handle any row-specific errors
+                    print(f"Error processing row {index + 1}: {str(row_error)}")
+                    status_list.append(f"Skipped: Error occurred ({str(row_error)})")
+
+            # Add the status column to the DataFrame
+            df['hirelines-status'] = status_list
+
+            # Save the updated DataFrame back to Excel
+            report_file = f"{formatted_company_id}_candidate_report.xlsx"
+            output_file_path = os.path.join(settings.MEDIA_ROOT,'uploads','candidate_upload',report_file)
+            df.to_excel(output_file_path, index=False)
+            print(f"Processing complete. Updated Excel file saved to: {output_file_path}")
 
     except Exception as e:
+        print(f"Error occurred: {str(e)}")
         raise
+
+
+def is_valid_email(email):
+    """Basic regex pattern to validate email format."""
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(pattern, email) is not None

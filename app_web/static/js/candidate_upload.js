@@ -83,7 +83,6 @@ $(document).ready(function () {
             processData: false,  // Prevent jQuery from converting the data to a query string
             success: function (response) {
                 console.log('File uploaded successfully:', response);
-                alert('File has been uploaded successfully!');
                 processBackendResponse(response.data);
             },
             error: function (error) {
@@ -230,14 +229,36 @@ function highlightNextField() {
         enableManualSelection();
     } else {
         // If all fields are processed
-        alert('All columns have been confirmed!');
+        // alert('All columns have been confirmed!');
         $('#confirmation-prompt').html(''); // Clear the prompt
         resetHighlights();
 
-        // Log the final column mapping
-        console.log('Final Column Mapping:', selectedColumns);
+        Swal.fire({
+            title: 'Candidates Upload',
+            text: "The following candidate will be added with the following data",
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#274699',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If confirmed, proceed with sending data
+                sendConfirmedColumnsData(selectedColumns);
+        
+                
+            } else {
+                // Optional: Handle the case when the user cancels
+                Swal.fire(
+                    'Cancelled',
+                    'Uploading of candidate data is cancelled',
+                    'info'
+                );
+            }
+        });
 
-        sendConfirmedColumnsData(selectedColumns)
+
     }
 }
 
@@ -319,8 +340,13 @@ function proceedToNextField() {
 
         // Log the confirmation
         console.log(`Field "${fieldName}" confirmed for column index ${columnIndex}`);
+        console.log(`Selected Columns :`,selectedColumns)
     } else {
         console.log(`Field "${fieldName}" could not be confirmed. Please ensure a valid column is selected.`);
+        alert(`Please select a valid column for the field "${fieldName}" before proceeding.`);
+
+        // Stop execution to prevent moving to the next field
+        return;
     }
 
     // Move to the next field
@@ -353,8 +379,21 @@ function sendConfirmedColumnsData(columnsData) {
         if (res.statusCode == 0) {
             var candidateData = res.data
 
+            Swal.fire({
+                position: 'center',
+                title: 'Data submitted!',
+                text: 'Candidates will be updated shortly.',
+                icon: 'success',
+                confirmButtonText: 'OK', 
+                confirmButtonColor: '#274699'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/candidates';
+                }
+            });
             
         }
+
         else{
             $("#save-data").prop("disabled", false);
             Swal.fire({
@@ -363,9 +402,35 @@ function sendConfirmedColumnsData(columnsData) {
                 title: 'Error in saving the candidate details',
                 text: 'Please try again after some time',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 2000
             })
+
+            setTimeout(function () { window.location.reload()}, 2000);
         }
     })
 
 }
+
+
+
+document.getElementById('reset-file').addEventListener('click', function () {
+    // Reset the file input
+    const fileInput = document.getElementById('excelFile');
+    fileInput.value = '';
+
+    // Clear any table or output generated
+    $('#table-container').html('');
+
+    // Reset any validation messages or prompts
+    $('#confirmation-prompt').html(''); // Clear confirmation prompts
+    $('#code-error').hide(); // Hide validation errors for source code input
+    $('#existing-sources').html('').hide(); // Clear and hide suggestions box
+
+    // Reset processing variables or states
+    selectedColumns = {};
+    usedColumns.clear();
+    currentFieldIndex = 0;
+
+    // Reset column highlights
+    $('table td, table th').css('background-color', ''); // Clear table highlights
+});

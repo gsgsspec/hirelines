@@ -1485,9 +1485,10 @@ def candidateUploadFile(request):
     }
     try:
         if request.method == "POST":
+            user = auth_user(request.user)
             company_id = getCompanyId(request.user)
             fileObjs = request.FILES
-            mapping_response = mapUploadedCandidateFields(request.user,fileObjs)
+            mapping_response = mapUploadedCandidateFields(company_id,user.id,fileObjs)
             response['data'] = mapping_response
             response['statusCode'] = 0
 
