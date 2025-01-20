@@ -2708,9 +2708,9 @@ function addQuestionsToList(Qid, elementId) {
         else{
             
             // Push the question ID to the appropriate qIds array
-            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(String(Qid))
+            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
             if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(String(Qid));
+                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
                 
                 // if index not equal to minus one that means index value is found 
                 if (index !== -1) {
@@ -2733,9 +2733,9 @@ function addQuestionsToList(Qid, elementId) {
         }
         else{
             
-            let checkQuestionInLst = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.includes(String(Qid))
+            let checkQuestionInLst = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.includes(Qid)
             if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.indexOf(String(Qid));
+                let index = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.indexOf(Qid);
                 
                 if (index !== -1) {
                     // remove from the list
@@ -2758,9 +2758,9 @@ function addQuestionsToList(Qid, elementId) {
         else{
             
             // Push the question ID to the appropriate qIds array
-            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(String(Qid))
+            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
             if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(String(Qid));
+                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
                 
                 // if index not equal to minus one that means index value is found 
                 if (index !== -1) {
