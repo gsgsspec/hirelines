@@ -2991,12 +2991,34 @@ function fillDynamicQuestionsInputField(TestCardid_,data) {
 
 // check candidate's before save paper
 
-// paper_ids format [121,150,140] Array with integers
-// Return format {'121':'Y','150':'N','140':'Y'}  Y - Candidate Registeres , N - Not Registered
+function checkCandidateRegistration(){ 
 
-function checkCandidateRegistration(job_id){ 
-    console.log();
+    dataObjs = {
+        'jd_id': jdId,
+    }
+
+    var final_data = {
+        'data': JSON.stringify(dataObjs),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    }
+
+    $.post(CONFIG['portal'] + "/api/check-jd-candidate-registration", final_data, function (res) {
+
+        if (res.statusCode == 0) {
+            console.log(res.data);
+            if (res.data == "Y") {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'The candidate is already registered for this Job Description and cannot be edited.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#274699',
+                });
+            }
+        }
+        else{
+            console.log('Error in checking the candidate registrations')
+        }
+    })
 }
-
 
 //  code in between

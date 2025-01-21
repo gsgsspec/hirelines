@@ -2868,3 +2868,20 @@ def is_valid_email(email):
     """Basic regex pattern to validate email format."""
     pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(pattern, email) is not None
+
+
+
+def checkJdCandidateRegistrationService(dataObjs):
+    try:
+
+        registrations = Registration.objects.filter(jobid=dataObjs["jd_id"]).last()
+
+        if registrations:
+            registrations_flag = "Y"
+        else:
+            registrations_flag = "N"
+
+        return registrations_flag
+
+    except Exception as e:
+        raise

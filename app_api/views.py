@@ -20,7 +20,7 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
-        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService
+        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService
 
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
@@ -1548,5 +1548,28 @@ def updateDashboardDisplayFlag(request):
     except Exception as e:
         response['data'] = 'Error in updating dashboard display data'
         response['error'] = str(e)
+    
+    return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def checkJdCandidateRegistration(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            registration_flag = checkJdCandidateRegistrationService(dataObjs)
+            response['data'] = registration_flag
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in checking candidate registration data'
+        response['error'] = str(e)
+        raise
     
     return JsonResponse(response)
