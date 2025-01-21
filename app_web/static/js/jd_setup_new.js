@@ -2919,6 +2919,12 @@ function dynamicQuestionscountSave(inputElement){
 
 // check candidate's before save paper
 
+// paper_ids format [121,150,140] Array with integers
+// Return format {'121':'Y','150':'N','140':'Y'}  Y - Candidate Registeres , N - Not Registered
+
+function checkCandidateRegistration(job_id){ 
+    console.log();
+}
 
 
 //  code in between

@@ -58,4 +58,5 @@ urlpatterns = [
     path('confirmed-candidates-data',views.confirmedCandidateData),
     path('display-dashboardflag',views.updateDashboardDisplayFlag),
     path('skills-topics-subtopics-withquestions',views.skillsWithTopicwithSubtopics),
+    
 ]

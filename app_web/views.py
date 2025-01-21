@@ -376,8 +376,6 @@ def addCandidatePage(request):
 
         sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
 
-        print('sources_data',sources_data)
-
         return render(request, "portal_index.html", {"template_name": 'add_candidate.html','menuItemList': menuItemList,'jds_data':jds_list,'sources_data':sources_data})
 
     except Exception as e:

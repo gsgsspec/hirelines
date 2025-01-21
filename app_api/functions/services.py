@@ -655,7 +655,7 @@ def generate_random_password(length=15):
 
 def getCompanyJdData(cid):
     try:
-        company_jds = JobDesc.objects.filter(companyid=cid, status="A")
+        company_jds = JobDesc.objects.filter(companyid=cid).exclude(status__in = ["D","I"])
 
         jds_list = []
 
@@ -1059,7 +1059,10 @@ def getCallScheduleDetails(cid):
 
         jd = JobDesc.objects.get(id=candidate.jobid)
 
-        jd_interviewers = ast.literal_eval(jd.interviewers)
+        if jd.interviewers:
+            jd_interviewers = ast.literal_eval(jd.interviewers)
+        else :
+            jd_interviewers = ""
 
         job_interviewers = []
 

@@ -209,7 +209,7 @@ const sourceInputField = document.getElementById("source-code");
 sourceInputField.addEventListener("keypress", function (e) {
 
     if (e.key === " " || e.keyCode === 32) {
-        e.preventDefault();  // Prevent space from being typed
+        e.preventDefault();  
     }
 });
 
