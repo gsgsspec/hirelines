@@ -66,7 +66,7 @@ function getSkills() {
         success: function (res) {
             if (res.statusCode == 0) {
 
-                skillsTopicSubtopics = res.data
+                skillsTopicSubtopics = res.data['skillsList']
                 
                 for (var key in workFlowDetails) {
                     
@@ -76,7 +76,7 @@ function getSkills() {
                         
                         // this function call when page loads or page referesh's.
                         // it create html with skills with topic with subtopic 
-                        skillsListShowInHtml(workflowData.id, res.data, workflowData.papertype);
+                        skillsListShowInHtml(workflowData.id, res.data['skillsList'], workflowData.papertype);
                     }
                     else{
                         console.log('key condition faill');
@@ -2773,6 +2773,8 @@ function addQuestionsToList(Qid, elementId) {
 
     }
 
+    console.log('allTestsQuestions :: ',allTestsQuestions);
+
 }
 
 
@@ -2912,3 +2914,11 @@ function dynamicQuestionscountSave(inputElement){
     allTestsQuestions[testId][subTopic_Id][complexitytype]['qCount'] = dynamicInptElement.value
 
 }
+
+
+
+// check candidate's before save paper
+
+
+
+//  code in between
