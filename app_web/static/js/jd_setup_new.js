@@ -33,7 +33,10 @@ var skillsTopicSubtopics
 // adding all questions in a seprate list's depends on the subtopic ids
 var allTestsQuestions = {};
 
+// this variable containes selected question ids with html
 var questionHasToBeSelected = []
+
+var DynamicQuesCount
 
 
 $(document).ready(function () {
@@ -67,7 +70,9 @@ function getSkills() {
             if (res.statusCode == 0) {
 
                 skillsTopicSubtopics = res.data['skillsList']
-                
+
+                DynamicQuesCount = res.data['paperSubtopicComplexityQuestionsCount']
+
                 for (var key in workFlowDetails) {
                     
                     if (workFlowDetails.hasOwnProperty(key)) {
@@ -76,7 +81,11 @@ function getSkills() {
                         
                         // this function call when page loads or page referesh's.
                         // it create html with skills with topic with subtopic 
-                        skillsListShowInHtml(workflowData.id, res.data['skillsList'], workflowData.papertype);
+                        skillsListShowInHtml(workflowData.id, res.data['skillsList'], workflowData.papertype, DynamicQuesCount);
+
+                        if(testsList[workflowData.id]['paperid']) {
+                            fillDynamicQuestionsInputField(workflowData.id,DynamicQuesCount[testsList[workflowData.id]['paperid']])
+                        }
                     }
                     else{
                         console.log('key condition faill');
@@ -378,7 +387,7 @@ function screeningTabs(testId){
 
 
 // Show skills, topics, and subtopics in HTML
-function skillsListShowInHtml(testId, skillData, PaperType) {
+function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount) {
 
     let skillsHtml = "";
     let skillsTopicsHtml = "";
@@ -755,6 +764,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     complexityDynamicInput.dataset['subtopicid'] = subTopicId; 
     complexityDynamicInput.setAttribute(
         'onkeyup',
+        // 'onchange',
         `dynamicQuestionscountSave(this.id)`
     );
 
@@ -949,73 +959,88 @@ function questionCheckAsSelected(){
         let element = questionHasToBeSelected[quesId];
 
         if(element){
+
             var elementHasChecked = document.getElementById(element)
 
-            elementHasChecked.checked = true;
+            if(elementHasChecked){
 
-            if(elementHasChecked.checked){
-                var elementData = elementHasChecked.dataset
-                if(elementData){
-                    var ElementTestId = elementData['testid']
-                    var ElementSubtopicId = elementData['subtopic']
-                    var ElementType = elementData['type']
-                    var ElementQid = elementData['qid']
-                    var ElementComplexity = elementData['complexity']
+                elementHasChecked.checked = true;
+    
+                if(elementHasChecked.checked){
 
-                    if(!allTestsQuestions[ElementTestId]){
-                        allTestsQuestions[ElementTestId] = {'staticQuestions':[]};
-                    }
+                    var elementData = elementHasChecked.dataset
 
-                    // Check if the subTopic is present
-                    if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
-                        allTestsQuestions[ElementTestId][ElementSubtopicId] = {
-                            veryLow: { qCount: 0, qIds: [] },
-                            low: { qCount: 0, qIds: [] },
-                            medium: { qCount: 0, qIds: [] },
-                            high: { qCount: 0, qIds: [] },
-                            veryHigh: { qCount: 0, qIds: [] }
-                        };
-                    }
+                    if(elementData){
 
-                    if(ElementComplexity == 'verylow'){
-                        ElementComplexity = 'veryLow'
-                    }
-
-                    if(ElementComplexity == 'veryhigh'){
-                        ElementComplexity = 'veryHigh'
-                    }
-
-                    if(ElementQid){
-
-                        // checking questions are static questions are dynamic question
-                        // static questions
-                        if(ElementType == 'S'){
-                            // Push the question ID to the appropriate ElementQid array
-                            allTestsQuestions[ElementTestId]['staticQuestions'].push(parseInt(ElementQid))
+                        var ElementTestId = elementData['testid']
+                        var ElementSubtopicId = elementData['subtopic']
+                        var ElementType = elementData['type']
+                        var ElementQid = elementData['qid']
+                        var ElementComplexity = elementData['complexity']
+    
+                        if(!allTestsQuestions[ElementTestId]){
+                            allTestsQuestions[ElementTestId] = {'staticQuestions':[]};
                         }
+
                         
-                        if(ElementType == 'D'){
-                            // Push the question ID to the appropriate ElementQid array
-                            allTestsQuestions[ElementTestId][ElementSubtopicId][ElementComplexity]['qIds'].push(parseInt(ElementQid));
+
+                        if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
+                            allTestsQuestions[ElementTestId][ElementSubtopicId] = {
+                                veryLow:  { qIds: [] },
+                                low:      { qIds: [] },
+                                medium:   { qIds: [] },
+                                high:     { qIds: [] },
+                                veryHigh: { qIds: [] }
+                            };
+                        }
+
+                        // var paperid_ = testsList[ElementTestId]['paperid']
+    
+                        if(ElementComplexity == 'verylow'){
+                            ElementComplexity = 'veryLow'
                         }
     
-                        if(ElementType == 'screening'){
-                            // Push the question ID to the appropriate ElementQid array
-                            allTestsQuestions[ElementTestId]['staticQuestions'].push(parseInt(ElementQid))
+                        if(ElementComplexity == 'veryhigh'){
+                            ElementComplexity = 'veryHigh'
                         }
 
+                        if(ElementQid){
+    
+                            // checking questions are static questions are dynamic question
+                            // static questions
+                            if(ElementType == 'S'){
+                                // Push the question ID to the appropriate ElementQid array
+                                allTestsQuestions[ElementTestId]['staticQuestions'].push(parseInt(ElementQid))
+                            }
+                            
+                            if(ElementType == 'D'){
+                                // Push the question ID to the appropriate ElementQid array
+                                allTestsQuestions[ElementTestId][ElementSubtopicId][ElementComplexity]['qIds'].push(parseInt(ElementQid));
+                            }
+        
+                            if(ElementType == 'screening'){
+                                // Push the question ID to the appropriate ElementQid array
+                                allTestsQuestions[ElementTestId]['staticQuestions'].push(parseInt(ElementQid))
+                            }
+    
+                        }
+    
                     }
-
-                    
+                    else{
+                        console.log('Question data was not in the element');
+                    }
                 }
-                else{
-                    console.log('Question data was not in the element');
-                }
+    
             }
 
         }
+
     }
+    
     questionHasToBeSelected = []
+
+
+    console.log('allTestsQuestions :: ',allTestsQuestions);
 
 }
 
@@ -1829,7 +1854,7 @@ function saveOrUpdateTest(){
 
                         // this function call when a new test created, with out page referesh 
                         // this function create skills and topics and subtopics with html and show in webapge.
-                        skillsListShowInHtml(key_, skillsTopicSubtopics, paperType__);
+                        skillsListShowInHtml(key_, skillsTopicSubtopics, paperType__, null);
 
                         // clicking on the newlly created test card
                         document.getElementById(paperType__+'_'+data[0]['id']).click();
@@ -2689,11 +2714,11 @@ function addQuestionsToList(Qid, elementId) {
     // Check if the subTopic is present
     if (!allTestsQuestions[testCardId][subTopic_Id]) {
         allTestsQuestions[testCardId][subTopic_Id] = {
-            veryLow: { qCount: 0, qIds: [] },
-            low: { qCount: 0, qIds: [] },
-            medium: { qCount: 0, qIds: [] },
-            high: { qCount: 0, qIds: [] },
-            veryHigh: { qCount: 0, qIds: [] }
+            veryLow: { qIds: [] },
+            low: { qIds: [] },
+            medium: { qIds: [] },
+            high: { qIds: [] },
+            veryHigh: { qIds: [] }
         };
     }
 
@@ -2886,6 +2911,7 @@ function savePaper(BtnElement) {
 }
 
 
+// user entered an number in the input or changed the input value is updated in the varibale
 function dynamicQuestionscountSave(inputElement){
     var dynamicInptElement = document.getElementById(inputElement)
     var dynInptDataSet = dynamicInptElement.dataset
@@ -2894,8 +2920,6 @@ function dynamicQuestionscountSave(inputElement){
     var subTopic_Id = dynInptDataSet['subtopicid']
     var complexitytype = dynInptDataSet['complexitytype']
     
-    // `DynamicInput_TestId_${dynInptDataSet['testid']}_subTopic_${dynInptDataSet['subtopicid']}`
-
     if (!allTestsQuestions[testId]) {
         allTestsQuestions[testId] = {'staticQuestions':[]};
     }
@@ -2915,6 +2939,54 @@ function dynamicQuestionscountSave(inputElement){
 
 }
 
+
+function fillDynamicQuestionsInputField(TestCardid_,data) {
+    
+    for (const subtopicId in data) {
+        const complexities = data[subtopicId];
+
+        if(!allTestsQuestions[TestCardid_]){
+            allTestsQuestions[TestCardid_] = {'staticQuestions':[]};
+        }
+
+        if (!allTestsQuestions[TestCardid_][subtopicId]) {
+            allTestsQuestions[TestCardid_][subtopicId] = {
+                veryLow:  { qCount: 0 ,  qIds: [] },
+                low:      { qCount: 0 ,  qIds: [] },
+                medium:   { qCount: 0 ,  qIds: [] },
+                high:     { qCount: 0 ,  qIds: [] },
+                veryHigh: { qCount: 0 ,  qIds: [] }
+            };
+        }
+
+        // console.log('complexities :: ',complexities);
+
+        allTestsQuestions[TestCardid_][subtopicId]['veryLow']['qCount'] = parseInt(complexities['veryLow'])
+        allTestsQuestions[TestCardid_][subtopicId]['low']['qCount'] = parseInt(complexities['low'])
+        allTestsQuestions[TestCardid_][subtopicId]['medium']['qCount'] = parseInt(complexities['medium'])
+        allTestsQuestions[TestCardid_][subtopicId]['high']['qCount'] = parseInt(complexities['high'])
+        allTestsQuestions[TestCardid_][subtopicId]['veryHigh']['qCount'] = parseInt(complexities['veryHigh'])
+
+        // console.log('::',allTestsQuestions);
+
+        for (const complexity in complexities) {
+
+            // Construct the dynamic element ID
+            const elementId = `DynamicInput_TestId_${TestCardid_}_subTopic_${subtopicId}_complex_${complexity}`;
+            
+            // Get the input element by ID
+            const complexityInputElement = document.getElementById(elementId);
+
+            // If the element exists, set its value
+            if (complexityInputElement) {
+                complexityInputElement.value = complexities[complexity];
+            } 
+        }
+    }
+
+    console.log('allTestsQuestions :: ',allTestsQuestions);
+
+}
 
 
 // check candidate's before save paper
