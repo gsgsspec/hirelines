@@ -38,12 +38,15 @@ var questionHasToBeSelected = []
 
 var DynamicQuesCount
 
+var dynamicQuestionCountInputValueBackup = 0
+
 
 $(document).ready(function () {
     Promise.all([
         workFlowData(), // it has to call first because it get all test data and create html after skill, topic, subtopics are added in to that html
         getSkills(),
     ])
+    checkCandidateRegistration()
 })
 
 
@@ -73,6 +76,8 @@ function getSkills() {
 
                 DynamicQuesCount = res.data['paperSubtopicComplexityQuestionsCount']
 
+                var papersMarksAndQues = res.data['papersMarksAndQuestions']
+
                 for (var key in workFlowDetails) {
                     
                     if (workFlowDetails.hasOwnProperty(key)) {
@@ -91,6 +96,8 @@ function getSkills() {
                         console.log('key condition faill');
                     }
                 }
+
+                paperQuestionsCountAndMarksSetInHTML(papersMarksAndQues)
 
             }
         },
@@ -306,6 +313,11 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
 // test card header test name paper data & save & create New question ETC..... 
 function TestCardQuestionContainerHeader(testId,PaperType,PaperTitle){
 
+    var customHiddelabels = ''
+    var showInterviewTest = 'hidden'
+    var screeningCustmClass = ""
+    var screeningStaticQuestionsCount = ''
+
     var createCustomQuestion = ''
     if(PaperType != 'E'){
         // createCustomQuestion = `<button id="CreateCustomQuestion_${testId}" class="btn btn-primary btn-custom-margin-left"> Create Question </button>`
@@ -313,22 +325,46 @@ function TestCardQuestionContainerHeader(testId,PaperType,PaperTitle){
     else{
         createCustomQuestion = ''
     }
+
+    if(PaperType == 'I'){
+        showInterviewTest = ""
+        customHiddelabels = 'hidden'
+    }
+    else{
+        showInterviewTest = 'hidden'
+    }
+
+    if(PaperType == 'S'){
+        screeningCustmClass = `screeningTestId_${testId}`
+        screeningStaticQuestionsCount = `screeningStaticQuestionsCount_${testId}`
+    }
+    else{
+        screeningCustmClass = ''
+        screeningStaticQuestionsCount = ''
+    }
+    
     
     var wholeContainer = `<div class="testCardQuestionsHeadingContainer">
         <h4 id="Testtitle_${testId}"  class="m-0">${PaperTitle}</h4>
     
         <div class="testCardQuestionsFirstContainer-first-child">
 
-            <div id="paperWeightage_${testId}">
-                Test weightage <span id="TestWeightage"> 30 </span> 
+            <div id="paperWeightage_${testId}" ${customHiddelabels}>Weightage - 
+                <span id="TestWeightage_${testId}" class="${screeningCustmClass}"> 0 </span> 
             </div>
 
-            <div id="staticQuestionsCountainer_${testId}" class="text-align-custom-left-margin">
-                Static Questions <span id="StaticQuestionsCount_${testId}"> 15 </span>
+            <div id="staticQuestionsCountainer_${testId}" class="text-align-custom-left-margin" ${customHiddelabels}>
+                <span class="" style="font-weight: 700;">Questions</span> Static - 
+                <span id="StaticQuestionsCount_${testId}" class="${screeningStaticQuestionsCount}"> 0 </span>
             </div>
 
-            <div id="dynamicQuestionsContainer_${testId}" class="text-align-custom-left-margin">
-                Dynamic Questions <span id="DynamicQuestionsCount_${testId}"> 15 </span>
+            
+            <div id="dynamicQuestionsContainer_${testId}" class="text-align-custom-left-margin" ${customHiddelabels}>
+            Dynamic - <span id="DynamicQuestionsCount_${testId}"> 0 </span>
+            </div>
+
+            <div id="InterviewQuestionsContainer_${testId}" class="text-align-custom-left-margin" ${showInterviewTest}>
+                <span style="font-weight: 700;">  Questions </span> - <span id="InterviewQuestionsCount_${testId}"> 0 </span>
             </div>
 
             <button id="save_${testId}" class="btn btn-primary btn-custom-margin-left" data-testid="${testId}" onclick="savePaper(this.id)"> Save </button>
@@ -564,6 +600,9 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount) {
         genrateHtmlWithScreeningBasicQuestion(testId)
         
     }
+    else{
+        loader.style.display = 'none';
+    }
     
     questionCheckAsSelected()
 
@@ -704,34 +743,41 @@ function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, Pape
 }
 
 
-
+// it create complexity container for each subtopic it create low , verylow, medium, hard , veryhard complexity container and put in html
 function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, topicId, subTopicId, test_Id, PaperType_, complexityType){
     
     var fndFirstQuestionComplexity
     var complexityTxt
     var dynamicId
+    var ComplexityTitles
+
     if(complexityWiseQuestions.length > 0){
         fndFirstQuestionComplexity = complexityWiseQuestions[0]['questionComplexity']
     }
 
     if(fndFirstQuestionComplexity == 1){
         complexityTxt = 'veryLow'
+        ComplexityTitles = 'Complexity - Beginner'
     }
 
     if(fndFirstQuestionComplexity == 2){
         complexityTxt = 'low'
+        ComplexityTitles = 'Complexity - Intermediate'
     }
 
     if(fndFirstQuestionComplexity == 3){
         complexityTxt = 'medium'
+        ComplexityTitles = 'Complexity - Moderate'
     }
 
     if(fndFirstQuestionComplexity == 4){
         complexityTxt = 'high'
+        ComplexityTitles = 'Complexity - Advanced'
     }
 
     if(fndFirstQuestionComplexity == 5){
         complexityTxt = 'veryHigh'
+        ComplexityTitles = 'Complexity - Expert'
     }
 
     // create complexity container section.
@@ -746,7 +792,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
     var complexityHeading = document.createElement('h5');
     complexityHeading.classList.add('m-0')
-    complexityHeading.innerText = complexityType; 
+    complexityHeading.innerText = ComplexityTitles; 
     
     // // Add a suitable text for the header
     var DynamicInoutTitle = document.createElement('h5')
@@ -762,11 +808,20 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     complexityDynamicInput.dataset['skillid'] = skill_Id; 
     complexityDynamicInput.dataset['topicid'] = topicId; 
     complexityDynamicInput.dataset['subtopicid'] = subTopicId; 
+    // complexityDynamicInput.setAttribute(
+    //     'onkeyup',
+    //     `dynamicQuestionscountSave(this.id)`
+    // );
     complexityDynamicInput.setAttribute(
-        'onkeyup',
-        // 'onchange',
+        'onchange',
         `dynamicQuestionscountSave(this.id)`
     );
+
+    complexityDynamicInput.setAttribute(
+        'onmouseover',
+        `DynamicInputValueBackUp(this.id)`
+    );
+
 
     var dynamicInputLabelContainer = document.createElement('div')
     dynamicInputLabelContainer.classList.add('complexityDynamicContainer')
@@ -831,18 +886,6 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
             'onclick',
             `addQuestionsToList(${ques['questionId']},this.id)`
         );
-
-        // let firstInpt = `<input type="checkbox" 
-        //     class="form-check-input mx-4" 
-        //     id="questionId_${ques['questionId']}_S" 
-        //     data-test-id="${test_Id}" 
-        //     data-skill="${skill_Id}" 
-        //     data-topic="${topicId}" 
-        //     data-subtopic="${subTopicId}" 
-        //     data-marks="${questionMarks}" 
-        //     data-complexity="${complexityType}" 
-        //     data-type="S" 
-        //     onclick="addQuestionsToList(${ques['questionId']},this.id)">`
 
         // Another checkbox
         let secondInpt = document.createElement('input');
@@ -1038,9 +1081,6 @@ function questionCheckAsSelected(){
     }
     
     questionHasToBeSelected = []
-
-
-    console.log('allTestsQuestions :: ',allTestsQuestions);
 
 }
 
@@ -2687,14 +2727,16 @@ function OpenIntegrationModal(){
   
 
 function addQuestionsToList(Qid, elementId) {
+
     var questionElement_ = document.getElementById(elementId);
     var questionDataSet = questionElement_.dataset;
 
     // Extract attributes
-    let testCardId = questionDataSet['testid']; 
+    let testCardId    = questionDataSet['testid']; 
     let questionType_ = questionDataSet['type']; 
-    let subTopic_Id = questionDataSet['subtopic']; 
-    let complexType = questionDataSet['complexity']?.toLowerCase(); 
+    let subTopic_Id   = questionDataSet['subtopic']; 
+    let complexType   = questionDataSet['complexity']?.toLowerCase(); 
+    let QueMarks      = questionDataSet['marks']
 
     // Normalize complexType keys
     const complexityMapping = {
@@ -2729,9 +2771,87 @@ function addQuestionsToList(Qid, elementId) {
         if(questionElement_.checked){
             // Push the question ID to the appropriate qIds array
             allTestsQuestions[testCardId]['staticQuestions'].push(Qid)
+
+            if(testsList[testCardId]['papertype'] == 'S'){
+
+                // increase the test static questions count
+                // screening static questions count in to html
+                var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
+                var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
+    
+                for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
+                    let element = lstOfCountElements[elem_];
+    
+                    if(element.innerText){
+                        let totalCount_ = parseInt(element.innerText) + 1
+                        element.innerText = totalCount_
+                    }
+                }
+    
+                // increase the paper weightage 
+                // paper weightage
+                var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
+                var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
+    
+                for (let elem = 0; elem < lstOfElements.length; elem++) {
+                    let element = lstOfElements[elem];
+    
+                    if(element.innerText){
+                        let totalMarks_ = parseInt(element.innerText) + parseInt(QueMarks)
+                        element.innerText = totalMarks_
+                    }
+    
+                }
+
+            }
+
+            if(testsList[testCardId]['papertype'] == 'E'){
+
+                var WeightAgeElementId = `TestWeightage_${testCardId}`
+                var element_ = document.getElementById(WeightAgeElementId)
+
+                if(element_) {
+                    if(element_.innerText){
+                        let totalMarks_ = parseInt(element_.innerText) + parseInt(QueMarks)
+                        element_.innerText = totalMarks_
+                    }
+                    else{
+                        console.log('inner text not fnd');
+                    }
+                }
+                else{
+                    console.log('elme cnot fnd');
+                }
+
+                var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
+                var Qcount_Element = document.getElementById(StaticQuesElementId)
+
+                if(Qcount_Element) {
+
+                    if(Qcount_Element.innerText){
+                        let totalCount_ = parseInt(Qcount_Element.innerText) + 1
+                        Qcount_Element.innerText = totalCount_
+                    }
+                }
+
+            }
+
+            if(testsList[testCardId]['papertype'] == 'I'){
+
+                let interviewTestQuesId = document.getElementById(`InterviewQuestionsCount_${testCardId}`)
+                if(interviewTestQuesId){
+                    if(interviewTestQuesId.innerText){
+                        let interQuestotalCount_ = parseInt(interviewTestQuesId.innerText) + 1
+                        interviewTestQuesId.innerText = interQuestotalCount_
+                    }
+                }
+
+            }
+
+
         }
         else{
-            
+
             // Push the question ID to the appropriate qIds array
             let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
             if(checkQuestionInLst){
@@ -2742,6 +2862,78 @@ function addQuestionsToList(Qid, elementId) {
                     // remove from the list
                     allTestsQuestions[testCardId]['staticQuestions'].splice(index, 1);
                 }
+            }
+
+            if(testsList[testCardId]['papertype'] == 'S'){
+
+                // Decrease the test static questions count
+                var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
+                var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
+
+                for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
+                    let element = lstOfCountElements[elem_];
+                    // element.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
+
+                    if(element.innerText){
+                        let totalCount_ = parseInt(element.innerText) - 1
+                        element.innerText = totalCount_
+                    }
+                }
+
+                // decerease the paper weightage 
+                // paper weightage
+                var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
+                var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
+
+                for (let elem = 0; elem < lstOfElements.length; elem++) {
+                    let element = lstOfElements[elem];
+
+                    if(element.innerText){
+                        let totalMarks_ = parseInt(element.innerText) - parseInt(QueMarks)
+                        element.innerText = totalMarks_
+                    }
+
+                }
+
+            }
+
+            if(testsList[testCardId]['papertype'] == 'E'){
+
+                // test total score
+                var WeightAgeElementId = `TestWeightage_${testCardId}`
+                var element_ = document.getElementById(WeightAgeElementId)
+
+                if(element_) {
+                    if(element_.innerText){
+                        let totalMarks_ = parseInt(element_.innerText) - parseInt(QueMarks)
+                        element_.innerText = totalMarks_
+                    }
+
+                }
+
+                // questions count
+                var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
+                var Qcount_Element = document.getElementById(StaticQuesElementId)
+
+                if(Qcount_Element) {
+                    if(Qcount_Element.innerText){
+                        let totalCount_ = parseInt(Qcount_Element.innerText) - 1
+                        Qcount_Element.innerText = totalCount_
+                    }
+                }
+
+            }
+
+            if(testsList[testCardId]['papertype'] == 'I'){
+
+                let interviewTestQuesId = document.getElementById(`InterviewQuestionsCount_${testCardId}`)
+                if(interviewTestQuesId){
+                    if(interviewTestQuesId.innerText){
+                        let interQuestotalCount_ = parseInt(interviewTestQuesId.innerText) - 1
+                        interviewTestQuesId.innerText = interQuestotalCount_
+                    }
+                }
+
             }
 
         }
@@ -2797,8 +2989,6 @@ function addQuestionsToList(Qid, elementId) {
         }
 
     }
-
-    console.log('allTestsQuestions :: ',allTestsQuestions);
 
 }
 
@@ -2913,33 +3103,167 @@ function savePaper(BtnElement) {
 
 // user entered an number in the input or changed the input value is updated in the varibale
 function dynamicQuestionscountSave(inputElement){
+
     var dynamicInptElement = document.getElementById(inputElement)
     var dynInptDataSet = dynamicInptElement.dataset
 
     var testId = dynInptDataSet['testid']
     var subTopic_Id = dynInptDataSet['subtopicid']
-    var complexitytype = dynInptDataSet['complexitytype']
+
+    if(subTopic_Id){
+
+        var complexitytype = dynInptDataSet['complexitytype']
+        
+        if (!allTestsQuestions[testId]) {
+            allTestsQuestions[testId] = {'staticQuestions':[]};
+        }
+
+        // Check if the subTopic is present
+        if (!allTestsQuestions[testId][subTopic_Id]) {
+            allTestsQuestions[testId][subTopic_Id] = {
+                veryLow: { qCount: 0, qIds: [] },
+                low: { qCount: 0, qIds: [] },
+                medium: { qCount: 0, qIds: [] },
+                high: { qCount: 0, qIds: [] },
+                veryHigh: { qCount: 0, qIds: [] }
+            };
+        }
+
+        allTestsQuestions[testId][subTopic_Id][complexitytype]['qCount'] = dynamicInptElement.value
+
+    }
+
+
+
+    if(testsList[testId]['papertype'] == 'S'){
+
+        let codingDynamicElemId = `DynamicQuestionsCount_${testId}`
+        let codingDynamicElem = document.getElementById(codingDynamicElemId)
+
+        if(codingDynamicElem){
+            var labelCount = parseInt(codingDynamicElem.innerText)
+ 
+            if(isNaN(labelCount)){
+                labelCount = 0
+            }
+
+            var labelValue = labelCount - parseInt(dynamicQuestionCountInputValueBackup)
+
+            var DynInptVal = parseInt(dynamicInptElement.value)
+
+            if(isNaN(parseInt(dynamicInptElement.value))){
+                DynInptVal = 0
+            }
+            
+            let finalDynCount = labelValue + DynInptVal
+
+            codingDynamicElem.innerText = finalDynCount
+            
+            if(isNaN(dynamicInptElement.value)){
+                dynamicQuestionCountInputValueBackup = 0
+            }
+            else{
+                dynamicQuestionCountInputValueBackup = parseInt(dynamicInptElement.value)
+            }
+
+        }
+
+    }
+
+    if(testsList[testId]['papertype'] == 'E'){
+
+        let codingDynamicElemId = `DynamicQuestionsCount_${testId}`
+        let codingDynamicElem = document.getElementById(codingDynamicElemId)
+
+        if(codingDynamicElem){
+            var labelCount = parseInt(codingDynamicElem.innerText)
+ 
+            if(isNaN(labelCount)){
+                labelCount = 0
+            }
+
+            var labelValue = parseInt(dynamicQuestionCountInputValueBackup) - labelCount
+
+            // console.log('::', "--", parseInt(dynamicQuestionCountInputValueBackup) , '::',labelCount);
+
+            console.log('back Up :: ',dynamicQuestionCountInputValueBackup,  'labelCount :: ',labelCount);
+            console.log('inpt val :: ',dynamicInptElement.value);
+
+            var DynInptVal = dynamicInptElement.value
+            if(parseInt(dynamicInptElement.value) == NaN){
+                DynInptVal = 0
+            }
+
+            
+            let finalDynCount = labelValue + parseInt(DynInptVal)
+
+            if (isNaN(finalDynCount)) {
+                console.log('Found NaN');
+                codingDynamicElem.innerText = dynamicQuestionCountInputValueBackup - labelCount
+            }
+            else{
+                codingDynamicElem.innerText = labelValue + parseInt(DynInptVal)
+            }
+
+            
+            if(isNaN(dynamicInptElement.value)){
+                dynamicQuestionCountInputValueBackup = 0
+            }
+            else{
+                dynamicQuestionCountInputValueBackup = parseInt(dynamicInptElement.value)
+            }
+
+        }
+
+    }
+
+
+    // if (testsList[testId]['papertype'] == 'E') {
+    //     let codingDynamicElemId = `DynamicQuestionsCount_${testId}`;
+    //     let codingDynamicElem = document.getElementById(codingDynamicElemId);
     
-    if (!allTestsQuestions[testId]) {
-        allTestsQuestions[testId] = {'staticQuestions':[]};
-    }
-
-    // Check if the subTopic is present
-    if (!allTestsQuestions[testId][subTopic_Id]) {
-        allTestsQuestions[testId][subTopic_Id] = {
-            veryLow: { qCount: 0, qIds: [] },
-            low: { qCount: 0, qIds: [] },
-            medium: { qCount: 0, qIds: [] },
-            high: { qCount: 0, qIds: [] },
-            veryHigh: { qCount: 0, qIds: [] }
-        };
-    }
-
-    allTestsQuestions[testId][subTopic_Id][complexitytype]['qCount'] = dynamicInptElement.value
+    //     if (codingDynamicElem) {
+    //         var labelCount = parseInt(codingDynamicElem.innerText) || 0; // Ensure it's a valid number, default to 0
+    
+    //         // Calculate updated label count
+    //         labelCount = (parseInt(dynamicQuestionCountInputValueBackup) || 0) - labelCount;
+    
+    //         // Update the element with the new count
+    //         codingDynamicElem.innerText = labelCount + (parseInt(dynamicInptElement.value) || 0);
+    //     }
+    // }
 
 }
 
 
+function DynamicInputValueBackUp(element_Id){
+
+    dynamicQuestionCountInputValueBackup = 0
+
+    var Elem_ = document.getElementById(element_Id)
+    if(Elem_){
+        if(Elem_.value){
+            dynamicQuestionCountInputValueBackup = Elem_.value
+        }
+        else{
+            dynamicQuestionCountInputValueBackup = 0
+        }
+    }
+
+}
+
+
+// function DynamicInputValueBackUp(element_Id) {
+//     dynamicQuestionCountInputValueBackup = 0;
+//     var Elem_ = document.getElementById(element_Id);
+//     if (Elem_ && !isNaN(Elem_.value)) { // Ensure Elem_ exists and its value is numeric
+//         dynamicQuestionCountInputValueBackup = parseInt(Elem_.value) || 0; // Default to 0 if parsing fails
+//     }
+// }
+
+
+
+// this function takes data from the backend and insert in to a variable that contains static and dynamic question that variable go to backend
 function fillDynamicQuestionsInputField(TestCardid_,data) {
     
     for (const subtopicId in data) {
@@ -2959,15 +3283,17 @@ function fillDynamicQuestionsInputField(TestCardid_,data) {
             };
         }
 
-        // console.log('complexities :: ',complexities);
+        // inserting dynamic questions count in to the variable.
+        if(subtopicId){
 
-        allTestsQuestions[TestCardid_][subtopicId]['veryLow']['qCount'] = parseInt(complexities['veryLow'])
-        allTestsQuestions[TestCardid_][subtopicId]['low']['qCount'] = parseInt(complexities['low'])
-        allTestsQuestions[TestCardid_][subtopicId]['medium']['qCount'] = parseInt(complexities['medium'])
-        allTestsQuestions[TestCardid_][subtopicId]['high']['qCount'] = parseInt(complexities['high'])
-        allTestsQuestions[TestCardid_][subtopicId]['veryHigh']['qCount'] = parseInt(complexities['veryHigh'])
+            allTestsQuestions[TestCardid_][subtopicId]['veryLow']['qCount'] = parseInt(complexities['veryLow'])
+            allTestsQuestions[TestCardid_][subtopicId]['low']['qCount'] = parseInt(complexities['low'])
+            allTestsQuestions[TestCardid_][subtopicId]['medium']['qCount'] = parseInt(complexities['medium'])
+            allTestsQuestions[TestCardid_][subtopicId]['high']['qCount'] = parseInt(complexities['high'])
+            allTestsQuestions[TestCardid_][subtopicId]['veryHigh']['qCount'] = parseInt(complexities['veryHigh'])
 
-        // console.log('::',allTestsQuestions);
+        }
+
 
         for (const complexity in complexities) {
 
@@ -2984,13 +3310,10 @@ function fillDynamicQuestionsInputField(TestCardid_,data) {
         }
     }
 
-    console.log('allTestsQuestions :: ',allTestsQuestions);
-
 }
 
 
 // check candidate's before save paper
-
 function checkCandidateRegistration(){ 
 
     dataObjs = {
@@ -3005,7 +3328,6 @@ function checkCandidateRegistration(){
     $.post(CONFIG['portal'] + "/api/check-jd-candidate-registration", final_data, function (res) {
 
         if (res.statusCode == 0) {
-            console.log(res.data);
             if (res.data == "Y") {
                 Swal.fire({
                     icon: 'info',
@@ -3020,5 +3342,92 @@ function checkCandidateRegistration(){
         }
     })
 }
-
 //  code in between
+
+function paperQuestionsCountAndMarksSetInHTML(papersData){
+    
+    for (var key in workFlowDetails) {
+                    
+        if (workFlowDetails.hasOwnProperty(key)) {
+
+            var workflowData = workFlowDetails[key]
+            var testCardId__ = workflowData['id']
+
+            if(papersData[workflowData['paperid']]){
+
+                if(workflowData['papertype'] == 'S'){
+
+                    // paper weightage
+                    var screeningWeightAgeElementId = `screeningTestId_${testCardId__}`
+                    var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
+
+                    for (let elem = 0; elem < lstOfElements.length; elem++) {
+                        let element = lstOfElements[elem];
+                        element.innerText = papersData[workflowData['paperid']]['totalMarks']
+                    }
+
+                    // screening static questions count in to html
+                    var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId__}`
+                    var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
+
+                    for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
+                        let element = lstOfCountElements[elem_];
+                        element.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
+                    }
+
+                    // inserting dynamic questions count in to html
+                    var ScrenningDynamicQuesCountElement = document.getElementById(`DynamicQuestionsCount_${testCardId__}`)
+
+                    if(ScrenningDynamicQuesCountElement){
+                        ScrenningDynamicQuesCountElement.innerText = papersData[workflowData['paperid']]['dynamicQuestionsCount']
+                    }
+
+                    // papersData[workflowData['paperid']]['totalMarks']
+
+                }
+
+                if(workflowData['papertype'] == 'E'){
+
+                    papersData[workflowData['paperid']]['totalMarks']
+
+                    var codingPaperTotalWeightage = document.getElementById(`TestWeightage_${testCardId__}`)
+                    if(codingPaperTotalWeightage){
+                        codingPaperTotalWeightage.innerText = papersData[workflowData['paperid']]['totalMarks']
+                    }
+
+                    var codingStaticQues = document.getElementById(`StaticQuestionsCount_${testCardId__}`)
+                    if(codingStaticQues){
+                        codingStaticQues.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
+                    }
+
+                    var codingDynamicQuesCount = document.getElementById(`DynamicQuestionsCount_${testCardId__}`)
+                    if(codingDynamicQuesCount){
+                        codingDynamicQuesCount.innerText = papersData[workflowData['paperid']]['dynamicQuestionsCount']
+                    }
+
+                }
+
+                if(workflowData['papertype'] == 'I'){
+
+                    var interviewQuestionsCount = document.getElementById(`InterviewQuestionsCount_${testCardId__}`)
+                    if(interviewQuestionsCount){
+                        interviewQuestionsCount.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
+                    }
+                    
+                }
+
+
+                console.log(';;',papersData[workflowData['paperid']]['totalMarks']);
+
+
+
+            }
+
+        }
+    }
+}
+
+
+function increaseStaticQuestionsCount(){
+
+}
