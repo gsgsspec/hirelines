@@ -392,36 +392,6 @@ function screeningTabs(testId){
 }
 
 
-
-// function getSkillsTopicsAndSubTopic(skillsSetLst, data){
-
-//     dataObj = {
-//         'skillsSetLst' : skillsSetLst
-//     }
-
-//     var final_data = {
-//         'data': JSON.stringify(dataObj),
-//         csrfmiddlewaretoken: CSRF_TOKEN,
-//     }
-
-//     $.post(CONFIG['portal'] + "/api/skills-topics-subtopics-withquestions", final_data, function (res) {
-        
-//         var skillData = res.data['data']
-//         var workFlowData_ = data['workFlowData']
-
-//         if(workFlowData_.length > 0){
-//             for(var workFlowDetails_ = 0; workFlowDetails_ < workFlowData_.length; workFlowDetails_++){
-                
-//                 var WorkFlowtestId = workFlowData_[workFlowDetails_]['id']
-
-//             }
-//         }
-
-//     })
-
-// }
-
-
 // Show skills, topics, and subtopics in HTML
 function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount) {
 
@@ -1026,14 +996,24 @@ function questionCheckAsSelected(){
                         }
 
                         
+                        // orginial
+                        // if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
+                        //     allTestsQuestions[ElementTestId][ElementSubtopicId] = {
+                        //         veryLow:  { qIds: [] },
+                        //         low:      { qIds: [] },
+                        //         medium:   { qIds: [] },
+                        //         high:     { qIds: [] },
+                        //         veryHigh: { qIds: [] }
+                        //     };
+                        // }
 
                         if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
                             allTestsQuestions[ElementTestId][ElementSubtopicId] = {
-                                veryLow:  { qIds: [] },
-                                low:      { qIds: [] },
-                                medium:   { qIds: [] },
-                                high:     { qIds: [] },
-                                veryHigh: { qIds: [] }
+                                veryLow: { qCount: 0, qIds: [] },
+                                low: { qCount: 0, qIds: [] },
+                                medium: { qCount: 0, qIds: [] },
+                                high: { qCount: 0, qIds: [] },
+                                veryHigh: { qCount: 0, qIds: [] }
                             };
                         }
 
@@ -1598,11 +1578,6 @@ function unhideTheTopicContainer(elementId) {
     }
     
 }
-
-
-
-
-
 
 
 // Perfect
@@ -2664,36 +2639,6 @@ function OpenIntegrationModal(){
 //     });
 // });
 
-// var allTestsQuestions = {
-//     "8": { // test card id
-//         staticQuestion: [],
-//         subTopic : {
-//             dynamicQuestion: {
-//                 veryLow: {
-//                     qCount: 0,
-//                     qIds: []
-//                 },
-//                 low: {
-//                     qCount: 0,
-//                     qIds: []
-//                 },
-//                 medium: {
-//                     qCount: 2,
-//                     qIds: []
-//                 },
-//                 high: {
-//                     qCount: 0,
-//                     qIds: []
-//                 },
-//                 veryHigh: {
-//                     qCount: 0,
-//                     qIds: []
-//                 },
-//             }
-//         }
-        
-//     }
-// };
 
 // don't remove here to ==============================================
 // {
@@ -2752,15 +2697,27 @@ function addQuestionsToList(Qid, elementId) {
     if (!allTestsQuestions[testCardId]) {
         allTestsQuestions[testCardId] = {'staticQuestions':[]};
     }
+    
+    // orginial
+    // // Check if the subTopic is present
+    // if (!allTestsQuestions[testCardId][subTopic_Id]) {
+    //     allTestsQuestions[testCardId][subTopic_Id] = {
+    //         veryLow: { qIds: [] },
+    //         low: { qIds: [] },
+    //         medium: { qIds: [] },
+    //         high: { qIds: [] },
+    //         veryHigh: { qIds: [] }
+    //     };
+    // }
 
     // Check if the subTopic is present
     if (!allTestsQuestions[testCardId][subTopic_Id]) {
         allTestsQuestions[testCardId][subTopic_Id] = {
-            veryLow: { qIds: [] },
-            low: { qIds: [] },
-            medium: { qIds: [] },
-            high: { qIds: [] },
-            veryHigh: { qIds: [] }
+            veryLow: { qCount: 0, qIds: [] },
+            low: { qCount: 0, qIds: [] },
+            medium: { qCount: 0, qIds: [] },
+            high: { qCount: 0, qIds: [] },
+            veryHigh: { qCount: 0, qIds: [] }
         };
     }
 
@@ -2993,47 +2950,6 @@ function addQuestionsToList(Qid, elementId) {
 }
 
 
-
-
-
-
-// function savePaper(BtnElement) {
-
-//     var saveBtnElementDataset = document.getElementById(BtnElement).dataset
-//     let testid_ = saveBtnElementDataset['testid']
-
-//     let paperType = testsList[testid_]['papertype']
-//     var testTitle = document.getElementById(`testTitle_${testid_}`)
-
-//     var testid = Number(testid_);
-
-//     dataObj = {
-//         'paperid'              :  561445,
-//         'paperType'            :  paperType,
-//         'paperTitle'           :  testTitle,
-//         'questionsData'        :  allTestsQuestions[testid]
-//     };
-
-//     var final_data = {
-//         "data":JSON.stringify(dataObj),
-//         csrfmiddlewaretoken: CSRF_TOKEN,
-//     };
-
-//     $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
-
-//         if(res.statusCode == 0){
-            
-//         }
-
-//     });
-
-// }
-
-
-
-
-
-
 function savePaper(BtnElement) {
     return new Promise((resolve, reject) => {
 
@@ -3063,6 +2979,7 @@ function savePaper(BtnElement) {
         $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
 
             if (res.statusCode == 0 && res.data) {
+
                 var data = res.data;
                 selectedPaper = data;
 
@@ -3078,7 +2995,7 @@ function savePaper(BtnElement) {
                     csrfmiddlewaretoken: CSRF_TOKEN,
                 };
 
-                // Saving Paper id in hireline with this app 
+                // Saving Paper id in hireline with this api
                 $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data_jd, function (res) {
                     resolve(data); // Resolve the promise with the data after both calls
 
@@ -3133,8 +3050,6 @@ function dynamicQuestionscountSave(inputElement){
 
     }
 
-
-
     if(testsList[testId]['papertype'] == 'S'){
 
         let codingDynamicElemId = `DynamicQuestionsCount_${testId}`
@@ -3184,11 +3099,6 @@ function dynamicQuestionscountSave(inputElement){
 
             var labelValue = parseInt(dynamicQuestionCountInputValueBackup) - labelCount
 
-            // console.log('::', "--", parseInt(dynamicQuestionCountInputValueBackup) , '::',labelCount);
-
-            console.log('back Up :: ',dynamicQuestionCountInputValueBackup,  'labelCount :: ',labelCount);
-            console.log('inpt val :: ',dynamicInptElement.value);
-
             var DynInptVal = dynamicInptElement.value
             if(parseInt(dynamicInptElement.value) == NaN){
                 DynInptVal = 0
@@ -3217,22 +3127,6 @@ function dynamicQuestionscountSave(inputElement){
 
     }
 
-
-    // if (testsList[testId]['papertype'] == 'E') {
-    //     let codingDynamicElemId = `DynamicQuestionsCount_${testId}`;
-    //     let codingDynamicElem = document.getElementById(codingDynamicElemId);
-    
-    //     if (codingDynamicElem) {
-    //         var labelCount = parseInt(codingDynamicElem.innerText) || 0; // Ensure it's a valid number, default to 0
-    
-    //         // Calculate updated label count
-    //         labelCount = (parseInt(dynamicQuestionCountInputValueBackup) || 0) - labelCount;
-    
-    //         // Update the element with the new count
-    //         codingDynamicElem.innerText = labelCount + (parseInt(dynamicInptElement.value) || 0);
-    //     }
-    // }
-
 }
 
 
@@ -3251,16 +3145,6 @@ function DynamicInputValueBackUp(element_Id){
     }
 
 }
-
-
-// function DynamicInputValueBackUp(element_Id) {
-//     dynamicQuestionCountInputValueBackup = 0;
-//     var Elem_ = document.getElementById(element_Id);
-//     if (Elem_ && !isNaN(Elem_.value)) { // Ensure Elem_ exists and its value is numeric
-//         dynamicQuestionCountInputValueBackup = parseInt(Elem_.value) || 0; // Default to 0 if parsing fails
-//     }
-// }
-
 
 
 // this function takes data from the backend and insert in to a variable that contains static and dynamic question that variable go to backend
@@ -3416,18 +3300,8 @@ function paperQuestionsCountAndMarksSetInHTML(papersData){
                     
                 }
 
-
-                console.log(';;',papersData[workflowData['paperid']]['totalMarks']);
-
-
-
             }
 
         }
     }
-}
-
-
-function increaseStaticQuestionsCount(){
-
 }
