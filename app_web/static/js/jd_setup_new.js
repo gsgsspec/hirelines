@@ -997,25 +997,25 @@ function questionCheckAsSelected(){
 
                         
                         // orginial
-                        // if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
-                        //     allTestsQuestions[ElementTestId][ElementSubtopicId] = {
-                        //         veryLow:  { qIds: [] },
-                        //         low:      { qIds: [] },
-                        //         medium:   { qIds: [] },
-                        //         high:     { qIds: [] },
-                        //         veryHigh: { qIds: [] }
-                        //     };
-                        // }
-
                         if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
                             allTestsQuestions[ElementTestId][ElementSubtopicId] = {
-                                veryLow: { qCount: 0, qIds: [] },
-                                low: { qCount: 0, qIds: [] },
-                                medium: { qCount: 0, qIds: [] },
-                                high: { qCount: 0, qIds: [] },
-                                veryHigh: { qCount: 0, qIds: [] }
+                                veryLow:  { qIds: [] },
+                                low:      { qIds: [] },
+                                medium:   { qIds: [] },
+                                high:     { qIds: [] },
+                                veryHigh: { qIds: [] }
                             };
                         }
+
+                        // if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
+                        //     allTestsQuestions[ElementTestId][ElementSubtopicId] = {
+                        //         veryLow: { qCount: 0, qIds: [] },
+                        //     low: { qCount: 0, qIds: [] },
+                        //     medium: { qCount: 0, qIds: [] },
+                        //     high: { qCount: 0, qIds: [] },
+                        //     veryHigh: { qCount: 0, qIds: [] }
+                        //     };
+                        // }
 
                         // var paperid_ = testsList[ElementTestId]['paperid']
     
@@ -2700,26 +2700,26 @@ function addQuestionsToList(Qid, elementId) {
     
     // orginial
     // // Check if the subTopic is present
-    // if (!allTestsQuestions[testCardId][subTopic_Id]) {
-    //     allTestsQuestions[testCardId][subTopic_Id] = {
-    //         veryLow: { qIds: [] },
-    //         low: { qIds: [] },
-    //         medium: { qIds: [] },
-    //         high: { qIds: [] },
-    //         veryHigh: { qIds: [] }
-    //     };
-    // }
-
-    // Check if the subTopic is present
     if (!allTestsQuestions[testCardId][subTopic_Id]) {
         allTestsQuestions[testCardId][subTopic_Id] = {
-            veryLow: { qCount: 0, qIds: [] },
-            low: { qCount: 0, qIds: [] },
-            medium: { qCount: 0, qIds: [] },
-            high: { qCount: 0, qIds: [] },
-            veryHigh: { qCount: 0, qIds: [] }
+            veryLow: { qIds: [] },
+            low: { qIds: [] },
+            medium: { qIds: [] },
+            high: { qIds: [] },
+            veryHigh: { qIds: [] }
         };
     }
+
+    // Check if the subTopic is present
+    // if (!allTestsQuestions[testCardId][subTopic_Id]) {
+    //     allTestsQuestions[testCardId][subTopic_Id] = {
+    //         veryLow: { qCount: 0, qIds: [] },
+    //         low: { qCount: 0, qIds: [] },
+    //         medium: { qCount: 0, qIds: [] },
+    //         high: { qCount: 0, qIds: [] },
+    //         veryHigh: { qCount: 0, qIds: [] }
+    //     };
+    // }
 
     // checking questions are static questions are dynamic question
     // static questions
