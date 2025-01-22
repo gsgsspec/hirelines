@@ -1373,12 +1373,28 @@ def getCandidateInterviewData(scd_id):
             resp["coding_data"] = coding_data
 
         job_desc = JobDesc.objects.get(id=candidate.jobid)
+        
+        skillsString = ""
+
+        if job_desc:
+            if job_desc.skillset:
+                skillesSet = ast.literal_eval(job_desc.skillset)
+                
+                skillCount = 0
+                for skill in skillesSet:
+                    value = next(iter(skill.values()))  # Get the first value dynamically
+                    skillCount += 1
+
+                    if len(skillesSet) == skillCount:
+                        skillsString += value
+                    else:
+                        skillsString += value + ", "
 
         job_desc_data = {
             "jd_title": job_desc.title,
             "role": job_desc.role,
             "location": job_desc.location,
-            "skills": job_desc.skillset,
+            "skills": skillsString,
             "notes": job_desc.skillnotes,
             'instructions':call_details.instructions
         }
