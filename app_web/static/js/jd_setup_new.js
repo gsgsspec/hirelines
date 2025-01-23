@@ -48,7 +48,6 @@ $(document).ready(function () {
         workFlowData(), // it has to call first because it get all test data and create html after skill, topic, subtopics are added in to that html
         getSkills(),
     ])
-    checkCandidateRegistration()
 })
 
 
@@ -1061,12 +1060,86 @@ function questionCheckAsSelected(){
 function markAsStarQuestion(question_id , subtopic_id, test_id){
     
     if(subtopic_id){
-        var starQuestionId = `starQuestion_Q_${question_id}_subTopic_${subtopic_id}_testId_${test_id}`
-        console.log('sub topic question');
+        // starQuestion_Q_131_11_testId_202
+        var starQuestionId = `starQuestion_Q_${question_id}_${subtopic_id}_testId_${test_id}`
+
+        var CheckBoxElement = document.getElementById(`questionId_${question_id}_S`)
+
+        if(CheckBoxElement){
+            if(CheckBoxElement.checked){
+
+                var starElement = document.getElementById(starQuestionId)
+                if(starElement){
+
+                    var starData = starElement.dataset
+                    
+                    if(starData['star'] == 'N'){
+                        starData['star'] = 'Y'
+                        starElement.className = ''
+                        starElement.classList.add('fas','fa-star','customStarCursor')
+                    }
+                    else{
+                        starData['star'] = 'N'
+                        starElement.className = ''
+                        starElement.classList.add('far','fa-star','customStarCursor')
+                    }
+
+                }
+                else{
+                    console.log('can not found the star element');
+                }
+                
+
+
+
+            }
+            else{
+                console.log('element was not checked');
+            }
+        }
+        else{
+            console.log('can not find question checked element');
+        }
+
     }
     else{
         var starQuestionId = `starQuestion_Q_${question_id}_subTopic_BasicScreening_testId_${test_id}`
-        console.log('screening basic question');
+        
+        var CheckBoxElement = document.getElementById(`questionId_${question_id}`)
+
+        if(CheckBoxElement){
+            if(CheckBoxElement.checked){
+
+                var starElement = document.getElementById(starQuestionId)
+                if(starElement){
+
+                    var starData = starElement.dataset
+                    
+                    if(starData['star'] == 'N'){
+                        starData['star'] = 'Y'
+                        starElement.className = ''
+                        starElement.classList.add('fas','fa-star','customStarCursor')
+                    }
+                    else{
+                        starData['star'] = 'N'
+                        starElement.className = ''
+                        starElement.classList.add('far','fa-star','customStarCursor')
+                    }
+
+                }
+                else{
+                    console.log('can not found the star element');
+                }
+
+            }
+            else{
+                console.log('element was not checked');
+            }
+        }
+        else{
+            console.log('can not find question checked element');
+        }
+        
     }
 
 }
@@ -3007,6 +3080,10 @@ function addQuestionsToList(Qid, elementId) {
 
 }
 
+// function caller(dt){
+//     console.log('calleererererere');
+//     console.log('::',dt);
+// }
 
 function savePaper(BtnElement) {
     return new Promise((resolve, reject) => {
@@ -3026,50 +3103,59 @@ function savePaper(BtnElement) {
             'questionsData'        :  allTestsQuestions[testid]
         };
 
-        console.log('dataObj :: ',dataObj);
+        
+        checkCandidateRegistration().then(data => {
 
-        var final_data = {
-            "data": JSON.stringify(dataObj),
-            csrfmiddlewaretoken: CSRF_TOKEN,
-        };
+            if(data == 'N'){
 
-        // First AJAX call
-        $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
-
-            if (res.statusCode == 0 && res.data) {
-
-                var data = res.data;
-                selectedPaper = data;
-
-                var dataObj = {
-                    'createOrUpdate' : 'update',
-                    'createdPaperid': data['createdPaperid'],
-                    'testId': testid,
-                    'jdId': jdId,
-                };
-
-                var final_data_jd = {
-                    'data': JSON.stringify(dataObj),
+                var final_data = {
+                    "data": JSON.stringify(dataObj),
                     csrfmiddlewaretoken: CSRF_TOKEN,
                 };
-
-                // Saving Paper id in hireline with this api
-                $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data_jd, function (res) {
-                    resolve(data); // Resolve the promise with the data after both calls
-
+        
+                // First AJAX call
+                $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
+        
+                    if (res.statusCode == 0 && res.data) {
+        
+                        var data = res.data;
+                        selectedPaper = data;
+        
+                        var dataObj = {
+                            'createOrUpdate' : 'update',
+                            'createdPaperid': data['createdPaperid'],
+                            'testId': testid,
+                            'jdId': jdId
+                        };
+        
+                        var final_data_jd = {
+                            'data': JSON.stringify(dataObj),
+                            csrfmiddlewaretoken: CSRF_TOKEN,
+                        };
+        
+                        // Saving Paper id in hireline with this api
+                        $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data_jd, function (res) {
+                            resolve(data); // Resolve the promise with the data after both calls
+                            showSuccessMessage('Saved Successfully');
+                        }).fail((error) => {
+                            reject(error); // Reject on second API call error
+                        });
+        
+                    } 
+                    else {
+                        reject(new Error("Failed to create paper")); // Reject on first API call error
+                    }
                 }).fail((error) => {
-                    console.error('Error in second API call:', error);
-                    reject(error); // Reject on second API call error
+                    console.error('Error in first API call:', error);
+                    reject(error); // Reject on first API call error
                 });
 
-            } 
-            else {
-                console.error('Error in first API call response:', res);
-                reject(new Error("Failed to create paper")); // Reject on first API call error
             }
-        }).fail((error) => {
-            console.error('Error in first API call:', error);
-            reject(error); // Reject on first API call error
+
+
+        })
+        .catch(err => {
+            console.error("Error occurred:", err);
         });
 
     })
@@ -3256,33 +3342,41 @@ function fillDynamicQuestionsInputField(TestCardid_,data) {
 
 
 // check candidate's before save paper
-function checkCandidateRegistration(){ 
 
-    dataObjs = {
-        'jd_id': jdId,
-    }
+function checkCandidateRegistration() {
+    return new Promise((resolve, reject) => {
+        const dataObjs = { 'jd_id': jdId };
 
-    var final_data = {
-        'data': JSON.stringify(dataObjs),
-        csrfmiddlewaretoken: CSRF_TOKEN,
-    }
+        const final_data = {
+            'data': JSON.stringify(dataObjs),
+            csrfmiddlewaretoken: CSRF_TOKEN,
+        };
 
-    $.post(CONFIG['portal'] + "/api/check-jd-candidate-registration", final_data, function (res) {
+        $.post(CONFIG['portal'] + "/api/check-jd-candidate-registration", final_data)
+            .done(function (res) {
+                if (res.statusCode === 0) {
 
-        if (res.statusCode == 0) {
-            if (res.data == "Y") {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'The candidate is already registered for this Job Description and cannot be edited.',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#274699',
-                });
-            }
-        }
-        else{
-            console.log('Error in checking the candidate registrations')
-        }
-    })
+                    if (res.data === "Y") {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'The candidate is already registered for this Job Description and cannot be edited.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#274699',
+                        });
+                    }
+
+                    // Resolve with the API data
+                    resolve(res.data);
+                } else {
+                    console.error('Error: Unexpected statusCode in response');
+                    reject('Unexpected statusCode');
+                }
+            })
+            .fail(function () {
+                console.error('Error in checking the candidate registration (API call failed)');
+                // reject('API call failed');
+            });
+    });
 }
 //  code in between
 
