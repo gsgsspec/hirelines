@@ -291,8 +291,8 @@ def getJdQuestionsView(request):
                         if workFlow_.papertype == "S":
                             if workFlow_.paperid:
                                 screeningPapersLst.append(workFlow_.paperid)
-
-            jd_data['screeningPapersList'] = screeningPapersLst
+            if jd_data:
+                jd_data['screeningPapersList'] = screeningPapersLst
             
             get_evaluation_submissions = requests.post(url, json = jd_data, verify = False)
             response_content = get_evaluation_submissions.content
