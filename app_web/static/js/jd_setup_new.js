@@ -40,6 +40,8 @@ var DynamicQuesCount
 
 var dynamicQuestionCountInputValueBackup = 0
 
+// var jdBasedQuesFromPaper
+
 
 $(document).ready(function () {
     Promise.all([
@@ -78,12 +80,14 @@ function getSkills() {
 
                 var papersMarksAndQues = res.data['papersMarksAndQuestions']
 
+                // jdBasedQuesFromPaper = res.data['jdBasedQues']
+
                 for (var key in workFlowDetails) {
                     
                     if (workFlowDetails.hasOwnProperty(key)) {
                         
                         var workflowData = workFlowDetails[key]; // Access the value by the key
-                        
+
                         // this function call when page loads or page referesh's.
                         // it create html with skills with topic with subtopic 
                         skillsListShowInHtml(workflowData.id, res.data['skillsList'], workflowData.papertype, DynamicQuesCount);
@@ -994,7 +998,6 @@ function questionCheckAsSelected(){
                         if(!allTestsQuestions[ElementTestId]){
                             allTestsQuestions[ElementTestId] = {'staticQuestions':[]};
                         }
-
                         
                         // orginial
                         if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
@@ -1006,18 +1009,6 @@ function questionCheckAsSelected(){
                                 veryHigh: { qIds: [] }
                             };
                         }
-
-                        // if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
-                        //     allTestsQuestions[ElementTestId][ElementSubtopicId] = {
-                        //         veryLow: { qCount: 0, qIds: [] },
-                        //     low: { qCount: 0, qIds: [] },
-                        //     medium: { qCount: 0, qIds: [] },
-                        //     high: { qCount: 0, qIds: [] },
-                        //     veryHigh: { qCount: 0, qIds: [] }
-                        //     };
-                        // }
-
-                        // var paperid_ = testsList[ElementTestId]['paperid']
     
                         if(ElementComplexity == 'verylow'){
                             ElementComplexity = 'veryLow'
@@ -1296,10 +1287,22 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
             firstInpt.dataset['qid'] = ques['questionId']
             firstInpt.dataset['type'] = 'screening'
             firstInpt.dataset['testid'] = testId
+            firstInpt.dataset['marks'] = ques['questionMarks']
             firstInpt.setAttribute(
                 'onclick',
                 `addQuestionsToList(${ques['questionId']},this.id)`
             );
+
+            if (ques['paperQuestion'] == 'Y'){
+                firstInpt.checked = true;
+
+                if(!allTestsQuestions[testId]){
+                    allTestsQuestions[testId] = {'staticQuestions':[]};
+                }
+
+                allTestsQuestions[testId]['staticQuestions'].push(parseInt(ques['questionId']))
+
+            }
 
             var starContainer = document.createElement('span');
 
@@ -2722,7 +2725,7 @@ function addQuestionsToList(Qid, elementId) {
     // }
 
     // checking questions are static questions are dynamic question
-    // static questions
+    // static questions adding in to static questions list
     if(questionType_ == 'S'){
 
         if(questionElement_.checked){
@@ -2772,12 +2775,6 @@ function addQuestionsToList(Qid, elementId) {
                         let totalMarks_ = parseInt(element_.innerText) + parseInt(QueMarks)
                         element_.innerText = totalMarks_
                     }
-                    else{
-                        console.log('inner text not fnd');
-                    }
-                }
-                else{
-                    console.log('elme cnot fnd');
                 }
 
                 var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
@@ -2898,7 +2895,7 @@ function addQuestionsToList(Qid, elementId) {
     }
 
     // checking questions are static questions are dynamic question
-    // dynamic questions
+    // dynamic questions adding in to questions list
     if(questionType_ == 'D'){
 
         if(questionElement_.checked){
@@ -2922,12 +2919,43 @@ function addQuestionsToList(Qid, elementId) {
     }
 
     // checking questions are static questions are dynamic question
-    // jd basic screening questions
+    // jd basic screening questions in to the static questions list
     if(questionType_ == 'screening'){
 
         if(questionElement_.checked){
             // Push the question ID to the appropriate qIds array
             allTestsQuestions[testCardId]['staticQuestions'].push(Qid)
+
+            // increase the test static questions count
+            // screening static questions count in to html
+            var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
+            var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
+
+            for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
+                let element = lstOfCountElements[elem_];
+
+                if(element.innerText){
+                    let totalCount_ = parseInt(element.innerText) + 1
+                    element.innerText = totalCount_
+                }
+            }
+
+            // increase the paper weightage 
+            // paper weightage
+            var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
+            var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
+
+            for (let elem = 0; elem < lstOfElements.length; elem++) {
+                let element = lstOfElements[elem];
+
+                if(element.innerText){
+                    let totalMarks_ = parseInt(element.innerText) + parseInt(QueMarks)
+                    element.innerText = totalMarks_
+                }
+
+            }
+
+
         }
         else{
             
@@ -2942,6 +2970,36 @@ function addQuestionsToList(Qid, elementId) {
                     allTestsQuestions[testCardId]['staticQuestions'].splice(index, 1);
                 }
             }
+
+            // Decrease the test static questions count
+            var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
+            var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
+
+            for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
+                let element = lstOfCountElements[elem_];
+                // element.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
+
+                if(element.innerText){
+                    let totalCount_ = parseInt(element.innerText) - 1
+                    element.innerText = totalCount_
+                }
+            }
+
+            // decerease the paper weightage 
+            // paper weightage
+            var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
+            var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
+
+            for (let elem = 0; elem < lstOfElements.length; elem++) {
+                let element = lstOfElements[elem];
+
+                if(element.innerText){
+                    let totalMarks_ = parseInt(element.innerText) - parseInt(QueMarks)
+                    element.innerText = totalMarks_
+                }
+
+            }
+            
 
         }
 

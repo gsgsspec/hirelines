@@ -282,6 +282,18 @@ def getJdQuestionsView(request):
                 skill = ", ".join(skill.keys())
                 skills_list.append(skill)
             jd_data['skillset'] = skills_list
+
+            screeningPapersLst = []
+            workFlowData = Workflow.objects.filter(jobid = dataObjs["jd_id"])
+            if workFlowData:
+                for workFlow_ in workFlowData:
+                    if workFlow_:
+                        if workFlow_.papertype == "S":
+                            if workFlow_.paperid:
+                                screeningPapersLst.append(workFlow_.paperid)
+
+            jd_data['screeningPapersList'] = screeningPapersLst
+            
             get_evaluation_submissions = requests.post(url, json = jd_data, verify = False)
             response_content = get_evaluation_submissions.content
 
