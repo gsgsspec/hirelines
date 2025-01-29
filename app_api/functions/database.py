@@ -283,7 +283,7 @@ def scheduleInterviewDB(user_id, dataObjs):
     
 def saveJdNewTest(dataObjs,compyId):
     try:
-
+        print('dataObjs',dataObjs)
         if dataObjs['createOrUpdate'] == 'create': # it create new Test.
             
             testType = None
@@ -362,6 +362,7 @@ def saveJdNewTest(dataObjs,compyId):
                 if 'testName' in dataObjs:
                     if dataObjs['testName']:
                         savedWorkFlowDetails.papertitle = dataObjs['testName']
+                        savedWorkFlowDetails.save()
                 
                 if 'createdPaperid' in dataObjs:
                     savedWorkFlowDetails.paperid = dataObjs['createdPaperid']

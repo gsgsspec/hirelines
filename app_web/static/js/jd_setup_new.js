@@ -2815,17 +2815,20 @@ function addQuestionsToList(Qid, elementId) {
     if(!allTestsQuestions[testCardId]['staticQuestions']){
         allTestsQuestions[testCardId]['staticQuestions'] = [];
     }
-    
+
     // orginial
     // // Check if the subTopic is present
-    if (!allTestsQuestions[testCardId][subTopic_Id]) {
-        allTestsQuestions[testCardId][subTopic_Id] = {
-            veryLow: { qIds: [] },
-            low: { qIds: [] },
-            medium: { qIds: [] },
-            high: { qIds: [] },
-            veryHigh: { qIds: [] }
-        };
+    if(subTopic_Id) {
+
+        if (!allTestsQuestions[testCardId][subTopic_Id]) {
+            allTestsQuestions[testCardId][subTopic_Id] = {
+                veryLow: { qIds: [] },
+                low: { qIds: [] },
+                medium: { qIds: [] },
+                high: { qIds: [] },
+                veryHigh: { qIds: [] }
+            };
+        }
     }
 
     // Check if the subTopic is present
@@ -3070,7 +3073,6 @@ function addQuestionsToList(Qid, elementId) {
 
             }
 
-
         }
         else{
             
@@ -3235,6 +3237,8 @@ function dynamicQuestionscountSave(inputElement){
         }
 
         allTestsQuestions[testId][subTopic_Id][complexitytype]['qCount'] = dynamicInptElement.value
+
+        updateTestWeightage(allTestsQuestions[testId],testId)
 
     }
 
@@ -3531,4 +3535,72 @@ function updateStarVariableStatus(question_id, testId, starFlag) {
     }
 
     console.log('Updated allTestsQuestions:', allTestsQuestions);
+}
+
+
+function updateTestWeightage(test_data, test_id) {
+    console.log('test_data', test_data);
+    console.log('test_id', test_id);
+
+    const subtopicKeys = Object.keys(test_data).filter(key => key !== "starQuestions" && key !== "staticQuestions");
+
+    const weightageCategories = ["veryLow", "low", "medium", "high", "veryHigh"];
+
+    let totalMarks = 0; // Consolidated total for all test IDs
+
+    // Calculate total marks for dynamic questions
+    subtopicKeys.forEach(subtopicId => {
+        weightageCategories.forEach(category => {
+            if (test_data[subtopicId][category] && test_data[subtopicId][category].qIds.length > 0) {
+                // Get the first qId from the category
+                const firstQId = test_data[subtopicId][category].qIds[0];
+
+                // Construct the element ID dynamically using the first qId
+                const elementId = `questionId_${firstQId}_D`;
+                const element = document.getElementById(elementId);
+
+                if (element) {
+                    const marks = parseFloat(element.getAttribute('data-marks')) || 0;
+
+                    // Multiply qCount by the marks and add to total
+                    totalMarks += test_data[subtopicId][category].qCount * marks;
+                }
+            }
+        });
+    });
+
+    console.log("Consolidated Total Marks from Dynamic Questions:", totalMarks);
+
+    // Calculate total marks for static questions
+    if (test_data.staticQuestions && Array.isArray(test_data.staticQuestions)) {
+        test_data.staticQuestions.forEach(qId => {
+            
+            let element = document.getElementById(`questionId_${qId}_S`);
+        
+            // If not found, try to find the element without the "_S" suffix (JD Based Questions)
+            if (!element) {
+                element = document.getElementById(`questionId_${qId}`);
+            }
+
+            if (element) {
+                const marks = parseFloat(element.getAttribute('data-marks')) || 0;
+                totalMarks += marks; // Add the marks for the static question
+            }
+            else{
+                console.log('Element not found');
+                
+            }
+        });
+    }
+
+    console.log("Consolidated Total Marks (including Static Questions):", totalMarks);
+
+    // Assuming the total marks are to be updated in the corresponding <span> element
+    const totalMarksElement = document.querySelector(`#TestWeightage_${test_id}`);
+
+    if (totalMarksElement) {
+        totalMarksElement.textContent = totalMarks; // Update the span with the total marks
+    } else {
+        console.log(`No element found for TestWeightage_${test_id}`);
+    }
 }
