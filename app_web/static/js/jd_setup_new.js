@@ -833,6 +833,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     for (let question_ = 0; question_ < complexityWiseQuestions.length; question_++) {
         
         let ques = complexityWiseQuestions[question_];
+        
         var questionContainer = document.createElement('div');
         questionContainer.classList.add('customQuestionContainer')
         questionContainer.id = `QuestionContainerId_${ques['questionId']}`
@@ -884,12 +885,23 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
         // Simple star icon, you can replace it with a font icon or image
         var starContainer = document.createElement('span');
+
+
+        if (!allTestsQuestions[test_Id]) {
+            allTestsQuestions[test_Id] = {}; // Initialize the test_Id key if it doesn't exist
+        }
+
+        if (!allTestsQuestions[test_Id]['starQuestions']) {
+            allTestsQuestions[test_Id]['starQuestions'] = []; // Initialize starQuestions as an empty array
+        }
         
         if(ques['starQuestion'] == 'Y'){                                                    // question id , subtopic id, test id
             starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;  
+            allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
         }
         else{                                                                               // question id , subtopic id, test id
-            starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;  
+            starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;
+            allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})  
         }
 
         var questionCheckBox = document.createElement('div')
@@ -995,7 +1007,11 @@ function questionCheckAsSelected(){
                         var ElementComplexity = elementData['complexity']
     
                         if(!allTestsQuestions[ElementTestId]){
-                            allTestsQuestions[ElementTestId] = {'staticQuestions':[]};
+                            allTestsQuestions[ElementTestId] = {};
+                        }
+
+                        if(!allTestsQuestions[ElementTestId]['staticQuestions']){
+                            allTestsQuestions[ElementTestId]['staticQuestions'] = [];
                         }
                         
                         // orginial
@@ -1065,6 +1081,8 @@ function markAsStarQuestion(question_id , subtopic_id, test_id){
 
         var CheckBoxElement = document.getElementById(`questionId_${question_id}_S`)
 
+        // console.log('CheckBoxElement',CheckBoxElement);
+        
         if(CheckBoxElement){
             if(CheckBoxElement.checked){
 
@@ -1077,12 +1095,18 @@ function markAsStarQuestion(question_id , subtopic_id, test_id){
                         starData['star'] = 'Y'
                         starElement.className = ''
                         starElement.classList.add('fas','fa-star','customStarCursor')
+
+                        updateStarVariableStatus(question_id,test_id,starData['star'])
                     }
                     else{
                         starData['star'] = 'N'
                         starElement.className = ''
                         starElement.classList.add('far','fa-star','customStarCursor')
+                        updateStarVariableStatus(question_id,test_id,starData['star'])
                     }
+
+                    // console.log('starData',starData['star']);
+                    
 
                 }
                 else{
@@ -1119,11 +1143,15 @@ function markAsStarQuestion(question_id , subtopic_id, test_id){
                         starData['star'] = 'Y'
                         starElement.className = ''
                         starElement.classList.add('fas','fa-star','customStarCursor')
+
+                        updateStarVariableStatus(question_id,test_id,starData['star'])
                     }
                     else{
                         starData['star'] = 'N'
                         starElement.className = ''
                         starElement.classList.add('far','fa-star','customStarCursor')
+
+                        updateStarVariableStatus(question_id,test_id,starData['star'])
                     }
 
                 }
@@ -1291,7 +1319,6 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
 
 
         if(ques['paperQuestion'] == 'Y'){
-            console.log('Done', secondInpt,ques['questionId']);
             firstInpt.checked = true
             secondInpt.checked = true
         }
@@ -1327,7 +1354,7 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
 }
 
 
-// basic screening questions genrate add to html
+// basic screening questions genrate add to html (JD Based Generated Questions)
 async function genrateHtmlWithScreeningBasicQuestion(testId) {
     
     try {
@@ -1379,11 +1406,21 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
 
             var starContainer = document.createElement('span');
 
+            if (!allTestsQuestions[testId]) {
+                allTestsQuestions[testId] = {}; // Initialize the testId key if it doesn't exist
+            }
+    
+            if (!allTestsQuestions[testId]['starQuestions']) {
+                allTestsQuestions[testId]['starQuestions'] = []; // Initialize starQuestions as an empty array
+            }
+
             if(ques['starQuestion'] == 'Y'){                                                // question id , subtopic id, test id
-                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_subTopic_BasicScreening_testId_${testId}" onclick="markAsStarQuestion(${ques['questionId']},null,${testId})"></i>`;  
+                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_subTopic_BasicScreening_testId_${testId}" onclick="markAsStarQuestion(${ques['questionId']},null,${testId})"></i>`; 
+                allTestsQuestions[testId]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
             }
             else{                                                                           // question id , subtopic id, test id
                 starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_subTopic_BasicScreening_testId_${testId}" onclick="markAsStarQuestion(${ques['questionId']},null,${testId})"></i>`;  
+                allTestsQuestions[testId]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})
             }
 
             var questionCheckBox = document.createElement('div');
@@ -2770,8 +2807,13 @@ function addQuestionsToList(Qid, elementId) {
     complexType = complexityMapping[complexType] || complexType;
 
     // check if the test card is persent
-    if (!allTestsQuestions[testCardId]) {
-        allTestsQuestions[testCardId] = {'staticQuestions':[]};
+  
+    if(!allTestsQuestions[testCardId]){
+        allTestsQuestions[testCardId] = {};
+    }
+
+    if(!allTestsQuestions[testCardId]['staticQuestions']){
+        allTestsQuestions[testCardId]['staticQuestions'] = [];
     }
     
     // orginial
@@ -3096,6 +3138,8 @@ function savePaper(BtnElement) {
 
         var testid = Number(testid_);
 
+        console.log('allTestsQuestions',allTestsQuestions[testid])
+
         dataObj = {
             'paperid'              :  testsList[testid_]['paperid'],
             'paperType'            :  paperType,
@@ -3293,14 +3337,18 @@ function DynamicInputValueBackUp(element_Id){
 
 // this function takes data from the backend and insert in to a variable that contains static and dynamic question that variable go to backend
 function fillDynamicQuestionsInputField(TestCardid_,data) {
-    
+
     for (const subtopicId in data) {
         const complexities = data[subtopicId];
 
         if(!allTestsQuestions[TestCardid_]){
-            allTestsQuestions[TestCardid_] = {'staticQuestions':[]};
+            allTestsQuestions[TestCardid_] = {};
         }
 
+        if(!allTestsQuestions[TestCardid_]['staticQuestions']){
+            allTestsQuestions[TestCardid_]['staticQuestions'] = [];
+        }
+        
         if (!allTestsQuestions[TestCardid_][subtopicId]) {
             allTestsQuestions[TestCardid_][subtopicId] = {
                 veryLow:  { qCount: 0 ,  qIds: [] },
@@ -3310,15 +3358,17 @@ function fillDynamicQuestionsInputField(TestCardid_,data) {
                 veryHigh: { qCount: 0 ,  qIds: [] }
             };
         }
-
+        
         // inserting dynamic questions count in to the variable.
         if(subtopicId){
 
-            allTestsQuestions[TestCardid_][subtopicId]['veryLow']['qCount'] = parseInt(complexities['veryLow'])
-            allTestsQuestions[TestCardid_][subtopicId]['low']['qCount'] = parseInt(complexities['low'])
-            allTestsQuestions[TestCardid_][subtopicId]['medium']['qCount'] = parseInt(complexities['medium'])
-            allTestsQuestions[TestCardid_][subtopicId]['high']['qCount'] = parseInt(complexities['high'])
-            allTestsQuestions[TestCardid_][subtopicId]['veryHigh']['qCount'] = parseInt(complexities['veryHigh'])
+            if(complexities){
+                allTestsQuestions[TestCardid_][subtopicId]['veryLow']['qCount'] = parseInt(complexities['veryLow'])
+                allTestsQuestions[TestCardid_][subtopicId]['low']['qCount'] = parseInt(complexities['low'])
+                allTestsQuestions[TestCardid_][subtopicId]['medium']['qCount'] = parseInt(complexities['medium'])
+                allTestsQuestions[TestCardid_][subtopicId]['high']['qCount'] = parseInt(complexities['high'])
+                allTestsQuestions[TestCardid_][subtopicId]['veryHigh']['qCount'] = parseInt(complexities['veryHigh'])
+            }
 
         }
 
@@ -3354,6 +3404,7 @@ function checkCandidateRegistration() {
 
         $.post(CONFIG['portal'] + "/api/check-jd-candidate-registration", final_data)
             .done(function (res) {
+                res.data = "N"
                 if (res.statusCode === 0) {
 
                     if (res.data === "Y") {
@@ -3456,4 +3507,28 @@ function paperQuestionsCountAndMarksSetInHTML(papersData){
 
         }
     }
+}
+
+
+function updateStarVariableStatus(question_id, testId, starFlag) {
+
+    // Check if the test ID exists and starQuestions array is available
+    if (allTestsQuestions[testId] && Array.isArray(allTestsQuestions[testId]['starQuestions'])) {
+
+        // Find the question by `qid` and update its star_flag
+        let question = allTestsQuestions[testId]['starQuestions'].find(q => q.qid === question_id);
+
+        if (question) {
+            question.star_flag = starFlag;  // Update star_flag if question exists
+            console.log('Question updated successfully:', question);
+        } else {
+            console.warn(`Question with ID ${question_id} not found. Adding new entry.`);
+            allTestsQuestions[testId]['starQuestions'].push({ "qid": question_id, "star_flag": starFlag });
+        }
+
+    } else {
+        console.error(`Test ID "${testId}" not found or starQuestions is not an array.`);
+    }
+
+    console.log('Updated allTestsQuestions:', allTestsQuestions);
 }

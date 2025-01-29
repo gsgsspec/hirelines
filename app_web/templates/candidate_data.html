@@ -102,6 +102,28 @@
             {% endfor %}
           </div>
           {% if candidate_info.notify_check == "Y" %}
+          <br>
+          <h5 class="p-clr" style="font-weight: 600;margin-top: 10px;">Interview Feedbacks</h5>
+          <div class="table-responsive text-nowrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Decision</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody class="table-border-bottom-0">
+                {% for feedback in feedbacks_data %}
+                  <tr>
+                    <td>{{ feedback.name }}</td>
+                    <td>{{ feedback.decision }}  {% if feedback.decision == "Hire" %} <i class="fas fa-thumbs-up" style="color: green;"></i>&nbsp; {% elif feedback.decision == "Not Hire" %} <i class="fas fa-thumbs-up fa-flip-vertical" style="color: red;"></i> {% else %} {% endif %}</td>
+                    <td>{{ feedback.notes }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
           <form id="notify-candidate">
             <div class="col-9">
               <div class="mt-3">

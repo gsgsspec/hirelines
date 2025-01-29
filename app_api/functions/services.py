@@ -1667,7 +1667,7 @@ def getCandidateWorkflowData(cid):
 
         candidate = Candidate.objects.filter(id=cid).last()
 
-        candidate_data = {"candidate_info": None, "registrations_data": None}
+        candidate_data = {"candidate_info": None, "registrations_data": None,"feedbacks_data":None}
 
         if candidate:
 
@@ -1762,6 +1762,10 @@ def getCandidateWorkflowData(cid):
                 candidate_data["registrations_data"] = registrations_data
 
             candidate_data["candidate_info"]["notify_check"] = notify_check
+
+        feedback_data =  feedbacksData(candidate.id)
+
+        candidate_data["feedbacks_data"] = feedback_data
 
         return candidate_data
 
@@ -2259,13 +2263,15 @@ def getCompanyData(cid):
             if branding:
                 social_links_string = branding.sociallinks
 
-                social_links = social_links_string.strip(',').split(', ')
+                if social_links_string:
 
-                for link in social_links:
-                    if link: 
-                        key, value = link.split(':', 1)  # Split at the first colon
-                        if key in keywords:
-                            social_links_vars[key] = value
+                    social_links = social_links_string.strip(',').split(', ')
+
+                    for link in social_links:
+                        if link: 
+                            key, value = link.split(':', 1)  # Split at the first colon
+                            if key in keywords:
+                                social_links_vars[key] = value
 
                 Linkedin = social_links_vars['Linkedin']
                 Facebook = social_links_vars['Facebook']

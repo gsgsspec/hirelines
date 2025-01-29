@@ -647,9 +647,10 @@ def candidateData(request,cid):
 
         candidate_info = candidatedata['candidate_info']
         registrations_data = candidatedata['registrations_data']
+        feedbacks_data = candidatedata['feedbacks_data']
 
 
-        return render(request, "portal_index.html", {"template_name": 'candidate_data.html','menuItemList':menuItemList,
+        return render(request, "portal_index.html", {"template_name": 'candidate_data.html','menuItemList':menuItemList,'feedbacks_data':feedbacks_data,
                                 'candidate_info':candidate_info,'registrations_data':registrations_data})
     
     except Exception as e:
