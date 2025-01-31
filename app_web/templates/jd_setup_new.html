@@ -1093,6 +1093,22 @@
   margin-bottom: 0px !important;
 }
 
+.form-check-input:hover {
+  cursor: pointer;
+}
+
+.dynamic-custom-checkbox:checked, .form-check-input[type=checkbox]:indeterminate {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  box-shadow: 0 2px 4px 0 rgba(242, 92, 5, 0.4);
+}
+
+
+.dynamic-custom-checkbox:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 2px 4px 0 rgba(242, 92, 5, 0.4);
+}
+
 </style>
 <script src="{% static 'lib/portal/assets/js/ui-popover.js' %}"></script>
 <script src="/static/config/config.js"></script>

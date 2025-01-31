@@ -864,7 +864,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         // Another checkbox
         let secondInpt = document.createElement('input');
         secondInpt.type = 'checkbox'; 
-        secondInpt.classList.add('form-check-input','mx-4')
+        secondInpt.classList.add('form-check-input','mx-4','dynamic-custom-checkbox')
         secondInpt.id = `questionId_${ques['questionId']}_D`
         secondInpt.dataset['qid'] = ques['questionId']
         secondInpt.dataset['testid'] = test_Id
@@ -1302,7 +1302,7 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         // Another checkbox
         let secondInpt = document.createElement('input');
         secondInpt.type = 'checkbox'; 
-        secondInpt.classList.add('form-check-input','mx-4')
+        secondInpt.classList.add('form-check-input','mx-4','dynamic-custom-checkbox')
         secondInpt.id = `questionId_${ques['questionId']}_D`
         secondInpt.dataset['qid'] = ques['questionId']
         secondInpt.dataset['testid'] = TestCardId
