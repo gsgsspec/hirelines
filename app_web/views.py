@@ -46,12 +46,77 @@ def webHomePage(request):
 #     except Exception as e:
 #         raise
 
+import difflib
+
+def diff_highlight(preset, user_code):
+    def normalize_line(line):
+        """Removes leading spaces for comparison but keeps the indentation intact"""
+        return line.lstrip()
+
+    def add_indentation(line, indentation):
+        """Adds back the preserved indentation"""
+        return f"{indentation}{line}"
+
+    preset_lines = preset.strip().splitlines()
+    user_lines = user_code.strip().splitlines()
+
+    diff_result = []
+
+    # Use difflib to align the lines and find differences
+    differ = difflib.Differ()
+    diff = list(differ.compare(preset_lines, user_lines))
+
+    # Iterate through the diff result
+    for line in diff:
+        if line.startswith('  '):  # Unchanged line
+            # Preserve the line as is
+            diff_result.append(line[2:])
+        elif line.startswith('- '):  # Line in preset but not in user_code
+            # Skip lines that are missing in user_code
+            continue
+        elif line.startswith('+ '):  # Line in user_code but not in preset
+            # Separate indentation and content
+            user_line = line[2:]
+            user_indentation = len(user_line) - len(user_line.lstrip())
+            user_content = user_line.lstrip()
+
+            # Highlight only the content (excluding indentation)
+            highlighted_line = f'<span class="highlight">{user_content}</span>'
+            diff_result.append(add_indentation(highlighted_line, ' ' * user_indentation))
+        elif line.startswith('? '):  # Differences within a line (handled separately)
+            # Skip these lines as they are part of the previous '+' or '-' lines
+            continue
+
+    return "\n".join(diff_result)
+
 
 def loginPage(request):
     try:
+             
+    #     preset = """
+    # def sum(a,b):
+    #     try:
 
+    #         # CODE HERE
+    #         return sum_
+    #     except Exception as e:
+    #         raise"""
+            
+    #     user_code = """
+    # def sum(a,b):
+    #     try:
+    #         sum_ = a  +b
+    #         return sum_
+    #     except Exception as e:
+    #         raise"""
+    #     highlighted_result = diff_highlight(preset, user_code)
+    #     obj={
+    #         "preset": preset.strip(),
+    #         "user_code": user_code.strip(),
+    #         "highlighted_result": highlighted_result
+    #     }
+    #     return render(request, "bk_code_diff.html",{"obj":obj})
         return render(request, "web_index.html", {"template_name": 'login.html'})
-
     except Exception as e:
         raise
 

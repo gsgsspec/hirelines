@@ -240,12 +240,11 @@ function filter_data(pid, ptid) {
                         rows = 2
                         answer = ""
                     }
-
-                    question_options_div = '<div style="display:flex;justify-content:space-between;width:700px"><p style="padding-top:13px"> <b>Question Type :</b>  ' + QUESTIONS_LIST[n]['question_type_name'] + ' </p><p style="padding-top:13px"> <b>Time used :</b>  ' + QUESTIONS_LIST[n]['question_time_used'] + ' </p></div>' +
-                        '<label>Code :</label><textarea style="width: 700px;" class="form-control" rows="' + rows + '" disabled>' +
+                    answer = `<pre><code style="font-size: 15px;color: #4a556e;">${answer}</code></pre>`
+                    question_options_div = '<div style="display:flex;justify-content:space-between;width:100%"><p style="padding-top:13px"> <b>Question Type :</b>  ' + QUESTIONS_LIST[n]['question_type_name'] + ' </p><p style="padding-top:13px"> <b>Time used :</b>  ' + QUESTIONS_LIST[n]['question_time_used'] + ' </p></div>' +
+                        '<label>Code :</label><div style="width: 100%;" class="form-control"  disabled>' +
                         answer +
-                        '</textarea> <br>';
-
+                        '</div> <br>';
                 }
 
                 if (QUESTIONS_LIST[n]["question_type_code"] == "A") {

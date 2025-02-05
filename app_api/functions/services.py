@@ -1807,7 +1807,7 @@ def generateCandidateReport(cid):
                 root_path + "/media/reports/candidate_report.html", "r"
             )
             report_template = report_template_path.read()
-
+        
             screening_data = acert_data["screening_data"]
             coding_data = acert_data["coding_data"]
             interview_data = acert_data["interview_data"]
