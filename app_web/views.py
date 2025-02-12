@@ -6,7 +6,8 @@ from app_api.functions.enc_dec import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
-    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData
+    getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
+    getCompanyCandidateUploadData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -882,9 +883,13 @@ def uploadCandidatesPage(request):
 
         jds_list = getCompanyJdData(company_id)
         sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+
+        candidates_upload_data = getCompanyCandidateUploadData(company_id)
+
+        # print('candidates_upload_data',candidates_upload_data)
         
         return render(request, "portal_index.html", {"template_name": 'candidate_upload.html','menuItemList':menuItemList,'sources_data':sources_data,
-                                                     'jds_data':jds_list})
+                                                     'jds_data':jds_list,'candidates_upload_data':candidates_upload_data})
     
     except Exception as e:
         raise

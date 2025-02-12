@@ -2,9 +2,21 @@ $(document).ready(function () {
     $('#process-excel-file').on('click', function () {
         const fileInput = $('#excelFile')[0];
         const selectedFile = fileInput.files[0]; // Access the file directly from the input
+        const selectedJD = $('#jd').val(); // Job description selection
+        const sourceCode = $('#source-code').val();
 
         if (!selectedFile) {
             alert("Please select a file before processing!");
+            return;
+        }
+
+        if (!selectedJD) {
+            alert("Please select a job description.");
+            return;
+        }
+    
+        if (!sourceCode || sourceCode.length !== 5) {
+            alert("Please enter a valid source code of exactly 5 characters.");
             return;
         }
 
@@ -83,6 +95,7 @@ $(document).ready(function () {
             processData: false,  // Prevent jQuery from converting the data to a query string
             success: function (response) {
                 console.log('File uploaded successfully:', response);
+                $('#download-report').hide();
                 processBackendResponse(response.data);
             },
             error: function (error) {
@@ -246,7 +259,6 @@ function highlightNextField() {
             if (result.isConfirmed) {
                 // If confirmed, proceed with sending data
                 sendConfirmedColumnsData(selectedColumns);
-        
                 
             } else {
                 // Optional: Handle the case when the user cancels
@@ -254,7 +266,9 @@ function highlightNextField() {
                     'Cancelled',
                     'Uploading of candidate data is cancelled',
                     'info'
-                );
+                ).then(() => {
+                    location.reload();
+                });
             }
         });
 
@@ -372,7 +386,6 @@ function sendConfirmedColumnsData(columnsData) {
         csrfmiddlewaretoken: CSRF_TOKEN,
     }
 
-    console.log('dataObjs',dataObjs);
 
     $.post(CONFIG['portal'] + "/api/confirmed-candidates-data", final_data, function (res) {
 
@@ -434,3 +447,33 @@ document.getElementById('reset-file').addEventListener('click', function () {
     // Reset column highlights
     $('table td, table th').css('background-color', ''); // Clear table highlights
 });
+
+
+
+document.getElementById("download-report").addEventListener("click", async function () {
+    try {
+        const response = await fetch("/api/download-upload-report", {
+            method: "POST",
+            headers: { "X-CSRFToken": CSRF_TOKEN },
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to download file");
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const filename = "Hirelines-upload-report";
+
+        a.href = downloadUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+        console.error("Error downloading report:", error);
+    }
+});
+

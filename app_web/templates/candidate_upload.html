@@ -2,51 +2,69 @@
 <div class="container-center">
     <div class="col-11">
         <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0 p-clr" style="font-weight: 600">Candidates Upload</h5>
+                {% if candidates_upload_data.display_flag == "Y" and candidates_upload_data.status == "C" %}
+                    <!-- <div class="row justify-content-end"> -->
+                    <div class="col-sm-10 text-end">
+                        <button id="download-report" class="btn btn-primary">Previous Candidate Upload Report</button>
+                    </div>
+                    <!-- </div> -->
+                {% endif %}
+            </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label">Job Description</label>
-                    <div class="col-sm-8">
-                      <select class="form-select" id="jd" required>
-                        <option selected disabled></option>
-                        {% for jd in jds_data %}
-                          <option value="{{ jd.id }}">{{ jd.title }}</option>
-                        {% endfor %}
-                      </select>
+                {% if candidates_upload_data.display_flag == "Y" and candidates_upload_data.status == "I" %}
+                    <div style="text-align: center;">
+                        <iconify-icon class="rotate-icon" icon="bx:loader-alt"></iconify-icon>
+                        <h5 class="p-clr mt-4">Candidates updating is in progress...</h5>
+                        <h6>will update once completed</h6>
                     </div>
-                </div>
+                {% else %}
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Job Description</label>
+                        <div class="col-sm-8">
+                        <select class="form-select" id="jd" required>
+                            <option selected disabled></option>
+                            {% for jd in jds_data %}
+                            <option value="{{ jd.id }}">{{ jd.title }}</option>
+                            {% endfor %}
+                        </select>
+                        </div>
+                    </div>
 
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label">Source code</label>
-                    <div class="col-sm-3">
-                        <!-- <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5" maxlength="5" pattern="[^ ]*" required> -->
-                        <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5"
-                            maxlength="5" pattern="^[a-zA-Z0-9]*$" required>
-                        <div id="existing-sources" class="existing-sources"></div>
-                        <span style="color: red;display: none;" id="code-error"><small>* Code should be of 5
-                                letters</small></span>
-                        <span style="color: red;display: none;" id="career-code-error"><small>* This code will be used
-                                for careers page</small></span>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Source code</label>
+                        <div class="col-sm-3">
+                            <!-- <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5" maxlength="5" pattern="[^ ]*" required> -->
+                            <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5"
+                                maxlength="5" pattern="^[a-zA-Z0-9]*$" required>
+                            <div id="existing-sources" class="existing-sources"></div>
+                            <span style="color: red;display: none;" id="code-error"><small>* Code should be of 5
+                                    letters</small></span>
+                            <span style="color: red;display: none;" id="career-code-error"><small>* This code will be used
+                                    for careers page</small></span>
+                        </div>
+                        <div class="col-sm-3" style="padding-left: 0px;">
+                            <label class="col-form-label p-clr" id="selected-source"></label>
+                        </div>
                     </div>
-                    <div class="col-sm-3" style="padding-left: 0px;">
-                        <label class="col-form-label p-clr" id="selected-source"></label>
-                    </div>
-                </div>
 
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label">File</label>
-                    <div class="col-sm-8">
-                        <input class="form-control" type="file" id="excelFile" accept=".xlsx, .xls" />
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">File</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="file" id="excelFile" accept=".xlsx, .xls" />
+                        </div>
                     </div>
-                </div>
-                <div class="row justify-content-start">
-                    <div class="col-sm-10 text-start">
-                        <button id="reset-file" class="btn btn-secondary">Cancel</button>
-                        <button id="process-excel-file" type="submit" class="btn btn-primary">Process</button>
+                    <div class="row justify-content-start">
+                        <div class="col-sm-10 text-start">
+                            <button id="reset-file" class="btn btn-secondary">Cancel</button>
+                            <button id="process-excel-file" type="submit" class="btn btn-primary">Process</button>
+                        </div>
                     </div>
-                </div>
 
-                <div id="confirmation-prompt" style="margin-top: 20px; margin-bottom: 20px;"></div>
-                <div id="table-container" class="table-responsive text-nowrap"></div>
+                    <div id="confirmation-prompt" style="margin-top: 20px; margin-bottom: 20px;"></div>
+                    <div id="table-container" class="table-responsive text-nowrap"></div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -90,5 +108,21 @@
 
     .existing-sources div:hover {
         background: #f0f0f0;
+    }
+
+
+    .rotate-icon {
+      font-size: 50px;
+      color: var(--primary-color);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
     }
 </style>

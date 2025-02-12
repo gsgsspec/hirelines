@@ -7,7 +7,7 @@ import threading
 from urllib.parse import urljoin
 
 import requests
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from app_api.functions.enc_dec import decrypt_code, encrypt_code
 from hirelines.settings import BASE_DIR
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -20,8 +20,8 @@ from app_api.functions.masterdata import auth_user, getCompanyId
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
-        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService
-
+        notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
+        downloadUploadReportService
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
@@ -283,16 +283,18 @@ def getJdQuestionsView(request):
                 skills_list.append(skill)
             jd_data['skillset'] = skills_list
 
-            screeningPapersLst = []
+            screeningPaper = ""
             workFlowData = Workflow.objects.filter(jobid = dataObjs["jd_id"])
             if workFlowData:
                 for workFlow_ in workFlowData:
                     if workFlow_:
-                        if workFlow_.papertype == "S":
+                        if workFlow_.id == dataObjs["test_id"] and workFlow_.papertype == "S":
                             if workFlow_.paperid:
-                                screeningPapersLst.append(workFlow_.paperid)
+                                screeningPaper = workFlow_.paperid
             if jd_data:
-                jd_data['screeningPapersList'] = screeningPapersLst
+                jd_data['screeningPaper'] = screeningPaper
+
+            jd_data['test_id'] = dataObjs['test_id']
             
             get_evaluation_submissions = requests.post(url, json = jd_data, verify = False)
             response_content = get_evaluation_submissions.content
@@ -1581,6 +1583,33 @@ def checkJdCandidateRegistration(request):
 
     except Exception as e:
         response['data'] = 'Error in checking candidate registration data'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def downloadUploadReport(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            company_id = getCompanyId(request.user)
+            report_file_data = downloadUploadReportService(company_id)
+
+            response = FileResponse(
+                open(report_file_data['report_file_path'], 'rb'),
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+            response["Content-Disposition"] = f"attachment; filename={report_file_data['report_file_name']}"
+            return response
+
+    except Exception as e:
+        response['data'] = 'Error in downloading Upload Report'
         response['error'] = str(e)
         raise
     

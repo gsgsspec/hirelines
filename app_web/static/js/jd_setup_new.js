@@ -74,6 +74,7 @@ function getSkills() {
             if (res.statusCode == 0) {
 
                 skillsTopicSubtopics = res.data['skillsList']
+                console.log('skillsTopicSubtopics',skillsTopicSubtopics)
 
                 DynamicQuesCount = res.data['paperSubtopicComplexityQuestionsCount']
 
@@ -86,10 +87,12 @@ function getSkills() {
                     if (workFlowDetails.hasOwnProperty(key)) {
                         
                         var workflowData = workFlowDetails[key]; // Access the value by the key
-
+                        console.log('workflowData',workflowData);
+                        paper_id = workflowData.paperid
+                        
                         // this function call when page loads or page referesh's.
                         // it create html with skills with topic with subtopic 
-                        skillsListShowInHtml(workflowData.id, res.data['skillsList'], workflowData.papertype, DynamicQuesCount);
+                        skillsListShowInHtml(workflowData.id, res.data['skillsList'], workflowData.papertype, DynamicQuesCount, paper_id);
 
                         if(testsList[workflowData.id]['paperid']) {
                             fillDynamicQuestionsInputField(workflowData.id,DynamicQuesCount[testsList[workflowData.id]['paperid']])
@@ -101,6 +104,8 @@ function getSkills() {
                 }
 
                 paperQuestionsCountAndMarksSetInHTML(papersMarksAndQues)
+
+                console.log('testsList',testsList)
 
             }
         },
@@ -172,9 +177,9 @@ function workFlowData(){
 }
 
 
-function getAllBasicScreeningQuestions() {
+function getAllBasicScreeningQuestions(testId) {
     return new Promise((resolve, reject) => {
-        const getQuestions = { jd_id: jdId };
+        const getQuestions = { jd_id: jdId , test_id: testId};
 
         var final_data = {
             "data": JSON.stringify(getQuestions),
@@ -396,7 +401,7 @@ function screeningTabs(testId){
 
 
 // Show skills, topics, and subtopics in HTML
-function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount) {
+function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, paper_id) {
 
     let skillsHtml = "";
     let skillsTopicsHtml = "";
@@ -534,7 +539,7 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount) {
                     var subtopicQuestionsMainContainer = document.createElement('div')
                     subtopicQuestionsMainContainer.id = `SubTopicQuestionsContainer_${subTopicId}_test_${testId}`
 
-                    var complexitiesHtmlList = createAQuestion(skillId ,topicId , subTopicId , subtopicQuestionsList , testId, PaperType)
+                    var complexitiesHtmlList = createAQuestion(skillId ,topicId , subTopicId , subtopicQuestionsList , testId, PaperType, paper_id)
 
                     for (let complexityItem = 0; complexityItem < complexitiesHtmlList.length; complexityItem++) {
                         let complexityElement = complexitiesHtmlList[complexityItem];
@@ -585,7 +590,9 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount) {
 
 
 
-function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, PaperType_) {
+function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, PaperType_, paper_id) {
+
+    console.log('paper_id',paper_id)
 
     var complexityWiseQuestions = {
                                     'verylow'  : [],
@@ -598,6 +605,7 @@ function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, Pape
     for (let question_ = 0; question_ < quesData.length; question_++) {
 
         var ques = quesData[question_]
+
 
         // coding paper
         if(PaperType_ == 'E'){
@@ -687,27 +695,27 @@ function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, Pape
     var complexityHtml
 
     if(complexityWiseQuestions['verylow'].length > 0 ){
-        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['verylow'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'verylow')
+        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['verylow'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'verylow',paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
     if(complexityWiseQuestions['low'].length > 0){
-        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['low'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'low')
+        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['low'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'low', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
     if(complexityWiseQuestions['medium'].length > 0){
-        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['medium'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'medium')
+        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['medium'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'medium', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
     if(complexityWiseQuestions['high'].length > 0){
-        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['high'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'high')
+        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['high'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'high', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
     if(complexityWiseQuestions['veryhigh'].length > 0){
-        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['veryhigh'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'veryhigh')
+        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['veryhigh'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'veryhigh', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
@@ -717,8 +725,9 @@ function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, Pape
 
 
 // it create complexity container for each subtopic it create low , verylow, medium, hard , veryhard complexity container and put in html
-function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, topicId, subTopicId, test_Id, PaperType_, complexityType){
-    
+function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, topicId, subTopicId, test_Id, PaperType_, complexityType, paper_id){
+    // console.log('test_Id',test_Id)
+    // console.log('paper_id',paper_id)
     var fndFirstQuestionComplexity
     var complexityTxt
     var dynamicId
@@ -780,7 +789,8 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     complexityDynamicInput.dataset['testid'] = test_Id; 
     complexityDynamicInput.dataset['skillid'] = skill_Id; 
     complexityDynamicInput.dataset['topicid'] = topicId; 
-    complexityDynamicInput.dataset['subtopicid'] = subTopicId; 
+    complexityDynamicInput.dataset['subtopicid'] = subTopicId;
+    complexityDynamicInput.dataset['paperid'] = paper_id
     // complexityDynamicInput.setAttribute(
     //     'onkeyup',
     //     `dynamicQuestionscountSave(this.id)`
@@ -847,7 +857,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         let firstInpt = document.createElement('input');
         firstInpt.type = 'checkbox';  // Assuming you want checkboxes
         firstInpt.classList.add('form-check-input','mx-4')
-        firstInpt.id = `questionId_${ques['questionId']}_S`
+        firstInpt.id = `questionId_${ques['questionId']}_${test_Id}_S`
         firstInpt.dataset['qid'] = ques['questionId']
         firstInpt.dataset['testid'] = test_Id
         firstInpt.dataset['skill'] = skill_Id
@@ -856,16 +866,19 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         firstInpt.dataset['marks'] = questionMarks
         firstInpt.dataset['complexity'] = complexityType
         firstInpt.dataset['type'] = 'S'
+        firstInpt.dataset['paperid'] = paper_id
         firstInpt.setAttribute(
             'onclick',
-            `addQuestionsToList(${ques['questionId']},this.id)`
+            `addQuestionsToList(${ques['questionId']},this.id,${test_Id})`
         );
+
+        
 
         // Another checkbox
         let secondInpt = document.createElement('input');
         secondInpt.type = 'checkbox'; 
         secondInpt.classList.add('form-check-input','mx-4','dynamic-custom-checkbox')
-        secondInpt.id = `questionId_${ques['questionId']}_D`
+        secondInpt.id = `questionId_${ques['questionId']}_${test_Id}_D`
         secondInpt.dataset['qid'] = ques['questionId']
         secondInpt.dataset['testid'] = test_Id
         secondInpt.dataset['skill'] = skill_Id
@@ -874,9 +887,10 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         secondInpt.dataset['marks'] = questionMarks
         secondInpt.dataset['complexity'] = complexityType
         secondInpt.dataset['type'] = 'D'
+        secondInpt.dataset['paperid'] = paper_id
         secondInpt.setAttribute(
             'onclick',
-            `addQuestionsToList(${ques['questionId']},this.id)`
+            `addQuestionsToList(${ques['questionId']},this.id,${test_Id})`
         );
 
         if(complexityWiseQuestions.length == 1){
@@ -894,33 +908,53 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         if (!allTestsQuestions[test_Id]['starQuestions']) {
             allTestsQuestions[test_Id]['starQuestions'] = []; // Initialize starQuestions as an empty array
         }
+
+        var paper_data = ques['paperdata'][paper_id]
         
-        if(ques['starQuestion'] == 'Y'){                                                    // question id , subtopic id, test id
-            starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;  
-            allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
+        if (paper_data){
+            // console.log('paper_data',paper_data)
+            if(paper_data['starQuestion'] == 'Y'){                                                    
+                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;  
+                allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
+            }
+            else{                                                                               
+                starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;
+                allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})  
+            }
+        } else {
+            
+            if(ques['starQuestion'] == 'Y'){                                                    
+                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;  
+                allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
+            }
+            else{                                                                               
+                starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;
+                allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})  
+            }
         }
-        else{                                                                               // question id , subtopic id, test id
-            starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;
-            allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})  
-        }
+
+
 
         var questionCheckBox = document.createElement('div')
         questionCheckBox.classList.add('questionElements')
         questionCheckBox.append(firstInpt, secondInpt, starContainer)
 
-        if(ques['paperQuestion'] == 'Y'){
-            
-            if(ques?.staticOrDynamic){
-                if(ques['staticOrDynamic'] == 'S'){
-                    questionHasToBeSelected.push(firstInpt.id)
-                }
+        if (paper_data){
 
-                if(ques['staticOrDynamic'] == 'D'){
-                    questionHasToBeSelected.push(secondInpt.id)
+            if(paper_data['paperQuestion'] == 'Y'){
+                
+                if(paper_data?.staticOrDynamic){
+                    if(paper_data['staticOrDynamic'] == 'S'){
+                        questionHasToBeSelected.push(firstInpt.id)
+                    }
+
+                    if(paper_data['staticOrDynamic'] == 'D'){
+                        questionHasToBeSelected.push(secondInpt.id)
+                    }
+
                 }
 
             }
-
         }
 
         if(PaperType_ == 'S'){
@@ -982,8 +1016,10 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
 
 function questionCheckAsSelected(){
-    
+
+    // console.log('questionHasToBeSelected',questionHasToBeSelected)
     for (let quesId = 0; quesId < questionHasToBeSelected.length; quesId++) {
+
         let element = questionHasToBeSelected[quesId];
 
         if(element){
@@ -991,6 +1027,7 @@ function questionCheckAsSelected(){
             var elementHasChecked = document.getElementById(element)
 
             if(elementHasChecked){
+                // console.log('***',elementHasChecked)
 
                 elementHasChecked.checked = true;
     
@@ -1032,6 +1069,9 @@ function questionCheckAsSelected(){
                         if(ElementComplexity == 'veryhigh'){
                             ElementComplexity = 'veryHigh'
                         }
+
+                        // console.log('>>>>>',ElementQid);
+                        
 
                         if(ElementQid){
     
@@ -1079,7 +1119,7 @@ function markAsStarQuestion(question_id , subtopic_id, test_id){
         // starQuestion_Q_131_11_testId_202
         var starQuestionId = `starQuestion_Q_${question_id}_${subtopic_id}_testId_${test_id}`
 
-        var CheckBoxElement = document.getElementById(`questionId_${question_id}_S`)
+        var CheckBoxElement = document.getElementById(`questionId_${question_id}_${test_id}_S`)
 
         // console.log('CheckBoxElement',CheckBoxElement);
         
@@ -1129,7 +1169,7 @@ function markAsStarQuestion(question_id , subtopic_id, test_id){
     else{
         var starQuestionId = `starQuestion_Q_${question_id}_subTopic_BasicScreening_testId_${test_id}`
         
-        var CheckBoxElement = document.getElementById(`questionId_${question_id}`)
+        var CheckBoxElement = document.getElementById(`questionId-${test_id}_${question_id}`)
 
         if(CheckBoxElement){
             if(CheckBoxElement.checked){
@@ -1200,7 +1240,9 @@ function showMoreQuestions( skillId, topic_Id ,subTopicId, TestCardId, paper_Typ
                 subTopicId: subTopicId,
                 complexityType: complexity,
                 lastQuestionId: questId,
-                paperType : paper_Type
+                paperType : paper_Type,
+                paperid : testsList[TestCardId]['paperid']
+
             };
         
             // Prepare data to be sent to the backend
@@ -1208,6 +1250,9 @@ function showMoreQuestions( skillId, topic_Id ,subTopicId, TestCardId, paper_Typ
                 "data": JSON.stringify(getQuestions),
                 csrfmiddlewaretoken: CSRF_TOKEN,
             };
+
+            console.log('card-data',allTestsQuestions[TestCardId]);
+            
         
             try {
 
@@ -1264,6 +1309,7 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');  // Assuming ques is an object with 'question' key
 
         let questionMarks = ques['marks']
+        console.log('questionMarks',ques)
         let complex = null
 
         if(ques['questionComplexity'] == 1){
@@ -1285,7 +1331,7 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         let firstInpt = document.createElement('input');
         firstInpt.type = 'checkbox';  // Assuming you want checkboxes
         firstInpt.classList.add('form-check-input','mx-4')
-        firstInpt.id = `questionId_${ques['questionId']}_S`
+        firstInpt.id = `questionId_${ques['questionId']}_${TestCardId}_S`
         firstInpt.dataset['qid'] = ques['questionId']
         firstInpt.dataset['testid'] = TestCardId
         firstInpt.dataset['skill'] = skillId
@@ -1296,14 +1342,14 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         firstInpt.dataset['type'] = 'S'
         firstInpt.setAttribute(
             'onclick',
-            `addQuestionsToList(${ques['questionId']}, this.id)`
+            `addQuestionsToList(${ques['questionId']}, this.id,${TestCardId})`
         );
 
         // Another checkbox
         let secondInpt = document.createElement('input');
         secondInpt.type = 'checkbox'; 
         secondInpt.classList.add('form-check-input','mx-4','dynamic-custom-checkbox')
-        secondInpt.id = `questionId_${ques['questionId']}_D`
+        secondInpt.id = `questionId_${ques['questionId']}_${TestCardId}_D`
         secondInpt.dataset['qid'] = ques['questionId']
         secondInpt.dataset['testid'] = TestCardId
         secondInpt.dataset['skill'] = skillId
@@ -1314,13 +1360,23 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         secondInpt.dataset['type'] = 'D'
         secondInpt.setAttribute(
             'onclick',
-            `addQuestionsToList(${ques['questionId']}, this.id)`
+            `addQuestionsToList(${ques['questionId']}, this.id,${TestCardId})`
         );
 
 
         if(ques['paperQuestion'] == 'Y'){
-            firstInpt.checked = true
-            secondInpt.checked = true
+            
+            if(ques?.staticOrDynamic){
+                if(ques['staticOrDynamic'] == 'S'){
+                    questionHasToBeSelected.push(firstInpt.id)
+                }
+
+                if(ques['staticOrDynamic'] == 'D'){
+                    questionHasToBeSelected.push(secondInpt.id)
+                }
+
+            }
+
         }
 
         // Simple star icon, you can replace it with a font icon or image
@@ -1329,9 +1385,11 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
 
         if(ques['starQuestion'] == 'Y'){                                                    // question id , subtopic id, test id
             starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${TestCardId}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${TestCardId})"></i>`;  
+            allTestsQuestions[TestCardId]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
         }
         else{                                                                               // question id , subtopic id, test id
             starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${TestCardId}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${TestCardId})"></i>`;  
+            allTestsQuestions[TestCardId]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
         }
 
         var questionCheckBox = document.createElement('div')
@@ -1349,6 +1407,8 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
             }
         }
 
+        questionCheckAsSelected();
+
     }
 
 }
@@ -1358,8 +1418,11 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
 async function genrateHtmlWithScreeningBasicQuestion(testId) {
     
     try {
-        const screeningBasicQuestionsList = await getAllBasicScreeningQuestions();
-
+        const screeningBasicQuestionsList = await getAllBasicScreeningQuestions(testId);
+        // console.log('--------------')
+        // console.log('testId',testId)
+        // console.log('screeningBasicQuestionsList',screeningBasicQuestionsList)
+        // console.log('--------------')
         var basicQuestionsContainer = document.getElementById(`basicScreeningContainer_${testId}`)
             
         var olElement = document.createElement('ol')
@@ -1370,6 +1433,7 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
 
             let ques = screeningBasicQuestionsList[question_];
 
+            // console.log('ques',ques)
             var questionContainer = document.createElement('div');
             questionContainer.classList.add('customQuestionContainer');
             questionContainer.id = `QuestionContainerId_${ques['questionId']}`;
@@ -1383,20 +1447,42 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
             var firstInpt = document.createElement('input');
             firstInpt.type = 'checkbox';
             firstInpt.classList.add('form-check-input', 'mx-2');
-            firstInpt.id = `questionId_${ques['questionId']}`
+            firstInpt.id = `questionId-${testId}_${ques['questionId']}`
             firstInpt.dataset['qid'] = ques['questionId']
             firstInpt.dataset['type'] = 'screening'
             firstInpt.dataset['testid'] = testId
             firstInpt.dataset['marks'] = ques['questionMarks']
             firstInpt.setAttribute(
                 'onclick',
-                `addQuestionsToList(${ques['questionId']},this.id)`
+                `addQuestionsToList(${ques['questionId']},this.id,${testId})`
             );
+
+            // console.log('quesid',ques['questionId'])
+
+            
+            if (!allTestsQuestions[testId]) {
+                allTestsQuestions[testId] = {}; // Initialize the testId key if it doesn't exist
+            }
+    
+           
+
+            if(!allTestsQuestions[testId]['staticQuestions']){
+                allTestsQuestions[testId] = {'staticQuestions':[]};
+            }
+
+            // if (!allTestsQuestions[testId]['starQuestions']) {
+            //     allTestsQuestions[testId]['starQuestions'] = []; // Initialize starQuestions as an empty array
+            //     console.log('Star questions initialized for testId:', testId, allTestsQuestions[testId]);
+            // }
+
+            if (!allTestsQuestions[testId]['starQuestions']) {
+                allTestsQuestions[testId]['starQuestions'] = []; // Initialize starQuestions as an empty array
+            }
 
             if (ques['paperQuestion'] == 'Y'){
                 firstInpt.checked = true;
 
-                if(!allTestsQuestions[testId]){
+                if(!allTestsQuestions[testId]['staticQuestions']){
                     allTestsQuestions[testId] = {'staticQuestions':[]};
                 }
 
@@ -1405,14 +1491,9 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
             }
 
             var starContainer = document.createElement('span');
-
-            if (!allTestsQuestions[testId]) {
-                allTestsQuestions[testId] = {}; // Initialize the testId key if it doesn't exist
-            }
-    
-            if (!allTestsQuestions[testId]['starQuestions']) {
-                allTestsQuestions[testId]['starQuestions'] = []; // Initialize starQuestions as an empty array
-            }
+            
+            // console.log('allTestsQuestions[testId]',allTestsQuestions[testId])
+            // console.log('Star Question',allTestsQuestions[testId]['starQuestions'])
 
             if(ques['starQuestion'] == 'Y'){                                                // question id , subtopic id, test id
                 starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_subTopic_BasicScreening_testId_${testId}" onclick="markAsStarQuestion(${ques['questionId']},null,${testId})"></i>`; 
@@ -2784,159 +2865,322 @@ function OpenIntegrationModal(){
 // here ===============================================================
   
 
-function addQuestionsToList(Qid, elementId) {
+function addQuestionsToList(Qid, elementId, test_Id) {
 
-    var questionElement_ = document.getElementById(elementId);
-    var questionDataSet = questionElement_.dataset;
 
-    // Extract attributes
-    let testCardId    = questionDataSet['testid']; 
-    let questionType_ = questionDataSet['type']; 
-    let subTopic_Id   = questionDataSet['subtopic']; 
-    let complexType   = questionDataSet['complexity']?.toLowerCase(); 
-    let QueMarks      = questionDataSet['marks']
-
-    // Normalize complexType keys
-    const complexityMapping = {
-        verylow: 'veryLow',
-        low: 'low',
-        medium: 'medium',
-        high: 'high',
-        veryhigh: 'veryHigh'
-    };
-    complexType = complexityMapping[complexType] || complexType;
-
-    // check if the test card is persent
-  
-    if(!allTestsQuestions[testCardId]){
-        allTestsQuestions[testCardId] = {};
+    var elements = document.querySelectorAll(`#${elementId}`);
+    
+    if (elements.length === 0) {
+        console.error('No elements found with the provided ID.');
+        return;
     }
 
-    if(!allTestsQuestions[testCardId]['staticQuestions']){
-        allTestsQuestions[testCardId]['staticQuestions'] = [];
-    }
+    var targetElement = Array.from(elements).find(el => el.dataset.testid == test_Id);
 
-    // orginial
-    // // Check if the subTopic is present
-    if(subTopic_Id) {
+    if (targetElement) {
 
-        if (!allTestsQuestions[testCardId][subTopic_Id]) {
-            allTestsQuestions[testCardId][subTopic_Id] = {
-                veryLow: { qIds: [] },
-                low: { qIds: [] },
-                medium: { qIds: [] },
-                high: { qIds: [] },
-                veryHigh: { qIds: [] }
-            };
+        var questionElement_ = targetElement;
+
+        var questionDataSet = questionElement_.dataset;
+
+        // Extract attributes
+        let testCardId    = questionDataSet['testid']; 
+        let questionType_ = questionDataSet['type']; 
+        let subTopic_Id   = questionDataSet['subtopic']; 
+        let complexType   = questionDataSet['complexity']?.toLowerCase(); 
+        let QueMarks      = questionDataSet['marks']
+
+        // Normalize complexType keys
+        const complexityMapping = {
+            verylow: 'veryLow',
+            low: 'low',
+            medium: 'medium',
+            high: 'high',
+            veryhigh: 'veryHigh'
+        };
+        complexType = complexityMapping[complexType] || complexType;
+
+        // check if the test card is persent
+    
+        if(!allTestsQuestions[testCardId]){
+            allTestsQuestions[testCardId] = {};
         }
-    }
+        
+        if(!allTestsQuestions[testCardId]['staticQuestions']){
+            allTestsQuestions[testCardId]['staticQuestions'] = [];
+        }
 
-    // Check if the subTopic is present
-    // if (!allTestsQuestions[testCardId][subTopic_Id]) {
-    //     allTestsQuestions[testCardId][subTopic_Id] = {
-    //         veryLow: { qCount: 0, qIds: [] },
-    //         low: { qCount: 0, qIds: [] },
-    //         medium: { qCount: 0, qIds: [] },
-    //         high: { qCount: 0, qIds: [] },
-    //         veryHigh: { qCount: 0, qIds: [] }
-    //     };
-    // }
+        // orginial
+        // // Check if the subTopic is present
+        if(subTopic_Id) {
 
-    // checking questions are static questions are dynamic question
-    // static questions adding in to static questions list
-    if(questionType_ == 'S'){
+            if (!allTestsQuestions[testCardId][subTopic_Id]) {
+                allTestsQuestions[testCardId][subTopic_Id] = {
+                    veryLow: { qIds: [] },
+                    low: { qIds: [] },
+                    medium: { qIds: [] },
+                    high: { qIds: [] },
+                    veryHigh: { qIds: [] }
+                };
+            }
+        }
 
-        if(questionElement_.checked){
-            // Push the question ID to the appropriate qIds array
-            allTestsQuestions[testCardId]['staticQuestions'].push(Qid)
+        // Check if the subTopic is present
+        // if (!allTestsQuestions[testCardId][subTopic_Id]) {
+        //     allTestsQuestions[testCardId][subTopic_Id] = {
+        //         veryLow: { qCount: 0, qIds: [] },
+        //         low: { qCount: 0, qIds: [] },
+        //         medium: { qCount: 0, qIds: [] },
+        //         high: { qCount: 0, qIds: [] },
+        //         veryHigh: { qCount: 0, qIds: [] }
+        //     };
+        // }
 
-            if(testsList[testCardId]['papertype'] == 'S'){
+        // checking questions are static questions are dynamic question
+        // static questions adding in to static questions list
+        if(questionType_ == 'S'){
+
+            if(questionElement_.checked){
+                // Push the question ID to the appropriate qIds array
+                allTestsQuestions[testCardId]['staticQuestions'].push(Qid)
+
+                if(testsList[testCardId]['papertype'] == 'S'){
+
+                    // increase the test static questions count
+                    // screening static questions count in to html
+                    var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
+                    var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
+        
+                    for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
+                        let element = lstOfCountElements[elem_];
+        
+                        if(element.innerText){
+                            let totalCount_ = parseInt(element.innerText) + 1
+                            element.innerText = totalCount_
+                        }
+                    }
+        
+                    // increase the paper weightage 
+                    // paper weightage
+                    var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
+                    var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
+        
+                    for (let elem = 0; elem < lstOfElements.length; elem++) {
+                        let element = lstOfElements[elem];
+        
+                        if(element.innerText){
+                            let totalMarks_ = parseInt(element.innerText) + parseInt(QueMarks)
+                            element.innerText = totalMarks_
+                        }
+        
+                    }
+
+                }
+
+                if(testsList[testCardId]['papertype'] == 'E'){
+
+                    var WeightAgeElementId = `TestWeightage_${testCardId}`
+                    var element_ = document.getElementById(WeightAgeElementId)
+
+                    if(element_) {
+                        if(element_.innerText){
+                            let totalMarks_ = parseInt(element_.innerText) + parseInt(QueMarks)
+                            element_.innerText = totalMarks_
+                        }
+                    }
+
+                    var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
+                    var Qcount_Element = document.getElementById(StaticQuesElementId)
+
+                    if(Qcount_Element) {
+
+                        if(Qcount_Element.innerText){
+                            let totalCount_ = parseInt(Qcount_Element.innerText) + 1
+                            Qcount_Element.innerText = totalCount_
+                        }
+                    }
+
+                }
+
+                if(testsList[testCardId]['papertype'] == 'I'){
+
+                    let interviewTestQuesId = document.getElementById(`InterviewQuestionsCount_${testCardId}`)
+                    if(interviewTestQuesId){
+                        if(interviewTestQuesId.innerText){
+                            let interQuestotalCount_ = parseInt(interviewTestQuesId.innerText) + 1
+                            interviewTestQuesId.innerText = interQuestotalCount_
+                        }
+                    }
+
+                }
+
+
+            }
+            else{
+
+                // Push the question ID to the appropriate qIds array
+                let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
+                if(checkQuestionInLst){
+                    let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
+                    
+                    // if index not equal to minus one that means index value is found 
+                    if (index !== -1) {
+                        // remove from the list
+                        allTestsQuestions[testCardId]['staticQuestions'].splice(index, 1);
+                    }
+                }
+
+                if(testsList[testCardId]['papertype'] == 'S'){
+
+                    // Decrease the test static questions count
+                    var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
+                    var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
+
+                    for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
+                        let element = lstOfCountElements[elem_];
+                        // element.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
+
+                        if(element.innerText){
+                            let totalCount_ = parseInt(element.innerText) - 1
+                            element.innerText = totalCount_
+                        }
+                    }
+
+                    // decerease the paper weightage 
+                    // paper weightage
+                    var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
+                    var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
+
+                    for (let elem = 0; elem < lstOfElements.length; elem++) {
+                        let element = lstOfElements[elem];
+
+                        if(element.innerText){
+                            let totalMarks_ = parseInt(element.innerText) - parseInt(QueMarks)
+                            element.innerText = totalMarks_
+                        }
+
+                    }
+
+                }
+
+                if(testsList[testCardId]['papertype'] == 'E'){
+
+                    // test total score
+                    var WeightAgeElementId = `TestWeightage_${testCardId}`
+                    var element_ = document.getElementById(WeightAgeElementId)
+
+                    if(element_) {
+                        if(element_.innerText){
+                            let totalMarks_ = parseInt(element_.innerText) - parseInt(QueMarks)
+                            element_.innerText = totalMarks_
+                        }
+
+                    }
+
+                    // questions count
+                    var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
+                    var Qcount_Element = document.getElementById(StaticQuesElementId)
+
+                    if(Qcount_Element) {
+                        if(Qcount_Element.innerText){
+                            let totalCount_ = parseInt(Qcount_Element.innerText) - 1
+                            Qcount_Element.innerText = totalCount_
+                        }
+                    }
+
+                }
+
+                if(testsList[testCardId]['papertype'] == 'I'){
+
+                    let interviewTestQuesId = document.getElementById(`InterviewQuestionsCount_${testCardId}`)
+                    if(interviewTestQuesId){
+                        if(interviewTestQuesId.innerText){
+                            let interQuestotalCount_ = parseInt(interviewTestQuesId.innerText) - 1
+                            interviewTestQuesId.innerText = interQuestotalCount_
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        // checking questions are static questions are dynamic question
+        // dynamic questions adding in to questions list
+        if(questionType_ == 'D'){
+
+            if(questionElement_.checked){
+                // Push the question ID to the appropriate qIds array
+                allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.push(Qid);
+            }
+            else{
+                
+                let checkQuestionInLst = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.includes(Qid)
+                if(checkQuestionInLst){
+                    let index = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.indexOf(Qid);
+                    
+                    if (index !== -1) {
+                        // remove from the list
+                        allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.splice(index, 1);
+                    }
+                }
+
+            }
+
+        }
+
+        // checking questions are static questions are dynamic question
+        // jd basic screening questions in to the static questions list
+        if(questionType_ == 'screening'){
+
+            if(questionElement_.checked){
+                // Push the question ID to the appropriate qIds array
+                allTestsQuestions[testCardId]['staticQuestions'].push(Qid)
 
                 // increase the test static questions count
                 // screening static questions count in to html
                 var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
                 var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
-    
+
                 for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
                     let element = lstOfCountElements[elem_];
-    
+
                     if(element.innerText){
                         let totalCount_ = parseInt(element.innerText) + 1
                         element.innerText = totalCount_
                     }
                 }
-    
+
                 // increase the paper weightage 
                 // paper weightage
                 var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
                 var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
-    
+
                 for (let elem = 0; elem < lstOfElements.length; elem++) {
                     let element = lstOfElements[elem];
-    
+
                     if(element.innerText){
                         let totalMarks_ = parseInt(element.innerText) + parseInt(QueMarks)
                         element.innerText = totalMarks_
                     }
-    
+
                 }
 
             }
-
-            if(testsList[testCardId]['papertype'] == 'E'){
-
-                var WeightAgeElementId = `TestWeightage_${testCardId}`
-                var element_ = document.getElementById(WeightAgeElementId)
-
-                if(element_) {
-                    if(element_.innerText){
-                        let totalMarks_ = parseInt(element_.innerText) + parseInt(QueMarks)
-                        element_.innerText = totalMarks_
-                    }
-                }
-
-                var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
-                var Qcount_Element = document.getElementById(StaticQuesElementId)
-
-                if(Qcount_Element) {
-
-                    if(Qcount_Element.innerText){
-                        let totalCount_ = parseInt(Qcount_Element.innerText) + 1
-                        Qcount_Element.innerText = totalCount_
-                    }
-                }
-
-            }
-
-            if(testsList[testCardId]['papertype'] == 'I'){
-
-                let interviewTestQuesId = document.getElementById(`InterviewQuestionsCount_${testCardId}`)
-                if(interviewTestQuesId){
-                    if(interviewTestQuesId.innerText){
-                        let interQuestotalCount_ = parseInt(interviewTestQuesId.innerText) + 1
-                        interviewTestQuesId.innerText = interQuestotalCount_
-                    }
-                }
-
-            }
-
-
-        }
-        else{
-
-            // Push the question ID to the appropriate qIds array
-            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
-            if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
+            else{
                 
-                // if index not equal to minus one that means index value is found 
-                if (index !== -1) {
-                    // remove from the list
-                    allTestsQuestions[testCardId]['staticQuestions'].splice(index, 1);
+                // Push the question ID to the appropriate qIds array
+                let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
+                if(checkQuestionInLst){
+                    let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
+                    
+                    // if index not equal to minus one that means index value is found 
+                    if (index !== -1) {
+                        // remove from the list
+                        allTestsQuestions[testCardId]['staticQuestions'].splice(index, 1);
+                    }
                 }
-            }
-
-            if(testsList[testCardId]['papertype'] == 'S'){
 
                 // Decrease the test static questions count
                 var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
@@ -2966,161 +3210,17 @@ function addQuestionsToList(Qid, elementId) {
                     }
 
                 }
-
-            }
-
-            if(testsList[testCardId]['papertype'] == 'E'){
-
-                // test total score
-                var WeightAgeElementId = `TestWeightage_${testCardId}`
-                var element_ = document.getElementById(WeightAgeElementId)
-
-                if(element_) {
-                    if(element_.innerText){
-                        let totalMarks_ = parseInt(element_.innerText) - parseInt(QueMarks)
-                        element_.innerText = totalMarks_
-                    }
-
-                }
-
-                // questions count
-                var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
-                var Qcount_Element = document.getElementById(StaticQuesElementId)
-
-                if(Qcount_Element) {
-                    if(Qcount_Element.innerText){
-                        let totalCount_ = parseInt(Qcount_Element.innerText) - 1
-                        Qcount_Element.innerText = totalCount_
-                    }
-                }
-
-            }
-
-            if(testsList[testCardId]['papertype'] == 'I'){
-
-                let interviewTestQuesId = document.getElementById(`InterviewQuestionsCount_${testCardId}`)
-                if(interviewTestQuesId){
-                    if(interviewTestQuesId.innerText){
-                        let interQuestotalCount_ = parseInt(interviewTestQuesId.innerText) - 1
-                        interviewTestQuesId.innerText = interQuestotalCount_
-                    }
-                }
-
-            }
-
-        }
-
-    }
-
-    // checking questions are static questions are dynamic question
-    // dynamic questions adding in to questions list
-    if(questionType_ == 'D'){
-
-        if(questionElement_.checked){
-            // Push the question ID to the appropriate qIds array
-            allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.push(Qid);
-        }
-        else{
-            
-            let checkQuestionInLst = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.includes(Qid)
-            if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.indexOf(Qid);
                 
-                if (index !== -1) {
-                    // remove from the list
-                    allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.splice(index, 1);
-                }
+
             }
 
         }
-
+       
+    } else {
+        console.log('No element found with the matching test-id');
     }
 
-    // checking questions are static questions are dynamic question
-    // jd basic screening questions in to the static questions list
-    if(questionType_ == 'screening'){
-
-        if(questionElement_.checked){
-            // Push the question ID to the appropriate qIds array
-            allTestsQuestions[testCardId]['staticQuestions'].push(Qid)
-
-            // increase the test static questions count
-            // screening static questions count in to html
-            var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
-            var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
-
-            for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
-                let element = lstOfCountElements[elem_];
-
-                if(element.innerText){
-                    let totalCount_ = parseInt(element.innerText) + 1
-                    element.innerText = totalCount_
-                }
-            }
-
-            // increase the paper weightage 
-            // paper weightage
-            var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
-            var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
-
-            for (let elem = 0; elem < lstOfElements.length; elem++) {
-                let element = lstOfElements[elem];
-
-                if(element.innerText){
-                    let totalMarks_ = parseInt(element.innerText) + parseInt(QueMarks)
-                    element.innerText = totalMarks_
-                }
-
-            }
-
-        }
-        else{
-            
-            // Push the question ID to the appropriate qIds array
-            let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
-            if(checkQuestionInLst){
-                let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
-                
-                // if index not equal to minus one that means index value is found 
-                if (index !== -1) {
-                    // remove from the list
-                    allTestsQuestions[testCardId]['staticQuestions'].splice(index, 1);
-                }
-            }
-
-            // Decrease the test static questions count
-            var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
-            var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
-
-            for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
-                let element = lstOfCountElements[elem_];
-                // element.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
-
-                if(element.innerText){
-                    let totalCount_ = parseInt(element.innerText) - 1
-                    element.innerText = totalCount_
-                }
-            }
-
-            // decerease the paper weightage 
-            // paper weightage
-            var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
-            var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
-
-            for (let elem = 0; elem < lstOfElements.length; elem++) {
-                let element = lstOfElements[elem];
-
-                if(element.innerText){
-                    let totalMarks_ = parseInt(element.innerText) - parseInt(QueMarks)
-                    element.innerText = totalMarks_
-                }
-
-            }
-            
-
-        }
-
-    }
+    
 
 }
 
@@ -3135,12 +3235,14 @@ function savePaper(BtnElement) {
         var saveBtnElementDataset = document.getElementById(BtnElement).dataset
         let testid_ = saveBtnElementDataset['testid']
 
+        // console.log('testid_',testid_)
+
         let paperType = testsList[testid_]['papertype']
         var testTitle = document.getElementById(`testTitle_${testid_}`)
 
         var testid = Number(testid_);
 
-        console.log('allTestsQuestions',allTestsQuestions[testid])
+        // console.log('allTestsQuestions',allTestsQuestions)
 
         dataObj = {
             'paperid'              :  testsList[testid_]['paperid'],
@@ -3539,8 +3641,8 @@ function updateStarVariableStatus(question_id, testId, starFlag) {
 
 
 function updateTestWeightage(test_data, test_id) {
-    console.log('test_data', test_data);
-    console.log('test_id', test_id);
+    // console.log('test_data', test_data);
+    // console.log('test_id', test_id);
 
     const subtopicKeys = Object.keys(test_data).filter(key => key !== "starQuestions" && key !== "staticQuestions");
 
@@ -3556,7 +3658,7 @@ function updateTestWeightage(test_data, test_id) {
                 const firstQId = test_data[subtopicId][category].qIds[0];
 
                 // Construct the element ID dynamically using the first qId
-                const elementId = `questionId_${firstQId}_D`;
+                const elementId = `questionId_${firstQId}_${test_id}_D`;
                 const element = document.getElementById(elementId);
 
                 if (element) {
@@ -3575,11 +3677,11 @@ function updateTestWeightage(test_data, test_id) {
     if (test_data.staticQuestions && Array.isArray(test_data.staticQuestions)) {
         test_data.staticQuestions.forEach(qId => {
             
-            let element = document.getElementById(`questionId_${qId}_S`);
+            let element = document.getElementById(`questionId_${qId}_${test_id}_S`);
         
             // If not found, try to find the element without the "_S" suffix (JD Based Questions)
             if (!element) {
-                element = document.getElementById(`questionId_${qId}`);
+                element = document.getElementById(`questionId-${test_id}_${qId}`);
             }
 
             if (element) {

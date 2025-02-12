@@ -462,3 +462,15 @@ class Source(models.Model):
 
     class Meta:
         db_table = 'source'
+
+
+class Uploads(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    type = models.CharField(max_length=1,null=True) # C - Candidate upload
+    filepath = models.CharField(max_length=200, null=True)
+    filename = models.CharField(max_length=100, null=True)
+    status = models.CharField(max_length=1,null=True)
+
+    class Meta:
+        db_table = 'uploads'

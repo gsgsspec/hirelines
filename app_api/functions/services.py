@@ -14,6 +14,8 @@ from django.shortcuts import redirect
 from urllib.parse import urljoin
 from rest_framework.authtoken.models import Token
 from xhtml2pdf import pisa
+from openpyxl import load_workbook
+from openpyxl.styles import Border, Side
 from .constants import public_email_domains
 from hirelines.metadata import getConfig
 from hirelines.settings import BASE_DIR
@@ -47,7 +49,8 @@ from app_api.models import (
     Branding,
     Role,
     JdAnalysis,
-    Source
+    Source,
+    Uploads
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -2760,6 +2763,26 @@ def mapUploadedCandidateFields(company_id,user,fileObjs):
 
             mappings_data = validate_excel_with_json(file_path,excel_path)
 
+            candidate_upload_file = Uploads.objects.filter(companyid=company_id,type="C").last()
+
+            if candidate_upload_file:
+
+                candidate_upload_file.filepath = excel_path
+                candidate_upload_file.filename = user_file_name
+                candidate_upload_file.status = "U"
+                candidate_upload_file.save()
+
+            else:
+                uploaded_file = Uploads(
+                    companyid = company_id,
+                    type = "C",
+                    filepath = excel_path,
+                    filename = user_file_name,
+                    status = "U"
+                )
+
+                uploaded_file.save()
+
             return mappings_data
 
     except Exception as e:
@@ -2769,6 +2792,12 @@ def mapUploadedCandidateFields(company_id,user,fileObjs):
 
 def processAddCandidateService(company_id, dataObjs, user_id):
     try:
+        candidate_upload_file = Uploads.objects.filter(companyid=company_id,type="C").last()
+
+        if candidate_upload_file:
+            candidate_upload_file.status="I"
+            candidate_upload_file.save()
+
 
         # Format the company ID to be 3 digits
         formatted_company_id = str(company_id).zfill(3)
@@ -2834,7 +2863,7 @@ def processAddCandidateService(company_id, dataObjs, user_id):
                     # If there are any issues, skip the row and record the reasons
                     if skip_reasons:
                         status_list.append(f"Skipped: {', '.join(skip_reasons)}")
-                        print(f"Skipping row {index + 1}: {', '.join(skip_reasons)}")
+                        # print(f"Skipping row {index + 1}: {', '.join(skip_reasons)}")
                         continue
 
                     # Prepare candidate data
@@ -2852,24 +2881,21 @@ def processAddCandidateService(company_id, dataObjs, user_id):
                         # Call the function and handle errors
                         c_data = addCandidateDB(candidate_data, company_id, None, user_id)
 
-                        # Check the value of c_data and update the status accordingly
                         if c_data == "insufficient_credits":
                             status_list.append("Skipped: Insufficient Credits")
-                            print(f"Skipping row {index + 1}: Insufficient Credits")
+                            # print(f"Skipping row {index + 1}: Insufficient Credits")
                         elif c_data == "candidate_already_registered":
                             status_list.append("Skipped: Candidate Already Registered")
-                            print(f"Skipping row {index + 1}: Candidate Already Registered")
+                            # print(f"Skipping row {index + 1}: Candidate Already Registered")
                         else:
-                            print(f"Adding candidate: {first_name} {last_name}, Email: {email}, Mobile: {mobile}")
+                            # print(f"Adding candidate: {first_name} {last_name}, Email: {email}, Mobile: {mobile}")
                             status_list.append("Candidate is added")
                     except Exception as db_error:
-                        # Handle any errors specifically from addCandidateDB
-                        print(f"Error adding candidate at row {index + 1}: {str(db_error)}")
+                        # print(f"Error adding candidate at row {index + 1}: {str(db_error)}")
                         status_list.append(f"Skipped: Error adding candidate")
 
                 except Exception as row_error:
-                    # Handle any row-specific errors
-                    print(f"Error processing row {index + 1}: {str(row_error)}")
+                    # print(f"Error processing row {index + 1}: {str(row_error)}")
                     status_list.append(f"Skipped: Error occurred ({str(row_error)})")
 
             # Add the status column to the DataFrame
@@ -2879,7 +2905,30 @@ def processAddCandidateService(company_id, dataObjs, user_id):
             report_file = f"{formatted_company_id}_candidate_report.xlsx"
             output_file_path = os.path.join(settings.MEDIA_ROOT,'uploads','candidate_upload',report_file)
             df.to_excel(output_file_path, index=False)
-            print(f"Processing complete. Updated Excel file saved to: {output_file_path}")
+
+            # Load the workbook to remove borders from the first row
+            workbook = load_workbook(output_file_path)
+            sheet = workbook.active
+
+            # Define no-border style
+            no_border = Border(left=Side(border_style=None), 
+                                right=Side(border_style=None), 
+                                top=Side(border_style=None), 
+                                bottom=Side(border_style=None))
+
+            # Apply no-border style to header row cells
+            for cell in sheet[1]:  # First row (headers)
+                cell.border = no_border
+
+            # Save the workbook
+            workbook.save(output_file_path)
+
+            if candidate_upload_file:
+
+                candidate_upload_file.status = "C"
+                candidate_upload_file.save()
+
+            # print(f"Processing complete. Updated Excel file saved to: {output_file_path}")
 
     except Exception as e:
         print(f"Error occurred: {str(e)}")
@@ -2904,6 +2953,45 @@ def checkJdCandidateRegistrationService(dataObjs):
             registrations_flag = "N"
 
         return registrations_flag
+
+    except Exception as e:
+        raise
+
+
+
+def getCompanyCandidateUploadData(company_id):
+    try:
+        
+        upload_data = {}
+
+        candidate_uploaded_data = Uploads.objects.filter(companyid=company_id,type="C").last()
+
+        if candidate_uploaded_data:
+            upload_data['status'] = candidate_uploaded_data.status
+            upload_data['display_flag'] = "Y"
+        else:
+            upload_data['display_flag'] = "N"
+
+        return upload_data
+
+    except Exception as e:
+        raise
+
+
+def downloadUploadReportService(company_id):
+    try:
+
+        uploaded_data = Uploads.objects.filter(type="C",companyid=company_id,status="C").last()
+
+        if uploaded_data:
+            formatted_company_id = str(company_id).zfill(3)
+            report_file = f"{formatted_company_id}_candidate_report.xlsx"
+            report_file_path = os.path.join(settings.MEDIA_ROOT,'uploads','candidate_upload',report_file)
+
+            return {
+                "report_file_path": report_file_path,
+                "report_file_name" : report_file
+            }
 
     except Exception as e:
         raise
