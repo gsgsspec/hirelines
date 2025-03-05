@@ -5,13 +5,14 @@ import string
 import secrets
 import ast
 import time
+# import ffmpeg
 import re
 import pandas as pd
 from django.db.models import Q, Count, Avg
 from datetime import datetime, timedelta, date
 from django.utils import timezone
 from django.shortcuts import redirect
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from rest_framework.authtoken.models import Token
 from xhtml2pdf import pisa
 from openpyxl import load_workbook
@@ -1347,6 +1348,7 @@ def getCandidateInterviewData(scd_id):
             "interview_data": None,
             "screening_data": None,
             "coding_data": None,
+            # "profiling_video_url":None
         }
 
         acert_domain = getConfig()["DOMAIN"]["acert"]
@@ -1355,6 +1357,7 @@ def getCandidateInterviewData(scd_id):
         url = urljoin(acert_domain, endpoint)
 
         call_details = CallSchedule.objects.get(id=scd_id)
+
         candidate = Candidate.objects.get(id=call_details.candidateid)
         candidate_int_data = {
             "c_code": candidate.candidateid,
@@ -1366,14 +1369,18 @@ def getCandidateInterviewData(scd_id):
 
         if response_content:
             json_data = json.loads(response_content.decode("utf-8"))
-
             interview_data = json_data["data"]["interviewdata"]
             screening_data = json_data["data"]["screeningdata"]
             coding_data = json_data["data"]["codingdata"]
+            # profiling_video_url = json_data["data"]["profiling_video_url"]
+
+            # if profiling_video_url:
+            #     convertProfilingVideo(profiling_video_url, call_details.id)
 
             resp["interview_data"] = interview_data
             resp["screening_data"] = screening_data
             resp["coding_data"] = coding_data
+            # resp['profiling_video_url'] = profiling_video_url
 
         job_desc = JobDesc.objects.get(id=candidate.jobid)
         
@@ -2995,3 +3002,46 @@ def downloadUploadReportService(company_id):
 
     except Exception as e:
         raise
+
+
+# def convertProfilingVideo(video_url, schedule_id):
+#     try:
+
+#         call_details = CallSchedule.objects.get(id=schedule_id)
+#         candidate = Candidate.objects.get(id=call_details.candidateid)
+
+#         file_name = f"{call_details.id}_{candidate.id}_profilevideo.wav"
+
+#         profiling_dir = os.path.join(settings.MEDIA_ROOT, "uploads","profiling_videos")
+#         os.makedirs(profiling_dir, exist_ok=True)
+
+#         parsed_url = urlparse(video_url)
+#         filename = os.path.basename(parsed_url.path)
+#         video_path = os.path.join(profiling_dir, filename)
+
+#         wav_path = os.path.join(profiling_dir, file_name)
+
+#         # Checking if already profiling audio exists
+#         if os.path.exists(wav_path):
+#             print(f"File already converted: {wav_path}")
+#             return wav_path
+
+#         # Download the video
+#         response = requests.get(video_url, stream=True)
+#         if response.status_code != 200:
+#             raise Exception(f"Failed to download video")
+
+#         # Save the video locally
+#         with open(video_path, "wb") as f:
+#             for chunk in response.iter_content(chunk_size=8192):
+#                 f.write(chunk)
+
+#         # Converting video to WAV format using FFmpeg
+#         ffmpeg.input(video_path).output(wav_path, format="wav", acodec="pcm_s16le", ar="44100").run(overwrite_output=True)
+
+#         # Deleting video file after converting to wav file
+#         os.remove(video_path)
+
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         raise

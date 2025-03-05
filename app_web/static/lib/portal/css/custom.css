@@ -484,3 +484,14 @@ table.dataTable thead th, table.dataTable thead td {
 .hidden {
   display: none;
 }
+
+
+.jd_create_question_div {
+  display: flex;
+  justify-content: right;
+}
+
+
+#createQuestionModal .modal-dialog {
+  max-width: 40%; 
+}

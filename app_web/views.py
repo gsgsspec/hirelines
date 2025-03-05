@@ -385,7 +385,7 @@ def jobDescriptionSetUp(request,jd_id):
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         
-        return render(request, "portal_index.html", {"template_name": 'jd_setup_new.html', 'menuItemList': menuItemList,'jd_details':jd_details,
+        return render(request, "portal_index.html", {"template_name": 'jd_setup_new.html', 'menuItemList': menuItemList,'jd_details':jd_details,'companyId':companyId,
                                                      "hirelines_integration_script_enc":hirelines_integration_script_enc,
                                                      "hirelines_integration_function_enc":hirelines_integration_function_enc})
     except Exception as e:

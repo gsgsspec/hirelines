@@ -295,6 +295,7 @@ def getJdQuestionsView(request):
                 jd_data['screeningPaper'] = screeningPaper
 
             jd_data['test_id'] = dataObjs['test_id']
+            jd_data['company_id'] = user_company
             
             get_evaluation_submissions = requests.post(url, json = jd_data, verify = False)
             response_content = get_evaluation_submissions.content

@@ -439,10 +439,87 @@
   </div>
 </div>
 
+<!-- Create Question Modal -->
+<div class="modal fade" id="createQuestionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog model-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create new question</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="new-question-form">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Skill Area :</label>
+                        <div class="col-sm-8">
+                            <label class="col-sm-7 col-form-label p-clr" id="new_question_subtopic_name"></label>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3" id="question_type_div">
+                        <label class="col-sm-3 col-form-label">Question type</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-merge">
+                            <select class="form-select" id="new_question_type" required disabled>
+                                <option value="B" selected>Yes/No</option>
+                                <option value="I">Interview</option>
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">Question</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-merge">
+                            <textarea class="form-control" id="new_question_text" rows="4" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3" id="expected_response_div">
+                        <label class="col-sm-3 col-form-label">Expected Response</label>
+                        <div class="col-sm-3 d-flex align-items-center">
+                            <div class="form-check">
+                                <input name="expected-response" class="form-check-input" type="radio" value="Y" id="exp_res_yes" checked>
+                                <label class="form-check-label" style="color: #566a7f; cursor: pointer;" for="exp_res_yes" > Yes</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 d-flex align-items-center">
+                            <div class="form-check">
+                                <input name="expected-response" class="form-check-input" type="radio" value="N" id="exp_res_no">
+                                <label class="form-check-label" style="color: #566a7f; cursor: pointer;" for="exp_res_no"> No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3" id="question-complexity-div">
+                        <label class="col-sm-3 col-form-label">Complexity</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-merge">
+                                <select class="form-select" id="new_question_complexity" required>
+                                    <option value="1" selected>Beginner</option>
+                                    <option value="2">Intermediate</option>
+                                    <option value="3">Moderate</option>
+                                    <option value="4">Advanced</option>
+                                    <option value="5">Expert</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="save-new-question">Save Question</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <!-- Create Paper status validation modal end -->
 
 <script>
   var jdlibraryid = "{{jd_details.jdlibraryid}}";
+  var companyId = "{{companyId}}";
   var jdId = '{{jd_details.id}}';
   var interviewersList = {{ jd_details.interviewes_lst|safe }}
   var skillLst = {{ jd_details.skillsList|safe }}

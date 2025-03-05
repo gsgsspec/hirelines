@@ -58,7 +58,8 @@ function getSkills() {
 
     var skills = {
         data: skillLst,  // Pass the actual list of skills
-        testData: workFlowDetails  // Pass the actual list of skills
+        testData: workFlowDetails,  // Pass the actual list of skills
+        companyId : companyId
     };
 
     // Send as JSON using $.ajax
@@ -74,7 +75,7 @@ function getSkills() {
             if (res.statusCode == 0) {
 
                 skillsTopicSubtopics = res.data['skillsList']
-                console.log('skillsTopicSubtopics',skillsTopicSubtopics)
+                // console.log('skillsTopicSubtopics',skillsTopicSubtopics)
 
                 DynamicQuesCount = res.data['paperSubtopicComplexityQuestionsCount']
 
@@ -313,6 +314,13 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
         else{
             console.log(" can't hide the dynamic questions container ");
         }
+    }
+
+    if(paperType == 'S' || paperType == 'I'){
+
+        var createQuestionContainer = createNewQuestionContainer(testId, paperType);
+        testCardHeaderElement.innerHTML += createQuestionContainer;
+
     }
 
 }
@@ -565,6 +573,7 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
             // Apply a scrollbar to the container
             // addPerfectScrollbarToDynamicElement(testId);
         }
+        
     }
 
     if(PaperType == 'S'){
@@ -586,6 +595,7 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
 
     clickOnFirstSkill(testId)
 
+    
 }
 
 
@@ -727,7 +737,7 @@ function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, Pape
 // it create complexity container for each subtopic it create low , verylow, medium, hard , veryhard complexity container and put in html
 function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, topicId, subTopicId, test_Id, PaperType_, complexityType, paper_id){
     // console.log('test_Id',test_Id)
-    // console.log('paper_id',paper_id)
+    console.log('complexityWiseQuestions',complexityWiseQuestions)
     var fndFirstQuestionComplexity
     var complexityTxt
     var dynamicId
@@ -809,6 +819,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     var dynamicInputLabelContainer = document.createElement('div')
     dynamicInputLabelContainer.classList.add('complexityDynamicContainer')
     dynamicInputLabelContainer.id = `complexityDynamicContainer_subtopicId_${subTopicId}_testId_${test_Id}`
+    dynamicInputLabelContainer.dataset['']
 
     // if there is only one question in a complexity do not show the dynamic container 
     if(complexityWiseQuestions.length == 1){
@@ -844,6 +855,8 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         
         let ques = complexityWiseQuestions[question_];
         
+        // from here===================================
+        
         var questionContainer = document.createElement('div');
         questionContainer.classList.add('customQuestionContainer')
         questionContainer.id = `QuestionContainerId_${ques['questionId']}`
@@ -871,8 +884,6 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
             'onclick',
             `addQuestionsToList(${ques['questionId']},this.id,${test_Id})`
         );
-
-        
 
         // Another checkbox
         let secondInpt = document.createElement('input');
@@ -932,8 +943,6 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
                 allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})  
             }
         }
-
-
 
         var questionCheckBox = document.createElement('div')
         questionCheckBox.classList.add('questionElements')
@@ -1803,6 +1812,7 @@ function activeScreeningTab(element){
             var basicQuestionsContainer = document.getElementById(`basicScreeningContainer_${TestCardId}`)
             
             if(element.dataset['screeningtype'] == 'basic'){
+
                 screnningfirstTab.classList.add('active-screeningTab')
                 screnningSecondTab.classList.remove('active-screeningTab')
                 // un hide the basic questions container
@@ -1827,6 +1837,9 @@ function activeScreeningTab(element){
                 else{
                     console.log('try to show basic screening test question by hidding the knowledge test questions container but somthing went wrong');
                 }
+                
+                $('#knowledge_'+TestCardId).hide();
+                $('#screening_basic_'+TestCardId).show();
                 
             }
 
@@ -1857,6 +1870,9 @@ function activeScreeningTab(element){
                 else{
                     console.log('try to show knowledge test screening question by hidding the basic test questions container but somthing went wrong');
                 }
+
+                $('#knowledge_'+TestCardId).show();
+                $('#screening_basic_'+TestCardId).hide();
                 // click first skill if there is no active skill.
                 // clickOnFirstSkill(TestCardId)
             }
@@ -2001,6 +2017,8 @@ function saveOrUpdateTest(){
             if (res.statusCode == 0){
                 if(res.data){
                     var data = res.data
+
+                    console.log("data ::::",data);
 
                     // test is updated and update card data
                     if ('updateEvent' in data && data['updateEvent'] == 'Y'){
@@ -2175,6 +2193,9 @@ function addTestCardToShow(testName, promotValue, testType, data) {
 // when we click on the Test card this function will be called , and add Styles and Hide and Unhide the Test's Questions Container.
 function selectTest(element_id){
 
+    console.log('element_id::::::::::',element_id);
+    
+
     if (element_id != perviousSelectedTest){
 
         var test_type = element_id.split('_')[0]
@@ -2229,6 +2250,29 @@ function selectTest(element_id){
                 testBox.classList.add('unActiveTestCard')
             }
         }
+
+        if(test_type == "S"){
+
+            let element1 = document.getElementById("screeningTab_1_"+workFlowId);
+            let element2 = document.getElementById("screeningTab_2_"+workFlowId);
+
+            if (element1 && element1.classList.contains("active-screeningTab")) {
+                $('#knowledge_'+workFlowId).hide();
+                $('#screening_basic_'+workFlowId).show();
+
+                $('#new_question_type').val('B').change();
+
+            } else if (element2 && element2.classList.contains("active-screeningTab")) {
+                $('#knowledge_'+workFlowId).show();
+                $('#screening_basic_'+workFlowId).hide();
+                $('#new_question_type').val('B').change();
+            }
+
+        }else {
+            $('#knowledge_'+workFlowId).show();
+            $('#screening_basic_'+workFlowId).hide();
+        }
+
         
     }
     
@@ -3704,5 +3748,355 @@ function updateTestWeightage(test_data, test_id) {
         totalMarksElement.textContent = totalMarks; // Update the span with the total marks
     } else {
         console.log(`No element found for TestWeightage_${test_id}`);
+    }
+}
+
+
+
+
+function createNewQuestionContainer(test_id, paperType){
+
+    if(paperType == 'I'){
+       styleElement =  `style = "margin-top:1rem"`
+    }else {
+        styleElement = ''
+    }
+
+    var create_question_container = `
+        <div class="jd_create_question_div"  id="screening_basic_${test_id}"> 
+            <button class="btn btn-primary" ${styleElement} onclick="createQuestionModel(${test_id},'${paperType}','screening')"><i class="fas fa-plus"></i> &nbsp; Add question</button>
+        </div>
+        <div class="jd_create_question_div" id="knowledge_${test_id}" style="display:none"> 
+            <button class="btn btn-primary" ${styleElement} onclick="createQuestionModel(${test_id},'${paperType}','knowledge')"><i class="fas fa-plus"></i> &nbsp; Add question</button>
+        </div>
+        `
+
+    return create_question_container
+
+}
+
+
+function createQuestionModel(test_id, paperType, QuesType) {
+
+    // addKnowledgeBasedQuestion(255,{
+    //     'question_id': 3080, 
+    //     'question_text': 'Knowledge Question 1',
+    //     'question_type': 'B',
+    //     'question_complexity': '2',
+    //     'star_question': 'N', 
+    //     'question_subject': 35, 
+    //     'question_topic': 81, 
+    //     'question_subtopic': 94, 
+    //     'question_marks': '1'
+    // },"S")
+
+    if (QuesType == 'screening'){
+
+        let subTopicElement = document.getElementById("new_question_subtopic_name");
+        subTopicElement.textContent = "JD Screening";
+        subTopicElement.setAttribute("data-new-question-typefor", 'basic-screening');
+        subTopicElement.setAttribute("data-new-question-subtopicid", '');
+        subTopicElement.setAttribute("data-test-id", test_id);
+        subTopicElement.setAttribute("data-paper-type", paperType);
+       
+        $('#question-complexity-div').hide();
+        $('#expected_response_div').show();
+
+        let modalElement = document.getElementById('createQuestionModal');
+        modalElement.removeAttribute("aria-hidden");
+
+        var myModal = new bootstrap.Modal(modalElement);
+        myModal.show();
+
+    }else{
+
+        let key = `previousSelectedSubTopicId_${test_id}`;
+    
+        let previousSelectedSubTopicId = skillsClickesTracker.hasOwnProperty(key) ? skillsClickesTracker[key] : null;
+    
+        let subTopicElement = document.getElementById("new_question_subtopic_name");
+    
+        if (previousSelectedSubTopicId) {
+            let subTopicSourceElement = document.getElementById(previousSelectedSubTopicId);
+            if (subTopicSourceElement) {
+    
+                let subTopicText = subTopicSourceElement.textContent.trim();
+                let subTopicId = subTopicSourceElement.getAttribute("data-subtopicid");
+                subTopicElement.textContent = subTopicText;
+    
+                subTopicElement.setAttribute("data-new-question-subtopicid", subTopicId);
+                subTopicElement.setAttribute("data-test-id", test_id);
+                subTopicElement.setAttribute("data-paper-type", paperType);
+                subTopicElement.setAttribute("data-new-question-typefor", 'knowledge');
+    
+                if (paperType == "I"){
+                    $('#expected_response_div').hide();
+                    $('#new_question_type').val('I').change();
+                    $('#question-complexity-div').show();
+                }else {
+                    $('#expected_response_div').show();
+                    $('#new_question_type').val('B').change();
+                    $('#question-complexity-div').show();
+                }
+    
+                let modalElement = document.getElementById('createQuestionModal');
+                modalElement.removeAttribute("aria-hidden");
+    
+                var myModal = new bootstrap.Modal(modalElement);
+                myModal.show();
+    
+            } else {
+                console.log("Element not found for ID:", subTopicId);
+            }
+        }
+    }
+}
+
+
+
+document.getElementById('createQuestionModal').addEventListener('hidden.bs.modal', function () {
+    let subTopicElement = document.getElementById("new_question_subtopic_name");
+    
+    if (subTopicElement) {
+        subTopicElement.textContent = "N/A";
+
+        subTopicElement.removeAttribute("data-create-question-subtopicid");
+
+        $('#new_question_text').val('')
+        $('#new_question_complexity').val(1)
+        $('#save-new-question').prop('disabled', false);
+
+    }
+});
+
+
+document.getElementById("save-new-question").onclick = function () {
+
+    let subTopicElement = document.getElementById("new_question_subtopic_name");
+    subtopic_id = subTopicElement.getAttribute("data-new-question-subtopicid");
+    ques_typefor = subTopicElement.getAttribute("data-new-question-typefor");
+    test_id = subTopicElement.getAttribute("data-test-id");
+    paper_type = subTopicElement.getAttribute("data-paper-type");
+
+    $('#new-question-form').unbind('submit').bind('submit', function (event) {
+        event.preventDefault(); 
+    })
+
+    dataObjs = {
+        'company_id': companyId,
+        'subtopic_id': subtopic_id,
+        'ques_typefor':ques_typefor,
+        'question': $('#new_question_text').val(),
+        'question_type': $('#new_question_type').val(),
+        'question_complexity':$('#new_question_complexity').val(),
+        'expected_answer':  $("input[name='expected-response']:checked").val(),
+    }
+
+    var final_data = {
+        'data': JSON.stringify(dataObjs),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    }
+
+    $('#save-new-question').prop('disabled', true);
+
+    $.post(CONFIG['acert'] + "/api/hirelines-new-question", final_data, function (res) {
+        if (res.statusCode == 0) {
+
+            showSuccessMessage('New Question Added');
+
+            $('#createQuestionModal').modal('hide');
+
+            $('#save-new-question').prop('disabled', false);
+
+            questionData = res.data
+
+            if(ques_typefor == "basic-screening"){
+
+                addNewBasicScreeningQuestion(test_id,questionData);
+
+                scrollToSection(`QuestionContainerId_${questionData["question_id"]}`);
+
+            }else {
+
+                addKnowledgeBasedQuestion(test_id,questionData,paper_type);
+
+                scrollToSection(`questionId_${questionData["question_id"]}_${test_id}_S`);
+
+            }
+
+
+
+        } else {
+
+            showFailureMessage('Error in Adding new question. Please try again after some time');
+
+        }
+    }).fail(function () {
+        showFailureMessage('Error in Adding new question. Please try again after some time');
+        $('#save-new-question').prop('disabled', false);
+    });
+
+}
+
+
+function addNewBasicScreeningQuestion(test_id,questionData){
+
+    screeningContainer = document.getElementById(`basicScreeningContainer_${test_id}`);
+
+    ol = screeningContainer.querySelector("ol");
+
+    newQuestionElement = `
+        <div class="customQuestionContainer" id="QuestionContainerId_${questionData["question_id"]}">
+            <li id="question_id_${questionData["question_id"]}">${questionData["question_text"]}</li>
+            <div class="questionElements">
+                <input type="checkbox" class="form-check-input mx-2" id="questionId-${test_id}_${questionData["question_id"]}" data-qid="${questionData["question_id"]}" data-type="screening" data-testid="${test_id}" data-marks="${questionData["question_marks"]}" onclick="addQuestionsToList(${questionData["question_id"]},this.id,${test_id})">
+                <span>
+                    <i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${questionData["question_id"]}_subTopic_BasicScreening_testId_${test_id}" onclick="markAsStarQuestion(${questionData["question_id"]},null,${test_id})"></i>
+                </span>
+            </div>
+        </div>
+    `
+
+    ol.insertAdjacentHTML("beforeend", newQuestionElement);
+
+    if (!allTestsQuestions[test_id]) {
+        allTestsQuestions[test_id] = {}; // Initialize the test_id key if it doesn't exist
+    }
+
+    if (!allTestsQuestions[test_id]['starQuestions']) {
+        allTestsQuestions[test_id]['starQuestions'] = []; // Initialize starQuestions as an empty array
+    }
+
+    allTestsQuestions[test_id]['starQuestions'].push({"qid":  questionData["question_id"], 'star_flag': 'N'}) 
+    console.log("allTestsQuestions[test_id]",allTestsQuestions[test_id]);
+    
+}
+
+
+function addKnowledgeBasedQuestion(test_id,questionData,paperType){
+
+    let testQuestionsContainer = document.getElementById(`SubTopicQuestionsContainer_${questionData['question_subtopic']}_test_${test_id}`)
+
+    let questionComplexity = questionData['question_complexity']
+
+    let complexityMapping = {1:'verylow',2:'low',3:'medium',4:'high',5:'veryhigh'}
+
+    let complexityType = complexityMapping[questionComplexity];
+
+    let existingElement = testQuestionsContainer.querySelector(`[data-complexitytype="${complexityType}"]`);
+
+    let generateQuestionData = [{
+        'marks': questionData['question_marks'],
+        'moreQuestions': "N",
+        'paperQuestion': "N",
+        'paperdata': {},
+        'question': questionData['question_text'],
+        'questionComplexity': questionData['question_complexity'],
+        'questionId': questionData['question_id'],
+        'questionType': questionData['question_type'],
+        'skillId': questionData['question_subject'],
+        'starQuestion': "N",
+        'subTopicId': questionData['question_subtopic'],
+        'topicId': questionData['question_topic'],
+    }]
+
+    let complexityContainer = createComplexityQuestionsContainer(
+        generateQuestionData,
+        questionData['question_subject'],
+        questionData['question_topic'],
+        questionData['question_subtopic'],
+        test_id,
+        paperType,
+        complexityType,
+        undefined
+    )
+
+    if(complexityContainer){
+
+        if(existingElement){
+
+            let existingQuestionsOl = existingElement.querySelector("ol");
+    
+            if (existingQuestionsOl) {
+        
+                let newOl = complexityContainer.querySelector("ol");
+        
+                if (newOl) {
+    
+                    let newDivs = newOl.querySelectorAll("div.customQuestionContainer");
+                    console.log("newDivs",newDivs);
+                    
+                    newDivs.forEach(div => {
+                        existingQuestionsOl.appendChild(div);
+                    });
+
+                    if(paperType != "I"){
+                        setTimeout(() => updateDynamicContainerVisibility(existingElement,questionData['question_subtopic'],test_id), 0);
+                    }
+
+
+        
+                } else {
+                    console.log("Error: No <ol> found inside the generated complexity container.");
+                }
+    
+            } else {
+                console.log("Error: No <ol> found inside the existing complexity container.");
+            }
+    
+        }else {
+    
+            let children = [...testQuestionsContainer.children];
+            
+            let inserted = false;
+    
+            for (let child of children) {
+                let childComplexityType = child.getAttribute("data-complexitytype");
+                let childComplexityIndex = Object.values(complexityMapping).indexOf(childComplexityType);
+                let newComplexityIndex = Object.values(complexityMapping).indexOf(complexityType);
+    
+                if (newComplexityIndex < childComplexityIndex) {
+                    testQuestionsContainer.insertBefore(complexityContainer, child);
+                    inserted = true;
+                    break;
+                }
+            }
+    
+            if (!inserted) {
+                testQuestionsContainer.appendChild(complexityContainer);
+            }
+
+            if(paperType != "I"){
+                setTimeout(() => updateDynamicContainerVisibility(complexityContainer,questionData['question_subtopic'],test_id), 0);
+            }
+        }
+
+    }else {
+        console.log("Error: Complexity container creation failed.");
+    }
+}
+
+
+function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+}
+
+function updateDynamicContainerVisibility(complexityContainer,subTopicId,TestId) {
+    let questionsOl = complexityContainer.querySelector("ol");
+    
+    if (questionsOl) {
+
+        let dynamicContainer =  complexityContainer.querySelector(`#complexityDynamicContainer_subtopicId_${subTopicId}_testId_${TestId}`);
+        
+        let totalQuestions = questionsOl.querySelectorAll("div.customQuestionContainer").length;
+        
+        if (totalQuestions > 1 && dynamicContainer) {
+            dynamicContainer.removeAttribute("hidden");
+
+            let allInputs = questionsOl.querySelectorAll("div.customQuestionContainer input");
+            allInputs.forEach(input => {
+                input.removeAttribute("disabled");
+            });
+        }
     }
 }
