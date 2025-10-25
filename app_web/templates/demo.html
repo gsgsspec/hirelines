@@ -1,14 +1,45 @@
 {% load static %}
-<header id="header" class="header">
-    <div class="login-sec">
-        <div class="web-landing-content-lg-demo">
-            <div class="text-container">
-                <div class="form-div">
-                    <div class="detiails-sec">
-                        <div class="form-card-heading">
-                            <h4>Request a Demo
-                            </h4>
+
+<link rel="stylesheet" href="{% static 'lib/homePage/css/demoPage.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<header id="header" class="header"></header>
+<div class="login-sec">
+    <div class="web-landing-content-lg-demo">
+        <div class="text-container">
+            <div class="form-div">
+                <div class="demo-video-container">
+                    <div class="tabs-section">
+                        <div class="tab active" data-video="https://www.youtube.com/embed/qEHPsLyuAhk"><i class="fas fa-play"></i> &nbsp; Company Setup</div>
+                        <div class="tab" data-video="https://www.youtube.com/embed/hHcZnnk5H3s"> <i class="fas fa-play"></i> &nbsp; JD Setup</div>
+                        <div class="tab" data-video="https://www.youtube.com/embed/hHcZnnk5H3s"> <i class="fas fa-play"></i> &nbsp; Integration to Career page</div>
+                        <div class="tab" data-video="https://www.youtube.com/embed/kXYiU_JCYtU"> <i class="fas fa-play"></i> &nbsp; Evaluation</div>
+                        <div class="tab" data-video="https://www.youtube.com/embed/KC9AGQ58sIE"> <i class="fas fa-play"></i> &nbsp; Scheduling Interview</div>
+                        <div class="tab" data-video="https://www.youtube.com/embed/kXYiU_JCYtU"> <i class="fas fa-play"></i> &nbsp; Interview Process</div>
+                        <div class="tab" data-video="https://www.youtube.com/embed/oqf5_f3BmkE"> <i class="fas fa-play"></i> &nbsp; Offer Letter Release</div>
+                        <div class="tab" data-video="https://www.youtube.com/embed/lnmdwf9A6sQ"> <i class="fas fa-play"></i> &nbsp; Bussiness Presentation</div>
+                        <div class="tab" data-video="https://www.youtube.com/embed/nzRSFv0k4-k"> <i class="fas fa-play"></i> &nbsp; Webinar</div>
+                    </div>
+                    <div class="video-section">
+                        <iframe
+                            id="lessonVideo"
+                            src="https://www.youtube.com/embed/qEHPsLyuAhk"
+                            title="Lesson Video"
+                            allowfullscreen
+                        ></iframe>
+                        <div class="video-controls">
+                            <button id="prevBtn"><i class="fa-solid fa-chevron-left"></i> &nbsp;Previous</button>
+                            <button id="nextBtn">Next &nbsp; <i class="fa-solid fa-chevron-right"></i></button>
                         </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-card-heading">
+                </div>
+                <div class="demo-contact-container">
+                    <img src="{% static 'lib/homePage/images/contact.jpg' %}">
+                    <div class="demo-form-container">
+                        <h4 class="mb-4">Reach Out for a Personalized Demo</h4>
                         <form id="demo-form">
                             <div class="mb-4 form-floating">
                                 <input type="text" class="form-control" id="company-name" placeholder="Company Name" required>
@@ -30,28 +61,62 @@
                                <button type="submit" id="demo-btn" class="btn-solid-lg">Submit</button>
                            </div>
                         </form>
-                    </div>
-                    <div class="re-demo-sec">
-                        <div class="demo-video">
-                            <iframe style="aspect-ratio: 16/9;width: 100%;"  src="https://www.youtube.com/embed/{{demo_video}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                            <p class="demo-content">
-                                If you need any personalized demo, please let us know
-                                <button class="btn-solid-sm" id="req-demo-btn">Request demo</button>
-                            </p>
-                        </div>
                         <p class="demo-txt">
-                            <i class="fas fa-check-circle check-icon"></i>Thanks for your response, we will get in touch with you shortly..
+                            <i class="fas fa-check-circle check-icon"></i>&nbsp; Thanks for your response, we will get in touch with you shortly..
                         </p>
                     </div>
                 </div>
-            </div> 
-        </div>
+                <div class="re-demo-sec">
+                    <div class="demo-video">
+                        <iframe style="aspect-ratio: 16/9;width: 100%;"  src="https://www.youtube.com/embed/{{demo_video}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        <p class="demo-content">
+                            If you need any personalized demo, please let us know
+                            <button class="btn-solid-sm" id="req-demo-btn">Request demo</button>
+                        </p>
+                    </div>
+                    <p class="demo-txt">
+                        <i class="fas fa-check-circle check-icon"></i>Thanks for your response, we will get in touch with you shortly..
+                    </p>
+                </div>
+            </div>
+        </div> 
     </div>
-</header>
+</div>
 <style>
     body {
         background-color: #e3f0fc;
     }
 </style>
+
+<script>
+    const tabs = document.querySelectorAll(".tab");
+    const videoFrame = document.getElementById("lessonVideo");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let currentIndex = 0;
+
+    function updateVideo(index) {
+        tabs.forEach((t) => t.classList.remove("active"));
+        tabs[index].classList.add("active");
+        videoFrame.src = tabs[index].getAttribute("data-video");
+        currentIndex = index;
+        tabs[index].scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => updateVideo(index));
+    });
+
+    prevBtn.addEventListener("click", () => {
+        const newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+        updateVideo(newIndex);
+    });
+
+    nextBtn.addEventListener("click", () => {
+        const newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+        updateVideo(newIndex);
+    });
+</script>
 
 <script src="{% static 'js/demo.js' %}"></script>

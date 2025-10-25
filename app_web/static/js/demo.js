@@ -19,13 +19,16 @@ document.getElementById('demo-btn').onclick=function(){
         $.post(CONFIG['portal'] + "/api/demo-user", final_data, function (res) {
         
             if (res.statusCode == 0){   
-               
-                $('.re-demo-sec').show();
+
                 $('#demo-btn').hide();
                 
-                demo_id = res.data
+                $('.demo-txt').show();
+               
+                // $('.re-demo-sec').show();
+                
+                // demo_id = res.data
 
-                $('#req-demo-btn').attr('onclick', `reqDemo(${demo_id})`)
+                // $('#req-demo-btn').attr('onclick', `reqDemo(${demo_id})`)
 
             }
 
