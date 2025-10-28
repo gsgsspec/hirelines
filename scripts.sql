@@ -1,4 +1,4 @@
-SET @company_id = 1;
+-- SET @company_id = 1;
 
 
 DELETE FROM ivfeedback
