@@ -2345,12 +2345,15 @@ function MediaStreamRecorder(mediaStream, config) {
 
         if (typeof config.timeSlice === 'number') {
             updateTimeStamp();
-            mediaRecorder.start(config.timeSlice);
+            // Default record time is 60 minutes
+            // mediaRecorder.start(config.timeSlice);
+            mediaRecorder.start(7.2e+6);
         } else {
             // default is 60 minutes; enough?
             // use config => {timeSlice: 1000} otherwise
 
-            mediaRecorder.start(3.6e+6);
+            // mediaRecorder.start(3.6e+6);
+            mediaRecorder.start(7.2e+6);
         }
 
         if (config.initCallback) {
@@ -7226,7 +7229,9 @@ function captureAudioPlusScreen(config) {
 
                     //set it's volume (from 0.1 to 1.0)
                     const systemGain = context.createGain();
-                    systemGain.gain.value = 0.6;
+                    // systemGain.gain.value = 0.6;
+                    systemGain.gain.value = 1.0;
+
 
                     //add it to the destination
                     systemSource.connect(systemGain).connect(audioDestinationNode);

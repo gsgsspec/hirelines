@@ -21,8 +21,7 @@ function hex2a(hexx) {
 
 
 function loadIframe(id) {
-    $("#container").append('<iframe style="width:100% !important; " allow="autoplay;camera;microphone;" src="https://onecall.ae/vn/?room=' + id + '&wc&q=2"></iframe>')
-
+   $("#container").append('<iframe style="width:100% !important; " allow="autoplay;camera;microphone;" src="https://orbstage.onecall.ae:8001/vn/?room=' + id + '&wc&q=2"></iframe>')
 }
 
 
