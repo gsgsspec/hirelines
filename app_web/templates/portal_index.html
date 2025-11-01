@@ -146,14 +146,14 @@
           {% endfor %}
         </ul>
         <div class="aside-footer">
-          <div class="footer-container">
+          <div class="footer-container" style="cursor: pointer;"onclick="signOut();">
             <span class="user-name" id="user-name-menu">
               <!-- <i class="fas fa-user"></i> -->
-              <i class="fas fa-user-circle"></i>
+              <i class="fas  fa-power-off"  style="cursor: pointer;"onclick="signOut();"></i>
                &nbsp;</span>
-            <div class="d-flex justify-content-start">
+            <!-- <div class="d-flex justify-content-start">
               <button class="btn btn-primary btn-sm mt-2" onclick="signOut();">Sign out</button>
-            </div>
+            </div> -->
           </div>
         </div>
       </aside>
