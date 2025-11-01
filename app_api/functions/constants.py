@@ -97,11 +97,11 @@ hirelines_registration_script ="""
         "mobile": mobile,
         "source-code": "CARER"
     };
-    register_candidate(payload);
+    return register_candidate(payload);
 }
 
 function register_candidate(register_details) {
-    fetch("#hirelines_domain#/api/register-candidate", {
+    return fetch("#hirelines_domain#/api/register-candidate", {
         method: "POST",
         body: JSON.stringify(register_details),
         headers: {
@@ -115,6 +115,7 @@ function register_candidate(register_details) {
         return response.json();
     })
     .then(data => {
+        
         if (data.statusCode == 0) {
             // applicationForm.reset()
             // alert('Application submitted successfully. Please check your email.');
@@ -122,10 +123,12 @@ function register_candidate(register_details) {
             // alert('Error while applying for this job. Please reach out to our company email');
             console.log('Error', data.error);
         }
+        return data;
     })
     .catch(error => {
         // alert('Error while applying for this job. Please reach out to our company email');
         console.log('Error', error);
+        return {error}
     });
 }
 
