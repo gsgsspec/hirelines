@@ -188,6 +188,7 @@ function getAllBasicScreeningQuestions(testId) {
         };
 
         $.post(CONFIG['portal'] + "/api/get-jd-screening-questions", final_data, function(res) {
+            console.log('res',res)
             if (res.statusCode == 0 && res.data) {
                 resolve(res.data); // Resolve with the data
 
@@ -321,6 +322,10 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
         var createQuestionContainer = createNewQuestionContainer(testId, paperType);
         testCardHeaderElement.innerHTML += createQuestionContainer;
 
+    }
+    var instructionsContainer = document.getElementById('instructionsContainer');
+    if (instructionsContainer) {
+        instructionsContainer.hidden = true;
     }
 
 }
