@@ -75,13 +75,13 @@
           </button>
         
           <div class="btn-group" role="group" aria-label="First group">
-            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('screening')" title="Screening Test" data-bs-toggle="modal" data-bs-target="#modalCenter">
+            <button type="button" class="btn btn-outline-primary" id="btnScreening"onclick="createNewTestModalOpen('screening')" title="Screening Test" data-bs-toggle="modal" data-bs-target="#modalCenter">
               <i class="fas fa-clipboard-check"></i>
             </button>
-            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('coding')" title="Coding Test"  data-bs-toggle="modal" data-bs-target="#modalCenter">
+            <button type="button" class="btn btn-outline-primary" id="btnCoding" onclick="createNewTestModalOpen('coding')" title="Coding Test"  data-bs-toggle="modal" data-bs-target="#modalCenter">
               <i class='fas fa-code'></i>
             </button>
-            <button type="button" class="btn btn-outline-primary" onclick="createNewTestModalOpen('interview')" title="Interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
+            <button type="button" class="btn btn-outline-primary" id="btnInterview"onclick="createNewTestModalOpen('interview')" title="Interview" data-bs-toggle="modal" data-bs-target="#modalCenter">
               <i class='fas fa-chalkboard-teacher'></i>
             </button>
             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#InterviewPanel" title="Add Interviewers">
@@ -1288,7 +1288,49 @@
   box-shadow: 0 2px 4px 0 rgba(242, 92, 5, 0.4);
 }
 
+
 </style>
+<script>
+function highlightTestButton(testType) {
+  let btnId = null;
+
+  switch (testType.toLowerCase()) {
+    case 's':
+    case 'screening':
+      btnId = 'btnScreening';
+      break;
+    case 'e':
+    case 'coding':
+      btnId = 'btnCoding';
+      break;
+    case 'i':
+    case 'interview':
+      btnId = 'btnInterview';
+      break;
+  }
+
+  if (btnId) {
+    const btn = document.getElementById(btnId);
+    if (btn && !btn.classList.contains('active-test-green')) {
+      btn.classList.add('active-test-green');
+    }
+  }
+}
+
+
+</script>
+
+<style>
+.active-test-green {
+  background-color: #28a745 !important; /* green */
+  color: white !important;
+  /* border-color: #28a745 !important; */
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+  transition: all 0.2s ease;
+}
+
+</style>
+
 <script src="{% static 'lib/portal/assets/js/ui-popover.js' %}"></script>
 <script src="/static/config/config.js"></script>
 <script src="{% static 'js/jd_setup_new.js' %}"></script>

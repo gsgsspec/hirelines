@@ -2192,6 +2192,8 @@ function addTestCardToShow(testName, promotValue, testType, data) {
     requestAnimationFrame(() => {
         newCard.classList.add('visible'); // This will trigger the CSS animation
     });
+    highlightTestButton(testType);
+
 }
 
 
