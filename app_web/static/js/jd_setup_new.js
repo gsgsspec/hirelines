@@ -443,6 +443,20 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
     skillsAndTopicsAndSubtopicsContainer.innerHTML += skillsListHtml;
     
     if (skillData) {
+         // Sort skills alphabetically
+        skillData.sort((a, b) => (a.skill || "").localeCompare(b.skill || "", undefined, { sensitivity: "base" }));
+
+        // Sort topics and subtopics alphabetically
+        skillData.forEach(skill => {
+            if (Array.isArray(skill.skillTopics)) {
+                skill.skillTopics.sort((a, b) => (a.topicName || "").localeCompare(b.topicName || "", undefined, { sensitivity: "base" }));
+                skill.skillTopics.forEach(topic => {
+                    if (Array.isArray(topic.subTopics)) {
+                        topic.subTopics.sort((a, b) => (a.subTopicName || "").localeCompare(b.subTopicName || "", undefined, { sensitivity: "base" }));
+                    }
+                });
+            }
+        });
         
         // Loop through skills
         for (let skill_ = 0; skill_ < skillData.length; skill_++) {
