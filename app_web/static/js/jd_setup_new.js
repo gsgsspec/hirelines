@@ -610,6 +610,12 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
         loader.style.display = 'none';
     }
     
+    document.getElementById(`TestContainer_${testId}`).insertAdjacentHTML('beforeend', `
+        <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+            <button id="save_${testId}" class="btn btn-primary btn-custom-margin-left" data-testid="${testId}" onclick="savePaper(this.id)"> Save </button>
+        </div>
+    `);
+    
     questionCheckAsSelected()
 
     clickOnFirstSkill(testId)
