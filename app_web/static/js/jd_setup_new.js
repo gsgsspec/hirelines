@@ -820,6 +820,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     complexityDynamicInput.classList.add('dynamicInpt', 'form-control')
     complexityDynamicInput.id = `DynamicInput_TestId_${test_Id}_subTopic_${subTopicId}_complex_${complexityTxt}`;  // Set appropriate input type
     complexityDynamicInput.type = "number";  // Set appropriate input type
+    complexityDynamicInput.min="0"
     complexityDynamicInput.dataset['complexitytype'] = complexityTxt;  // Set appropriate input type
     complexityDynamicInput.dataset['testid'] = test_Id; 
     complexityDynamicInput.dataset['skillid'] = skill_Id; 
@@ -3412,41 +3413,65 @@ function dynamicQuestionscountSave(inputElement){
         allTestsQuestions[testId][subTopic_Id][complexitytype]['qCount'] = dynamicInptElement.value
 
         updateTestWeightage(allTestsQuestions[testId],testId)
+        
 
     }
-
+    
     if(testsList[testId]['papertype'] == 'S'){
 
         let codingDynamicElemId = `DynamicQuestionsCount_${testId}`
         let codingDynamicElem = document.getElementById(codingDynamicElemId)
 
-        if(codingDynamicElem){
-            var labelCount = parseInt(codingDynamicElem.innerText)
+        // if(codingDynamicElem){
+        //     var labelCount = parseInt(codingDynamicElem.innerText)
  
-            if(isNaN(labelCount)){
-                labelCount = 0
-            }
+        //     if(isNaN(labelCount)){
+        //         labelCount = 0
+        //     }
 
-            var labelValue = labelCount - parseInt(dynamicQuestionCountInputValueBackup)
+        //     var labelValue = labelCount - parseInt(dynamicQuestionCountInputValueBackup)
 
-            var DynInptVal = parseInt(dynamicInptElement.value)
+        //     var DynInptVal = parseInt(dynamicInptElement.value)
 
-            if(isNaN(parseInt(dynamicInptElement.value))){
-                DynInptVal = 0
-            }
+        //     if(isNaN(parseInt(dynamicInptElement.value))){
+        //         DynInptVal = 0
+        //     }
             
-            let finalDynCount = labelValue + DynInptVal
+        //     let finalDynCount = labelValue + DynInptVal
 
-            codingDynamicElem.innerText = finalDynCount
+        //     codingDynamicElem.innerText = finalDynCount
             
-            if(isNaN(dynamicInptElement.value)){
-                dynamicQuestionCountInputValueBackup = 0
-            }
-            else{
-                dynamicQuestionCountInputValueBackup = parseInt(dynamicInptElement.value)
-            }
+        //     if(isNaN(dynamicInptElement.value)){
+        //         dynamicQuestionCountInputValueBackup = 0
+        //     }
+        //     else{
+        //         dynamicQuestionCountInputValueBackup = parseInt(dynamicInptElement.value)
+        //     }
 
-        }
+        //     console.log('dynamicQuestionCountInputValueBackup',dynamicQuestionCountInputValueBackup)
+
+        // }
+        let totalDynamicCount = 0;
+    let dynamicInputs = document.querySelectorAll(
+        `input[data-testid='${testId}'].dynamicInpt`
+    );
+
+    dynamicInputs.forEach((inp) => {
+        let val = parseInt(inp.value);
+        if (!isNaN(val)) totalDynamicCount += val;
+    });
+
+    // Update the total label
+    let totalLabelElem = document.getElementById(`DynamicQuestionsCount_${testId}`);
+    if (totalLabelElem) {
+        totalLabelElem.innerText = totalDynamicCount;
+    }
+
+    // Backup new value
+    dynamicQuestionCountInputValueBackup = newValue;
+
+    console.log(`Updated total for Test ${testId}: ${totalDynamicCount}`);
+        
 
     }
 
@@ -3455,40 +3480,63 @@ function dynamicQuestionscountSave(inputElement){
         let codingDynamicElemId = `DynamicQuestionsCount_${testId}`
         let codingDynamicElem = document.getElementById(codingDynamicElemId)
 
-        if(codingDynamicElem){
-            var labelCount = parseInt(codingDynamicElem.innerText)
+        // if(codingDynamicElem){
+        //     var labelCount = parseInt(codingDynamicElem.innerText)
  
-            if(isNaN(labelCount)){
-                labelCount = 0
-            }
+        //     if(isNaN(labelCount)){
+        //         labelCount = 0
+        //     }
 
-            var labelValue = parseInt(dynamicQuestionCountInputValueBackup) - labelCount
+        //     var labelValue = parseInt(dynamicQuestionCountInputValueBackup) - labelCount
 
-            var DynInptVal = dynamicInptElement.value
-            if(parseInt(dynamicInptElement.value) == NaN){
-                DynInptVal = 0
-            }
-
-            
-            let finalDynCount = labelValue + parseInt(DynInptVal)
-
-            if (isNaN(finalDynCount)) {
-                console.log('Found NaN');
-                codingDynamicElem.innerText = dynamicQuestionCountInputValueBackup - labelCount
-            }
-            else{
-                codingDynamicElem.innerText = labelValue + parseInt(DynInptVal)
-            }
+        //     var DynInptVal = dynamicInptElement.value
+        //     if(parseInt(dynamicInptElement.value) == NaN){
+        //         DynInptVal = 0
+        //     }
 
             
-            if(isNaN(dynamicInptElement.value)){
-                dynamicQuestionCountInputValueBackup = 0
-            }
-            else{
-                dynamicQuestionCountInputValueBackup = parseInt(dynamicInptElement.value)
-            }
+        //     let finalDynCount = labelValue + parseInt(DynInptVal)
 
-        }
+        //     if (isNaN(finalDynCount)) {
+        //         console.log('Found NaN');
+        //         codingDynamicElem.innerText = dynamicQuestionCountInputValueBackup - labelCount
+        //     }
+        //     else{
+        //         codingDynamicElem.innerText = labelValue + parseInt(DynInptVal)
+        //     }
+
+            
+        //     if(isNaN(dynamicInptElement.value)){
+        //         dynamicQuestionCountInputValueBackup = 0
+        //     }
+        //     else{
+        //         dynamicQuestionCountInputValueBackup = parseInt(dynamicInptElement.value)
+        //     }
+
+        // }
+        let totalDynamicCount = 0;
+    let dynamicInputs = document.querySelectorAll(
+        `input[data-testid='${testId}'].dynamicInpt`
+    );
+
+    dynamicInputs.forEach((inp) => {
+        let val = parseInt(inp.value);
+        if (!isNaN(val)) totalDynamicCount += val;
+    });
+
+    // Update the total label
+    let totalLabelElem = document.getElementById(`DynamicQuestionsCount_${testId}`);
+    if (totalLabelElem) {
+        totalLabelElem.innerText = totalDynamicCount;
+    }
+
+    // Backup new value
+    dynamicQuestionCountInputValueBackup = newValue;
+
+    console.log(`Updated total for Test ${testId}: ${totalDynamicCount}`);
+       
+
+        console.log('dynamicQuestionCountInputValueBackup',dynamicQuestionCountInputValueBackup)
 
     }
 
@@ -3508,6 +3556,8 @@ function DynamicInputValueBackUp(element_Id){
             dynamicQuestionCountInputValueBackup = 0
         }
     }
+
+    console.log('dynamicQuestionCountInputValueBackup',dynamicQuestionCountInputValueBackup)
 
 }
 
@@ -3767,6 +3817,7 @@ function updateTestWeightage(test_data, test_id) {
     }
 
     console.log("Consolidated Total Marks (including Static Questions):", totalMarks);
+   
 
     // Assuming the total marks are to be updated in the corresponding <span> element
     const totalMarksElement = document.querySelector(`#TestWeightage_${test_id}`);
