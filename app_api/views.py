@@ -23,7 +23,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB
@@ -1614,4 +1614,27 @@ def downloadUploadReport(request):
         response['error'] = str(e)
         raise
     
+    return JsonResponse(response)
+
+
+
+
+@api_view(['GET'])
+@authentication_classes([])  # no authentication
+@permission_classes([])      # public access
+def get_paperid(request):
+    response = {'paper_id': None, 'error': None}
+    try:
+        test_id = request.GET.get('test_id')
+        if not test_id:
+            response['error'] = "Missing test_id"
+            return JsonResponse(response, status=400)
+
+        brule = Brules.objects.filter(workflowid=test_id).first()
+        if brule:
+            response['paper_id'] = brule.paperid
+        else:
+            response['error'] = f"No paper found for test_id {test_id}"
+    except Exception as e:
+        response['error'] = str(e)
     return JsonResponse(response)

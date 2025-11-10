@@ -616,6 +616,54 @@
     </div>
 </div>
 
+<!-- Preview Overlay Modal -->
+<div id="overlay" style="
+    display:none;
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.6);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+  <div id="overlay_content" style="
+      background:#fff;
+      width:50%;
+      max-height:90%;
+      overflow-y:auto;
+      padding:20px;
+      border-radius:8px;
+      position:relative;
+  ">
+      <!-- <button onclick="close_paper_preview()" style="
+          position:absolute;
+          top:10px;
+          right:15px;
+          background:none;
+          border:none;
+          font-size:20px;
+          cursor:pointer;
+      ">&times;</button> -->
+       <button onclick="close_paper_preview()" style="
+          position:absolute;
+          top:10px;
+          right:15px;
+          background:#274699;
+          color:#fff;
+          border:none;
+          padding:5px 12px;
+          font-size:14px;
+          border-radius:4px;
+          cursor:pointer;
+      ">Close</button>
+
+      <h3 id="preview_paper_title" class="mb-2"></h3>
+      <div id="preview_paper_details" class="mb-3"></div>
+      <div id="question_preview"></div>
+  </div>
+</div>
+
+
 
 <!-- Create Paper status validation modal end -->
 

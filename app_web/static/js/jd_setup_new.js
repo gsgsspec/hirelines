@@ -299,6 +299,34 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
         var screeningTabsContainer = screeningTabs(testId);
         testCardHeaderElement.innerHTML += screeningTabsContainer;
     }
+    // 1️⃣ Keep your existing header buttons same
+    if (paperType === 'S') {
+        testCardHeaderElement.innerHTML += `
+        <div class="mt-3">
+            <button class="btn btn-outline-primary" onclick="previewQuestions(${testId}, 'S')">
+                <i class="fas fa-eye"></i> Preview 
+            </button>
+        </div>
+    `;
+    }
+    if (paperType === 'E') {
+        testCardHeaderElement.innerHTML += `
+        <div class="mt-3">
+            <button class="btn btn-outline-primary" onclick="previewQuestions(${testId}, 'E')">
+                <i class="fas fa-eye"></i> Preview 
+            </button>
+        </div>
+    `;
+    }
+    if (paperType === 'I') {
+        testCardHeaderElement.innerHTML += `
+        <div class="mt-3">
+            <button class="btn btn-outline-primary" onclick="previewQuestions(${testId}, 'I')">
+                <i class="fas fa-eye"></i> Preview 
+            </button>
+        </div>
+    `;
+    }
 
     // Append the header element to the workflow container
     workFlowContainer.appendChild(testCardHeaderElement);
@@ -4177,4 +4205,110 @@ function updateDynamicContainerVisibility(complexityContainer,subTopicId,TestId)
             });
         }
     }
+}
+
+
+
+
+
+
+
+
+
+
+//  JS: Modal preview logic
+function previewQuestions(testId, paperType) {
+    // Show overlay modal (initially loading)
+    document.getElementById("overlay").style.display = "flex";
+    $("#preview_paper_title").html("Preview - " + (paperType === 'E' ? 'Coding' : paperType === 'I' ? 'Interview' : 'Screening'));
+    $("#question_preview").html("<p>Loading preview questions...</p>");
+
+    // Step 1: Fetch paper_id
+    $.ajax({
+        url: CONFIG["portal"] + `/api/get_paperid?test_id=${testId}`,
+        type: "GET",
+        success: function (res) {
+            if (res.paper_id) {
+                const paperId = res.paper_id;
+
+                // Step 2: Fetch preview data
+                $.ajax({
+                    url: CONFIG["acert"] + "/api/preview",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ paper_id: paperId }),
+
+                    success: function (res2) {
+                        if (res2.statusCode === 0 && res2.data) {
+                            const questions = res2.data;
+                            console.log("questions",questions)
+                            $("#preview_paper_details").html(
+                                `<span>Total Questions : ${questions.length} </span>`
+                            );
+                            $("#question_preview").html("");
+
+                            questions.forEach((q, i) => {
+                                const sno = (i + 1).toString().padStart(2, '0');
+                                if (q.question === null) {
+                                    $("#question_preview").append(`
+                                        <div class="question mb-3">
+                                            <p style="margin: 0; line-height: 1.8;">
+                                                <strong>${sno}. </strong>
+                                                dynamic question
+                                                <span style="color: #555; margin-left: 15px;">
+                                                    <strong>Topic:</strong> ${q.topic || "-"}
+                                                </span>
+                                                <span style="color: #555; margin-left: 15px;">
+                                                    <strong>Subtopic:</strong> ${q.subtopic || "-"}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    `);
+                                } else {
+                                    $("#question_preview").append(`
+                                        <div class="question mb-3">
+                                            <p style="margin: 0; line-height: 1.8;">
+                                                <strong>${sno}. </strong>${q.question}
+                                            </p>
+                                        </div>
+                                    `);
+                                }
+                            });
+                        } else {
+                            $("#question_preview").html("<p>No questions found.</p>");
+                        }
+
+                               
+                        //         $("#question_preview").append(`
+                                   
+                        //             <div class="question mb-3">
+                        //                 <p style="margin: 0; line-height: 2.0;">
+                        //                     <strong>${sno}. </strong>${q.question || "dynamic question"}
+                        //                 </p>
+                        //             </div>
+                        //         `);
+                        //     });
+                        // } else {
+                        //     $("#question_preview").html("<p>No questions found.</p>");
+                        // }
+                    },
+                    error: function (xhr, status, error) {
+                        $("#question_preview").html("<p class='text-danger'>Failed to load questions.</p>");
+                        console.error("Error fetching preview questions:", error);
+                    },
+                });
+            } else {
+                $("#question_preview").html("<p>No paper found for this test.</p>");
+            }
+        },
+        error: function (xhr, status, error) {
+            $("#question_preview").html("<p class='text-danger'>Failed to get paper ID.</p>");
+            console.error("Error fetching paper_id:", error);
+        },
+    });
+}
+
+// Close modal
+function close_paper_preview() {
+    document.getElementById("overlay").style.display = "none";
 }
