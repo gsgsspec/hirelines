@@ -917,8 +917,8 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
         var questionElement = document.createElement('li');
         questionElement.id = `question_id_${ques['questionId']}`
-        questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');  // Assuming ques is an object with 'question' key
-
+        // questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');  // Assuming ques is an object with 'question' key
+        questionElement.innerText = ques['question']
         let questionMarks = ques['marks']
 
         let firstInpt = document.createElement('input');
@@ -1369,8 +1369,9 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
 
         var questionElement = document.createElement('li');
         questionElement.id = `question_id_${ques['questionId']}`
-        questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');  // Assuming ques is an object with 'question' key
-
+        // questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');  // Assuming ques is an object with 'question' key
+        questionElement.innerText = ques['question']
+        
         let questionMarks = ques['marks']
         console.log('questionMarks',ques)
         let complex = null
@@ -1503,8 +1504,8 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
 
             var questionElement = document.createElement('li');
             questionElement.id = `question_id_${ques['questionId']}`;
-            questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');
-
+            // questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');
+            questionElement.innerText = ques['question']
             questionMarks = ques['marks']
 
             var firstInpt = document.createElement('input');
