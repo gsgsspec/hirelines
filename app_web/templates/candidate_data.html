@@ -97,7 +97,7 @@
                   {% endif %}
                   <label>Scored :  {{ registration.score_percentage }}%</label>
                   <hr style="margin: 10px 0px;">
-                  <label>Status : <label style="color: red;">Failed</label>  &nbsp;<i class="fas fa-times" style="color: red;"></i></label>
+                  <label>Status : <label style="color: red;">Failed&nbsp;<i class="fas fa-times" style="color: red;"></i> {% if registration.star_zero == "Y" %} (Scored 0 in a star question) {% endif %}</label>
                   <label>Completed on : {{ registration.completion_date }}</label>
                 {% elif registration.reg_status == "E" %}
                   <label>Under Evaluation</label>

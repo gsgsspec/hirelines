@@ -1783,6 +1783,7 @@ def getCandidateWorkflowData(cid):
                     scored_marks = 0
                     paper_marks = 0
                     score_percentage = 0
+                    star_zero = ""
 
                     for percentage_data in workflow_response_data["data"]:
 
@@ -1790,7 +1791,10 @@ def getCandidateWorkflowData(cid):
                             scored_marks = percentage_data["scored_marks"]
                             paper_marks = percentage_data["paper_marks"]
                             score_percentage = int(percentage_data["score_percentage"])
-                            
+                            star_zero = percentage_data["star_zero"]
+
+                    print("star_zero",star_zero)
+
                     registrations_data.append(
                         {
                             "reg_id": registration.id,
@@ -1812,7 +1816,8 @@ def getCandidateWorkflowData(cid):
                             "scored_marks" : scored_marks,
                             "paper_marks" : paper_marks,
                             "hold_check" : hold_check,
-                            "hold_range" : int(pass_percentage) - 1 if pass_percentage else ""
+                            "hold_range" : int(pass_percentage) - 1 if pass_percentage else "",
+                            "star_zero" : star_zero
                         }
                     )
 
