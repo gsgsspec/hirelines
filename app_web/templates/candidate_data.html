@@ -76,17 +76,25 @@
               {% else %}
               {% if registration.reg_status == "P" %}
                   
-                  <label style="color: green;">Promote > {{ registration.pass_percentage }}%</label>
-                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.pass_percentage }}%</label>
+                  <label style="color: green;">Promote >= {{ registration.pass_percentage }}%</label>
+                  {% if registration.hold_check == "Y" %}
+                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
                   <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
+                  {% else %}
+                  <label style="color: red;">Fail < {{ registration.pass_percentage }}%</label>
+                  {% endif %}
                   <label>Scored :  {{ registration.score_percentage }}%</label>
                   <hr style="margin: 10px 0px;">
                   <label>Status : <label style="color: green;">Promoted</label>  &nbsp;<i class="fas fa-check" style="color: #008000;"></i></label>
                   <label>Completed on : {{ registration.completion_date }}</label>
                 {% elif registration.reg_status == "F" %}
-                  <label style="color: green;">Promote > {{ registration.pass_percentage }}%</label>
-                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.pass_percentage }}%</label>
+                  <label style="color: green;">Promote >= {{ registration.pass_percentage }}%</label>
+                  {% if registration.hold_check == "Y" %}
+                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
                   <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
+                  {% else %}
+                  <label style="color: red;">Fail < {{ registration.pass_percentage }}%</label>
+                  {% endif %}
                   <label>Scored :  {{ registration.score_percentage }}%</label>
                   <hr style="margin: 10px 0px;">
                   <label>Status : <label style="color: red;">Failed</label>  &nbsp;<i class="fas fa-times" style="color: red;"></i></label>
@@ -96,9 +104,13 @@
                 {% elif registration.reg_status == "I" %}
                   <label>Initiated</label>
                 {% elif registration.reg_status == "H" %}
-                  <label style="color: green;">Promote > {{ registration.pass_percentage }}%</label>
-                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.pass_percentage }}%</label>
+                  <label style="color: green;">Promote >= {{ registration.pass_percentage }}%</label>
+                  {% if registration.hold_check == "Y" %}
+                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
                   <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
+                  {% else %}
+                  <label style="color: red;">Fail < {{ registration.pass_percentage }}%</label>
+                  {% endif %}
                   <label>Scored :  {{ registration.score_percentage }}%</label>
                   <hr style="margin: 10px 0px;">
                   <label>Candidate is on Hold</label>

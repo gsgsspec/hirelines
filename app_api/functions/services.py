@@ -1730,8 +1730,6 @@ def getCandidateWorkflowData(cid):
 
             workflow_response_data = json.loads(response.content.decode("utf-8"))
 
-            print("percentage_data",workflow_response_data)
-
             if registrations:
 
                 for registration in registrations:
@@ -1746,13 +1744,15 @@ def getCandidateWorkflowData(cid):
                     interviewer_name = ""
                     hold_percentage = ""
                     pass_percentage = ""
+                    hold_check =""
 
                     if workflow.papertype == "S":
 
                         paper_type = "Screening"
                         paper_brules = Brules.objects.get(paperid=registration.paperid,jobdescid=registration.jobid)
-                        hold_percentage = paper_brules.holdpercentage if paper_brules.holdpercentage else ""
+                        hold_percentage = paper_brules.holdpercentage if paper_brules.holdpercentage is not None else ""
                         pass_percentage = paper_brules.passscore if paper_brules.passscore else ""
+                        hold_check = paper_brules.hold
 
                     elif workflow.papertype == "E":
 
@@ -1760,6 +1760,7 @@ def getCandidateWorkflowData(cid):
                         paper_brules = Brules.objects.get(paperid=registration.paperid,jobdescid=registration.jobid)
                         hold_percentage = paper_brules.holdpercentage if paper_brules.holdpercentage else ""
                         pass_percentage = paper_brules.passscore if paper_brules.passscore else ""
+                        hold_check = paper_brules.hold
 
                     elif workflow.papertype == "I":
                         paper_type = "Interview"
@@ -1789,7 +1790,7 @@ def getCandidateWorkflowData(cid):
                             scored_marks = percentage_data["scored_marks"]
                             paper_marks = percentage_data["paper_marks"]
                             score_percentage = int(percentage_data["score_percentage"])
-
+                            
                     registrations_data.append(
                         {
                             "reg_id": registration.id,
@@ -1809,7 +1810,9 @@ def getCandidateWorkflowData(cid):
                             "pass_percentage":pass_percentage,
                             "score_percentage":score_percentage,
                             "scored_marks" : scored_marks,
-                            "paper_marks" : paper_marks
+                            "paper_marks" : paper_marks,
+                            "hold_check" : hold_check,
+                            "hold_range" : int(pass_percentage) - 1 if pass_percentage else ""
                         }
                     )
 
