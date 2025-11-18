@@ -74,24 +74,39 @@
                   <label>Rejected</label>
                 {% endif %}
               {% else %}
-            
-                {% if registration.reg_status == "P" %}
+              {% if registration.reg_status == "P" %}
+                  
+                  <label style="color: green;">Promote > {{ registration.pass_percentage }}%</label>
+                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.pass_percentage }}%</label>
+                  <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
+                  <label>Scored :  {{ registration.score_percentage }}%</label>
+                  <hr style="margin: 10px 0px;">
+                  <label>Status : <label style="color: green;">Promoted</label>  &nbsp;<i class="fas fa-check" style="color: #008000;"></i></label>
                   <label>Completed on : {{ registration.completion_date }}</label>
-                  <label>Promoted</label>
                 {% elif registration.reg_status == "F" %}
+                  <label style="color: green;">Promote > {{ registration.pass_percentage }}%</label>
+                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.pass_percentage }}%</label>
+                  <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
+                  <label>Scored :  {{ registration.score_percentage }}%</label>
+                  <hr style="margin: 10px 0px;">
+                  <label>Status : <label style="color: red;">Failed</label>  &nbsp;<i class="fas fa-times" style="color: red;"></i></label>
                   <label>Completed on : {{ registration.completion_date }}</label>
-                  <label>Failed</label>
                 {% elif registration.reg_status == "E" %}
                   <label>Under Evaluation</label>
                 {% elif registration.reg_status == "I" %}
                   <label>Initiated</label>
                 {% elif registration.reg_status == "H" %}
+                  <label style="color: green;">Promote > {{ registration.pass_percentage }}%</label>
+                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.pass_percentage }}%</label>
+                  <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
+                  <label>Scored :  {{ registration.score_percentage }}%</label>
+                  <hr style="margin: 10px 0px;">
                   <label>Candidate is on Hold</label>
-                    <select class="form-select" id="regid-{{ registration.reg_id }}" required>
-                      <option selected disabled></option>
-                      <option value="P">Promote next round</option>
-                      <option value="R">Reject</option>
-                    </select>
+                  <select class="form-select" id="regid-{{ registration.reg_id }}" required>
+                    <option selected disabled></option>
+                    <option value="P">Promote next round</option>
+                    <option value="R">Reject</option>
+                  </select>
                   <button class="btn btn-primary mt-2 update-btn" onclick="updateCandidateWorkflow('{{ registration.reg_id }}')">Send</button>
                 {% endif %}
               {% endif %}

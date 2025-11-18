@@ -1717,6 +1717,21 @@ def getCandidateWorkflowData(cid):
 
             registrations_data = []
 
+            registration_data = {
+                "candidate_code": candidate.candidateid,
+            }
+
+
+            acert_domain = getConfig()["DOMAIN"]["acert"]
+            endpoint = "/api/candiate-workflow-percentage"
+
+            url = urljoin(acert_domain, endpoint)
+            response = requests.post(url, json=registration_data)
+
+            workflow_response_data = json.loads(response.content.decode("utf-8"))
+
+            print("percentage_data",workflow_response_data)
+
             if registrations:
 
                 for registration in registrations:
@@ -1729,11 +1744,23 @@ def getCandidateWorkflowData(cid):
                     call_status = ""
                     scheduled_time = ""
                     interviewer_name = ""
+                    hold_percentage = ""
+                    pass_percentage = ""
 
                     if workflow.papertype == "S":
+
                         paper_type = "Screening"
+                        paper_brules = Brules.objects.get(paperid=registration.paperid,jobdescid=registration.jobid)
+                        hold_percentage = paper_brules.holdpercentage if paper_brules.holdpercentage else ""
+                        pass_percentage = paper_brules.passscore if paper_brules.passscore else ""
+
                     elif workflow.papertype == "E":
+
                         paper_type = "Coding"
+                        paper_brules = Brules.objects.get(paperid=registration.paperid,jobdescid=registration.jobid)
+                        hold_percentage = paper_brules.holdpercentage if paper_brules.holdpercentage else ""
+                        pass_percentage = paper_brules.passscore if paper_brules.passscore else ""
+
                     elif workflow.papertype == "I":
                         paper_type = "Interview"
                         call_schedule = CallSchedule.objects.filter(
@@ -1752,10 +1779,22 @@ def getCandidateWorkflowData(cid):
                     else:
                         paper_type = ""
 
+                    scored_marks = 0
+                    paper_marks = 0
+                    score_percentage = 0
+
+                    for percentage_data in workflow_response_data["data"]:
+
+                        if percentage_data["paper_id"] == registration.paperid:
+                            scored_marks = percentage_data["scored_marks"]
+                            paper_marks = percentage_data["paper_marks"]
+                            score_percentage = int(percentage_data["score_percentage"])
+
                     registrations_data.append(
                         {
                             "reg_id": registration.id,
                             "paper_title": workflow.papertitle,
+                            "paperid":workflow.paperid,
                             "paper_type": workflow.papertype,
                             "type_title": paper_type,
                             "call_status": call_status,
@@ -1765,7 +1804,12 @@ def getCandidateWorkflowData(cid):
                             "notify_check": notify_check,
                             "call_completion_date":call_completion_date,
                             "scheduled_time": scheduled_time,
-                            "interviewer_name":interviewer_name
+                            "interviewer_name":interviewer_name,
+                            "hold_percentage":hold_percentage,
+                            "pass_percentage":pass_percentage,
+                            "score_percentage":score_percentage,
+                            "scored_marks" : scored_marks,
+                            "paper_marks" : paper_marks
                         }
                     )
 
