@@ -98,8 +98,8 @@ if (screening_count === 0 && coding_count === 0 && interview_count === 0 && offe
             dataPoints: [
               { y: screening_count, label: "Screening", color: "#17b0e3" },
               { y: coding_count, label: "Coding", color: "#3bc482" },
-              { y: interview_count, label: "Interview", color: "#93c131" },
-              { y: offer_count, label: "Offer Letter", color: "#e3cd09" }
+              { y: interview_count, label: "Interview", color: "#e3cd09" },
+              { y: offer_count, label: "Offer Letter", color: "#93c131" }
             ]
           }]
         });

@@ -35,32 +35,78 @@
     </div>
     <div class="col-md-6 col-xl-6">
         <div class="row mt-2 text-center  animate__animated animate__zoomIn">
-            <div class="col-md-6 col-xl-6">
+            <div class="col-md-4 col-xl-4">
                 <div class="card text-white mb-3" style="background-color: #17b0e3;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Screened</h5>
-                        <p class="card-text num-txt">{{jd_data.screening_tests}}</p>
+                        <h5 class="card-title text-white mb-0">(Pending)</h5>
+                        <p class="card-text num-txt">{{jd_data.screening_pending}}</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-6">
+            <div class="col-md-4 col-xl-4">
+                <div class="card text-white mb-3" style="background-color: #17b0e3;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Screened</h5>
+                        <h5 class="card-title text-white mb-0">(Dropped)</h5>
+                        <p class="card-text num-txt">{{jd_data.screening_fail}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-xl-4">
+                <div class="card text-white mb-3" style="background-color: #17b0e3;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Screened</h5>
+                        <h5 class="card-title text-white mb-0">(Promoted)</h5>
+                        <p class="card-text num-txt">{{jd_data.screening_pass}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-xl-4">
                 <div class="card text-white mb-3" style="background-color: #3bc482;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Coding</h5>
-                        <p class="card-text num-txt">{{jd_data.coding_tests}}</p>
+                        <h5 class="card-title text-white mb-0">(Pending)</h5>
+                        <p class="card-text num-txt">{{jd_data.coding_pending}}</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-6">
-                <div class="card text-white mb-3" style="background-color: #93c131;">
+            <div class="col-md-4 col-xl-4">
+                <div class="card text-white mb-3" style="background-color: #3bc482;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Coding</h5>
+                        <h5 class="card-title text-white mb-0">(Dropped)</h5>
+                        <p class="card-text num-txt">{{jd_data.coding_fail}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-xl-4">
+                <div class="card text-white mb-3" style="background-color: #3bc482;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Coding</h5>
+                        <h5 class="card-title text-white mb-0">(Promoted)</h5>
+                        <p class="card-text num-txt">{{jd_data.coding_pass}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-xl-4">
+                <div class="card text-white mb-3" style="background-color: #e3cd09;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Interview</h5>
-                        <p class="card-text num-txt">{{jd_data.interviews}}</p>
+                        <p class="card-text num-txt">{{jd_data.interview_pending}}</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-xl-6">
-                <div class="card text-white mb-3" style="background-color: #e3cd09;">
+            <div class="col-md-4 col-xl-4">
+                <div class="card text-white mb-3" style="background-color: red;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Rejected</h5>
+                        <p class="card-text num-txt">{{jd_data.offer_letters}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-xl-4">
+                <div class="card text-white mb-3" style="background-color: #93c131;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Offer Letter</h5>
                         <p class="card-text num-txt">{{jd_data.offer_letters}}</p>

@@ -244,26 +244,56 @@ def getJobDescData(jid, company_id):
 
         if job_desc:
 
-            screening_tests = Registration.objects.filter(
-                companyid=company_id, jobid=jid, papertype="S"
-            ).exclude(candidateid__in=deleted_candidate_ids).count()
-            coding_tests = Registration.objects.filter(
-                companyid=company_id, jobid=jid, papertype="E"
-            ).exclude(candidateid__in=deleted_candidate_ids).count()
-            interviews = Registration.objects.filter(
-                companyid=company_id, jobid=jid, papertype="I"
-            ).exclude(candidateid__in=deleted_candidate_ids).count()
-            offer_letters = Registration.objects.filter(
-                companyid=company_id, jobid=jid, papertype="I", status="O"
-            ).exclude(candidateid__in=deleted_candidate_ids).count()
+            screening_tests = 0
+            screening_fail = 0
+            screening_pass = 0
+            coding_tests = 0
+            coding_fail = 0
+            coding_pass = 0
+            interviews = 0
+            offer_letters = 0
+            rejected = 0
+
+            registrations = Registration.objects.filter(companyid=company_id, jobid=jid).exclude(candidateid__in=deleted_candidate_ids)
+            
+            for registation in registrations:
+
+                if registation.papertype == "S":
+                    screening_tests += 1
+                    if registation.status == "F":
+                        screening_fail += 1
+                    elif registation.status == "P":
+                        screening_pass += 1
+
+                elif registation.papertype == "E":
+                    coding_tests += 1
+                    if registation.status == "F":
+                        coding_fail += 1
+                    elif registation.status == "P":
+                        coding_pass += 1
+
+                elif registation.papertype == "I":
+                    interviews += 1
+                    if registation.status == "O":
+                        offer_letters += 1
+                    elif registation.status == "R":
+                        rejected += 1
 
             jd_data = {
                 "jobid":job_desc.id,
                 "title": job_desc.title,
                 "screening_tests": screening_tests,
+                "screening_pending": screening_tests - (screening_fail + screening_pass),
+                "screening_fail":screening_fail,
+                "screening_pass":screening_pass,
                 "coding_tests": coding_tests,
+                "coding_pending": coding_tests - (coding_fail + coding_pass),
+                "coding_fail": coding_fail,
+                "coding_pass": coding_pass,
                 "interviews": interviews,
+                "interview_pending": interviews - (offer_letters + rejected),
                 "offer_letters": offer_letters,
+                "rejected": rejected,
                 "display_flag": job_desc.dashboardflag if job_desc.dashboardflag else "N"
             }
             return jd_data
@@ -1792,8 +1822,6 @@ def getCandidateWorkflowData(cid):
                             paper_marks = percentage_data["paper_marks"]
                             score_percentage = int(percentage_data["score_percentage"])
                             star_zero = percentage_data["star_zero"]
-
-                    print("star_zero",star_zero)
 
                     registrations_data.append(
                         {
