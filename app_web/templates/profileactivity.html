@@ -1,0 +1,145 @@
+{% load static %}
+
+<style>
+    .container {
+        max-width: 1100px;
+        margin: 32px auto;
+        padding: 20px;
+        display: flex;
+        gap: 18px;
+    }
+
+    .content {
+        flex: 1;
+    }
+
+
+
+    .tabsContainer {
+        height: 50px;
+        border-radius: 0.5rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+
+    .custm-tab {
+        height: min-content;
+        border: 0.9px solid lightgray;
+        border-radius: 0.5rem;
+        padding: 0.3rem 0.5rem;
+        cursor: pointer;
+        width: 107px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+    }
+
+    .activeTab {
+        background-color: var(--light-primary-color);
+        font-weight: 700;
+    }
+
+
+
+
+    @media (max-width:980px) {
+        .container {
+            padding: 14px
+        }
+
+
+    }
+
+    @media (max-width:620px) {
+        .tabsContainer {
+            width: 100%
+        }
+    }
+
+    /* HIDE ALL TABLE BORDERS */
+    .table,
+    .table td,
+    .table th {
+        border: none !important;
+    }
+
+    .table tbody tr {
+        border: none !important;
+    }
+
+    .table-responsive {
+        border: none !important;
+    }
+</style>
+
+<div class="container">
+    <div class="left-gap" aria-hidden="true"></div>
+
+    <main class="content">
+        <div class="card">
+            <div class="card-title-table">
+            <h4 class="card-header">
+                Profile {{ activity_details.0.jobtitle }} {{ activity_details.0.firstname }} {{ activity_details.0.lastname }}
+            </h4>
+            </div>
+            <div class="card-body">
+                <!-- <div class="pb-3"> -->
+                <div class="tabsContainer">
+                    <div style="display: flex; gap: 12px;">
+                        <span id="active" class="custm-tab p-clr"
+                            onclick="tabSwitch(this.id)">Profile</span>
+                        <span id="Inactive" class="custm-tab p-clr activeTab shadow" onclick="tabSwitch(this.id)">Activity</span>
+                    </div>
+                </div>
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-bordered">
+
+
+                        <tbody>
+                            {% for act in activity_details %}
+
+                            <tr>
+                                <td style="width: 15%;padding-left: 0px;">{{ act.datentime }}</td>
+                                <td> {{ act.activity_text }}</td>
+                            </tr>
+                            
+                            {% endfor %}
+
+  
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+    </main>
+</div>
+<script>
+
+function getPidFromUrl() {
+    const parts = window.location.pathname.split("/");
+    return parts[parts.length - 1];   // last part always PID
+}
+
+function tabSwitch(element) {
+
+    const pid = getPidFromUrl();   // GET PID FROM URL
+
+    if (element === 'active') {
+        $('#active').addClass('activeTab shadow');
+        $('#Inactive').removeClass('activeTab shadow');
+        window.location.href = "/profileview/" + pid;
+    }
+
+    if (element === 'Inactive') {
+        $('#Inactive').addClass('activeTab shadow');
+        $('#active').removeClass('activeTab shadow');
+        window.location.href = "/profileactivity/" + pid;
+    }
+}
+
+</script>

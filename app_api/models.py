@@ -474,3 +474,162 @@ class Uploads(models.Model):
 
     class Meta:
         db_table = 'uploads'
+
+
+
+
+class Resume(models.Model):
+    id = models.AutoField(primary_key=True)
+    datentime = models.DateTimeField(null=True, blank=True)
+    sourceid = models.IntegerField(null=True, blank=True)
+    filename = models.CharField(max_length=100, null=True, blank=True)
+    status = models.CharField(max_length=1, null=True, blank=True) #P - Pending Review, D - Soft Deleted, A - Added to Prfiles
+
+    class Meta:
+        db_table = 'resume'
+
+
+class Profile(models.Model):
+    id = models.AutoField(primary_key=True)
+    sourceid = models.IntegerField(null=True, blank=True)
+    resumeid = models.IntegerField(null=True, blank=True)
+    dateofcreation = models.DateTimeField(null=True, blank=True)
+    title = models.CharField(max_length=100, null=True, blank=True)
+    firstname = models.CharField(max_length=100, null=True, blank=True)
+    middlename = models.CharField(max_length=40, null=True, blank=True)
+    lastname = models.CharField(max_length=100, null=True, blank=True)
+    email = models.CharField(max_length=100, null=True, blank=True)
+    mobile = models.CharField(max_length=15, null=True, blank=True)
+    linkedin = models.CharField(max_length=100, null=True, blank=True)
+    facebook = models.CharField(max_length=100, null=True, blank=True)
+    passportnum = models.CharField(max_length=40, null=True, blank=True)
+    dateofbirth = models.DateTimeField(null=True, blank=True)
+    fathername = models.CharField(max_length=100, null=True, blank=True)
+    nativeof = models.CharField(max_length=100, null=True, blank=True)
+    status = models.CharField(max_length=1, null=True, blank=True) #  D - Draft, R - Rejected, O - Offered, E - Employee
+
+
+    class Meta:
+        db_table = 'profile'
+
+
+
+
+class ProfileEducation(models.Model):
+    id = models.AutoField(primary_key=True)
+    profileid = models.IntegerField(null=True, blank=True)
+    sequence = models.IntegerField(null=True, blank=True)
+    course = models.CharField(max_length=100, null=True, blank=True)
+    institute = models.CharField(max_length=100, null=True, blank=True)
+    yearfrom = models.IntegerField(null=True, blank=True)
+    yearto = models.IntegerField(null=True, blank=True)
+    grade = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        db_table = 'profileeducation'
+
+
+
+
+
+class ProfileExperience(models.Model):
+    id = models.AutoField(primary_key=True)
+    profileid = models.IntegerField(null=True, blank=True)
+    sequence = models.IntegerField(null=True, blank=True)
+    jobtitle = models.CharField(max_length=100, null=True, blank=True)
+    company = models.CharField(max_length=100, null=True, blank=True)
+    yearfrom = models.IntegerField(null=True, blank=True)
+    yearto = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'profileexperience'
+
+
+
+class ProfileSkills(models.Model):
+    id = models.AutoField(primary_key=True)
+    profileid = models.IntegerField(null=True, blank=True)
+    primaryskills = models.CharField(max_length=256, null=True, blank=True)
+    secondaryskills = models.CharField(max_length=256, null=True, blank=True)
+
+    class Meta:
+        db_table = 'profileskills'
+
+
+
+
+class ProfileProjects(models.Model):
+    id = models.AutoField(primary_key=True)
+    profileid = models.IntegerField(null=True, blank=True)
+    sequence = models.IntegerField(null=True, blank=True)
+    projectname = models.CharField(max_length=100, null=True, blank=True)
+    clientname = models.CharField(max_length=100, null=True, blank=True)
+    roleplayed = models.CharField(max_length=100, null=True, blank=True)
+    skillsused = models.CharField(max_length=100, null=True, blank=True)
+    yearsfrom = models.IntegerField(null=True, blank=True)
+    yearsto = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'profileprojects'
+
+
+
+class ResumeFile(models.Model):
+    id = models.AutoField(primary_key=True)
+    resumeid = models.IntegerField(null=True, blank=True)
+    filename = models.CharField(max_length=100, null=True, blank=True)
+    filecontent = models.BinaryField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'resumefile'
+
+
+
+class ProfileActivity(models.Model):
+    id = models.AutoField(primary_key=True)
+    profileid = models.IntegerField(null=True, blank=True)
+    datentime = models.DateTimeField(null=True, blank=True)
+    sequence = models.IntegerField(null=True, blank=True)
+    activitycode = models.CharField(max_length=2, null=True, blank=True) #"PC - Profile Created | PS - Profile Screened | P1 - Profile Screening - Promoted | PC - Profile Coding Test | P2 - Profile Coding Test - Promoted"
+    acvityuserid = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'profileactivity'
+
+
+
+class ProfileAwards(models.Model):
+    id = models.AutoField(primary_key=True)
+    profileid = models.IntegerField(null=True, blank=True)
+    sequence = models.IntegerField(null=True, blank=True)
+    awardname = models.CharField(max_length=100, null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'profileawards'   
+
+
+class ProfileCertificates(models.Model):
+    id = models.AutoField(primary_key=True)
+    profileid = models.IntegerField(null=True, blank=True)
+    certname = models.CharField(max_length=100, null=True, blank=True)
+    sequence = models.IntegerField(null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'profilecertificates'   
+
+
+class ProfileAddress(models.Model):
+    id = models.AutoField(primary_key=True)
+    profileid = models.IntegerField(null=True, blank=True)
+    addline1 = models.CharField(max_length=100, null=True, blank=True)
+    addline2 = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    state = models.CharField(max_length=40, null=True, blank=True)
+    country = models.CharField(max_length=40, null=True, blank=True)
+    zipcode = models.CharField(max_length=20, null=True, blank=True)
+
+
+    class Meta:
+        db_table = 'profileaddress'   

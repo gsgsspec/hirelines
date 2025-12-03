@@ -51,7 +51,13 @@ from app_api.models import (
     Role,
     JdAnalysis,
     Source,
-    Uploads
+    Uploads,
+    Profile,
+    ProfileProjects,
+    ProfileSkills,
+    ProfileExperience,
+    ProfileEducation,ProfileActivity,ProfileAwards,ProfileCertificates,ProfileAddress
+
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -1865,6 +1871,7 @@ def getCandidateWorkflowData(cid):
 
 def generateCandidateReport(cid):
     try:
+        print("cid.............",cid)
         acert_domain = getConfig()["DOMAIN"]["acert"]
         endpoint = "/api/hireline-candidate-report"
 
@@ -3124,4 +3131,145 @@ def downloadUploadReportService(company_id):
 
 #     except Exception as e:
 #         print(f"Error: {e}")
-#         raise
+#         raise         
+
+
+
+def getProfileDetailsService(pid):
+    try:
+     
+        profile = Profile.objects.filter(id=pid).values().first()
+
+        if not profile:
+            return {}
+
+        profile_det = {
+            "id": profile.get("id"),
+            "firstname": profile.get("firstname", ""),
+            "lastname": profile.get("lastname", ""),
+            "title": profile.get("title", ""),
+            "email": profile.get("email", ""),
+            "mobile": profile.get("mobile", ""),
+        }
+
+
+        education_list = (
+            ProfileEducation.objects.filter(profileid=pid)
+            .values("course", "institute", "yearfrom", "yearto", "grade")
+            .order_by("sequence")
+        )
+
+        profile_det["education"] = list(education_list)
+
+        experience_list = (
+            ProfileExperience.objects.filter(profileid=pid)
+            .values("jobtitle", "company", "yearfrom", "yearto")
+            .order_by("sequence")
+        )
+
+        profile_det["experience"] = list(experience_list)
+
+        skills = (
+            ProfileSkills.objects.filter(profileid=pid)
+            .values("primaryskills", "secondaryskills")
+            .first()
+        )
+
+        profile_det["skills"] = skills if skills else {"primaryskills": "", "secondaryskills": ""}
+
+        projects_list = (
+            ProfileProjects.objects.filter(profileid=pid)
+            .values("projectname", "clientname", "roleplayed", "skillsused", "yearsfrom", "yearsto")
+            .order_by("sequence")
+        )
+
+        profile_det["projects"] = list(projects_list)
+
+
+        awards_list = (
+            ProfileAwards.objects.filter(profileid=pid)
+            .values("awardname", "year")
+            .order_by("sequence")
+        )
+        profile_det["awards"] = list(awards_list)
+
+        cert_list = (
+            ProfileCertificates.objects.filter(profileid=pid)
+            .values("certname", "year")
+            .order_by("sequence")
+        )
+        profile_det["certificates"] = list(cert_list)
+
+        # ADDRESS (NEW)
+        address_list = list(
+            ProfileAddress.objects.filter(profileid=pid)
+            .values("addline1", "addline2", "city", "state", "country", "zipcode")
+        )
+
+        profile_det["address"] = address_list
+
+
+
+        return profile_det
+
+    except Exception as e:
+        raise
+
+
+def getProfileactivityDetailsService(pid):
+    try:
+        # Fetch all activity rows for this profile
+        activity_list = (
+            ProfileActivity.objects
+            .filter(profileid=pid)
+            .values()
+            .order_by("sequence")
+        )
+
+        final_list = []
+
+        # Activity mapping
+        activity_map = {
+            "PC": "Profile Created",
+            "PS": "Profile Screened",
+            "P1": "Profile Screening - Promoted",
+            "CT": "Profile Coding Test",
+            "P2": "Profile Coding Test - Promoted",
+        }
+
+        # Fetch profile details ONCE
+        job_title = (
+            Profile.objects
+            .filter(id=pid)
+            .values("title", "firstname", "lastname")
+            .first()
+        )
+
+        for row in activity_list:
+
+            # Format datetime safely
+            dt = row.get("datentime")
+            if dt and hasattr(dt, "strftime"):
+                formatted_dt = dt.strftime("%d-%b-%Y %I:%M %p")
+            else:
+                formatted_dt = ""
+
+            final_list.append({
+                "id": row.get("id"),
+                "profileid": row.get("profileid"),
+                "sequence": row.get("sequence"),
+                "datentime": formatted_dt,
+                "activitycode": row.get("activitycode"),
+                "activity_text": activity_map.get(row.get("activitycode"), "Unknown Activity"),
+                "activityuserid": row.get("activityuserid"),
+
+                # Adding job title details
+                "jobtitle": job_title["title"] if job_title else "",
+                "firstname": job_title["firstname"] if job_title else "",
+                "lastname": job_title["lastname"] if job_title else "",
+            })
+
+        return final_list
+
+    except Exception as e:
+        raise

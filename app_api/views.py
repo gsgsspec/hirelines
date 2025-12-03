@@ -23,7 +23,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB
@@ -296,7 +296,7 @@ def getJdQuestionsView(request):
 
             jd_data['test_id'] = dataObjs['test_id']
             jd_data['company_id'] = user_company
-            
+            print('jd_data',jd_data)
             get_evaluation_submissions = requests.post(url, json = jd_data, verify = False)
             response_content = get_evaluation_submissions.content
 
@@ -305,6 +305,7 @@ def getJdQuestionsView(request):
                 json_data = json.loads(response_content.decode('utf-8'))
 
                 acert_data = json_data['data']
+
                 jd_questions = acert_data
                 if json_data['statusCode'] == 0:
                     response['data'] = jd_questions
@@ -313,6 +314,7 @@ def getJdQuestionsView(request):
     except Exception as e:
         response['data'] = 'Error in getJdQuestionsView'
         response['error'] = str(e)
+        print(str(e))
         # raise
         # logging.error("Error in getJdQuestionsView : ", str(e))
     return JsonResponse(response)
@@ -533,13 +535,16 @@ def registerCandidate(request):
             job_description = JobDesc.objects.get(id=jd_id)
             app_config = getConfig()['APP_CONFIG']
             register_candidate_once_per_jd = app_config["register_candidate_once_per_jd"]
-            if register_candidate_once_per_jd == "N":
-                check_candidate_registered = "N"
+            if register_candidate_once_per_jd == "Y":
+                check_candidate_registered = "Y"
+            # if register_candidate_once_per_jd == "N":
+            #     check_candidate_registered = "N"                
             else:
                 check_candidate_registered = Candidate.objects.filter(companyid = job_description.companyid,
                     jobid = job_description.id,
                     email = dataObjs["email"])
 
+            # if (not check_candidate_registered) or (check_candidate_registered == "Y"):
             if (not check_candidate_registered) or (check_candidate_registered == "N"):
                 if job_description.status == "A":
                     workflow_data = Workflow.objects.filter(jobid=jd_id,order=1).last()
@@ -1638,3 +1643,121 @@ def get_paperid(request):
     except Exception as e:
         response['error'] = str(e)
     return JsonResponse(response)
+
+
+
+
+def filter_profiles_api(request):
+
+    data = json.loads(request.POST.get("data", "{}"))
+
+    title = data.get("title", "")
+    exp_from = data.get("exp_from", "")
+    exp_to = data.get("exp_to", "")
+    source_code = data.get("source", "")
+    skills = data.get("skills", "")
+    status = data.get("status", "")
+    date_from = data.get("date_from", "")
+    date_to = data.get("date_to", "")
+
+    exp_from = int(exp_from) if exp_from else None
+    exp_to = int(exp_to) if exp_to else None
+
+  
+    filtered_profiles = Profile.objects.all()
+
+
+    if title:
+        filtered_profiles = filtered_profiles.filter(title__icontains=title)
+
+    if exp_from is not None and exp_to is not None:
+
+        matched_ids = []
+
+        for exp in ProfileExperience.objects.all():
+            if exp.yearfrom and exp.yearto:
+                years = exp.yearto - exp.yearfrom
+                if exp_from <= years <= exp_to:
+                    matched_ids.append(exp.profileid)
+
+        filtered_profiles = filtered_profiles.filter(id__in=matched_ids)
+
+    if source_code:
+        source_obj = Source.objects.filter(code=source_code).first()
+        if source_obj:
+            filtered_profiles = filtered_profiles.filter(sourceid=source_obj.id)
+        else:
+            filtered_profiles = filtered_profiles.none()
+
+   
+    if skills:
+        skill_profile_ids = (
+            ProfileSkills.objects.filter(primaryskills__icontains=skills)
+            .values_list("profileid", flat=True)
+        )
+        filtered_profiles = filtered_profiles.filter(id__in=skill_profile_ids)
+
+    if status:
+        filtered_profiles = filtered_profiles.filter(status=status[0])
+
+    if date_from and date_to:
+        start_datetime = datetime.strptime(date_from, "%Y-%m-%d")
+        end_datetime = datetime.strptime(date_to, "%Y-%m-%d").replace(
+            hour=23, minute=59, second=59
+        )
+
+        filtered_profiles = filtered_profiles.filter(
+            dateofcreation__gte=start_datetime,
+            dateofcreation__lte=end_datetime
+        )
+
+    status_map = {
+        "D": "Draft",
+        "R": "Rejected",
+        "O": "Offered",
+        "E": "Employee",
+    }
+
+    final_output = []
+
+    for profile in filtered_profiles:
+
+        # --- EXPERIENCE ---
+        exp = ProfileExperience.objects.filter(profileid=profile.id).first()
+        years = (exp.yearto - exp.yearfrom) if exp and exp.yearfrom and exp.yearto else 0
+
+        # --- SOURCE ---
+        source_value = (
+            Source.objects.filter(id=profile.sourceid)
+            .values_list("code", flat=True)
+            .first() or ""
+        )
+
+        # --- SKILLS (primary + secondary) ---
+        skills_data = (
+            ProfileSkills.objects.filter(profileid=profile.id)
+            .values("primaryskills", "secondaryskills")
+            .first()
+        )
+
+        if skills_data:
+            primary_sk = skills_data.get("primaryskills") or ""
+            secondary_sk = skills_data.get("secondaryskills") or ""
+        else:
+            primary_sk = ""
+            secondary_sk = ""
+
+        # --- APPEND OUTPUT ---
+        final_output.append({
+            "date": profile.dateofcreation.strftime("%d-%b-%Y %I:%M %p"),
+            "title": profile.title,
+            "firstname": profile.firstname,
+            "lastname": profile.lastname,
+            "experience": f"{years} Years",
+            "source": source_value,
+            "status": status_map.get(profile.status, profile.status),
+            "primaryskills_name": primary_sk,
+            "secondaryskills_name": secondary_sk,
+        })
+
+    return JsonResponse({"statusCode": 0, "data": final_output})

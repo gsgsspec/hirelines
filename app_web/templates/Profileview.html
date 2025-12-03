@@ -1,0 +1,414 @@
+{% load static %}
+
+<style>
+    .container {
+        max-width: 1100px;
+        margin: 32px auto;
+        padding: 20px;
+        display: flex;
+        gap: 18px;
+    }
+
+
+    .content {
+        flex: 1;
+    }
+
+
+    .tabsContainer {
+        height: 50px;
+        border-radius: 0.5rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+
+    .custm-tab {
+        height: min-content;
+        border: 0.9px solid lightgray;
+        border-radius: 0.5rem;
+        padding: 0.3rem 0.5rem;
+        cursor: pointer;
+        width: 107px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+    }
+
+    .activeTab {
+        background-color: var(--light-primary-color);
+        font-weight: 700;
+    }
+
+
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 28px 0 14px 0;
+        font-weight: 600;
+        font-size: 17px;
+        color: var(--primary-color);
+    }
+
+    .section-title .icon-box {
+        width: 34px;
+        height: 34px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .section-title .icon-box i {
+        color: white;
+        font-size: 16px;
+    }
+
+
+    @media (max-width:980px) {
+        .container {
+            padding: 14px
+        }
+
+
+    }
+
+    @media (max-width:620px) {
+        .tabsContainer {
+            width: 100%
+        }
+    }
+
+    .table,
+    .table td,
+    .table th {
+        border: none !important;
+    }
+
+    .table tbody tr {
+        border: none !important;
+    }
+
+    .table-responsive {
+        border: none !important;
+    }
+
+    /* Vertical timeline connector for section icons */
+    .section-wrapper {
+        position: relative;
+    }
+
+    .section-wrapper::before {
+        content: "";
+        position: absolute;
+        left: 17px;
+        /* PERFECT center of your 34px icon-box */
+        top: 48px;
+        /* starts just below the first icon */
+        bottom: 0;
+        /* connects all sections */
+        width: 2px;
+        background: #c4d1e8;
+        /* your light blue line */
+    }
+
+
+
+    .section-title .icon-box {
+        position: relative;
+        z-index: 2;
+    }
+</style>
+
+<div class="container">
+
+    <main class="content">
+
+        <div class="card">
+            <div class="card-title-table">
+                <h4 class="card-header">Profile {{profile_details.title}} {{profile_details.firstname}} {{profile_details.lastname}}<h4>
+            </div>
+
+            <div class="card-body">
+
+                <div class="tabsContainer">
+                    <div style="display: flex; gap: 12px; flex-grow: 1;">
+                        <span id="active" class="custm-tab p-clr activeTab shadow"
+                            onclick="tabSwitch(this.id)">Profile</span>
+
+                        <span id="Inactive" class="custm-tab p-clr"
+                            onclick="tabSwitch(this.id)">Activity</span>
+
+                    </div>
+
+                    <div style="display:flex;gap:12px;">
+                        <button class="btn btn-primary" onclick="window.location.href=''" type="button">
+                            View Resume
+                        </button>
+                        <button class="btn btn-primary" type="button"
+                            onclick="window.location.href=''"><i class="fas fa-file-upload"></i>&ensp;
+                            Export
+                        </button>
+                    </div>
+                </div>
+                <div class="section-wrapper">
+
+                    <div class="section-title" style="display:flex; align-items:center;">
+                        <div class="icon-box">
+                            <i class="fas fa-user"></i>
+                        </div>
+
+                        <span>Personal Details</span>
+                        <div style="text-align: right;font-size: 1.3rem;cursor: pointer;" data-bs-toggle="tooltip"
+                            id="editIcon" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title=""
+                            data-bs-original-title="<span>Edit Profile</span>">
+                            <i class="fas fa-edit p-clr"></i>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 15%;"> <strong> Title</strong></td>
+                                    <td>:&ensp;{{profile_details.title}}</td>
+                                </tr>
+                                <tr>
+                                    <td> <strong> First Name </strong></td>
+                                    <td>:&ensp;{{profile_details.firstname}}</td>
+                                </tr>
+                                <tr>
+                                    <td> <strong> Last Name </strong></td>
+                                    <td>:&ensp;{{profile_details.lastname}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td> <strong> Email </strong></td>
+                                    <td>:&ensp;{{profile_details.email}}</td>
+                                </tr>
+                                <tr>
+                                    <td> <strong> Mobile </strong></td>
+                                    <td>:&ensp;{{profile_details.mobile}}</td>
+                                </tr>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="section-title">
+    <div class="icon-box">
+        <i class="fas fa-map-marker-alt"></i>
+    </div>
+    Address
+</div>
+
+<div class="table-responsive text-nowrap" style="padding-left: 25px;">
+    <table class="table table-bordered">
+        <tbody>
+
+            {% for addr in profile_details.address %}
+            <tr>
+                <td style="width: 15%;"><strong>Address {{ forloop.counter }}</strong></td>
+                <td>
+                    :&ensp;
+
+                    {% if addr.addline1 %}
+                        {{ addr.addline1 }}
+                    {% endif %}
+
+                    {% if addr.addline2 %}
+                         {{ addr.addline2 }}
+                    {% endif %}
+
+                    {% if addr.city %}
+                        , {{ addr.city }}
+                    {% endif %}
+
+                    {% if addr.state %}
+                        , {{ addr.state }}
+                    {% endif %}
+
+                    {% if addr.country %}
+                        , {{ addr.country }}
+                    {% endif %}
+
+                    {% if addr.zipcode %}
+                        - {{ addr.zipcode }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+                    <div class="section-title">
+                        <div class="icon-box">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>Education
+                    </div>
+
+                    <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <table class="table table-bordered">
+                            <tbody>
+                                {% for edu in profile_details.education %}
+
+                                    <tr>
+                                        <td>
+                                            {{ edu.course }} from {{ edu.institute }}
+                                            {{ edu.yearfrom }} - {{ edu.yearto }}
+                                            — Grade - {{ edu.grade }}
+                                        </td>
+                                    </tr>
+                               
+                                {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section-title">
+                        <div class="icon-box">
+                            <i class="fas fa-briefcase"></i>
+                        </div>Experience
+                    </div>
+                    <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <table class="table table-bordered">
+                            <tbody>
+                                {% for exp in profile_details.experience %}
+
+                                <tr>
+                                    <td>
+                                        {{ exp.jobtitle }} at {{ exp.company }}
+                                        {{ exp.yearfrom }} - {{ exp.yearto }}
+                                    </td>
+                                </tr>
+
+                                {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section-title">
+                        <div class="icon-box">
+                            <i class="fas fa-tools"></i>
+                        </div>Skills
+                    </div>
+                    <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {{ profile_details.skills.primaryskills }}
+                                        {% if profile_details.skills.secondaryskills %}
+                                            , {{ profile_details.skills.secondaryskills }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section-title">
+                        <div class="icon-box">
+                            <i class="fas fa-folder-open"></i>
+                        </div>Projects
+                    </div>
+                    <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <table class="table table-bordered">
+                            <tbody>
+                            {% for p in profile_details.projects %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ p.projectname }}</strong>  
+                                        — {{ p.clientname }}  
+                                        — {{ p.roleplayed }}  
+                                        — Skills: {{ p.skillsused }}  
+                                        — ({{ p.yearsfrom }} to {{ p.yearsto }})
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section-title">
+                        <div class="icon-box">
+                            <i class="fas fa-certificate"></i>
+                        </div>Certificate
+                    </div>
+                    <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <table class="table table-bordered">
+                            <tbody>
+                            {% for c in profile_details.certificates %}
+                                <tr>
+                                    <td>
+                                        {{ c.certname }}
+                                        — {{ c.year }}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr><td>No certificates added</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section-title">
+                        <div class="icon-box">
+                            <i class="fas fa-award"></i>
+                        </div>Awards
+                    </div>
+                    <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <table class="table table-bordered">
+                            <tbody>
+                            {% for a in profile_details.awards %}
+                                <tr>
+                                    <td>
+                                        {{ a.awardname }}
+                                        — {{ a.year }}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr><td>No awards added</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+    </main>
+</div>
+<script>
+
+function tabSwitch(element) {
+
+    const pid = "{{ profile_details.id }}"; 
+
+    if (element === 'active') {
+        $('#active').addClass('activeTab shadow');
+        $('#Inactive').removeClass('activeTab shadow');
+        window.location.href = "/profileview/" + pid;
+    }
+
+    if (element === 'Inactive') {
+        $('#Inactive').addClass('activeTab shadow');
+        $('#active').removeClass('activeTab shadow');
+        window.location.href = "/profileactivity/" + pid;
+    }
+}
+
+</script>
+
+

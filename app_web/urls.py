@@ -41,5 +41,12 @@ urlpatterns = [
 
     # Company data page
     path("cmp-reg", views.homePage),
+    path("profiles",views.profilesPage),
+    path("profileview/<int:pid>",views.profileviewPage),
+    path("profileactivity/<int:pid>",views.profileactivityviewPage)
+
+
+
+
     
 ]

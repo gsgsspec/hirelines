@@ -1,0 +1,196 @@
+{% load static %}
+<style>
+   /* Make custom gaps between columns */
+.filter-row {
+    display: flex;
+    margin-bottom: 18px;
+}
+
+/* Column widths adjusted for custom spacing */
+.filter-col {
+    display: flex;
+    align-items: center;
+}
+
+/* COL 1 */
+.filter-row .filter-col:nth-child(1) {
+    width: 34%;       /* little more width */
+    margin-right: 144px;   /* BIG GAP to Column 2 */
+}
+
+/* COL 2 */
+.filter-row .filter-col:nth-child(2) {
+    width: 30%;
+    margin-right: 20px;   /* SMALL GAP to Column 3 */
+}
+
+/* COL 3 */
+.filter-row .filter-col:nth-child(3) {
+    width: 22%;
+}
+
+/* LABELS */
+.filter-col label {
+    width: 35%;
+    font-weight: 500;
+    color: #697a8d;
+}
+
+/* SHORT LABEL (To) */
+.filter-col .short-label {
+    width: 15% !important;
+    text-align: left;
+}
+
+/* INPUT FIELDS */
+.filter-col input,
+.filter-col select {
+    width: 85%;
+    background: #fff;
+}
+
+/* Buttons */
+.filter-actions {
+    text-align: right;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.filter-actions button {
+    min-width: 90px;
+    padding: 6px 12px;
+}
+
+tbody tr:hover {
+    cursor: pointer;
+}
+
+</style>
+<div class="candidates-loader-wrapper" id="candidates-loader" style="background-color: rgba(255, 255, 255, 1);">
+    <div class="candidates-loader">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+            <path fill="#274699"
+                d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z" />
+        </svg>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Profiles</h4>
+
+        <h4 class="header-btn">
+            <button class="btn btn-primary" onclick="window.location.href=''" type="button">
+                <i class="fas fa-user-plus"></i>
+            </button>
+        </h4>
+    </div>
+
+
+
+    <!-- FILTERS -->
+    <div class="table-responsive text-nowrap table-cls" style="padding:20px;">
+
+        <div class="filter-row">
+            <div class="filter-col">
+                <label>Title</label>
+                <input type="text" id="filter_title" class="form-control">
+            </div>
+
+            <div class="filter-col">
+                <label>Experience</label>
+                <input type="text" id="filter_exp" class="form-control">
+            </div>
+
+            <div class="filter-col">
+                <label class="short-label">To</label>
+                <input type="text" id="filter_to_1" class="form-control">
+            </div>
+        </div>
+
+        <div class="filter-row">
+            <div class="filter-col">
+                <label>Source</label>
+                <input type="text" id="filter_source" class="form-control">
+            </div>
+
+            <div class="filter-col">
+                <label>Skills</label>
+                <input type="text" id="filter_skills" class="form-control">
+            </div>
+
+            <div class="filter-col">
+                <label></label>
+                <input type="text" style="visibility:hidden;" disabled>
+            </div>
+        </div>
+
+        <div class="filter-row">
+            <div class="filter-col">
+                <label>Status</label>
+                <select class="form-select" id="begin-from" required>
+                    <option value="">All</option>
+                    <option value="D">Draft</option>
+                    <option value="R">Rejected</option>
+                    <option value="O">Offered</option>
+                    <option value="E">Employee</option>
+                </select>                
+            </div>
+            
+
+            
+
+            <div class="filter-col">
+                <label>Applied On</label>
+                <input type="date" id="filter_apl" class="form-control">
+            </div>
+
+            <div class="filter-col">
+                <label class="short-label">To</label>
+                <input type="date" id="filter_to_2" class="form-control">
+            </div>
+        </div>
+
+        <!-- FILTER BUTTONS -->
+        <div class="filter-actions">
+            <button class="btn btn-secondary" id="clearFilters">Clear</button>
+            <button class="btn btn-primary" id="applyFilters">Apply</button>
+        </div>
+
+        <!-- TABLE -->
+
+        
+        <table class="table table-hover" id="profiles-table">
+            <thead>
+                <tr>
+                    <th><strong>Date</strong></th>
+                    <th><strong>Title</strong></th>
+                    <th><strong>First Name</strong></th>
+                    <th><strong>Last Name</strong></th>
+                    <th><strong>Experience</strong></th>
+                    <th><strong>Source</strong></th>
+                    <th><strong>Skills</strong></th>
+                    <th><strong>Status</strong></th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for p in profile_details %}
+                <tr onclick="window.location.href='/profileview/{{p.id}}'">
+                    <td>{{ p.formatted_date }}</td>
+                    <td>{{ p.title }}</td>
+                    <td>{{ p.firstname }}</td>
+                    <td>{{ p.lastname }}</td>
+                    <td>{{ p.final_experience }}</td>
+                    <td>{{ p.source_code }}</td>
+                    <td>{{ p.primaryskills_name }}, {{ p.secondaryskills_name }}</td>
+                    <td>{{ p.status_text }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<script src="{% static 'js/profiles.js' %}"></script>

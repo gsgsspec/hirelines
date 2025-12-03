@@ -37,3 +37,142 @@ alter table hirelines.jobdesc add column dashboardflag varchar(1) null ;
 
 ALTER TABLE `hirelines`.`workflow` 
 ADD COLUMN `teststatus` VARCHAR(1) NULL DEFAULT NULL AFTER `paperlibraryid`;
+
+
+============================Mounika========================================
+
+
+CREATE TABLE IF NOT EXISTS `resume` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `datentime` DATETIME NULL,
+  `sourceid` INT NULL,
+  `filename` VARCHAR(100) NULL,
+  `status` VARCHAR(1) NULL COMMENT 'P - Pending Review, D - Soft Deleted, A - Added to Profiles',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+
+CREATE TABLE IF NOT EXISTS `profile` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `sourceid` INT NULL,
+  `resumeid` INT NULL,
+  `dateofcreation` DATETIME NULL,
+  `title` VARCHAR(100) NULL,
+  `firstname` VARCHAR(100) NULL,
+  `middlename` VARCHAR(40) NULL,
+  `lastname` VARCHAR(100) NULL,
+  `email` VARCHAR(100) NULL,
+  `mobile` VARCHAR(15) NULL,
+  `linkedin` VARCHAR(100) NULL,
+  `facebook` VARCHAR(100) NULL,
+  `passportnum` VARCHAR(40) NULL,
+  `dateofbirth` DATETIME NULL,
+  `fathername` VARCHAR(100) NULL,
+  `nativeof` VARCHAR(100) NULL,
+  `status` VARCHAR(1) NULL COMMENT 'D - Draft, R - Rejected, O - Offered, E - Employee',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `profileeducation` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `profileid` INT NULL,
+  `sequence` INT NULL,
+  `course` VARCHAR(100) NULL,
+  `institute` VARCHAR(100) NULL,
+  `yearfrom` INT NULL,
+  `yearto` INT NULL,
+  `grade` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+
+CREATE TABLE IF NOT EXISTS `profileexperience` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `profileid` INT NULL,
+  `sequence` INT NULL,
+  `jobtitle` VARCHAR(100) NULL,
+  `company` VARCHAR(100) NULL,
+  `yearfrom` INT NULL,
+  `yearto` INT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+
+CREATE TABLE IF NOT EXISTS `profileskills` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `profileid` INT NULL,
+  `primaryskills` VARCHAR(256) NULL,
+  `secondaryskills` VARCHAR(256) NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `profileprojects` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `profileid` INT NULL,
+  `sequence` INT NULL,
+  `projectname` VARCHAR(100) NULL,
+  `clientname` VARCHAR(100) NULL,
+  `roleplayed` VARCHAR(100) NULL,
+  `skillsused` VARCHAR(100) NULL,
+  `yearsfrom` INT NULL,
+  `yearsto` INT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `resumefile` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `resumeid` INT NULL,
+  `filename` VARCHAR(100) NULL,
+  `filecontent` BLOB NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `profileactivity` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `profileid` INT NULL,
+  `datentime` DATETIME NULL,
+  `sequence` INT NULL,
+  `activitycode` VARCHAR(2) NULL COMMENT 'PC - Profile Created | PS - Profile Screened | P1 - Profile Screening - Promoted | PC - Profile Coding Test | P2 - Profile Coding Test - Promoted',
+  `acvityuserid` INT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `profileawards` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `profileid` INT NULL,
+  `sequence` INT NULL,
+  `awardname` VARCHAR(100) NULL,
+  `year` INT NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `profilecertificates` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `profileid` INT NULL,
+  `certname` VARCHAR(100) NULL,
+  `sequence` INT NULL,
+  `year` INT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `profileaddress` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `profileid` INT NULL,
+  `addline1` VARCHAR(100) NULL,
+  `addline2` VARCHAR(100) NULL,
+  `city` VARCHAR(100) NULL,
+  `state` VARCHAR(40) NULL,
+  `country` VARCHAR(40) NULL,
+  `zipcode` VARCHAR(20) NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;

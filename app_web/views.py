@@ -4,10 +4,10 @@ from django.db.models import Q
 from app_api.functions import constants
 from app_api.functions.enc_dec import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
-from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding
+from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -891,5 +891,140 @@ def uploadCandidatesPage(request):
         return render(request, "portal_index.html", {"template_name": 'candidate_upload.html','menuItemList':menuItemList,'sources_data':sources_data,
                                                      'jds_data':jds_list,'candidates_upload_data':candidates_upload_data})
     
+    except Exception as e:
+        raise
+
+
+def profilesPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [
+            child for menuItemObj in menuItemList
+            for child in menuItemObj["child"]
+            if child["menuItemLink"] == currentPath
+        ]
+
+        # Simple: Convert queryset → list of dictionaries
+        profile_details = list(Profile.objects.values())
+
+        #  Add source name + status text
+        for p in profile_details:
+            # Source
+            src = Source.objects.filter(id=p["sourceid"]).first()
+            p["source_code"] = src.code if src else ""
+
+            # Status
+            status_map = {
+                "D": "Draft",
+                "R": "Rejected",
+                "O": "Offered",
+                "E": "Employee"
+            }
+            p["status_text"] = status_map.get(p["status"], "NA")
+
+
+
+            if p.get("dateofcreation"):
+                p["formatted_date"] = p["dateofcreation"].strftime("%d-%b-%Y %I:%M %p")
+            else:
+                p["formatted_date"] = ""
+
+            exp = ProfileExperience.objects.filter(profileid=p["id"]).values("yearfrom", "yearto").first()
+
+            if exp:
+                year_from = int(exp["yearfrom"])
+                year_to = int(exp["yearto"])
+
+                total_exp = year_to - year_from  
+
+                p["final_experience"] = f"{total_exp} Years"
+            else:
+                p["final_experience"] = "0 Years"
+
+            skills = ProfileSkills.objects.filter(profileid=p["id"]).values(
+                "primaryskills", "secondaryskills"
+            ).first()
+
+            if skills:
+                p["primaryskills_name"] = skills.get("primaryskills", "")
+                p["secondaryskills_name"] = skills.get("secondaryskills", "")
+            else:
+                p["primaryskills_name"] = ""
+                p["secondaryskills_name"] = ""
+
+
+
+        if menuItemObjList:
+            return render(
+                request,
+                "portal_index.html",
+                {
+                    "template_name": "profiles.html",
+                    "menuItemList": menuItemList,
+                    "profile_details": profile_details,  # <-- clean list
+                },
+            )
+        else:
+            return redirect("../")
+
+    except Exception as e:
+        raise
+
+
+
+
+
+def profileviewPage(request,pid):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        profile_details=getProfileDetailsService(pid)
+       
+
+        return render(request, "portal_index.html", {"template_name": 'profileview.html','menuItemList': menuItemList,'profile_details':profile_details})
+
+      
+    except Exception as e:
+        raise   
+
+
+
+def profileactivityviewPage(request,pid):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+  
+
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+
+        activity_details=getProfileactivityDetailsService(pid)
+
+
+        menuItemList = get_functions_service(user_role)
+        return render(request, "portal_index.html", {"template_name": 'profileactivity.html','menuItemList': menuItemList,"activity_details":activity_details})
+
+   
     except Exception as e:
         raise
