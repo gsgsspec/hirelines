@@ -1,0 +1,95 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'lib/portal/css/resume_inbox.css' %}" />
+
+
+<div class="container-center">
+    <div class="w-100">
+        <div class="card mb-4">
+            <div class="card-title-table">
+                <!-- <div id="display_icon" style="display:block;cursor:pointer" onclick='showFullPage()'><i class="bx bx-menu bx-sm"></i></div>
+                <div id="hide_icon" style="display:none;cursor:pointer" onclick='hideFullPage()'><i class="bx bx-menu bx-sm"></i></div> -->
+                <h4 class="card-header">Resume Inbox</h4>
+            </div>
+            <!-- <div>
+                <div class="search-wrapper">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search..." />
+                        <button type="button"><i class="fas fa-arrow-right"></i> </button>
+                    </div>
+                </div>
+            </div> -->
+
+            {% if user_data.role == "HR-Admin" %}
+                <div class="sources-layout">
+                    <div class="sources-ctn">
+                        {% for source in sources_data %}
+                            <div class="sources-item" data-sourceid="{{ source.id }}"><span>{{ source.label }}</span></div>
+                        {%  endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="d-flex">
+                <div class="table-ctn">
+                    <div class="table-responsive text-nowrap table-cls">
+                        <table class="table table-hover" id="resume-table">
+                            <thead>
+                                <tr>
+                                    <th> <strong> Name </strong></th>
+                                    <th> <strong> Source </strong></th>
+                                    <th> <strong> Date </strong></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                                {% for resume_data in resumes_data %}
+                                    <tr class="resume-row" data-id="{{ resume_data.id }}" style="cursor: pointer;">
+                                        <td> {{ resume_data.name }} </td>
+                                        <td> {{ resume_data.source }} </td>
+                                        <td> {{ resume_data.date }} </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="resumePreview" class="w-50" style="display: none;">
+                    <iframe 
+                        id="resumeIframe"
+                        src=""
+                        width="100%" 
+                        height="500px"
+                        style="border: none;">
+                    </iframe>   
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-danger" id="delete-resume-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+                        <button class="btn btn-primary" id="add-profile-btn"><i class="fas fa-user-plus"></i> Add to Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $.noConflict();
+        $('#resume-table').DataTable({
+            "order": [],
+            "ordering": false,
+            "lengthChange": false,
+            language: { search: "",searchPlaceholder: "Search..." } ,
+            pagingType: 'simple_numbers'
+        });
+    });
+</script>
+
+<script src="{% static 'js/resume_inbox.js' %}"></script>
+
+
+<style>
+    .credits-container {
+        display: none;
+    }
+</style>

@@ -458,6 +458,7 @@ class Source(models.Model):
     id = models.AutoField(primary_key=True)
     code = models.CharField(max_length=5, null=True)
     label = models.CharField(max_length=50, null=True)
+    userid = models.IntegerField(null=True)
     companyid = models.IntegerField(null=True)
 
     class Meta:
@@ -477,22 +478,34 @@ class Uploads(models.Model):
 
 
 
-
 class Resume(models.Model):
     id = models.AutoField(primary_key=True)
-    datentime = models.DateTimeField(null=True, blank=True)
-    sourceid = models.IntegerField(null=True, blank=True)
-    filename = models.CharField(max_length=100, null=True, blank=True)
-    status = models.CharField(max_length=1, null=True, blank=True) #P - Pending Review, D - Soft Deleted, A - Added to Prfiles
+    sourceid = models.IntegerField(null=True)
+    filename =  models.CharField(max_length=100, null=True)
+    mailid =  models.CharField(max_length=200, null=True)
+    datentime = models.DateTimeField(auto_now_add=True)
+    companyid = models.IntegerField(null=True)
+    status = models.CharField(max_length=1,null=True) # P - Pending Review, D - Soft Deleted, A - Added to Profile
 
     class Meta:
-        db_table = 'resume'
+        db_table = "resume"
+
+
+class ResumeFile(models.Model):
+    id = models.AutoField(primary_key=True)
+    resumeid = models.IntegerField(null=True)
+    filename =  models.CharField(max_length=100, null=True)
+    filecontent = models.BinaryField(null=True)
+
+    class Meta:
+        db_table = "resumefile"
 
 
 class Profile(models.Model):
     id = models.AutoField(primary_key=True)
     sourceid = models.IntegerField(null=True, blank=True)
     resumeid = models.IntegerField(null=True, blank=True)
+    companyid = models.IntegerField(null=True)
     dateofcreation = models.DateTimeField(null=True, blank=True)
     title = models.CharField(max_length=100, null=True, blank=True)
     firstname = models.CharField(max_length=100, null=True, blank=True)
@@ -508,11 +521,8 @@ class Profile(models.Model):
     nativeof = models.CharField(max_length=100, null=True, blank=True)
     status = models.CharField(max_length=1, null=True, blank=True) #  D - Draft, R - Rejected, O - Offered, E - Employee
 
-
     class Meta:
         db_table = 'profile'
-
-
 
 
 class ProfileEducation(models.Model):
@@ -529,9 +539,6 @@ class ProfileEducation(models.Model):
         db_table = 'profileeducation'
 
 
-
-
-
 class ProfileExperience(models.Model):
     id = models.AutoField(primary_key=True)
     profileid = models.IntegerField(null=True, blank=True)
@@ -545,7 +552,6 @@ class ProfileExperience(models.Model):
         db_table = 'profileexperience'
 
 
-
 class ProfileSkills(models.Model):
     id = models.AutoField(primary_key=True)
     profileid = models.IntegerField(null=True, blank=True)
@@ -554,8 +560,6 @@ class ProfileSkills(models.Model):
 
     class Meta:
         db_table = 'profileskills'
-
-
 
 
 class ProfileProjects(models.Model):
@@ -573,18 +577,6 @@ class ProfileProjects(models.Model):
         db_table = 'profileprojects'
 
 
-
-class ResumeFile(models.Model):
-    id = models.AutoField(primary_key=True)
-    resumeid = models.IntegerField(null=True, blank=True)
-    filename = models.CharField(max_length=100, null=True, blank=True)
-    filecontent = models.BinaryField(null=True, blank=True)
-
-    class Meta:
-        db_table = 'resumefile'
-
-
-
 class ProfileActivity(models.Model):
     id = models.AutoField(primary_key=True)
     profileid = models.IntegerField(null=True, blank=True)
@@ -595,7 +587,6 @@ class ProfileActivity(models.Model):
 
     class Meta:
         db_table = 'profileactivity'
-
 
 
 class ProfileAwards(models.Model):
@@ -629,7 +620,6 @@ class ProfileAddress(models.Model):
     state = models.CharField(max_length=40, null=True, blank=True)
     country = models.CharField(max_length=40, null=True, blank=True)
     zipcode = models.CharField(max_length=20, null=True, blank=True)
-
 
     class Meta:
         db_table = 'profileaddress'   

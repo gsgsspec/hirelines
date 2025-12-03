@@ -5,6 +5,7 @@ import logging
 import time
 import threading
 import re
+import base64
 from urllib.parse import urljoin
 
 import requests
@@ -22,12 +23,12 @@ from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
-        downloadUploadReportService
+        downloadUploadReportService, getResumeData, softDeleteResume
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
-    updateCandidateInfoDB, updateDashboardDisplayFlagDB
+    updateCandidateInfoDB, updateDashboardDisplayFlagDB, saveProfileDetailsDB, addResumeProfileDB, updateProfileDetailsDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -1766,12 +1767,6 @@ def filter_profiles_api(request):
 
 
 
-
-
-
-
-
-
 @csrf_exempt
 @api_view(['POST'])
 def getDefaultEmailTemplate(request):
@@ -1868,4 +1863,139 @@ def getDefaultEmailTemplate(request):
     except Exception as e:
         response['error'] = str(e)
 
+    return JsonResponse(response)
+
+
+
+@api_view(['GET'])
+def getResumeFile(request,rid):
+
+    resume_file = ResumeFile.objects.get(id=rid)
+
+    file_base64 = base64.b64encode(resume_file.filecontent).decode("utf-8")
+
+    return JsonResponse({
+        "pdf_data": f"data:application/pdf;base64,{file_base64}"
+    })
+
+
+@api_view(['POST'])
+def getFilterResumes(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            user_data = auth_user(request.user)
+
+            resumes_data = getResumeData(user_data,dataObjs)
+
+            response['data'] = resumes_data
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getting filtered resume data'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def deleteResume(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            softDeleteResume(dataObjs["resume_id"])
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in deleting Resume'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def addResumeProfile(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            add_profile = addResumeProfileDB(dataObjs)
+
+            response['data'] = add_profile
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in deleting Resume'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def saveProfileDetails(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            saveProfileDetailsDB(dataObjs)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in saving Profile Details'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateProfileDetails(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            updateProfileDetailsDB(dataObjs)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updating Profile Details'
+        response['error'] = str(e)
+        raise
+    
     return JsonResponse(response)

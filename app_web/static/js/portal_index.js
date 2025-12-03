@@ -16,6 +16,7 @@ var menuItemsUrls = {
     'reports': ['/reports', '/credits-usage'],
     'company': ['/company-data'],
     'sources': ['/sources'],
+    'resume-inbox': ['/resume-inbox'],
     'logout': ['/']
 };
 

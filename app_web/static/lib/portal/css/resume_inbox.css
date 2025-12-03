@@ -1,0 +1,100 @@
+.search-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    /* pill shape */
+    padding: 8px 10px;
+    max-width: 500px;
+    width: 100%;
+    background: #fff;
+}
+
+.search-box .fa-search {
+    margin:0px 8px;
+    font-size: 14px;
+    color: #777;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+}
+
+.search-box button {
+    border: none;
+    outline: none;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--primary-color);
+    color: #fff;
+    white-space: nowrap;
+}
+
+.search-box button:hover {
+    opacity: 0.9;
+}
+
+.sources-layout {
+    padding: 1.5rem;
+}
+
+.sources-ctn {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 15px;
+}
+
+.sources-item {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    padding: 10px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.sources-item.selected {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.table-ctn {
+    width: 100%;
+}
+
+/* For Chrome, Edge, Brave */
+::-webkit-scrollbar {
+  width: 6px;      /* scrollbar width */
+  height: 6px;     /* horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}

@@ -8,7 +8,7 @@ from app_api.functions.enc_dec import decrypt_code
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
-    IvFeedback, Email_template, Branding, Source
+    IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills
 
 
 def addCompanyDataDB(dataObjs):
@@ -824,6 +824,156 @@ def updateDashboardDisplayFlagDB(dataObjs, company_id):
         if job_desc:
             job_desc.dashboardflag = dataObjs['dashboard-display']
             job_desc.save()
+
+    except Exception as e:
+        raise
+
+
+def addResumeProfileDB(dataObjs):
+    try:
+
+        resume = Resume.objects.get(id=dataObjs["resume_id"])
+
+        profile = Profile(
+            sourceid = resume.sourceid,
+            resumeid = resume.id,
+            companyid = resume.companyid,
+            dateofcreation = datetime.now(),
+            status = "D",
+
+        )
+
+        profile.save()
+
+        return {"profile_id":profile.id}
+
+    except Exception as e:
+        raise
+
+
+
+def saveProfileDetailsDB(dataObjs):
+    try:
+
+        profile = Profile(
+            title = dataObjs["title"],
+            firstname = dataObjs["firstname"],
+            middlename = dataObjs["middlename"],
+            lastname = dataObjs["lastname"],
+            email = dataObjs["email"],
+            mobile = dataObjs["mobile"],
+            linkedin = dataObjs["linkedin"],
+            facebook = dataObjs["facebook"],
+            fathername = dataObjs["fathername"],
+            nativeof = dataObjs["nativeof"],
+            dateofcreation = datetime.now(),
+            passportnum = dataObjs["passportnum"],
+            dateofbirth = dataObjs["dateofbirth"],
+            status = "D"
+        )
+
+        profile.save()
+
+    except Exception as e:
+        raise
+
+
+def saveProfileEducationDB(dataObjs):
+    try:
+
+        profile_id = dataObjs["profile_id"]
+        profile_education = dataObjs["data"]
+
+        ProfileEducation.objects.filter(profileid=profile_id).delete()
+
+        for index,education in enumerate(profile_education, start=1):
+
+            ProfileEducation.objects.create(
+                profileid=profile_id,
+                sequence = index,
+                course = education["course_name"],
+                institute = education["institute_name"],
+                yearfrom = education["start_year"],
+                yearto = education["end_year"],
+                grade = education["grade"]
+            )
+
+
+    except Exception as e:
+        raise
+
+
+def saveProfileDetailsDB(dataObjs):
+    try:
+
+        profile = Profile(
+            title = dataObjs["title"],
+            firstname = dataObjs["firstname"],
+            middlename = dataObjs["middlename"],
+            lastname = dataObjs["lastname"],
+            email = dataObjs["email"],
+            mobile = dataObjs["mobile"],
+            linkedin = dataObjs["linkedin"],
+            facebook = dataObjs["facebook"],
+            fathername = dataObjs["fathername"],
+            nativeof = dataObjs["nativeof"],
+            dateofcreation = datetime.now(),
+            passportnum = dataObjs["passportnum"],
+            dateofbirth = dataObjs["dateofbirth"],
+            status = "D"
+        )
+
+        profile.save()
+
+    except Exception as e:
+        raise
+
+
+def saveProfileDetailsDB(dataObjs):
+    try:
+
+        profile = Profile(
+            title = dataObjs["title"],
+            firstname = dataObjs["firstname"],
+            middlename = dataObjs["middlename"],
+            lastname = dataObjs["lastname"],
+            email = dataObjs["email"],
+            mobile = dataObjs["mobile"],
+            linkedin = dataObjs["linkedin"],
+            facebook = dataObjs["facebook"],
+            fathername = dataObjs["fathername"],
+            nativeof = dataObjs["nativeof"],
+            dateofcreation = datetime.now(),
+            passportnum = dataObjs["passportnum"],
+            dateofbirth = dataObjs["dateofbirth"],
+            status = "D"
+        )
+
+        profile.save()
+
+    except Exception as e:
+        raise
+
+
+def updateProfileDetailsDB(dataObjs):
+    try:
+
+        profile = Profile.objects.get(id=dataObjs["profileid"])
+
+        profile.title = dataObjs["title"]
+        profile.firstname = dataObjs["firstname"]
+        profile.middlename = dataObjs["middlename"]
+        profile.lastname = dataObjs["lastname"]
+        profile.email = dataObjs["email"]
+        profile.mobile = dataObjs["mobile"]
+        profile.linkedin = dataObjs["linkedin"]
+        profile.facebook = dataObjs["facebook"]
+        profile.passportnum = dataObjs["passport"]
+        profile.dateofbirth = dataObjs["dob"]
+        profile.fathername = dataObjs["father_name"]
+        profile.nativeof = dataObjs["native_of"]
+
+        profile.save()
 
     except Exception as e:
         raise

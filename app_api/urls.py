@@ -61,9 +61,20 @@ urlpatterns = [
     path('check-jd-candidate-registration',views.checkJdCandidateRegistration),
     path('download-upload-report',views.downloadUploadReport),
     path("get_paperid",views.get_paperid),
+    path("get-gmail-resume/<int:rid>",views.getResumeFile),
+    path("get-filter-resume",views.getFilterResumes),
+    path("delete-resume",views.deleteResume),
+
+    path("add-resume-profile",views.addResumeProfile),
+    path("save-profile",views.saveProfileDetails),
+    path("update-profile",views.updateProfileDetails),
+    path("update-education",views.saveProfileDetails),
+    path("update-experience",views.saveProfileDetails),
+    path("update-projects",views.saveProfileDetails),
+    path("update-awards",views.saveProfileDetails),
+    path("update-certifications",views.saveProfileDetails),
+    path("get_paperid",views.get_paperid),
     path("profile-filters",views.filter_profiles_api),
     path('get-default-email-template',views.getDefaultEmailTemplate),
-
-
 
 ]

@@ -176,3 +176,7 @@ CREATE TABLE IF NOT EXISTS `profileaddress` (
   `zipcode` VARCHAR(20) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
+======================== SRIKANTH =================================
+
+INSERT INTO `role` (`Name`, `status`) VALUES ('Recruiter', 'A');
+INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('Resume Inbox', 'Resume Inbox', 'resume-inbox', 'HR-Admin, Recruiter', 'fas fa-envelope', '3');

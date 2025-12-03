@@ -7,12 +7,13 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
 import json
 import requests
+from app_api.functions.email_resume import fetch_gmail_attachments
 
 domains = getConfig()['DOMAIN']
 acert_domain = domains['acert']
@@ -1002,8 +1003,7 @@ def profileviewPage(request,pid):
 
       
     except Exception as e:
-        raise   
-
+        raise  
 
 
 def profileactivityviewPage(request,pid):
@@ -1026,5 +1026,55 @@ def profileactivityviewPage(request,pid):
         return render(request, "portal_index.html", {"template_name": 'profileactivity.html','menuItemList': menuItemList,"activity_details":activity_details})
 
    
+    except Exception as e:
+        raise
+    
+
+def resumeInboxPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        # gmail_data = fetch_gmail_attachments()
+        sources_data = getCompanySourcesData(user_data.companyid)
+
+        filters = None
+        resumes_data = getResumeData(user_data)
+
+        return render(request, "portal_index.html", {"template_name": 'resume_inbox.html','menuItemList':menuItemList,
+            "resumes_data":resumes_data, "user_data":user_data, "sources_data":sources_data
+        })
+      
+    except Exception as e:
+        raise   
+
+
+def updateProfileDetailsPage(request, pid):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+       
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        profile_data = getProfileData(pid, user_data)
+
+        print("profile_data",profile_data)
+        
+        return render(request, "portal_index.html", {"template_name": 'update_profile.html','menuItemList':menuItemList})
+    
     except Exception as e:
         raise

@@ -52,12 +52,16 @@ from app_api.models import (
     JdAnalysis,
     Source,
     Uploads,
+    Resume,
     Profile,
+    ProfileActivity,
+    ProfileEducation,
+    ProfileExperience,
     ProfileProjects,
     ProfileSkills,
-    ProfileExperience,
-    ProfileEducation,ProfileActivity,ProfileAwards,ProfileCertificates,ProfileAddress
-
+    ProfileAwards,
+    ProfileCertificates,
+    ProfileAddress
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -2215,6 +2219,20 @@ def addNewUserService(company_id, user_data):
                     status='A'
                 )
                 save_user.save()
+
+                if userRole == "Recruiter":
+                    code = f"REC{save_user.id:02}"
+
+                    source = Source(
+                        code = code,
+                        label = save_user.name,
+                        companyid = save_user.companyid,
+                        userid= save_user.id
+                    )
+
+                    source.save()
+
+
                 return {'userAlreadyExisted': 'N', 'event': 'created','userid':save_user.id}
 
         if user_data['event'] == 'update':
@@ -2226,10 +2244,31 @@ def addNewUserService(company_id, user_data):
                 userAuthdata.save()
 
             if userFind:
+
                 userFind.name = user_data['userName']
                 userFind.password = user_data['userPswd']
                 userFind.location = user_data['newUserLocation']
                 userFind.save()
+
+                if userFind.role == "Recruiter":
+
+                    code = f"REC{userFind.id:02}"
+
+                    source = Source.objects.filter(code=code,companyid=userFind.companyid).last()
+
+                    if source:
+                        source.label = userFind.name
+                        source.userid = userFind.id
+
+                    else:
+                        source = Source(
+                            code = code,
+                            label = userFind.name,
+                            companyid = userFind.companyid,
+                            userid = userFind.id
+                        )
+
+                    source.save()
                 
                 # Convert userFind to a dictionary format for JSON serialization
                 user_data_response = {
@@ -3271,5 +3310,167 @@ def getProfileactivityDetailsService(pid):
 
         return final_list
 
+    except Exception as e:
+        raise
+#         raise
+
+
+def getResumeData(user_data,filters=None):
+    try:
+
+        resumes_data = []
+
+        if user_data.role == "HR-Admin":
+            sources = Source.objects.filter(companyid=user_data.companyid)
+            if filters and filters.get("source_ids"):
+                sources = sources.filter(id__in=filters["source_ids"])
+        else:
+            sources = Source.objects.filter(userid=user_data.id)
+
+        source_ids = sources.values_list('id', flat=True)
+
+        resumes = Resume.objects.filter(sourceid__in=source_ids).exclude(status="D")
+
+        if resumes:
+
+            for resume in resumes:
+
+                source = sources.filter(id=resume.sourceid).first()
+
+                resumes_data.append({
+                    "id":resume.id,
+                    "name": resume.filename or "",
+                    "source": source.label or "",
+                    "date": resume.datentime.strftime("%d-%b-%Y") if resume.datentime else "",
+                })
+
+        return resumes_data
+
+
+    except Exception as e:
+        raise
+
+
+def getEmailFetchUsers():
+    try:
+
+        users = list(User.objects.filter(role__icontains="Recruiter").values("id","email","companyid"))
+        return users
+
+    except Exception as e:
+        raise
+
+
+def softDeleteResume(rid):
+    try:
+
+        resume = Resume.objects.get(id=rid)
+        resume.status = "D"
+        resume.save()
+        
+    except Exception as e:
+        raise
+
+
+def getProfileData(pid,user_data):
+    try:
+        
+        profile = Profile.objects.filter(id=pid,companyid=user_data.companyid).last()
+
+        if not profile:
+            return None
+        
+        profile_data = {
+            "personal": None,
+            "education": None,
+            "experience":None,
+            "projects":None,
+            "awards":None,
+        }
+
+        personal_details = {
+            "title": profile.title or "",
+            "firstname": profile.firstname or "",
+            "middlename": profile.middlename or "",
+            "lastname": profile.lastname or "",
+            "email": profile.email or "",
+            "mobile": profile.mobile or "",
+            "linkedin": profile.linkedin or "",
+            "facebook": profile.facebook or "",
+            "passportnum": profile.passportnum or "",
+            "fathername": profile.fathername or "",
+            "nativeof": profile.nativeof or "",
+            "status":profile.status
+        }    
+
+        education_data = ProfileEducation.objects.filter(profileid=profile.id).order_by("sequence")
+
+        profile_education = []
+        
+        if education_data:
+
+            for education in education_data:
+
+                profile_education.append({
+                    "course": education.course or "",
+                    "institute": education.institute or "",
+                    "yearfrom": education.yearfrom or "",
+                    "yearto": education.yearto or "",
+                    "grade": education.grade or "",
+                })
+
+        experience_data = ProfileExperience.objects.filter(profileid=profile.id).order_by("sequence")
+
+        profile_experience = []
+
+        if experience_data:
+
+            for experience in experience_data:
+
+                profile_experience.append({
+                    "jobtitle": experience.jobtitle or "",
+                    "company": experience.company or "",
+                    "yearfrom": experience.yearfrom or "",
+                    "yearto": experience.yearto or ""
+                })
+
+        projects_data = ProfileProjects.objects.filter(profileid=profile.id).order_by("sequence")
+
+        profile_projects = []
+
+        if projects_data:
+
+            for project in projects_data:
+
+                profile_projects.append({
+                    "projectname": project.projectname or "",
+                    "clientname": project.clientname or "",
+                    "roleplayed": project.roleplayed or "",
+                    "skillsused": project.skillsused or "",
+                    "yearsfrom": project.yearsfrom or "",
+                    "yearsto": project.yearsto or "",
+                })
+        
+        awards_data = ProfileAwards.objects.filter(profileid=profile.id).order_by("sequence")
+
+        profile_awards = []
+
+        if projects_data:
+
+            for award in awards_data:
+
+                profile_awards.append({
+                    "awardname": award.awardname or "",
+                    "year": award.year or "",
+                })
+        
+        profile_data["personal"] = personal_details    
+        profile_data["experience"] = profile_experience
+        profile_data["education"] = profile_education    
+        profile_data["projects"] = profile_projects
+        profile_data["awards"] = profile_awards
+
+        return profile_data
+        
     except Exception as e:
         raise

@@ -22,6 +22,8 @@ document.getElementById('login-btn').onclick=function(){
                         window.location.href = '/dashboard'
                     } else if(res.data == 'Interviewer'){
                         window.location.href = '/interviews' 
+                    } else if(res.data == 'Recruiter'){
+                        window.location.href = '/resume-inbox' 
                     }
                 }
                 else{

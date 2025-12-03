@@ -37,16 +37,13 @@ urlpatterns = [
     path('sources',views.sourcesPage),
     path("company-data",views.companyPage),
     path("upload-candidates",views.uploadCandidatesPage),
-    
+    path("resume-inbox",views.resumeInboxPage),
+    path("update-profile-data/<int:pid>",views.updateProfileDetailsPage),
 
     # Company data page
     path("cmp-reg", views.homePage),
     path("profiles",views.profilesPage),
     path("profileview/<int:pid>",views.profileviewPage),
     path("profileactivity/<int:pid>",views.profileactivityviewPage)
-
-
-
-
     
 ]
