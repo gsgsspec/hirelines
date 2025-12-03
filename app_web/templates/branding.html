@@ -1,89 +1,313 @@
 {% load static %}
+<style>
+    .branding-wrapper {
+        display: flex;
+        gap: 25px;
+        width: 100%;
+    }
+
+    .branding-left {
+        width: 50%;
+    }
+    #toggle_social_icons {
+        transform: scale(1.4); 
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    .branding-preview {
+        width: 50%;
+       
+        padding-left: 20px;
+    }
+
+
+
+    
+
+    
+</style>
+
 
 <div class="container-center">
-    <div class="col-9">
+    <div class="col-12">
         <div class="card mb-4">
-            <div class="card-header d-flex align-items-center justify-content-between" style="align-self:center;">
-                <h5 class="mb-0">Branding</h5>
+
+            <div class="card-header">
+                <h5 class="p-clr">Your Company Branding</h5>
+                <span style="color: #333;">Brand your email communication with candidates,
+                    also screening and coding test
+                    user interface for candidates.</span>
             </div>
-            <div class="card-body">
-                <form id="brand_form">
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label text-end">CSS</label>
-                        <div class="col-sm-9">
-                            <div class="input-group input-group-merge">
-                                <textarea id="css_content" rows="7" class="form-control" name="{{companyBranding.id}}" required> {{companyBranding.content}} </textarea>
+
+
+            <div class="card-body branding-wrapper">
+
+          
+                <div class="branding-left">
+
+                    <form id="brand_form">
+
+                        <div class="form-group row">
+                            <label class="col-xl-3 col-form-label">Company Logo</label>
+                            <div class="col-xl-7 drop-zone mt-2">
+                                <label class="upload-label cursor-pointer" for="logo">
+                                    Upload Logo <br />
+                                    <i class="fa fa-2x fa-image mt-5" id="image_icon"></i>
+                                    <input type="file" id="logo" onchange="loadFile(event)" style="display:none"
+                                        accept="image/*" />
+                                    <br>
+                                    <p id="output"></p>
+                                </label>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label text-end">Social Links</label>
-                        <div class="col-sm-9">
-                            <div class="input-group input-group-merge">
-                                <textarea id="social_links" rows="5" class="form-control" required> {{companyBranding.social_links}} </textarea>
-                            </div>
-                        </div>
-                    </div> -->
+                        <div id="colorSettings" data-company-id="{{ companyBranding.id }}"></div>
 
-                    <div class="form-group row">
-                        <label class="col-xl-2 col-form-label text-end" for="logo">Logo</label>
-                        <div class="col-xl-4 drop-zone mt-2">
-                            <label class="upload-label cursor-pointer" for="logo" style="width: 100%; height: 100%;">
-                                Upload Logo <br />
-                                <i class="fa fa-2x fa-image mt-5" id="image_icon"></i>
-                                <input type="file" id="logo" onchange="loadFile(event)" style="display: none;" accept="image/*" />
-                                <br />
-                                <p id="output"></p>
+                    
+                        <div class="form-group mt-2">
+                            <label for="toggle_social_icons" style="font-weight: 0;">
+                                Social Media Icons
                             </label>
+
+                            <input type="checkbox" id="toggle_social_icons" checked style="margin-left: 100px;">
                         </div>
+
+
+
+
+
+
+                        <div class="mt-4 text-end">
+                         
+                            <button type="submit" id="save_branding" class="btn btn-primary">Save</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+               
+                <div class="branding-preview" id="previewPanel" style="display:block;">
+
+                 
+                    <label style="margin-left: 215px;">Email Preview</label>
+
+                    <div id="emailPreviewBox">
+                        
+                
+                        <div id="preview_body"></div>
+
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-md-2 col-form-label text-end">Status</label>
-                        <div class="form-check form-check-inline ml-3" style="width: 140px;align-content: space-evenly;margin-left: 15px;">
-                            <input class="form-check-input" id="status_a" type="radio" name="status" value="A" {% if companyBranding.status == "A" %}checked{% endif %}>
-                            <label class="form-check-label" for="status_a">Active</label>
-                        </div>
-                        <div class="form-check form-check-inline ml-5" style="width: 140px;align-content: space-evenly;">
-                            <input class="form-check-input" id="status_e" type="radio" name="status" value="I" {% if companyBranding.status != "A" %}checked{% endif %}>
-                            <label class="form-check-label" for="status_e">Inactive</label>
-                        </div>
-                    </div>
-
-                    <div class="row justify-content-end">
-                        <div class="text-end">
-                            <button type="reset" class="btn btn-danger btn_width" style="margin-right: 10px;">Cancel</button>
-                            <button  type="submit" class="btn btn-primary" id="save_branding">Save</button>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
+
         </div>
     </div>
 </div>
 
+
 <script>
     $(document).ready(function () {
-        $("#output").html('<img id="img_output" style="width:85%;height:auto" />');
+        $("#output").html('<img id="img_output" style="width:65%;height:auto" />');
         var image = document.getElementById('img_output');
         image.src = "{{ companyBranding.logourl }}";
-        if ("{{ companyBranding.logourl }}"){
-            $("#image_icon").prop("hidden",true);
-        }else{
-            $("#image_icon").prop("hidden",false)
+        if ("{{ companyBranding.logourl }}") {
+            $("#image_icon").prop("hidden", true);
+        } else {
+            $("#image_icon").prop("hidden", false)
         }
 
     });
 
 
+   
     function loadFile(event) {
-        $("#output").html('<img id="img_output" style="width:85%;height:auto" />');
-        var image = document.getElementById('img_output');
-        image.src = URL.createObjectURL(event.target.files[0]);
 
-        $("#image_icon").prop("hidden",true);
+        const file = event.target.files[0];
+      if (!file) return;
 
-    };
+        const newUrl = URL.createObjectURL(file);
+
+    $("#output").html('<img id="img_output" style="width:65%;height:auto" />');
+    var image = document.getElementById('img_output');
+    image.src = URL.createObjectURL(event.target.files[0]);
+    $("#image_icon").prop("hidden", true);
+
+  
+    const previewLogo = document.getElementById("previewLogo");
+    if (previewLogo) {
+        previewLogo.src = newUrl;
+    }
+
+   
+}
+
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        let cssContent = `{{ companyBranding.content|safe }}`;
+    
+
+        const container = document.getElementById("colorSettings");
+        container.innerHTML = "";
+
+        const variableRegex = /--([\w-]+)\s*:\s*([^;]+);/g;
+
+        let match;
+        let colorVariables = [];
+        let fontVariable = null;
+
+        while ((match = variableRegex.exec(cssContent)) !== null) {
+            let name = `--${match[1]}`;
+            let value = match[2].trim();
+
+            if (name === "--font-family") {
+                fontVariable = { name, value };
+            } else {
+                colorVariables.push({ name, value });
+            }
+        }
+
+        
+        colorVariables.forEach(v => {
+
+            if (!isValidCSSColor(v.value)) return;
+
+            const box = document.createElement("div");
+            box.className = "col-12";
+
+            box.innerHTML = `
+            <div class="d-flex align-items-center gap-3 py-2">
+
+                <div style="width:200px;">
+                    ${convertToLabel(v.name)}
+                </div>
+
+                <input type="color"
+                    class="color-input"
+                    value="${toHex(v.value)}"
+                    data-var="${v.name}"
+                    style="width:100px; height:35px; cursor:pointer; background:transparent;">
+
+                <input type="text"
+                    class="form-control color-code"
+                    value="${v.value}"
+                    data-var="${v.name}"
+                    style="width:100px; height:35px;">
+            </div>
+        `;
+
+            container.appendChild(box);
+        });
+       
+    
+        if (fontVariable) {
+            const box = document.createElement("div");
+            box.className = "col-12";
+
+            box.innerHTML = `
+            <div class="d-flex align-items-center gap-3 py-2">
+
+                <div style="width:200px;">
+                    Font Family
+                </div>
+
+                <input type="text"
+                    class="form-control font-input"
+                    data-var="${fontVariable.name}"
+                    value='${fontVariable.value}'
+                    style="width:235px; height:35px;">
+            </div>
+        `;
+
+            container.appendChild(box);
+        }
+        
+        
+
+     
+        container.addEventListener("input", function (e) {
+            if (e.target.classList.contains("color-input")) {
+                let variable = e.target.dataset.var;
+                let hex = e.target.value;
+
+                let codeInput = container.querySelector(`.color-code[data-var="${variable}"]`);
+                if (codeInput) codeInput.value = hex;
+            }
+        });
+
+        container.addEventListener("keyup", function (e) {
+            if (e.target.classList.contains("color-code")) {
+
+                let variable = e.target.dataset.var;
+                let value = e.target.value.trim();
+
+                let picker = container.querySelector(`.color-input[data-var="${variable}"]`);
+
+                if (picker && isValidCSSColor(value)) {
+                    picker.value = toHex(value);
+                }
+            }
+        });
+
+    });
+
+   
+    function convertToLabel(variableName) {
+        switch (variableName) {
+            case "--brand-primary-color": return "Primary Color";
+            case "--brand-secondary-color": return "Secondary Color";
+            case "--brand-btn-primary-color": return "Primary Brand Button";
+            case "--brand-btn-primary-hover-color": return "Button Brand Hover";
+            case "--button-primary": return "Primary Button";
+            case "--button-secondary": return "Secondary Button";
+            default:
+                return variableName.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+        }
+    }
+
+    function isValidCSSColor(value) {
+        let s = new Option().style;
+        s.color = value;
+        return s.color !== "";
+    }
+
+    function toHex(color) {
+        let ctx = document.createElement("canvas").getContext("2d");
+        ctx.fillStyle = color;
+        return ctx.fillStyle;
+    }
+
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    let cssContent = `{{ companyBranding.content|safe }}`;
+
+    const variableRegex = /--([\w-]+)\s*:\s*([^;]+);/g;
+    let match;
+
+    while ((match = variableRegex.exec(cssContent)) !== null) {
+        let name = `--${match[1]}`;
+        let value = match[2].replace(/;/g, '').trim();
+        document.documentElement.style.setProperty(name, value);
+    }
+
+
+});
+
+
+</script>
+
+
+
+
+
+
 <script src="{% static 'js/branding.js' %}"></script>

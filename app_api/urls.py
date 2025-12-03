@@ -61,7 +61,9 @@ urlpatterns = [
     path('check-jd-candidate-registration',views.checkJdCandidateRegistration),
     path('download-upload-report',views.downloadUploadReport),
     path("get_paperid",views.get_paperid),
-    path("profile-filters",views.filter_profiles_api)
+    path("profile-filters",views.filter_profiles_api),
+    path('get-default-email-template',views.getDefaultEmailTemplate),
+
 
 
 ]

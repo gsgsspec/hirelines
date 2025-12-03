@@ -4,6 +4,7 @@ import json
 import logging
 import time
 import threading
+import re
 from urllib.parse import urljoin
 
 import requests
@@ -23,7 +24,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB
@@ -1761,3 +1762,110 @@ def filter_profiles_api(request):
         })
 
     return JsonResponse({"statusCode": 0, "data": final_output})
+
+
+
+
+
+
+
+
+
+
+@csrf_exempt
+@api_view(['POST'])
+def getDefaultEmailTemplate(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+
+    try:
+        user = request.user
+        company_id = getCompanyId(user)
+
+      
+        try:
+            branding = Branding.objects.get(companyid=company_id)
+        except Branding.DoesNotExist:
+            branding = Branding.objects.get(companyid=0)
+
+    
+        email_temp = Email_template.objects.filter(company_id=company_id).first()
+        if not email_temp:
+            email_temp = Email_template.objects.filter(company_id=0).first()
+
+  
+        try:
+            company = Company.objects.get(id=company_id)
+        except Company.DoesNotExist:
+            company = Company.objects.get(id=0)
+
+        company_name = company.name
+        company_website = company.website
+        company_email = company.email
+
+      
+        social_links = {}
+        social_pattern = re.compile(r'(Linkedin|Facebook|Youtube|Twitter)\s*:\s*([^,]+)', re.IGNORECASE)
+
+        for platform, url in social_pattern.findall(branding.sociallinks or ""):
+            social_links[platform.capitalize()] = url.strip()
+
+       
+        media_path = f"{getConfig()['DOMAIN']['acert']}/static/lib/img/social_links_logos/"
+        print("media_path",media_path)
+
+        footer_icon = """
+            <a style="text-decoration:none; margin:0 5px;" href="{url}" target="_blank">
+                <img style="width:34px; padding:3px;" src="{icon}" alt="{platform}" />
+            </a>
+        """
+
+        footer_div_list = []
+
+        for platform in ["Linkedin", "Facebook", "Youtube", "Twitter"]:
+            url = social_links.get(platform)
+            if url:
+                icon_url = f"{media_path}{platform}.png"
+                footer_div_list.append(
+                    footer_icon.format(url=url, icon=icon_url, platform=platform)
+                )
+
+        footer_div_html = "".join(footer_div_list)
+
+     
+        email_body = email_temp.email_body.replace("[footer_div]", footer_div_html)
+
+       
+        response['data'] = {
+            "id": email_temp.id,
+            "template_name": email_temp.template_name,
+            "paper_type": email_temp.paper_type,
+            "email_subject": email_temp.email_subject,
+            "email_body": email_body,
+            "template_heading": email_temp.template_heading,
+            "sender_email": email_temp.sender_email,
+            "sender_label": email_temp.sender_label,
+            "email_attachment": email_temp.email_attachment or "",
+            "email_attachment_name": email_temp.email_attachment_name or "",
+
+            "branding": {
+                "content": branding.content or "",
+                "logourl": str(branding.logourl) if branding.logourl else "",
+                "social_links": social_links,
+            },
+
+            "company_name": company_name,
+            "company_website": company_website,
+            "company_email": company_email
+        }
+       
+
+        response['statusCode'] = 0
+
+    except Exception as e:
+        response['error'] = str(e)
+
+    return JsonResponse(response)
