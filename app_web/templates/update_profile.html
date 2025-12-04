@@ -248,19 +248,25 @@
             <div class="resume-details-section">
 
                 <div class="tabsContainer">
-                    <span id="Personal" class="custm-tab p-clr activeTab shadow"
+                    <span id="Personal" class="custm-tab p-clr activeTab shadow" data-target="resumeview-personal"
                         onclick="tabSwitch(this.id)">Personal</span>
-                    <span id="Education" class="custm-tab p-clr " onclick="tabSwitch(this.id)">Education</span>
-                    <span id="Experience" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Experience</span>
-                    <span id="Skills" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Skills</span>
-                    <span id="Projects" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Projects</span>
-                    <span id="Awards" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Awards</span>
-                    <span id="Certifications" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Certifiations</span>
+                    <span id="Education" class="custm-tab p-clr " data-target="resumeview-Education"
+                        onclick="tabSwitch(this.id)">Education</span>
+                    <span id="Experience" class="custm-tab p-clr" data-target="resumeview-Experience"
+                        onclick="tabSwitch(this.id)">Experience</span>
+                    <span id="Skills" class="custm-tab p-clr" data-target="resumeview-skills"
+                        onclick="tabSwitch(this.id)">Skills</span>
+                    <span id="Projects" class="custm-tab p-clr" data-target="resumeview-Projects"
+                        onclick="tabSwitch(this.id)">Projects</span>
+                    <span id="Awards" class="custm-tab p-clr" data-target="resumeview-Awards"
+                        onclick="tabSwitch(this.id)">Awards</span>
+                    <span id="Certifications" class="custm-tab p-clr" data-target="resumeview-Certificates"
+                        onclick="tabSwitch(this.id)">Certifiations</span>
                 </div>
                 <div class="tabsDetailsContainer">
                     <div id="PersonalSection" class="tab-section">
                         <div class="card-header d-flex align-items-center justify-content-between">
-                            <h5 class="mb-0">Personal</h5>
+                            <h5 class="mb-0 p-clr">Personal</h5>
                         </div>
                         <div class="card-body">
                             <form id="Person-detais">
@@ -375,7 +381,7 @@
 
                     <div id="ProjectsSection" class="tab-section" style="display:none;">
 
-                        <h5 class="mb-0 ml-1 pb-3">Projects</h5>
+                        <h5 class="mb-0 ml-1 pb-3 p-clr">Projects</h5>
                         <div
                             style="max-height: 60vh; overflow-y: auto; border: 1px solid #ddd; position: relative; margin-bottom: 10px;">
 
@@ -416,7 +422,7 @@
                     </div>
 
                     <div id="ExperienceSection" class="tab-section" style="display:none;">
-                        <h5 class="mb-0 ml-1 pb-3">Experience</h5>
+                        <h5 class="mb-0 ml-1 pb-3 p-clr">Experience</h5>
 
 
                         <div
@@ -455,7 +461,7 @@
 
                     </div>
                     <div id="EducationSection" class="tab-section" style="display:none;">
-                        <h5 class="mb-0 ml-1 pb-3">Education</h5>
+                        <h5 class="mb-0 ml-1 pb-3 p-clr">Education</h5>
 
 
                         <div
@@ -496,7 +502,7 @@
 
                     </div>
                     <div id="AwardsSection" class="tab-section" style="display:none;">
-                        <h5 class="mb-0 ml-1 pb-3">Awards</h5>
+                        <h5 class="mb-0 ml-1 pb-3 p-clr">Awards</h5>
 
 
                         <div
@@ -507,8 +513,8 @@
                                     <tr>
                                         <th class="sort-th"></th>
                                         <th>Name</th>
-
                                         <th>Year</th>
+                                        <th></th>
 
                                     </tr>
                                 </thead>
@@ -533,7 +539,7 @@
 
                     </div>
                     <div id="CertificationsSection" class="tab-section" style="display:none;">
-                        <h5 class="mb-0 ml-1 pb-3">Certifications</h5>
+                        <h5 class="mb-0 ml-1 pb-3 p-clr">Certifications</h5>
 
 
                         <div
@@ -544,8 +550,8 @@
                                     <tr>
                                         <th class="sort-th"></th>
                                         <th>Certification Name</th>
-
                                         <th>Year</th>
+                                        <th></th>
 
                                     </tr>
                                 </thead>
@@ -584,7 +590,7 @@
 
 
                     <div id="SkillsSection" class="tab-section" style="display:none;">
-                        <h5 class="mb-0 ml-1 pb-3">Skills</h5>
+                        <h5 class="mb-0 ml-1 pb-3 p-clr">Skills</h5>
 
                         <div class="card-body">
                             <div class="row mb-3">
