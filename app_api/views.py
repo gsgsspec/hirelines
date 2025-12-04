@@ -28,7 +28,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
-    updateCandidateInfoDB, updateDashboardDisplayFlagDB, saveProfileDetailsDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB
+    updateCandidateInfoDB, updateDashboardDisplayFlagDB, saveProfileDetailsDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatessDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -2019,6 +2019,102 @@ def updateProfileEducation(request):
 
     except Exception as e:
         response['data'] = 'Error in updating Profile Education Details'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateProfileExperience(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            updateProfileExperienceDB(dataObjs)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updating Profile Experience Details'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateProfileProjects(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            updateProfileProjectsDB(dataObjs)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updating Profile Projects Details'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateProfileAwards(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            updateProfileAwardsDB(dataObjs)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updating Profile Awards Details'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateProfileCertificates(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            updateProfileCertificatessDB(dataObjs)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updating Profile Certificate Details'
         response['error'] = str(e)
         raise
     

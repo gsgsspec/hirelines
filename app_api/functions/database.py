@@ -8,7 +8,7 @@ from app_api.functions.enc_dec import decrypt_code
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
-    IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills
+    IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates
 
 
 def addCompanyDataDB(dataObjs):
@@ -920,13 +920,103 @@ def updateProfileEducationDB(dataObjs):
             ProfileEducation.objects.create(
                 profileid=profile_id,
                 sequence = index,
-                course = education["course_name"],
-                institute = education["institute_name"],
-                yearfrom = education["start_year"],
-                yearto = education["end_year"],
+                course = education["coursename"],
+                institute = education["institutename"],
+                yearfrom = education["yearfrom"],
+                yearto = education["yearto"],
                 grade = education["grade"]
             )
 
+    except Exception as e:
+        raise
+
+
+def updateProfileExperienceDB(dataObjs):
+    try:
+        
+        profile_id = dataObjs["profile_id"]
+        profile_experience = dataObjs["data"]
+
+        ProfileExperience.objects.filter(profileid=profile_id).delete()
+
+        for index,experience in enumerate(profile_experience, start=1):
+
+            ProfileExperience.objects.create(
+                profileid=profile_id,
+                sequence = index,
+                jobtitle = experience["jobtitle"],
+                company = experience["companyname"],
+                yearfrom = experience["yearfrom"],
+                yearto = experience["yearto"],
+            )
+
+
+    except Exception as e:
+        raise
+
+
+def updateProfileProjectsDB(dataObjs):
+    try:
+
+        profile_id = dataObjs["profile_id"]
+        profile_projects = dataObjs["data"]
+
+        ProfileProjects.objects.filter(profileid=profile_id).delete()
+
+        for index,project in enumerate(profile_projects, start=1):
+
+            ProfileProjects.objects.create(
+                profileid=profile_id,
+                sequence = index,
+                projectname = project["projectname"],
+                clientname = project["clientname"],
+                roleplayed = project["roleplayed"],
+                skillsused = project["skillsused"],
+                yearsfrom = project["yearfrom"],
+                yearsto = project["yearto"],
+            )
+
+    except Exception as e:
+        raise
+
+
+def updateProfileAwardsDB(dataObjs):
+    try:
+
+        profile_id = dataObjs["profile_id"]
+        profile_awards = dataObjs["data"]
+
+        ProfileAwards.objects.filter(profileid=profile_id).delete()
+
+        for index,award in enumerate(profile_awards, start=1):
+
+            ProfileAwards.objects.create(
+                profileid=profile_id,
+                sequence = index,
+                awardname = award["awardname"],
+                year = award["year"]
+            )
+
+    except Exception as e:
+        raise
+
+
+def updateProfileCertificatessDB(dataObjs):
+    try:
+
+        profile_id = dataObjs["profile_id"]
+        profile_certificates = dataObjs["data"]
+
+        ProfileCertificates.objects.filter(profileid=profile_id).delete()
+
+        for index,certificate in enumerate(profile_certificates, start=1):
+
+            ProfileCertificates.objects.create(
+                profileid=profile_id,
+                sequence = index,
+                certname = certificate["cert_name"],
+                year = certificate["year"]
+            )
 
     except Exception as e:
         raise
