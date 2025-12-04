@@ -68,7 +68,7 @@ urlpatterns = [
     path("add-resume-profile",views.addResumeProfile),
     path("save-profile",views.saveProfileDetails),
     path("update-profile",views.updateProfileDetails),
-    path("update-education",views.saveProfileDetails),
+    path("update-education",views.updateProfileEducation),
     path("update-experience",views.saveProfileDetails),
     path("update-projects",views.saveProfileDetails),
     path("update-awards",views.saveProfileDetails),
