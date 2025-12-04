@@ -1,0 +1,910 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'lib/portal/css/profile_view.css' %}" />
+
+<div class="candidates-loader-wrapper" id="candidates-loader" style="background-color: rgba(255, 255, 255, 1);">
+    <div class="candidates-loader">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+            <path fill="#274699"
+                d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z" />
+        </svg>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Add Profile</h4>
+
+    </div>
+    <div class="card-body">
+        <div class="resume-section">
+
+            <div class="resume-view-section" id="resumeScroll">
+                <div class="card">
+
+
+
+                    <div class="section-wrapper">
+
+                        <div class="section-title" id="resumeview-personal" style="display:flex; align-items:center;">
+                            <div class="icon-box">
+                                <i class="fas fa-user"></i>
+                            </div>
+
+                            <span>Personal Details</span>
+
+                        </div>
+
+                        <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 15%;"> <strong> Title</strong></td>
+                                        <td>:&ensp;{{profile_data.personal.title}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> First Name </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.firstname}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> Middle Name </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.middlename}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> Last Name </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.lastname}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td> <strong> Email </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.email}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> Mobile </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.mobile}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> Linkedin </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.linkedin}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> Facebook </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.facebook}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> Passport </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.passportnum}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> Date of Birth </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.dob}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong> Father Name </strong></td>
+                                        <td>:&ensp;{{profile_data.personal.fathername}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td> <strong>Native of</strong></td>
+                                        <td>:&ensp;{{profile_data.personal.nativeof}}</td>
+                                    </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="section-title">
+
+                        </div>
+
+
+                        <div class="section-title" id="resumeview-Education">
+                            <div class="icon-box">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>Education
+                        </div>
+
+                        <div class="table-responsive text-wrap" style="padding-left: 25px;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for edu in profile_data.education %}
+
+                                    <tr>
+                                        <td>
+                                            {{ edu.course }} from {{ edu.institute }}
+                                            {{ edu.yearfrom }} - {{ edu.yearto }}
+                                            — Grade - {{ edu.grade }}
+                                        </td>
+                                    </tr>
+
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="section-title" id="resumeview-Experience">
+                            <div class="icon-box">
+                                <i class="fas fa-briefcase"></i>
+                            </div>Experience
+                        </div>
+                        <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for exp in profile_data.experience %}
+
+                                    <tr>
+                                        <td>
+                                            {{ exp.jobtitle }} at {{ exp.company }}
+                                            {{ exp.yearfrom }} - {{ exp.yearto }}
+                                        </td>
+                                    </tr>
+
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="section-title" id="resumeview-skills">
+                            <div class="icon-box">
+                                <i class="fas fa-tools"></i>
+                            </div>Skills
+                        </div>
+                        <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for exp in profile_data.skills %}
+
+                                    <tr>
+                                        <td>
+                                            {{ exp.skills }}
+
+                                        </td>
+                                    </tr>
+
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="section-title" id="resumeview-Projects">
+                            <div class="icon-box">
+                                <i class="fas fa-folder-open"></i>
+                            </div>Projects
+                        </div>
+                        <div class="table-responsive text-wrap" style="padding-left: 25px;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for p in profile_data.projects %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ p.projectname }}</strong>
+                                            at {{ p.clientname }}
+                                            as {{ p.roleplayed }}
+                                            using skills: {{ p.skillsused }}
+                                            during ({{ p.yearsfrom }} to {{ p.yearsto }})
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="section-title" id="resumeview-Certificates">
+                            <div class="icon-box">
+                                <i class="fas fa-certificate"></i>
+                            </div>Certificate
+                        </div>
+                        <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for c in profile_data.certificates %}
+                                    <tr>
+                                        <td>
+                                            {{ c.certname }}
+                                            — {{ c.year }}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td>No certificates added</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="section-title" id="resumeview-Awards">
+                            <div class="icon-box">
+                                <i class="fas fa-award"></i>
+                            </div>Awards
+                        </div>
+                        <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for a in profile_data.awards %}
+                                    <tr>
+                                        <td>
+                                            {{ a.awardname }}
+                                            in {{ a.year }}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td>No awards added</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="resume-details-section">
+
+                <div class="tabsContainer">
+                    <span id="Personal" class="custm-tab p-clr activeTab shadow"
+                        onclick="tabSwitch(this.id)">Personal</span>
+                    <span id="Education" class="custm-tab p-clr " onclick="tabSwitch(this.id)">Education</span>
+                    <span id="Experience" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Experience</span>
+                    <span id="Skills" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Skills</span>
+                    <span id="Projects" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Projects</span>
+                    <span id="Awards" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Awards</span>
+                    <span id="Certifications" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Certifiations</span>
+                </div>
+                <div class="tabsDetailsContainer">
+                    <div id="PersonalSection" class="tab-section">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <h5 class="mb-0">Personal</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="Person-detais">
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Title</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" maxlength="100" id="Title"
+                                            placeholder=" " value="{{profile_data.personal.title}}" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">First Name</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group input-group-merge">
+                                            <input type="text" id="FirstName" maxlength="100" class="form-control"
+                                                placeholder=" " value="{{profile_data.personal.firstname}}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Middle Name</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group input-group-merge">
+                                            <input type="text" id="MiddleName" maxlength="100" class="form-control"
+                                                placeholder=" " value="{{profile_data.personal.middlename}}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Last Name</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group input-group-merge">
+                                            <input type="text" id="LastName" maxlength="100" class="form-control"
+                                                placeholder=" " value="{{profile_data.personal.lastname}}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Email</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group input-group-merge">
+                                            <input type="email" id="Email" class="form-control" maxlength="100"
+                                                placeholder=" " value="{{profile_data.personal.email}}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Mobile</label>
+                                    <div class="col-sm-10">
+                                        <input type="number" id="Mobile" class="form-control phone-mask" placeholder=" "
+                                            value="{{profile_data.personal.mobile}}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Linkedin</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="Linkedin" class="form-control phone-mask" maxlength="100"
+                                            placeholder="Linkedin URL" value="{{profile_data.personal.linkedin}}">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Facebook</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="Facebook" class="form-control phone-mask" maxlength="100"
+                                            placeholder="Facebook URL" value="{{profile_data.personal.facebook}}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Passport</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="Passport" class="form-control phone-mask" maxlength="100"
+                                            placeholder="XXXXXXX" value="{{profile_data.personal.passportnum}}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Date of birth</label>
+                                    <div class="col-sm-10">
+                                        <input type="date" id="DateOfBirth" class="form-control" maxlength="100"
+                                            placeholder="DD/MM/YYYY" value="{{profile_data.personal.dob}}">
+
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Father Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="FatherName" class="form-control phone-mask"
+                                            maxlength="100" placeholder=" "
+                                            value="{{profile_data.personal.fathername}}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">Native Of</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="NativeOf" class="form-control phone-mask" maxlength="100"
+                                            placeholder=" " value="{{profile_data.personal.nativeof}}">
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="row justify-content-end">
+                                    <div class="col-sm-10 text-end">
+                                        <button id="update-data" type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="ProjectsSection" class="tab-section" style="display:none;">
+
+                        <h5 class="mb-0 ml-1 pb-3">Projects</h5>
+                        <div
+                            style="max-height: 60vh; overflow-y: auto; border: 1px solid #ddd; position: relative; margin-bottom: 10px;">
+
+                            <table class="table table-bordered mb-0  dynamic-table" id="projectTable">
+                                <thead>
+                                    <tr>
+                                        <th class="sort-th"></th>
+                                        <th>Name</th>
+                                        <th>Client</th>
+                                        <th>Role</th>
+                                        <th>Tech Stack</th>
+                                        <th>Year From</th>
+                                        <th>Year To</th>
+                                        <th></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- rows will be added here -->
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <!-- Add Row -->
+                        <button class="btn btn-primary add-row-btn" data-target="#projectTable">Add Row</button>
+
+
+                        <!-- Save -->
+                        <div class="row justify-content-end mt-3">
+                            <div class="col-sm-10 text-end">
+
+                                <button id="update-data" class="btn btn-primary save-table-btn"
+                                    data-target="#projectTable" data-url="/api/update-projects">Save</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="ExperienceSection" class="tab-section" style="display:none;">
+                        <h5 class="mb-0 ml-1 pb-3">Experience</h5>
+
+
+                        <div
+                            style="max-height: 60vh; overflow-y: auto; border: 1px solid #ddd; position: relative; margin-bottom: 10px;">
+
+                            <table class="table table-bordered mb-0  dynamic-table" id="ExperienceTable">
+                                <thead>
+                                    <tr>
+                                        <th class="sort-th"></th>
+                                        <th>Title</th>
+                                        <th>Company</th>
+                                        <th>From Year</th>
+                                        <th>To Year</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- rows will be added here -->
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <!-- Add Row -->
+                        <button class="btn btn-primary add-row-btn" data-target="#ExperienceTable">Add Row</button>
+
+
+                        <!-- Save -->
+                        <div class="row justify-content-end mt-3">
+                            <div class="col-sm-10 text-end">
+
+                                <button id="update-data" class="btn btn-primary save-table-btn"
+                                    data-target="#ExperienceTable" data-url="/api/update-experience">Save</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="EducationSection" class="tab-section" style="display:none;">
+                        <h5 class="mb-0 ml-1 pb-3">Education</h5>
+
+
+                        <div
+                            style="max-height: 60vh; overflow-y: auto; border: 1px solid #ddd; position: relative;margin-bottom: 10px;">
+
+                            <table class="table table-bordered mb-0  dynamic-table" id="EducationTable">
+                                <thead>
+                                    <tr>
+                                        <th class="sort-th"></th>
+                                        <th>Course</th>
+                                        <th>Institute</th>
+                                        <th>From Year</th>
+                                        <th>To Year</th>
+                                        <th>Grade</th>
+                                        <th></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- rows will be added here -->
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <!-- Add Row -->
+                        <button class="btn btn-primary add-row-btn" data-target="#EducationTable">Add Row</button>
+
+
+                        <!-- Save -->
+                        <div class="row justify-content-end mt-3">
+                            <div class="col-sm-10 text-end">
+
+                                <button id="update-data" class="btn btn-primary save-table-btn"
+                                    data-target="#EducationTable" data-url="/api/update-education">Save</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="AwardsSection" class="tab-section" style="display:none;">
+                        <h5 class="mb-0 ml-1 pb-3">Awards</h5>
+
+
+                        <div
+                            style="max-height: 60vh; overflow-y: auto; border: 1px solid #ddd; position: relative;margin-bottom: 10px;">
+
+                            <table class="table table-bordered mb-0    dynamic-table" id="AwardsTable">
+                                <thead>
+                                    <tr>
+                                        <th class="sort-th"></th>
+                                        <th>Name</th>
+
+                                        <th>Year</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- rows will be added here -->
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <!-- Add Row -->
+                        <button class="btn btn-primary add-row-btn" data-target="#AwardsTable">Add Row</button>
+
+
+                        <!-- Save -->
+                        <div class="row justify-content-end mt-3">
+                            <div class="col-sm-10 text-end">
+                                <button id="update-data" class="btn btn-primary save-table-btn"
+                                    data-target="#AwardsTable" data-url="/api/update-awards">Save</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="CertificationsSection" class="tab-section" style="display:none;">
+                        <h5 class="mb-0 ml-1 pb-3">Certifications</h5>
+
+
+                        <div
+                            style="max-height: 60vh; overflow-y: auto; border: 1px solid #ddd; position: relative;margin-bottom: 10px;">
+
+                            <table class="table table-bordered mb-0    dynamic-table" id="CertificationsTable">
+                                <thead>
+                                    <tr>
+                                        <th class="sort-th"></th>
+                                        <th>Certification Name</th>
+
+                                        <th>Year</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- rows will be added here -->
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <!-- Add Row -->
+                        <button class="btn btn-primary add-row-btn" data-target="#CertificationsTable">Add Row</button>
+
+
+                        <!-- Save -->
+                        <div class="row justify-content-end mt-3">
+                            <div class="col-sm-10 text-end">
+                                <button id="update-data" class="btn btn-primary save-table-btn"
+                                    data-target="#CertificationsTable"
+                                    data-url="/api/update-certifications">Save</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <div id="SkillsSection" class="tab-section" style="display:none;">
+                        <h5 class="mb-0 ml-1 pb-3">Skills</h5>
+
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-sm-12">
+                                    <div class="input-group">
+                                        <input type="text" id="skillInput" class="form-control"
+                                            placeholder="Type a skill (e.g. Python, Java)" maxlength="50">
+                                        <button class="btn btn-outline-primary" type="button"
+                                            id="addSkillBtn">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-12">
+                                    <div id="skillsContainer" class="d-flex flex-wrap gap-2 p-3 border rounded bg-light"
+                                        style="min-height: 60px;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-end mt-3">
+                                <div class="col-sm-10 text-end">
+                                    <button id="save-skills-btn" class="btn btn-primary"
+                                        data-url="/api/save-skills">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--                    
+                    <div id="SkillsSection" class="tab-section" style="display:none;">
+                        <h5 class="mb-0 ml-1 pb-3">Skills</h5>
+                        
+                        
+                        Skills form here...
+                        
+                    
+                    
+                    </div> -->
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+</div>
+
+
+<style>
+    #suggestion-box {
+        background-color: white;
+        border: 1px solid rgba(0, 0, 0, .125);
+        border-radius: 0 0 0.25rem 0.25rem;
+    }
+
+    .suggestion-item {
+        cursor: pointer;
+        padding: 10px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+        color: #495057;
+        background-color: #fff;
+        transition: all 0.2s;
+    }
+
+    .suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .suggestion-item:hover,
+    .suggestion-item.active-suggestion {
+        background-color: var(--light-primary-color, #e9ecef);
+        /* Fallback if var not defined */
+        color: var(--primary-color, #007bff);
+        font-weight: 500;
+    }
+
+    .custm-tab {
+        height: min-content;
+        border: 0.9px solid lightgray;
+        border-radius: 0.5rem;
+        padding: 0.3rem 0.5rem;
+        cursor: pointer;
+        width: 107px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+    }
+
+    .activeTab {
+        background-color: var(--light-primary-color);
+        font-weight: 700;
+    }
+
+
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 28px 0 14px 0;
+        font-weight: 600;
+        font-size: 17px;
+        color: var(--primary-color);
+    }
+
+    .section-title .icon-box {
+        width: 34px;
+        height: 34px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .section-title .icon-box i {
+        color: white;
+        font-size: 16px;
+    }
+
+
+    @media (max-width:980px) {
+        .container {
+            padding: 14px
+        }
+
+
+    }
+
+    @media (max-width:620px) {
+        .tabsContainer {
+            width: 100%
+        }
+    }
+
+    .table,
+    .table td,
+    .table th {
+        border: none !important;
+    }
+
+    .table tbody tr {
+        border: none !important;
+    }
+
+    .table-responsive {
+        border: none !important;
+    }
+
+    /* Vertical timeline connector for section icons */
+    .section-wrapper {
+        position: relative;
+    }
+
+    .section-wrapper::before {
+        content: "";
+        position: absolute;
+        left: 17px;
+        /* PERFECT center of your 34px icon-box */
+        top: 48px;
+        /* starts just below the first icon */
+        bottom: 0;
+        /* connects all sections */
+        width: 2px;
+        background: #c4d1e8;
+        /* your light blue line */
+    }
+
+
+
+    .section-title .icon-box {
+        position: relative;
+        z-index: 2;
+    }
+
+
+
+    /* Skills Bubble Styling */
+    .skill-bubble {
+        background-color: white;
+        color: #333;
+        border: 1px solid #ced4da;
+        border-radius: 20px;
+        padding: 8px 15px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s;
+        margin-right: 8px;
+        /* Spacing if gap-2 isn't supported by older bootstrap */
+        margin-bottom: 8px;
+    }
+
+    .skill-bubble:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .skill-text {
+        font-weight: 500;
+        margin-right: 10px;
+    }
+
+    .delete-skill-icon {
+        color: #dc3545;
+        /* Bootstrap danger color */
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 1;
+        padding: 0 4px;
+    }
+
+    .delete-skill-icon:hover {
+        color: #a71d2a;
+        background-color: rgba(220, 53, 69, 0.1);
+        border-radius: 50%;
+    }
+
+    .tabsDetailsContainer {
+        padding: 20px;
+    }
+
+    .table-active {
+        background-color: var(--light-primary-color) !important;
+    }
+
+    tbody tr:hover {
+        cursor: pointer;
+    }
+
+    .tabsContainer {
+        /* height: 50px; */
+        /* border: 0.9px solid #d3d3d369; */
+        border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+        /* width: 240px; */
+        padding: 0.5rem;
+        display: flex;
+
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .custm-tab {
+        height: min-content;
+        border: 0.9px solid lightgray;
+        border-radius: 0.5rem;
+        padding: 0.3rem 0.6rem;
+        cursor: pointer;
+        width: 107px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        margin: 10px;
+    }
+
+    .activeTab {
+        background-color: var(--light-primary-color);
+        font-weight: 700;
+    }
+
+    .resume-view-section {
+        display: flex;
+        flex-direction: column;
+        width: 40%;
+        height: 90vh;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 25px;
+    }
+
+    .resume-details-section {
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+    }
+
+    .resume-section {
+        display: flex;
+        width: 100%;
+        gap: 20px;
+    }
+
+    .tab-section {
+        width: 100%;
+    }
+
+    .delete-row-plain-icon {
+        color: red;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 0.8em;
+        /* Makes the X slightly larger */
+        padding: 0 5px;
+        /* Adds a bit of space around the X */
+        display: inline-block;
+        /* Helps with padding and clickable area */
+    }
+
+    .ghost {
+        opacity: 0.4;
+        /* background: var(--light-primary-color) !important; */
+    }
+
+    .drag-handle {
+        cursor: grab;
+
+    }
+
+    .sort-th {
+        padding: 5px;
+    }
+</style>
+{{ profile_data|json_script:"profileData" }}
+<script src="{% static 'js/profile.js' %}"></script>

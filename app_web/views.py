@@ -1071,10 +1071,9 @@ def updateProfileDetailsPage(request, pid):
         menuItemList = get_functions_service(user_role)
 
         profile_data = getProfileData(pid, user_data)
-
         print("profile_data",profile_data)
         
-        return render(request, "portal_index.html", {"template_name": 'update_profile.html','menuItemList':menuItemList})
+        return render(request, "portal_index.html", {"template_name": 'update_profile.html','menuItemList':menuItemList,"profile_data":profile_data})
     
     except Exception as e:
         raise
