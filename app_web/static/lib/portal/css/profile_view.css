@@ -178,10 +178,10 @@
 .table-active {
     background-color: var(--light-primary-color) !important;
 }
-
+/* 
 tbody tr:hover {
     cursor: pointer;
-}
+} */
 
 .tabsContainer {
     /* height: 50px; */

@@ -1001,7 +1001,7 @@ def updateProfileAwardsDB(dataObjs):
         raise
 
 
-def updateProfileCertificatessDB(dataObjs):
+def updateProfileCertificatesDB(dataObjs):
     try:
 
         profile_id = dataObjs["profile_id"]
@@ -1017,6 +1017,26 @@ def updateProfileCertificatessDB(dataObjs):
                 certname = certificate["cert_name"],
                 year = certificate["year"]
             )
+
+    except Exception as e:
+        raise
+
+
+def updateProfileSkillsDB(dataObjs):
+    try:
+
+        profile_id = dataObjs["profile_id"]
+        profile_skills = dataObjs["skills"]
+
+        ProfileSkills.objects.filter(profileid=profile_id).delete()
+
+        skills_str = ",".join(profile_skills)
+
+        ProfileSkills.objects.create(
+            profileid=profile_id,
+            primaryskills=skills_str
+        )
+
 
     except Exception as e:
         raise

@@ -73,6 +73,7 @@ urlpatterns = [
     path("update-projects",views.updateProfileProjects),
     path("update-awards",views.updateProfileAwards),
     path("update-certifications",views.updateProfileCertificates),
+    path("update-skills",views.updateProfileSkills),
     path("get_paperid",views.get_paperid),
     path("profile-filters",views.filter_profiles_api),
     path('get-default-email-template',views.getDefaultEmailTemplate),

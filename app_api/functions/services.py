@@ -3386,8 +3386,11 @@ def getProfileData(pid,user_data):
             "experience":None,
             "projects":None,
             "awards":None,
+            "certificates":None,
+            "skills":None
         }
 
+        # Profile details
         personal_details = {
             "title": profile.title or "",
             "firstname": profile.firstname or "",
@@ -3403,6 +3406,7 @@ def getProfileData(pid,user_data):
             "status":profile.status
         }    
 
+        # Education
         education_data = ProfileEducation.objects.filter(profileid=profile.id).order_by("sequence")
 
         profile_education = []
@@ -3419,6 +3423,7 @@ def getProfileData(pid,user_data):
                     "grade": education.grade or "",
                 })
 
+        # Experience
         experience_data = ProfileExperience.objects.filter(profileid=profile.id).order_by("sequence")
 
         profile_experience = []
@@ -3434,6 +3439,7 @@ def getProfileData(pid,user_data):
                     "yearto": experience.yearto or ""
                 })
 
+        # Projects
         projects_data = ProfileProjects.objects.filter(profileid=profile.id).order_by("sequence")
 
         profile_projects = []
@@ -3451,6 +3457,7 @@ def getProfileData(pid,user_data):
                     "yearsto": project.yearsto or "",
                 })
         
+        # Awards
         awards_data = ProfileAwards.objects.filter(profileid=profile.id).order_by("sequence")
 
         profile_awards = []
@@ -3463,12 +3470,35 @@ def getProfileData(pid,user_data):
                     "awardname": award.awardname or "",
                     "year": award.year or "",
                 })
+
+        # Cerificates
+        certificates_data = ProfileCertificates.objects.filter(profileid=profile.id).order_by("sequence")
+
+        profile_certificates = []
+
+        if certificates_data:
+
+            for certificate in certificates_data:
+
+                profile_certificates.append({
+                    "certname": certificate.certname or "",
+                    "year": certificate.year or "",
+                })
+
+        skills_data = ProfileSkills.objects.filter(profileid=profile.id).last()
+
+        profile_skills = []
+
+        if skills_data and skills_data.primaryskills:
+            profile_skills = skills_data.primaryskills.split(",")
         
         profile_data["personal"] = personal_details    
         profile_data["experience"] = profile_experience
         profile_data["education"] = profile_education    
         profile_data["projects"] = profile_projects
         profile_data["awards"] = profile_awards
+        profile_data["certificates"] = profile_certificates
+        profile_data["skills"] = profile_skills 
 
         return profile_data
         

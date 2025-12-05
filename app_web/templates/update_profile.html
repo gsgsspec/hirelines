@@ -13,7 +13,7 @@
 
 <div class="card">
     <div class="card-title-table">
-        <h4 class="card-header">Add Profile</h4>
+        <h4 class="card-header">Profile</h4>
 
     </div>
     <div class="card-body">
@@ -152,19 +152,15 @@
                                 <i class="fas fa-tools"></i>
                             </div>Skills
                         </div>
-                        <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <div class="table-responsive text-wrap" style="padding-left: 25px;">
                             <table class="table table-bordered">
                                 <tbody>
-                                    {% for exp in profile_data.skills %}
-
                                     <tr>
                                         <td>
-                                            {{ exp.skills }}
-
+                                            {{ profile_data.skills|join:", " }}
                                         </td>
                                     </tr>
 
-                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -192,29 +188,7 @@
                             </table>
                         </div>
 
-                        <div class="section-title" id="resumeview-Certificates">
-                            <div class="icon-box">
-                                <i class="fas fa-certificate"></i>
-                            </div>Certificate
-                        </div>
-                        <div class="table-responsive text-nowrap" style="padding-left: 25px;">
-                            <table class="table table-bordered">
-                                <tbody>
-                                    {% for c in profile_data.certificates %}
-                                    <tr>
-                                        <td>
-                                            {{ c.certname }}
-                                            — {{ c.year }}
-                                        </td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr>
-                                        <td>No certificates added</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                        
 
                         <div class="section-title" id="resumeview-Awards">
                             <div class="icon-box">
@@ -234,6 +208,30 @@
                                     {% empty %}
                                     <tr>
                                         <td>No awards added</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="section-title" id="resumeview-Certificates">
+                            <div class="icon-box">
+                                <i class="fas fa-certificate"></i>
+                            </div>Certificates
+                        </div>
+                        <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    {% for c in profile_data.certificates %}
+                                    <tr>
+                                        <td>
+                                            {{ c.certname }}
+                                            — {{ c.year }}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td>No certificates added</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -407,7 +405,7 @@
                         </div>
 
                         <!-- Add Row -->
-                        <button class="btn btn-primary add-row-btn" data-target="#projectTable">Add Row</button>
+                        <button class="btn btn-primary add-row-btn btn-sm" data-target="#projectTable"><i class="fas fa-plus"></i> Add Row</button>
 
 
                         <!-- Save -->
@@ -447,7 +445,7 @@
                         </div>
 
                         <!-- Add Row -->
-                        <button class="btn btn-primary add-row-btn" data-target="#ExperienceTable">Add Row</button>
+                        <button class="btn btn-primary add-row-btn btn-sm" data-target="#ExperienceTable"><i class="fas fa-plus"></i> Add Row</button>
 
 
                         <!-- Save -->
@@ -488,7 +486,7 @@
                         </div>
 
                         <!-- Add Row -->
-                        <button class="btn btn-primary add-row-btn" data-target="#EducationTable">Add Row</button>
+                        <button class="btn btn-primary add-row-btn btn-sm" data-target="#EducationTable"><i class="fas fa-plus"></i> Add Row</button>
 
 
                         <!-- Save -->
@@ -526,7 +524,7 @@
                         </div>
 
                         <!-- Add Row -->
-                        <button class="btn btn-primary add-row-btn" data-target="#AwardsTable">Add Row</button>
+                        <button class="btn btn-primary add-row-btn btn-sm" data-target="#AwardsTable"><i class="fas fa-plus"></i> Add Row</button>
 
 
                         <!-- Save -->
@@ -563,7 +561,7 @@
                         </div>
 
                         <!-- Add Row -->
-                        <button class="btn btn-primary add-row-btn" data-target="#CertificationsTable">Add Row</button>
+                        <button class="btn btn-primary add-row-btn btn-sm" data-target="#CertificationsTable"><i class="fas fa-plus"></i> Add Row</button>
 
 
                         <!-- Save -->
@@ -577,37 +575,27 @@
 
                     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
                     <div id="SkillsSection" class="tab-section" style="display:none;">
-                        <h5 class="mb-0 ml-1 pb-3 p-clr">Skills</h5>
+                        <h5 class="mb-0 ml-1 pb-3">Skills</h5>
 
                         <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-sm-12">
+                            <div class=" mb-3">
+                                <div class="col-sm-12 position-relative">
                                     <div class="input-group">
                                         <input type="text" id="skillInput" class="form-control"
-                                            placeholder="Type a skill (e.g. Python, Java)" maxlength="50">
-                                        <button class="btn btn-outline-primary" type="button"
-                                            id="addSkillBtn">Add</button>
+                                            placeholder="Search & Select a skill..." autocomplete="off">
+                                    </div>
+
+                                    <div id="suggestion-box" class="list-group position-absolute w-100 start-0"
+                                        style="top: 100%; z-index: 1050; display: none; max-height: 250px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-sm-12">
-                                    <div id="skillsContainer" class="d-flex flex-wrap gap-2 p-3 border rounded bg-light"
-                                        style="min-height: 60px;">
+                                    <div id="skillsContainer" class="d-flex flex-wrap p-3 border rounded bg-light"
+                                        style="min-height: 60px; gap: 10px;">
                                     </div>
                                 </div>
                             </div>
@@ -615,31 +603,16 @@
                             <div class="row justify-content-end mt-3">
                                 <div class="col-sm-10 text-end">
                                     <button id="save-skills-btn" class="btn btn-primary"
-                                        data-url="/api/save-skills">Save</button>
+                                        data-url="/api/update-skills">Save</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!--                    
-                    <div id="SkillsSection" class="tab-section" style="display:none;">
-                        <h5 class="mb-0 ml-1 pb-3">Skills</h5>
-                        
-                        
-                        Skills form here...
-                        
-                    
-                    
-                    </div> -->
-
                 </div>
 
             </div>
         </div>
-
     </div>
-
-
-
 </div>
 
 {{ profile_data|json_script:"profileData" }}
