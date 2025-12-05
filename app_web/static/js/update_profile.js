@@ -17,7 +17,7 @@
 //     if (scriptTag && scriptTag.textContent) {
 //         try {
 //             fullProfileData = JSON.parse(scriptTag.textContent);
-
+            
 //             // Education
 //             if (fullProfileData.education) {
 //                 EducationData = fullProfileData.education;
@@ -153,11 +153,11 @@
 //         `;
 //         Object.values(item).forEach(val => {
 //             row += `<td contenteditable="true">${val}</td>`;
-
+            
 //         });
 //         // row += `<td><button class="btn btn-danger btn-sm delete-row-icon">✖</button></td>`;
 //          row += `<td><span class="delete-row-plain-icon">✖</span></td>`;
-
+       
 //         row += "</tr>";
 
 //         tbody.append(row);
@@ -198,24 +198,24 @@
 
 //     // Project keys match the column order (Name, Client, Role, Tech Stack)
 //     "#projectTable": ["projectname", "clientname", "roleplayed", "skillsused", "yearfrom", "yearto"], 
-
+    
 //     // Experience keys match the column order (Title, Company, From Year, To Year)
 //     "#ExperienceTable": ["jobtitle", "companyname", "yearfrom", "yearto"], 
-
+    
 //     // Education keys match the column order (Course, Institute, From Year, To Year, Grade)
 //     "#EducationTable": ["coursename", "institutename", "yearfrom", "yearto", "grade"],
-
+    
 //     // Awards keys match the column order (Name, Purpose, Year)
 //     "#AwardsTable": ["awardname",  "year"],
-
+    
 //     // Certifications keys match the column order (Certification Name, Year)
 //     "#CertificationsTable": ["cert_name", "year"]
-
-
+    
+    
 // };
 // function getTableData(tableSelector) {
 //     let rows = [];
-
+    
 //     // 1. Get the predefined keys for this specific table
 //     const dataHeaders = tableKeyMaps[tableSelector];
 
@@ -223,17 +223,17 @@
 //         console.error("Error: Key map not defined for table selector:", tableSelector);
 //         return rows; 
 //     }
-
+    
 //     // The number of columns to process is simply the length of our fixed key map
 //     const editableColumnCount = dataHeaders.length; 
 
 //     $(`${tableSelector} tbody tr`).each(function () {
 //         let rowData = {};
-
+        
 //         // 2. Iterate only over the data cells (excluding the last 'Action' column)
 //         // We use :lt() based on the expected number of data columns
 //         $(this).find("td:gt(0):lt(" + editableColumnCount  + ")").each(function (i) {
-
+            
 //             // 3. Use the fixed key defined in the map
 //             let columnName = dataHeaders[i];
 //             rowData[columnName] = $(this).text().trim(); 
@@ -264,7 +264,7 @@
 //         }
 
 //         console.log("tableData",tableData);
-
+        
 //         var final_data = {
 //             'data': JSON.stringify(dataObj),
 //             csrfmiddlewaretoken: CSRF_TOKEN,
@@ -273,7 +273,7 @@
 //         console.log("final_data",final_data);
 //         $.post(CONFIG['portal'] + saveUrl, final_data, function (res) { 
 
-
+                
 
 //             })
 //     });
@@ -334,7 +334,7 @@
 
 // function renderSkill(skillName) {
 //     if (!skillName) return;
-
+    
 //     let skillHtml = `
 //         <div class="skill-bubble">
 //             <span class="skill-text" contenteditable="false">${skillName}</span>
@@ -352,7 +352,7 @@
 // $("#addSkillBtn").on("click", function() {
 //     let input = $("#skillInput");
 //     let val = input.val().trim();
-
+    
 //     if (val) {
 //         renderSkill(val);
 //         input.val(""); // Clear input
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let fullProfileData = {};
 
     // Initialize empty arrays to prevent errors if data is missing
-    let EducationData = [];
+    let EducationData = []; 
     let ExperienceData = [];
     let ProjectData = [];
     let AwardsData = [];
@@ -435,8 +435,8 @@ document.addEventListener('DOMContentLoaded', () => {
             fullProfileData = JSON.parse(scriptTag.textContent);
             console.log("Full Profile Data Loaded:", fullProfileData);
 
-
-
+           
+            
             // Education
             if (fullProfileData.education) {
                 EducationData = fullProfileData.education;
@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
+  
 
     // Prefill Education Table
     if (EducationData.length > 0) {
@@ -539,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function tabSwitch(selectedTab) {
+ function tabSwitch(selectedTab) {
 
     const tab = document.getElementById(selectedTab);
     const targetId = tab.getAttribute("data-target");
@@ -591,11 +591,11 @@ function prefillTable(selector, data) {
 
         Object.values(item).forEach(val => {
             row += `<td contenteditable="true">${val}</td>`;
-
+            
         });
-
-        row += `<td><span class="delete-row-plain-icon">✖</span></td>`;
-
+      
+         row += `<td><span class="delete-row-plain-icon">✖</span></td>`;
+       
         row += "</tr>";
 
         tbody.append(row);
@@ -625,7 +625,7 @@ $(document).on("click", ".add-row-btn", function () {
     for (let i = 0; i < colCount; i++) {
         row += `<td contenteditable="true"></td>`;
     }
-
+    
     row += `<td><span class="delete-row-plain-icon">✖</span></td>`;
     row += "</tr>";
 
@@ -635,13 +635,22 @@ $(document).on("click", ".add-row-btn", function () {
 
 
 const tableKeyMaps = {
-    "#projectTable": ["projectname", "clientname", "roleplayed", "skillsused", "yearfrom", "yearto"],
-    "#ExperienceTable": ["jobtitle", "companyname", "yearfrom", "yearto"],
+    
+    "#projectTable": ["projectname", "clientname", "roleplayed", "skillsused", "yearfrom", "yearto"], 
+    
+    
+    "#ExperienceTable": ["jobtitle", "companyname", "yearfrom", "yearto"], 
+    
+  
     "#EducationTable": ["coursename", "institutename", "yearfrom", "yearto", "grade"],
-    "#AwardsTable": ["awardname", "year"],
-    "#CertificationsTable": ["cert_name", "year"]
-};
+ 
+    "#AwardsTable": ["awardname",  "year"],
+    
 
+    "#CertificationsTable": ["cert_name", "year"]
+    
+    
+};
 function getTableData(tableSelector) {
 
     let rows = [];
@@ -655,54 +664,98 @@ function getTableData(tableSelector) {
 
     const editableColumnCount = dataHeaders.length;
 
+    let hasEmpty = false; // flag
+
     $(`${tableSelector} tbody tr`).each(function () {
 
         let rowData = {};
 
         $(this).find("td:gt(0):lt(" + editableColumnCount + ")").each(function (i) {
 
+            let value = $(this).text().trim();
             let columnName = dataHeaders[i];
-            rowData[columnName] = $(this).text().trim();
+
+            // Check empty cell
+            if (value === "" || value === null || value === undefined) {
+                hasEmpty = true;
+            }
+
+            rowData[columnName] = value;
         });
 
         rows.push(rowData);
     });
 
+    // If any empty found  Show SweetAlert + Stop
+    if (hasEmpty) {
+        Swal.fire({
+            title: "Please fill all items",
+            icon: "warning",
+            confirmButtonColor: "#3085d6",
+        });
+        return []; // stop returning incomplete data
+    }
+
     return rows;
 }
 
-
 $(document).on("click", ".save-table-btn", function () {
-    let tableSelector = $(this).data("target");   // example: "#projectTable"
-    let saveUrl = $(this).data("url");       // Django endpoint
+    let tableSelector = $(this).data("target");   // "#projectTable"
+    let saveUrl      = $(this).data("url");       // Django endpoint
 
     let tableData = getTableData(tableSelector);
 
-    dataObj = {
+    // If validation failed, stop here (getTableData already showed Swal)
+    if (!tableData || tableData.length === 0) {
+        return;
+    }
+
+    let dataObj = {
         "data": tableData,
         "profile_id": profileId
-    }
+    };
 
-    var final_data = {
+    let final_data = {
         'data': JSON.stringify(dataObj),
         csrfmiddlewaretoken: CSRF_TOKEN,
-    }
+    };
 
-    $.post(CONFIG['portal'] + saveUrl, final_data, function (res) {
+    console.log("final_data", final_data);
 
-
-
-    })
-
+    $.post(CONFIG['portal'] + saveUrl, final_data)
+        .done(function (res) {
+         
+            Swal.fire({
+                title: "Saved Successfully!",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: "OK"
+            });
+        })
+        .fail(function (err) {
+            
+            Swal.fire({
+                title: "Error!",
+                text: "Something went wrong while saving.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+        });
 });
 
 
-$(document).on("click", ".delete-row-plain-icon", function (e) {
-    e.stopPropagation(); // Stop event from triggering row selection
-    $(this).closest("tr").remove(); // Remove the closest parent table row
-});
 
-$(document).on("submit", "#Person-detais", function (e) {
+    $(document).on("click", ".add-row-btn", function () {
+        let tableSelector = $(this).data("target");
+        addRow(tableSelector);
+    });
+
+    $(document).on("click", ".delete-row-plain-icon", function (e) {
+        e.stopPropagation(); // Stop event from triggering row selection
+        $(this).closest("tr").remove(); // Remove the closest parent table row
+    });
+
+    $(document).on("submit", "#Person-detais", function (e) {
     e.preventDefault();   // stop normal browser submit
 
     let dataObj = {
@@ -733,22 +786,29 @@ $(document).on("submit", "#Person-detais", function (e) {
     );
 });
 
+
+
+
+
 var technologiesList = languages;
 
-$(document).ready(function () {
 
+
+$(document).ready(function() {
+
+   
     let sampleSkills = ["Python", "Django", "JavaScript", "HTML5", "CSS3"];
     const skillsContainer = $("#skillsContainer");
 
     function renderSkill(skillName) {
         if (!skillName) return;
-
+        
         // Prevent Duplicates
         let exists = false;
-        $("#skillsContainer .skill-text").each(function () {
+        $("#skillsContainer .skill-text").each(function() {
             if ($(this).text().trim().toLowerCase() === skillName.toLowerCase()) exists = true;
         });
-        if (exists) return;
+        if(exists) return;
 
         let skillHtml = `
             <div class="skill-bubble">
@@ -757,14 +817,17 @@ $(document).ready(function () {
             </div>
         `;
         skillsContainer.append(skillHtml);
-    }
+    }   
+
 
     sampleSkills.forEach(skill => renderSkill(skill));
 
+    
+
     // Filter and Show Dropdown
-    $("#skillInput").on("keyup", function (e) {
+    $("#skillInput").on("keyup", function(e) {
         // Ignore Enter key here (handled in keypress)
-        if (e.which === 13) return;
+        if(e.which === 13) return;
 
         let inputVal = $(this).val().toLowerCase().trim();
         let suggestionBox = $("#suggestion-box");
@@ -791,22 +854,22 @@ $(document).ready(function () {
     });
 
     // Handle Click on Suggestion
-    $(document).on("click", ".suggestion-item", function () {
+    $(document).on("click", ".suggestion-item", function() {
         let selectedSkill = $(this).data("value");
         renderSkill(selectedSkill);
-
+        
         $("#skillInput").val("").focus(); // Clear input
         $("#suggestion-box").hide(); // Hide dropdown
     });
 
     // Handle Enter Key (Select first suggestion)
-    $("#skillInput").on("keypress", function (e) {
+    $("#skillInput").on("keypress", function(e) {
         if (e.which === 13) { // Enter key
             e.preventDefault(); // Stop form submit
-
+            
             // Check if dropdown is visible and has items
             let firstItem = $("#suggestion-box .suggestion-item").first();
-
+            
             if (firstItem.length > 0 && $("#suggestion-box").is(":visible")) {
                 let val = firstItem.data("value");
                 renderSkill(val);
@@ -817,7 +880,7 @@ $(document).ready(function () {
     });
 
     // Hide Dropdown when clicking outside
-    $(document).on("click", function (e) {
+    $(document).on("click", function(e) {
         if (!$(e.target).closest("#skillInput, #suggestion-box").length) {
             $("#suggestion-box").hide();
         }
@@ -825,26 +888,26 @@ $(document).ready(function () {
 
 
 
-
-    $(document).on("click", ".delete-skill-icon", function () {
-        $(this).closest(".skill-bubble").fadeOut(200, function () {
+   
+    $(document).on("click", ".delete-skill-icon", function() {
+        $(this).closest(".skill-bubble").fadeOut(200, function() {
             $(this).remove();
         });
     });
 
-
-    $("#save-skills-btn").on("click", function () {
+   
+    $("#save-skills-btn").on("click", function() {
         let saveUrl = $(this).data("url");
         let skillsList = [];
 
-
-        $("#skillsContainer .skill-bubble .skill-text").each(function () {
+     
+        $("#skillsContainer .skill-bubble .skill-text").each(function() {
             skillsList.push($(this).text().trim());
         });
 
         let dataObj = {
             "skills": skillsList,
-            "profile_id": profileId
+            "profile_id": profileId 
         };
 
         console.log("Saving Skills:", dataObj);
@@ -852,9 +915,9 @@ $(document).ready(function () {
         $.post(CONFIG['portal'] + saveUrl, {
             data: JSON.stringify(dataObj),
             csrfmiddlewaretoken: CSRF_TOKEN
-        }, function (res) {
+        }, function(res) {
             // console.log("Skills Saved!", res);
-
+            
         });
     });
 
