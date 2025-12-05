@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Certifications (Check if key is 'certifications' or 'certification' in your DB)
-            if (fullProfileData.certifications) {
-                CertificationsData = fullProfileData.certifications;
+            if (fullProfileData.certificates) {
+                CertificationsData = fullProfileData.certificates;
             }
 
             // Skills (Usually a list of strings like ["Java", "Python"])
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 $("#Passport").val(p.passportnum || "");
                 $("#FatherName").val(p.fathername || "");
                 $("#NativeOf").val(p.nativeof || "");
-                $("#DateOfBirth").val(p.dob || "");
+                $("#DateOfBirth").val(p.dateofbirth || "");
             }
 
         } catch (e) {
@@ -107,6 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     enableSortableForAllTables();
+    let today = new Date();
+    today.setFullYear(today.getFullYear() - 14);     // subtract 14 years
+    let maxDate = today.toISOString().split("T")[0];
+
+    document.getElementById("DateOfBirth").setAttribute("max", maxDate);
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -348,7 +353,24 @@ $(document).on("submit", "#Person-detais", function (e) {
         function (response) {
             console.log("Saved!", response);
         }
-    );
+    ).done(function (res) {
+
+            Swal.fire({
+                title: "Saved Successfully!",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: "OK"
+            });
+        })
+        .fail(function (err) {
+
+            Swal.fire({
+                title: "Error!",
+                text: "Something went wrong while saving.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+        });
 });
 
 var technologiesList = languages;
@@ -463,8 +485,21 @@ $(document).ready(function () {
         $.post(CONFIG['portal'] + saveUrl, {
             data: JSON.stringify(dataObj),
             csrfmiddlewaretoken: CSRF_TOKEN
-        }, function (res) {
-            // console.log("Skills Saved!", res);
+        }).done( function (res) {
+            
+             Swal.fire({
+            icon: "success",
+            title: "Saved!",
+            text: "Your skills have been saved successfully.",
+            timer: 1500,
+            showConfirmButton: false
+        }).fail(function (xhr) {
+        Swal.fire({
+            icon: "error",
+            title: "Oops!",
+            text: "Something went wrong while saving.",
+        });
+    });
 
         });
     });
