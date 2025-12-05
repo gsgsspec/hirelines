@@ -3403,7 +3403,9 @@ def getProfileData(pid,user_data):
             "passportnum": profile.passportnum or "",
             "fathername": profile.fathername or "",
             "nativeof": profile.nativeof or "",
-            "status":profile.status
+            "status":profile.status,
+            "dateofbirth": profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
+
         }    
 
         # Education
