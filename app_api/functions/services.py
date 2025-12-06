@@ -5,6 +5,7 @@ import string
 import secrets
 import ast
 import time
+import base64
 # import ffmpeg
 import re
 import pandas as pd
@@ -61,7 +62,8 @@ from app_api.models import (
     ProfileSkills,
     ProfileAwards,
     ProfileCertificates,
-    ProfileAddress
+    ProfileAddress,
+    ResumeFile
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -3329,7 +3331,7 @@ def getResumeData(user_data,filters=None):
 
         source_ids = sources.values_list('id', flat=True)
 
-        resumes = Resume.objects.filter(sourceid__in=source_ids).exclude(status="D")
+        resumes = Resume.objects.filter(sourceid__in=source_ids).exclude(status="D").order_by("-datentime")
 
         if resumes:
 
@@ -3342,6 +3344,7 @@ def getResumeData(user_data,filters=None):
                     "name": resume.filename or "",
                     "source": source.label or "",
                     "date": resume.datentime.strftime("%d-%b-%Y") if resume.datentime else "",
+                    "status": resume.status
                 })
 
         return resumes_data
@@ -3387,7 +3390,8 @@ def getProfileData(pid,user_data):
             "projects":None,
             "awards":None,
             "certificates":None,
-            "skills":None
+            "skills":None,
+            "resume_file": None
         }
 
         # Profile details
@@ -3405,7 +3409,6 @@ def getProfileData(pid,user_data):
             "nativeof": profile.nativeof or "",
             "status":profile.status,
             "dateofbirth": profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
-
         }    
 
         # Education
@@ -3493,6 +3496,13 @@ def getProfileData(pid,user_data):
 
         if skills_data and skills_data.primaryskills:
             profile_skills = skills_data.primaryskills.split(",")
+
+        file_base64 = ""
+
+        if profile.resumeid:
+
+            resume_file = ResumeFile.objects.get(id=profile.resumeid)
+            file_base64 = base64.b64encode(resume_file.filecontent).decode("utf-8")
         
         profile_data["personal"] = personal_details    
         profile_data["experience"] = profile_experience
@@ -3501,6 +3511,7 @@ def getProfileData(pid,user_data):
         profile_data["awards"] = profile_awards
         profile_data["certificates"] = profile_certificates
         profile_data["skills"] = profile_skills 
+        profile_data["resume_file"] = f"data:application/pdf;base64,{file_base64}"
 
         return profile_data
         

@@ -840,10 +840,12 @@ def addResumeProfileDB(dataObjs):
             companyid = resume.companyid,
             dateofcreation = datetime.now(),
             status = "D",
-
         )
 
         profile.save()
+
+        resume.status = "A"
+        resume.save()
 
         return {"profile_id":profile.id}
 

@@ -33,21 +33,31 @@
 
             <div class="d-flex">
                 <div class="table-ctn">
-                    <div class="table-responsive text-nowrap table-cls">
+                    <div class="table-responsive text-nowrap table-cls pt-0">
                         <table class="table table-hover" id="resume-table">
                             <thead>
                                 <tr>
                                     <th> <strong> Name </strong></th>
                                     <th> <strong> Source </strong></th>
                                     <th> <strong> Date </strong></th>
+                                    <th> <strong> Status </strong></th>
                                 </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
                                 {% for resume_data in resumes_data %}
-                                    <tr class="resume-row" data-id="{{ resume_data.id }}" style="cursor: pointer;">
+                                    <tr class="resume-row" data-id="{{ resume_data.id }}" data-status="{{ resume_data.status }}" style="cursor: pointer;">
                                         <td> {{ resume_data.name }} </td>
                                         <td> {{ resume_data.source }} </td>
                                         <td> {{ resume_data.date }} </td>
+                                        {% if resume_data.status == "P" %}
+                                            <td>Review Pending</td>
+                                        {% elif resume_data.status == "A" %}
+                                            <td>Added to Profile</td>
+                                        {% elif resume_data.status == "D" %}
+                                            <td>Deleted</td>
+                                        {% else %}
+                                            <td> - </td>
+                                        {% endif %}
                                     </tr>
                                 {% endfor %}
                             </tbody>

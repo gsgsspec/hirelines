@@ -112,6 +112,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let maxDate = today.toISOString().split("T")[0];
 
     document.getElementById("DateOfBirth").setAttribute("max", maxDate);
+
+    console.log("fullProfileData");
+    
+
+    const pdfBlob = base64ToBlob(fullProfileData.resume_file);
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    const encodedUrl = encodeURIComponent(pdfUrl);
+
+    document.getElementById("resumeIframe").src = `/static/pdfjs/web/viewer.html?file=${encodedUrl}`;
+
+
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -515,4 +526,21 @@ function enableSortableForAllTables() {
             ghostClass: "ghost"
         });
     });
+}
+
+
+function base64ToBlob(base64) {
+    const byteCharacters = atob(base64.split(',')[1]);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: 'application/pdf' });
+}
+
+function resumeIframe(){
+    const pdfBlob = base64ToBlob(data.pdf_data);
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    const encodedUrl = encodeURIComponent(pdfUrl);
 }

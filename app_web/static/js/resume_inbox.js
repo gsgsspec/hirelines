@@ -39,6 +39,7 @@ function attachResumeRowClick() {
         row.addEventListener("click", async function () {
             
             const id = this.getAttribute("data-id");
+            const status = this.getAttribute("data-status");
     
             const response = await fetch(`/api/get-gmail-resume/${id}`);
             const data = await response.json();
@@ -55,6 +56,12 @@ function attachResumeRowClick() {
     
             document.getElementById("delete-resume-btn").setAttribute("data-id", id);
             document.getElementById("add-profile-btn").setAttribute("data-id", id);
+
+            if (status === "A") {
+                document.getElementById("add-profile-btn").style.display = "none";
+            } else {
+                document.getElementById("add-profile-btn").style.display = "inline-block";
+            }
             
         });
     });
@@ -181,11 +188,23 @@ function updateResumeTable(resumes){
 
 
     resumes.forEach(r => {
+
+        let status = "-"
+
+        if(r.status === "A"){
+            status = "Added to Profile"
+        }else if(r.status === "P"){
+            status = "Review Pending"
+        }else if(r.status === "D"){
+            status = "Deleted"
+        }
+
         let row = `
             <tr class="resume-row" data-id="${r.id}" style="cursor: pointer;">
                 <td>${r.name}</td>
                 <td>${r.source}</td>
                 <td>${r.date}</td>
+                <td>${status}</td>
             </tr>
         `;
         tbody.insertAdjacentHTML("beforeend", row);
