@@ -263,11 +263,12 @@
                         onclick="tabSwitch(this.id)">Skills</span>
                     <span id="Projects" class="custm-tab p-clr" data-target="resumeview-Projects"
                         onclick="tabSwitch(this.id)">Projects</span>
-                    <span id="Awards" class="custm-tab p-clr" data-target="resumeview-Awards"
-                        onclick="tabSwitch(this.id)">Awards</span>
                     <span id="Certifications" class="custm-tab p-clr" data-target="resumeview-Certificates"
                         onclick="tabSwitch(this.id)">Certifiations</span>
+                     <span id="Awards" class="custm-tab p-clr" data-target="resumeview-Awards"
+                        onclick="tabSwitch(this.id)">Awards</span>
                 </div>
+                
                 <div class="tabsDetailsContainer">
                     <div id="PersonalSection" class="tab-section">
                         <div class="card-header d-flex align-items-center justify-content-between">
@@ -295,7 +296,7 @@
                                     <label class="col-sm-2 col-form-label">Middle Name</label>
                                     <div class="col-sm-10">
                                         <div class="input-group input-group-merge">
-                                            <input type="text" id="MiddleName" maxlength="100" class="form-control"
+                                            <input type="text" id="MiddleName" maxlength="40" class="form-control"
                                                 placeholder=" " value="{{profile_data.personal.middlename}}">
                                         </div>
                                     </div>
@@ -321,7 +322,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label">Mobile</label>
                                     <div class="col-sm-10">
-                                        <input type="number" id="Mobile" class="form-control phone-mask" placeholder=" "
+                                        <input type="text" id="Mobile" class="form-control phone-mask" maxlength="100" placeholder=" "
                                             value="{{profile_data.personal.mobile}}">
                                     </div>
                                 </div>
@@ -343,14 +344,14 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label">Passport</label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="Passport" class="form-control phone-mask" maxlength="100"
+                                        <input type="text" id="Passport" class="form-control phone-mask" maxlength="40"
                                             placeholder="XXXXXXX" value="{{profile_data.personal.passportnum}}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label">Date of birth</label>
                                     <div class="col-sm-10">
-                                        <input type="date" id="DateOfBirth" class="form-control" maxlength="100"
+                                        <input type="date" id="DateOfBirth" class="form-control" 
                                             placeholder="DD/MM/YYYY" value="{{profile_data.personal.dateofbirth }}">
 
                                     </div>

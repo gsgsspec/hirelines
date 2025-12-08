@@ -1042,3 +1042,27 @@ def updateProfileSkillsDB(dataObjs):
 
     except Exception as e:
         raise
+
+def updateProfileActivityDB(dataObjs,userid):
+    try:
+        profile_id = dataObjs.get("profile_id")
+        activityname = dataObjs.get("activityname")
+        remarks = dataObjs.get("remarks")
+        status = dataObjs.get("status")
+
+        # Create new ProfileActivity record
+        ProfileActivity.objects.create(
+            profileid = profile_id,
+            datentime = datetime.now(),
+            acvityuserid = userid,
+            activityname = activityname,
+            activityremarks = remarks,
+            activitystatus = status
+        )
+
+        return True
+
+      
+
+    except Exception as e:
+        raise

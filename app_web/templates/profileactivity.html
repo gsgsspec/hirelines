@@ -75,6 +75,10 @@
     .table-responsive {
         border: none !important;
     }
+    .display-none{
+        display: none;
+    }
+    
 </style>
 
 <div class="container">
@@ -90,14 +94,22 @@
             <div class="card-body">
                 <!-- <div class="pb-3"> -->
                 <div class="tabsContainer">
-                    <div style="display: flex; gap: 12px;">
+                    <!-- <div style="display: flex; gap: 12px;"> -->
+                        <div class="tabsContainer">
                         <span id="active" class="custm-tab p-clr"
                             onclick="tabSwitch(this.id)">Profile</span>
                         <span id="Inactive" class="custm-tab p-clr activeTab shadow" onclick="tabSwitch(this.id)">Activity</span>
-                    </div>
+                        </div>
+                        <!-- <span id="addActivity" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Add Activity</span> -->
+                         <div class="tabsContainer"style="flex-direction: row-reverse;">
+                        
+                        <button class="btn btn-primary" id="sendWelcome"  onclick="tabSwitch(this.id)"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button>
+                        <button class="btn btn-primary" id="addActivity"  onclick="tabSwitch(this.id)"><i class="fas fa-user-plus"></i> Add activity</button>
+                        </div>
+                    <!-- </div> -->
                 </div>
                 <div class="table-responsive text-nowrap">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="activity_details_table">
 
 
                         <tbody>
@@ -105,7 +117,21 @@
 
                             <tr>
                                 <td style="width: 15%;padding-left: 0px;">{{ act.datentime }}</td>
-                                <td> {{ act.activity_text }}</td>
+                                
+                               
+                               <td>
+                                     {% if act.activity_text == "Unknown Activity" %}
+                                        {{ act.activityname }}
+                                        {% if act.activityremarks %} remarks- {{ act.activityremarks }}{% endif %}
+                                        {% if act.activitystatus %} status- {{ act.activitystatus }}{% endif %}
+                                    {% else %}
+                                        {{ act.activity_text }}
+                                    {% endif %}
+                                </td>   
+
+                                <td>{{ act.activityusername }}  </td>
+                                
+                               
                             </tr>
                             
                             {% endfor %}
@@ -113,6 +139,31 @@
   
                         </tbody>
                     </table>
+                    <div class="add-activity display-none">  
+                  
+                        <form id="add-activity-details" class="mt-3">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label class="form-label">Activity Name</label>
+                                <input type="text" name="activityname" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Remarks</label>
+                                <textarea rows="3" class="form-control" name="remarks" ></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Status </label>
+                                <input type="text" maxlength="20" name="status" class="form-control" >
+                            </div>
+
+                            <button id="save-activity" type="submit" class="btn btn-primary">Save Activity</button>
+                            
+                        </form>
+                    </div>  
+
                 </div>
 
             </div>
@@ -140,6 +191,73 @@ function tabSwitch(element) {
         $('#active').removeClass('activeTab shadow');
         window.location.href = "/profileactivity/" + pid;
     }
+
+    if (element === 'addActivity') {
+        
+        $('#Inactive').removeClass('activeTab shadow');
+        $('#activity_details_table').addClass('display-none');
+        $('.add-activity').removeClass('display-none');
+        
+
+        // window.location.href = "/addactivity/" + pid;
+
+    }
+
+    if (element === 'sendWelcome') {
+
+        window.location.href = "/profileactivity/" + pid;
+
+
+    }
 }
+$("#add-activity-details").submit(function (e) {
+    e.preventDefault();
+
+    const pid = getPidFromUrl();  // You already have this function
+
+    let activityname = $("input[name='activityname']").val();
+    let remarks = $("textarea[name='remarks']").val();
+    let status = $("input[name='status']").val();
+
+    // Prepare inner object
+    let dataObj = {
+        "activityname": activityname,
+        "remarks": remarks,
+        "status": status,
+        "profile_id": pid
+    };
+
+    // Prepare final POST object
+    let final_data = {
+        "data": JSON.stringify(dataObj),
+        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+    };
+
+    console.log("final_data", final_data);
+
+    // POST request
+    $.post(CONFIG['portal'] + "/api/add-profile-activity", final_data)
+        .done(function (res) {
+            Swal.fire({
+                title: "Saved Successfully!",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            setTimeout(() => {
+                window.location.href = "/profileactivity/" + pid;
+            }, 1000);
+        })
+        .fail(function (err) {
+            Swal.fire({
+                title: "Error!",
+                text: "Something went wrong while saving.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+        });
+});
+
 
 </script>

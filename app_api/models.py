@@ -510,7 +510,7 @@ class Profile(models.Model):
     title = models.CharField(max_length=100, null=True, blank=True)
     firstname = models.CharField(max_length=100, null=True, blank=True)
     middlename = models.CharField(max_length=40, null=True, blank=True)
-    lastname = models.CharField(max_length=100, null=True, blank=True)
+    lastname = models.CharField(max_length=100, null=   True, blank=True)
     email = models.CharField(max_length=100, null=True, blank=True)
     mobile = models.CharField(max_length=15, null=True, blank=True)
     linkedin = models.CharField(max_length=100, null=True, blank=True)
@@ -584,6 +584,9 @@ class ProfileActivity(models.Model):
     sequence = models.IntegerField(null=True, blank=True)
     activitycode = models.CharField(max_length=2, null=True, blank=True) #"PC - Profile Created | PS - Profile Screened | P1 - Profile Screening - Promoted | PC - Profile Coding Test | P2 - Profile Coding Test - Promoted"
     acvityuserid = models.IntegerField(null=True, blank=True)
+    activityname= models.CharField(null=True, blank=True, max_length=100)
+    activityremarks = models.CharField(null=True, blank=True, max_length=200)
+    activitystatus= models.CharField(null=True, blank=True, max_length=100)
 
     class Meta:
         db_table = 'profileactivity'

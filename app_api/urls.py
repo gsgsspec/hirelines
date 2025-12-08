@@ -77,5 +77,6 @@ urlpatterns = [
     path("get_paperid",views.get_paperid),
     path("profile-filters",views.filter_profiles_api),
     path('get-default-email-template',views.getDefaultEmailTemplate),
+    path('add-profile-activity',views.addProfileActivity),
 
 ]

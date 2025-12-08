@@ -3277,6 +3277,12 @@ def getProfileactivityDetailsService(pid):
             "CT": "Profile Coding Test",
             "P2": "Profile Coding Test - Promoted",
         }
+        user_ids = set(row.get("acvityuserid") for row in activity_list if row.get("acvityuserid"))
+
+        user_map = {
+            u["id"]: u["name"]
+            for u in User.objects.filter(id__in=user_ids).values("id", "name")
+        }
 
         # Fetch profile details ONCE
         job_title = (
@@ -3295,6 +3301,8 @@ def getProfileactivityDetailsService(pid):
             else:
                 formatted_dt = ""
 
+            userid = row.get("acvityuserid")
+
             final_list.append({
                 "id": row.get("id"),
                 "profileid": row.get("profileid"),
@@ -3302,14 +3310,17 @@ def getProfileactivityDetailsService(pid):
                 "datentime": formatted_dt,
                 "activitycode": row.get("activitycode"),
                 "activity_text": activity_map.get(row.get("activitycode"), "Unknown Activity"),
-                "activityuserid": row.get("activityuserid"),
+                "activityuserid": row.get("acvityuserid"),
+                "activityusername": user_map.get(userid, ""),
+                "activityremarks": row.get("activityremarks"),
+                "activitystatus": row.get("activitystatus"),
+                "activityname": row.get("activityname"),
 
                 # Adding job title details
                 "jobtitle": job_title["title"] if job_title else "",
                 "firstname": job_title["firstname"] if job_title else "",
                 "lastname": job_title["lastname"] if job_title else "",
             })
-
         return final_list
 
     except Exception as e:

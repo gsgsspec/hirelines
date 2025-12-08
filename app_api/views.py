@@ -29,7 +29,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, saveProfileDetailsDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB
+    updateProfileSkillsDB,updateProfileActivityDB
 from app_api.functions.constants import hirelines_registration_script
 
 # Create your views here.
@@ -2140,6 +2140,32 @@ def updateProfileSkills(request):
 
     except Exception as e:
         response['data'] = 'Error in updating Profile Skills Details'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+@api_view(['POST'])
+def addProfileActivity(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            
+            user = auth_user(request.user)
+            userid=user.id
+            dataObjs = json.loads(request.POST.get('data'))
+
+            updateProfileActivityDB(dataObjs,userid)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in adding Profile Activity Details'
         response['error'] = str(e)
         raise
     

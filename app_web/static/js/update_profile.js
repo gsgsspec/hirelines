@@ -168,38 +168,62 @@ function tabSwitch(selectedTab) {
 
 
 // Prefill sample data
-function prefillTable(selector, data) {
-    let tbody = $(selector);
+// function prefillTable(selector, data) {
+//     let tbody = $(selector);
 
-    data.forEach(item => {
-        let row = "<tr>";
+//     data.forEach(item => {
+//         let row = "<tr>";
 
-        row += `
-            <td class="drag-handle" style="cursor: grab;">
-                <span style="display: inline-flex; gap: 2px; align-items: center;">
-                    <i class="fas fa-ellipsis-v"></i>
-                    <i class="fas fa-ellipsis-v"></i>
-                </span>
-            </td>
-        `;
+//         row += `
+//             <td class="drag-handle" style="cursor: grab;">
+//                 <span style="display: inline-flex; gap: 2px; align-items: center;">
+//                     <i class="fas fa-ellipsis-v"></i>
+//                     <i class="fas fa-ellipsis-v"></i>
+//                 </span>
+//             </td>
+//         `;
 
-        Object.values(item).forEach(val => {
-            row += `<td contenteditable="true">${val}</td>`;
+//         Object.values(item).forEach(val => {
+//             row += `<td contenteditable="true">${val}</td>`;
 
-        });
+//         });
 
-        row += `<td><span class="delete-row-plain-icon">✖</span></td>`;
+//         row += `<td><span class="delete-row-plain-icon">✖</span></td>`;
 
-        row += "</tr>";
+//         row += "</tr>";
 
-        tbody.append(row);
-    });
-}
+//         tbody.append(row);
+//     });
+// }
 
-$(document).on("click", ".add-row-btn", function () {
-    let tableSelector = $(this).data("target"); // e.g. "#projectTable"
-    let colCount = $(`${tableSelector} thead th`).length - 2;
+// $(document).on("click", ".add-row-btn", function () {
+//     let tableSelector = $(this).data("target"); // e.g. "#projectTable"
+//     let colCount = $(`${tableSelector} thead th`).length - 2;
 
+//     let row = "<tr>";
+
+//     row += `
+//         <td class="drag-handle" style="cursor: grab;">
+//             <span style="display: inline-flex; gap: 2px; align-items: center;">
+//                 <i class="fas fa-ellipsis-v"></i>
+//                 <i class="fas fa-ellipsis-v"></i>
+//             </span>
+//         </td>
+//     `;
+
+//     for (let i = 0; i < colCount; i++) {
+//         row += `<td contenteditable="true"></td>`;
+//     }
+
+//     row += `<td><span class="delete-row-plain-icon">✖</span></td>`;
+//     row += "</tr>";
+
+//     $(`${tableSelector} tbody`).append(row);
+// });
+// New helper function to build the table row structure
+function buildRow(data, tableSelector) {
+
+    
     let row = "<tr>";
 
     row += `
@@ -211,26 +235,139 @@ $(document).on("click", ".add-row-btn", function () {
         </td>
     `;
 
-    for (let i = 0; i < colCount; i++) {
-        row += `<td contenteditable="true"></td>`;
+    const headers = tableKeyMaps[tableSelector];
+    const dataValues = data ? Object.values(data) : []; // For prefill
+    
+    // Ensure dataValues length matches headers length, padding with empty string if necessary
+    const values = dataValues.length === headers.length ? dataValues : Array(headers.length).fill('').map((_, i) => dataValues[i] !== undefined ? dataValues[i] : '');
+
+    for (let i = 0; i < headers.length; i++) {
+        const header = headers[i];
+        const value = values[i] || "";
+        const typeAttr = header.type ? `data-type="${header.type}"` : '';
+        const maxLengthAttr = header.maxlength ? `data-maxlength="${header.maxlength}"` : '';
+        const keyAttr = `data-key="${header.key}"`; // Added for convenience
+
+        // Added event handlers for input constraint/maxlength enforcement
+        row += `<td contenteditable="true" ${keyAttr} ${typeAttr} ${maxLengthAttr} 
+                    oninput="enforceInputConstraints(this)" 
+                    onpaste="enforceInputConstraints(this)">
+                    ${value}
+                </td>`;
     }
 
     row += `<td><span class="delete-row-plain-icon">✖</span></td>`;
     row += "</tr>";
 
+    return row;
+}
+
+
+// Prefill data
+function prefillTable(selector, data) {
+    let tbody = $(selector);
+    const tableSelector = selector.replace(' tbody', ''); // Get the table ID/selector
+
+    data.forEach(item => {
+        let row = buildRow(item, tableSelector);
+        tbody.append(row);
+    });
+}
+
+// Update the Add Row handler to use the new helper
+$(document).on("click", ".add-row-btn", function () {
+    let tableSelector = $(this).data("target");
+    let row = buildRow(null, tableSelector); // Pass null for empty data
     $(`${tableSelector} tbody`).append(row);
 });
 
 
-
+// const tableKeyMaps = {
+//     "#projectTable": ["projectname", "clientname", "roleplayed", "skillsused", "yearfrom", "yearto"],
+//     "#ExperienceTable": ["jobtitle", "companyname", "yearfrom", "yearto"],
+//     "#EducationTable": ["coursename", "institutename", "yearfrom", "yearto", "grade"],
+//     "#AwardsTable": ["awardname", "year"],
+//     "#CertificationsTable": ["cert_name", "year"]
+// };
 const tableKeyMaps = {
-    "#projectTable": ["projectname", "clientname", "roleplayed", "skillsused", "yearfrom", "yearto"],
-    "#ExperienceTable": ["jobtitle", "companyname", "yearfrom", "yearto"],
-    "#EducationTable": ["coursename", "institutename", "yearfrom", "yearto", "grade"],
-    "#AwardsTable": ["awardname", "year"],
-    "#CertificationsTable": ["cert_name", "year"]
+    "#projectTable": [
+        { key: "projectname", maxlength: 100 },
+        { key: "clientname", maxlength: 100 },
+        { key: "roleplayed", maxlength: 100 },
+        { key: "skillsused", maxlength: 100 },
+        { key: "yearfrom", maxlength: 4, type: 'year' }, // Added type
+        { key: "yearto", maxlength: 4, type: 'year' }    // Added type
+    ],
+    "#ExperienceTable": [
+        { key: "jobtitle", maxlength: 100 },
+        { key: "companyname", maxlength: 100 },
+        { key: "yearfrom", maxlength: 4, type: 'year' }, // Added type
+        { key: "yearto", maxlength: 4, type: 'year' }    // Added type
+    ],
+    "#EducationTable": [
+        { key: "coursename", maxlength: 100 },
+        { key: "institutename", maxlength: 100 },
+        { key: "yearfrom", maxlength: 4, type: 'year' }, // Added type
+        { key: "yearto", maxlength: 4, type: 'year' },   // Added type
+        { key: "grade", maxlength: 100 }
+    ],
+    "#AwardsTable": [
+        { key: "awardname", maxlength: 100 },
+        { key: "year", maxlength: 4, type: 'year' }      // Added type
+    ],
+    "#CertificationsTable": [
+        { key: "cert_name", maxlength: 100 },
+        { key: "year", maxlength: 4, type: 'year' }      // Added type
+    ]
 };
 
+// function getTableData(tableSelector) {
+
+//     let rows = [];
+
+//     const dataHeaders = tableKeyMaps[tableSelector];
+
+//     if (!dataHeaders) {
+//         console.error("Error: Key map not defined for table selector:", tableSelector);
+//         return rows;
+//     }
+
+//     const editableColumnCount = dataHeaders.length;
+
+//     let hasEmpty = false; // flag
+
+//     $(`${tableSelector} tbody tr`).each(function () {
+
+//         let rowData = {};
+
+//         $(this).find("td:gt(0):lt(" + editableColumnCount + ")").each(function (i) {
+
+//             let value = $(this).text().trim();
+//             let columnName = dataHeaders[i];
+
+//             // Check empty cell
+//             if (value === "" || value === null || value === undefined) {
+//                 hasEmpty = true;
+//             }
+
+//             rowData[columnName] = value;
+//         });
+
+//         rows.push(rowData);
+//     });
+
+//     // If any empty found  Show SweetAlert + Stop
+//     if (hasEmpty) {
+//         Swal.fire({
+//             title: "Please fill all items",
+//             icon: "warning",
+//             confirmButtonColor: "#3085d6",
+//         });
+//         return []; // stop returning incomplete data
+//     }
+
+//     return rows;
+// }
 function getTableData(tableSelector) {
 
     let rows = [];
@@ -242,23 +379,34 @@ function getTableData(tableSelector) {
         return rows;
     }
 
-    const editableColumnCount = dataHeaders.length;
-
     let hasEmpty = false; // flag
 
     $(`${tableSelector} tbody tr`).each(function () {
 
         let rowData = {};
-
-        $(this).find("td:gt(0):lt(" + editableColumnCount + ")").each(function (i) {
-
+        
+        // Find all editable TDs (skip the first drag-handle TD, stop before the last delete TD)
+        $(this).find("td[contenteditable='true']").each(function () {
+            
             let value = $(this).text().trim();
-            let columnName = dataHeaders[i];
+            let columnName = $(this).data('key'); // Read the column name from the data-key attribute
 
-            // Check empty cell
+            // Basic validation
             if (value === "" || value === null || value === undefined) {
                 hasEmpty = true;
             }
+            
+            // Additional 'year' validation (check if it's 4 digits if empty check passes)
+            if ($(this).data('type') === 'year' && value !== "" && !/^\d{4}$/.test(value)) {
+                 Swal.fire({
+                    title: "Validation Error",
+                    text: `${columnName.charAt(0).toUpperCase() + columnName.slice(1)} must be a 4-digit year.`,
+                    icon: "error",
+                    confirmButtonColor: "#3085d6",
+                 });
+                 hasEmpty = true; // Treat as empty/invalid for saving purpose
+            }
+
 
             rowData[columnName] = value;
         });
@@ -266,13 +414,15 @@ function getTableData(tableSelector) {
         rows.push(rowData);
     });
 
-    // If any empty found  Show SweetAlert + Stop
+    // If any empty or validation failed, stop here (getTableData already showed Swal)
     if (hasEmpty) {
-        Swal.fire({
-            title: "Please fill all items",
-            icon: "warning",
-            confirmButtonColor: "#3085d6",
-        });
+        if ($('.swal2-container').length === 0) { // Only show the generic error if no specific error was shown
+            Swal.fire({
+                title: "Please fill all items",
+                icon: "warning",
+                confirmButtonColor: "#3085d6",
+            });
+        }
         return []; // stop returning incomplete data
     }
 
@@ -464,7 +614,7 @@ $(document).ready(function () {
         }
     });
 
-    // Hide Dropdown when clicking outside
+   
     $(document).on("click", function (e) {
         if (!$(e.target).closest("#skillInput, #suggestion-box").length) {
             $("#suggestion-box").hide();
@@ -543,4 +693,53 @@ function resumeIframe(){
     const pdfBlob = base64ToBlob(data.pdf_data);
     const pdfUrl = URL.createObjectURL(pdfBlob);
     const encodedUrl = encodeURIComponent(pdfUrl);
+}
+
+function enforceInputConstraints(element) {
+    const value = element.innerText;
+    const maxLength = element.getAttribute('data-maxlength');
+    const type = element.getAttribute('data-type');
+    let newValue = value;
+    let contentChanged = false;
+
+    
+    if (type === 'year') {
+       
+        const cleanedValue = newValue.replace(/\D/g, '');
+        if (cleanedValue !== newValue) {
+            newValue = cleanedValue;
+            contentChanged = true;
+        }
+    }
+
+    // 2. Enforce max length
+    if (maxLength && newValue.length > parseInt(maxLength)) {
+        newValue = newValue.substring(0, parseInt(maxLength));
+        contentChanged = true;
+    }
+    
+  
+    if (contentChanged) {
+
+        element.innerText = newValue;
+
+       
+        setTimeout(() => {
+            try {
+                
+                element.focus();
+
+                
+                const range = document.createRange();
+                range.selectNodeContents(element);
+                range.collapse(false); 
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.add(range);
+            } catch (e) {
+               
+                element.focus();
+            }
+        }, 0); 
+    }
 }
