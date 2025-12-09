@@ -1,0 +1,236 @@
+{% load static %}
+<style>
+body {
+    margin: 0;
+    background: #eef0f5;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.resume-container {
+    width: 850px;
+    background: #fff;
+    margin: 20px auto;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    box-shadow: 0 0 10px #e0e0e0;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 25px;
+    border-bottom: 1px solid #dcdcdc;
+}
+
+.hireline-logo {
+    width: 130px;
+    object-fit: contain;
+}
+
+.header-center {
+    text-align: center;
+    flex: 1;
+}
+
+.header-center h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a3c7b;
+}
+
+.header-center h3 {
+    margin: 5px 0 0;
+    font-size: 15px;
+    color: #444;
+}
+
+.strength-box {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 4px solid #4caf50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4caf50;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+.body-content {
+    padding: 35px;
+}
+
+.section-title {
+    margin: 25px 0 12px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #1a3c7b;
+}
+
+ul.custom-list {
+    margin: 0;
+    padding-left: 22px;
+}
+
+ul.custom-list li {
+    font-size: 14.5px;
+    margin-bottom: 7px;
+    line-height: 20px;
+}
+
+
+.footer {
+    background: #f0f0f0;
+    padding: 10px;
+    text-align: center;
+    font-size: 13.5px;
+    color: #555;
+    border-top: 1px solid #ccc;
+}
+</style>
+
+<div class="resume-container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <img src="{{ profile_details.logo }}" class="hireline-logo">
+
+        <div class="header-center">
+            <h1>{{ profile_details.firstname }} {{ profile_details.lastname }}</h1>
+            <h3>{{ profile_details.title }} — Exp: {{ profile_details.final_experience }}</h3>
+        </div>
+
+        <div class="strength-box">
+            80%
+        </div>
+    </div>
+
+
+    <!-- BODY CONTENT -->
+    <div class="body-content">
+
+        <!-- PERSONAL DETAILS -->
+<div class="section-title" style="margin: 0px;">Personal Details</div>
+
+<table style="width: 100%; font-size: 14.5px; border-collapse: collapse; margin-left: 5px;">
+    <tr>
+        <td style="width: 140px; padding: 4px 0;color: #555;"><strong>Title</strong></td>
+        <td>: {{ profile_details.title }}</td>
+    </tr>
+
+    <tr>
+        <td style="padding: 4px 0;color: #555;"><strong>First Name</strong></td>
+        <td>: {{ profile_details.firstname }}</td>
+    </tr>
+
+    <tr>
+        <td style="padding: 4px 0;color: #555;"><strong>Last Name</strong></td>
+        <td>: {{ profile_details.lastname }}</td>
+    </tr>
+
+    <tr>
+        <td style="padding: 4px 0;color: #555;"><strong>Email</strong></td>
+        <td>: {{ profile_details.email }}</td>
+    </tr>
+
+    <tr>
+        <td style="padding: 4px 0;color: #555;"><strong>Mobile</strong></td>
+        <td>: {{ profile_details.mobile }}</td>
+    </tr>
+</table>
+
+
+
+        <!-- ADDRESS -->
+        <div class="section-title">Address</div>
+        <ul class="custom-list">
+            {% for addr in profile_details.address %}
+            <li>
+                Address {{ forloop.counter }}:
+                {{ addr.addline1 }} {{ addr.addline2 }},
+                {{ addr.city }}, {{ addr.state }},
+                {{ addr.country }} - {{ addr.zipcode }}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- EDUCATION -->
+        <div class="section-title">Education</div>
+        <ul class="custom-list">
+            {% for edu in profile_details.education %}
+            <li>
+               {{ edu.course }} — {{ edu.institute }}
+                ({{ edu.yearfrom }} - {{ edu.yearto }})  
+                Grade: {{ edu.grade }}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- EXPERIENCE -->
+        <div class="section-title">Experience</div>
+        <ul class="custom-list">
+            {% for exp in profile_details.experience %}
+            <li>
+             {{ exp.jobtitle }} at {{ exp.company }}
+                ({{ exp.yearfrom }} - {{ exp.yearto }})
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- SKILLS -->
+        <div class="section-title">Skills</div>
+        <ul class="custom-list">
+            <li>
+                {{ profile_details.skills.primaryskills }}
+                {% if profile_details.skills.secondaryskills %}
+                    , {{ profile_details.skills.secondaryskills }}
+                {% endif %}
+            </li>
+        </ul>
+
+        <!-- PROJECTS -->
+        <div class="section-title">Projects</div>
+        <ul class="custom-list">
+            {% for p in profile_details.projects %}
+            <li>
+                {{ p.projectname }} — {{ p.clientname }}  
+                Role: {{ p.roleplayed }}  
+                Skills Used: {{ p.skillsused }}  
+                ({{ p.yearsfrom }} to {{ p.yearsto }})
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- CERTIFICATES -->
+        <div class="section-title">Certificates</div>
+        <ul class="custom-list">
+            {% for c in profile_details.certificates %}
+            <li>{{ c.certname }} — {{ c.year }}</li>
+            {% empty %}
+            <li>No certificates added</li>
+            {% endfor %}
+        </ul>
+
+        <!-- AWARDS -->
+        <div class="section-title">Awards</div>
+        <ul class="custom-list">
+            {% for a in profile_details.awards %}
+            <li>{{ a.awardname }} — {{ a.year }}</li>
+            {% empty %}
+            <li>No awards added</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        This resume is submitted by {{username}} @ {{comany_name}} on {{ profile_details.dateofcreation|date:"d/m/Y" }}.
+    </div>
+
+</div>

@@ -142,18 +142,18 @@
                         <span id="active" class="custm-tab p-clr activeTab shadow"
                             onclick="tabSwitch(this.id)">Profile</span>
 
-                        <span id="Inactive" class="custm-tab p-clr"
-                            onclick="tabSwitch(this.id)">Activity</span>
+                        <span id="Inactive" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Activity</span>
 
                     </div>
 
                     <div style="display:flex;gap:12px;">
-                        <button class="btn btn-primary" onclick="window.location.href=''" type="button">
+                        <button class="btn btn-primary"
+                            onclick="window.location.href='/viewresume/{{profile_details.id}}'" type="button">
                             View Resume
                         </button>
-                        <button class="btn btn-primary" type="button"
-                            onclick="window.location.href=''"><i class="fas fa-file-upload"></i>&ensp;
-                            Export
+                        <button class="btn btn-primary" type="button" onclick="window.location.href=''"><i
+                                class="fas fa-file-upload"></i>&ensp;
+                            Download
                         </button>
                     </div>
                 </div>
@@ -196,57 +196,57 @@
                                     <td> <strong> Mobile </strong></td>
                                     <td>:&ensp;{{profile_details.mobile}}</td>
                                 </tr>
-                               
+
                             </tbody>
                         </table>
                     </div>
                     <div class="section-title">
-    <div class="icon-box">
-        <i class="fas fa-map-marker-alt"></i>
-    </div>
-    Address
-</div>
+                        <div class="icon-box">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        Address
+                    </div>
 
-<div class="table-responsive text-nowrap" style="padding-left: 25px;">
-    <table class="table table-bordered">
-        <tbody>
+                    <div class="table-responsive text-nowrap" style="padding-left: 25px;">
+                        <table class="table table-bordered">
+                            <tbody>
 
-            {% for addr in profile_details.address %}
-            <tr>
-                <td style="width: 15%;"><strong>Address {{ forloop.counter }}</strong></td>
-                <td>
-                    :&ensp;
+                                {% for addr in profile_details.address %}
+                                <tr>
+                                    <td style="width: 15%;"><strong>Address {{ forloop.counter }}</strong></td>
+                                    <td>
+                                        :&ensp;
 
-                    {% if addr.addline1 %}
-                        {{ addr.addline1 }}
-                    {% endif %}
+                                        {% if addr.addline1 %}
+                                        {{ addr.addline1 }}
+                                        {% endif %}
 
-                    {% if addr.addline2 %}
-                         {{ addr.addline2 }}
-                    {% endif %}
+                                        {% if addr.addline2 %}
+                                        {{ addr.addline2 }}
+                                        {% endif %}
 
-                    {% if addr.city %}
-                        , {{ addr.city }}
-                    {% endif %}
+                                        {% if addr.city %}
+                                        , {{ addr.city }}
+                                        {% endif %}
 
-                    {% if addr.state %}
-                        , {{ addr.state }}
-                    {% endif %}
+                                        {% if addr.state %}
+                                        , {{ addr.state }}
+                                        {% endif %}
 
-                    {% if addr.country %}
-                        , {{ addr.country }}
-                    {% endif %}
+                                        {% if addr.country %}
+                                        , {{ addr.country }}
+                                        {% endif %}
 
-                    {% if addr.zipcode %}
-                        - {{ addr.zipcode }}
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
+                                        {% if addr.zipcode %}
+                                        - {{ addr.zipcode }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
 
-        </tbody>
-    </table>
-</div>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div class="section-title">
                         <div class="icon-box">
@@ -259,14 +259,14 @@
                             <tbody>
                                 {% for edu in profile_details.education %}
 
-                                    <tr>
-                                        <td>
-                                            {{ edu.course }} from {{ edu.institute }}
-                                            {{ edu.yearfrom }} - {{ edu.yearto }}
-                                            — Grade - {{ edu.grade }}
-                                        </td>
-                                    </tr>
-                               
+                                <tr>
+                                    <td>
+                                        {{ edu.course }} from {{ edu.institute }}
+                                        {{ edu.yearfrom }} - {{ edu.yearto }}
+                                        — Grade - {{ edu.grade }}
+                                    </td>
+                                </tr>
+
                                 {% endfor %}
 
 
@@ -310,7 +310,7 @@
                                     <td>
                                         {{ profile_details.skills.primaryskills }}
                                         {% if profile_details.skills.secondaryskills %}
-                                            , {{ profile_details.skills.secondaryskills }}
+                                        , {{ profile_details.skills.secondaryskills }}
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -326,17 +326,17 @@
                     <div class="table-responsive text-nowrap" style="padding-left: 25px;">
                         <table class="table table-bordered">
                             <tbody>
-                            {% for p in profile_details.projects %}
+                                {% for p in profile_details.projects %}
                                 <tr>
                                     <td>
-                                        <strong>{{ p.projectname }}</strong>  
-                                        — {{ p.clientname }}  
-                                        — {{ p.roleplayed }}  
-                                        — Skills: {{ p.skillsused }}  
+                                        <strong>{{ p.projectname }}</strong>
+                                        — {{ p.clientname }}
+                                        — {{ p.roleplayed }}
+                                        — Skills: {{ p.skillsused }}
                                         — ({{ p.yearsfrom }} to {{ p.yearsto }})
                                     </td>
                                 </tr>
-                            {% endfor %}
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -349,16 +349,18 @@
                     <div class="table-responsive text-nowrap" style="padding-left: 25px;">
                         <table class="table table-bordered">
                             <tbody>
-                            {% for c in profile_details.certificates %}
+                                {% for c in profile_details.certificates %}
                                 <tr>
                                     <td>
                                         {{ c.certname }}
                                         — {{ c.year }}
                                     </td>
                                 </tr>
-                            {% empty %}
-                                <tr><td>No certificates added</td></tr>
-                            {% endfor %}
+                                {% empty %}
+                                <tr>
+                                    <td>No certificates added</td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -371,16 +373,18 @@
                     <div class="table-responsive text-nowrap" style="padding-left: 25px;">
                         <table class="table table-bordered">
                             <tbody>
-                            {% for a in profile_details.awards %}
+                                {% for a in profile_details.awards %}
                                 <tr>
                                     <td>
                                         {{ a.awardname }}
                                         — {{ a.year }}
                                     </td>
                                 </tr>
-                            {% empty %}
-                                <tr><td>No awards added</td></tr>
-                            {% endfor %}
+                                {% empty %}
+                                <tr>
+                                    <td>No awards added</td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -392,23 +396,21 @@
 </div>
 <script>
 
-function tabSwitch(element) {
+    function tabSwitch(element) {
 
-    const pid = "{{ profile_details.id }}"; 
+        const pid = "{{ profile_details.id }}";
 
-    if (element === 'active') {
-        $('#active').addClass('activeTab shadow');
-        $('#Inactive').removeClass('activeTab shadow');
-        window.location.href = "/profileview/" + pid;
+        if (element === 'active') {
+            $('#active').addClass('activeTab shadow');
+            $('#Inactive').removeClass('activeTab shadow');
+            window.location.href = "/profileview/" + pid;
+        }
+
+        if (element === 'Inactive') {
+            $('#Inactive').addClass('activeTab shadow');
+            $('#active').removeClass('activeTab shadow');
+            window.location.href = "/profileactivity/" + pid;
+        }
     }
-
-    if (element === 'Inactive') {
-        $('#Inactive').addClass('activeTab shadow');
-        $('#active').removeClass('activeTab shadow');
-        window.location.href = "/profileactivity/" + pid;
-    }
-}
 
 </script>
-
-

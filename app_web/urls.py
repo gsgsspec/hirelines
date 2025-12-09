@@ -46,6 +46,8 @@ urlpatterns = [
     path("profiles",views.profilesPage),
     path("add-profile",active_user_required(views.addProfilePage)),
     path("profileview/<int:pid>",views.profileviewPage),
-    path("profileactivity/<int:pid>",views.profileactivityviewPage)
+    path("profileactivity/<int:pid>",views.profileactivityviewPage),
+    path('viewresume/<int:pid>/', active_user_required(views.view_resumePage)),
+
     
 ]

@@ -3191,6 +3191,7 @@ def getProfileDetailsService(pid):
             "title": profile.get("title", ""),
             "email": profile.get("email", ""),
             "mobile": profile.get("mobile", ""),
+            "dateofcreation":profile.get("dateofcreation","")
         }
 
 
@@ -3207,8 +3208,21 @@ def getProfileDetailsService(pid):
             .values("jobtitle", "company", "yearfrom", "yearto")
             .order_by("sequence")
         )
-
+     
         profile_det["experience"] = list(experience_list)
+
+        total_exp = 0
+        for exp in experience_list:
+            try:
+                yf = int(exp.get("yearfrom", 0))
+                yt = int(exp.get("yearto", 0))
+
+                if yt >= yf:
+                    total_exp += (yt - yf)
+            except:
+                pass
+
+        profile_det["final_experience"] = f"{total_exp} Years"
 
         skills = (
             ProfileSkills.objects.filter(profileid=pid)
@@ -3249,6 +3263,12 @@ def getProfileDetailsService(pid):
 
         profile_det["address"] = address_list
 
+        branding = Branding.objects.filter(companyid=profile.get("companyid")).values("logourl").first()
+
+        if branding and branding.get("logourl"):
+            profile_det["logo"] = branding.get("logourl")
+        else:
+            profile_det["logo"] = None
 
 
         return profile_det

@@ -903,7 +903,9 @@ def profilesPage(request):
     try:
         user_mail = request.user
         user_data = auth_user(user_mail)
+        print("user_data",user_data)
         user_role = user_data.role
+        print("user_role",user_role)
 
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
@@ -915,7 +917,7 @@ def profilesPage(request):
         ]
 
         # Simple: Convert queryset → list of dictionaries
-        profile_details = list(Profile.objects.values())
+        profile_details = list(Profile.objects.filter(companyid=user_data.companyid).values())
 
         #  Add source name + status text
         for p in profile_details:
@@ -1079,7 +1081,7 @@ def addProfilePage(request):
     try:
         user_mail = request.user
         user_data = auth_user(user_mail)
-       
+
         user_role = user_data.role
 
         menuItemList = get_functions_service(user_role)
@@ -1088,3 +1090,25 @@ def addProfilePage(request):
 
     except Exception as e:
         raise
+       
+
+def view_resumePage(request,pid):
+    
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+        username=user_data.name
+        comany_name=Company.objects.get(id=user_data.companyid).name
+
+
+        menuItemList = get_functions_service(user_role)
+
+        profile_details=getProfileDetailsService(pid)
+       
+        return render(request, "portal_index.html", {"template_name": 'view_resume.html','menuItemList': menuItemList,'profile_details':profile_details,"username": username,'comany_name':comany_name
+})
+      
+    except Exception as e:
+        raise  

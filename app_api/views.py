@@ -1667,7 +1667,12 @@ def filter_profiles_api(request):
     exp_to = int(exp_to) if exp_to else None
 
   
-    filtered_profiles = Profile.objects.all()
+    login_user = request.user
+
+    company_id=User.objects.get(email=login_user).companyid 
+
+    filtered_profiles = Profile.objects.filter(companyid=company_id)
+
 
 
     if title:
@@ -1752,6 +1757,7 @@ def filter_profiles_api(request):
 
         # --- APPEND OUTPUT ---
         final_output.append({
+            "id":profile.id,
             "date": profile.dateofcreation.strftime("%d-%b-%Y %I:%M %p"),
             "title": profile.title,
             "firstname": profile.firstname,
