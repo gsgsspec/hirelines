@@ -932,8 +932,6 @@ def profilesPage(request):
             }
             p["status_text"] = status_map.get(p["status"], "NA")
 
-
-
             if p.get("dateofcreation"):
                 p["formatted_date"] = p["dateofcreation"].strftime("%d-%b-%Y %I:%M %p")
             else:
@@ -1064,7 +1062,6 @@ def updateProfileDetailsPage(request, pid):
 
         user_mail = request.user
         user_data = auth_user(user_mail)
-
        
         user_role = user_data.role
 
@@ -1074,5 +1071,20 @@ def updateProfileDetailsPage(request, pid):
         
         return render(request, "portal_index.html", {"template_name": 'update_profile.html','menuItemList':menuItemList,"profile_data":profile_data})
     
+    except Exception as e:
+        raise
+
+
+def addProfilePage(request):
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+       
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        return render(request, "portal_index.html", {"template_name": 'add_profile.html','menuItemList':menuItemList})
+
     except Exception as e:
         raise

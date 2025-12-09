@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from app_api.decorator import active_user_required
 
 
 urlpatterns = [
@@ -43,6 +44,7 @@ urlpatterns = [
     # Company data page
     path("cmp-reg", views.homePage),
     path("profiles",views.profilesPage),
+    path("add-profile",active_user_required(views.addProfilePage)),
     path("profileview/<int:pid>",views.profileviewPage),
     path("profileactivity/<int:pid>",views.profileactivityviewPage)
     
