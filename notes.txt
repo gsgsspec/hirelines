@@ -180,3 +180,11 @@ CREATE TABLE IF NOT EXISTS `profileaddress` (
 
 INSERT INTO `role` (`Name`, `status`) VALUES ('Recruiter', 'A');
 INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('Resume Inbox', 'Resume Inbox', 'resume-inbox', 'HR-Admin, Recruiter', 'fas fa-envelope', '3');
+
+==================ProfileActivity==================================
+
+ALTER TABLE profileactivity
+ADD activityname VARCHAR(100) NULL,
+ADD activityremarks VARCHAR(200) NULL,
+ADD activitystatus VARCHAR(100) NULL;
+
