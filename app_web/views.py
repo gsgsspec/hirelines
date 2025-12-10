@@ -918,12 +918,13 @@ def profilesPage(request):
 
         # Simple: Convert queryset → list of dictionaries
         profile_details = list(Profile.objects.filter(companyid=user_data.companyid).values())
+        source_list=list(Source.objects.filter(companyid=user_data.companyid).values())
 
         #  Add source name + status text
         for p in profile_details:
             # Source
             src = Source.objects.filter(id=p["sourceid"]).first()
-            p["source_code"] = src.code if src else ""
+            p["source_code"] = src.label if src else ""
 
             # Status
             status_map = {
@@ -971,7 +972,8 @@ def profilesPage(request):
                 {
                     "template_name": "profiles.html",
                     "menuItemList": menuItemList,
-                    "profile_details": profile_details,  # <-- clean list
+                    "profile_details": profile_details,
+                    "source_list":source_list  
                 },
             )
         else:

@@ -78,5 +78,7 @@ urlpatterns = [
     path("profile-filters",views.filter_profiles_api),
     path('get-default-email-template',views.getDefaultEmailTemplate),
     path('add-profile-activity',views.addProfileActivity),
+    path('candidate-profile',views.candidateProfile),
+
 
 ]

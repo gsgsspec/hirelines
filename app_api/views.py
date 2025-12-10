@@ -25,7 +25,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService, getResumeData, softDeleteResume
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile,Resume,ResumeFile
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, saveProfileDetailsDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
@@ -1691,7 +1691,7 @@ def filter_profiles_api(request):
         filtered_profiles = filtered_profiles.filter(id__in=matched_ids)
 
     if source_code:
-        source_obj = Source.objects.filter(code=source_code).first()
+        source_obj = Source.objects.filter(id=source_code).first()
         if source_obj:
             filtered_profiles = filtered_profiles.filter(sourceid=source_obj.id)
         else:
@@ -1737,7 +1737,7 @@ def filter_profiles_api(request):
         # --- SOURCE ---
         source_value = (
             Source.objects.filter(id=profile.sourceid)
-            .values_list("code", flat=True)
+            .values_list("label", flat=True)
             .first() or ""
         )
 
@@ -2175,4 +2175,64 @@ def addProfileActivity(request):
         response['error'] = str(e)
         raise
     
+    return JsonResponse(response)
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def candidateProfile(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+
+            dataObjs = request.POST.dict()
+            fileObj = request.FILES.get("attachment")
+
+            jd_id = decrypt_code(dataObjs["encjdid"])
+            company_id = JobDesc.objects.get(id=jd_id).companyid
+          
+            if fileObj:
+                filename = fileObj.name
+                file_data = fileObj.read()
+            else:
+                filename = None
+                file_data = None
+
+            # Example: Get source ID
+            source = Source.objects.filter(code=dataObjs['source-code']).last()
+            sourceid = source.id
+
+            # Save resume header
+            new_resume = Resume(
+                sourceid = sourceid,
+                filename = filename,
+                mailid = None,                
+                companyid = company_id,
+                status = "P"
+            )
+            new_resume.save()
+
+            # Save file content
+            if file_data:
+                resume_file = ResumeFile(
+                    resumeid=new_resume.id,
+                    filename=filename,
+                    filecontent=file_data
+                )
+                resume_file.save()
+
+            response['data'] = "Resume uploaded successfully"
+            response['statusCode'] = 0
+
+    except Exception as err:
+        response['data'] = 'Error in candidateProfile'
+        response['error'] = str(err)
+        raise
+
     return JsonResponse(response)

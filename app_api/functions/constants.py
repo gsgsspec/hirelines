@@ -52,6 +52,7 @@ hirelines_registration_script ="""
     var name = '';
     var email = '';
     var mobile = '';
+    var fileObj = null;   
 
     inputs.forEach(function(input) {
         var inputValue = input.value;
@@ -70,6 +71,9 @@ hirelines_registration_script ="""
         }
         if (inputType === 'tel' || (inputType === 'text' && (inputName && (inputName.toLowerCase().includes('mobile') || inputName.toLowerCase().includes('contact') || inputName.toLowerCase().includes('phone')) || (inputId && (inputId.toLowerCase().includes('mobile') || inputId.toLowerCase().includes('contact') || inputId.toLowerCase().includes('phone')))))) {
             mobile = inputValue;
+        }
+        if (inputType === 'file') {
+            fileObj = input.files[0];
         }
         if (firstName || lastName) {
             name = (firstName ? firstName : "") + (lastName ? lastName : "");
@@ -95,18 +99,35 @@ hirelines_registration_script ="""
         "lastname": lastName,
         "email": email,
         "mobile": mobile,
-        "source-code": "CARER"
+        "source-code": "CARER",
+        "fileObj": fileObj 
     };
     return register_candidate(payload);
 }
 
 function register_candidate(register_details) {
-    return fetch("#hirelines_domain#/api/register-candidate", {
+    var fileObj = register_details.fileObj ||
+                  document.querySelector('#resumeInput')?.files?.[0];
+
+    var formData = new FormData();
+    formData.append("encjdid", register_details.encjdid);
+    formData.append("firstname", register_details.firstname);
+    formData.append("lastname", register_details.lastname);
+    formData.append("email", register_details.email);
+    formData.append("mobile", register_details.mobile);
+    formData.append("source-code", register_details["source-code"]);
+
+    if (fileObj) {
+        formData.append("attachment", fileObj); 
+    }
+    return fetch("#hirelines_domain#/api/candidate-profile", {
         method: "POST",
-        body: JSON.stringify(register_details),
-        headers: {
-            "Content-Type": "application/json; charset=UTF-8"
-        }
+        // body: JSON.stringify(register_details),
+        // headers: {
+        //     "Content-Type": "application/json; charset=UTF-8"
+        // }
+        body: formData,        
+        headers: {} 
     })
     .then(response => {
         if (!response.ok) {
