@@ -82,6 +82,11 @@ ul.custom-list li {
     margin-bottom: 7px;
     line-height: 20px;
 }
+.custom-list {
+    list-style-type: none !important;
+    padding-left: 0 !important;
+    margin: 0;
+}
 
 
 .footer {
@@ -146,19 +151,7 @@ ul.custom-list li {
 
 
 
-        <!-- ADDRESS -->
-        <div class="section-title">Address</div>
-        <ul class="custom-list">
-            {% for addr in profile_details.address %}
-            <li>
-                Address {{ forloop.counter }}:
-                {{ addr.addline1 }} {{ addr.addline2 }},
-                {{ addr.city }}, {{ addr.state }},
-                {{ addr.country }} - {{ addr.zipcode }}
-            </li>
-            {% endfor %}
-        </ul>
-
+       
         <!-- EDUCATION -->
         <div class="section-title">Education</div>
         <ul class="custom-list">
@@ -211,8 +204,7 @@ ul.custom-list li {
         <ul class="custom-list">
             {% for c in profile_details.certificates %}
             <li>{{ c.certname }} — {{ c.year }}</li>
-            {% empty %}
-            <li>No certificates added</li>
+           
             {% endfor %}
         </ul>
 
@@ -221,8 +213,7 @@ ul.custom-list li {
         <ul class="custom-list">
             {% for a in profile_details.awards %}
             <li>{{ a.awardname }} — {{ a.year }}</li>
-            {% empty %}
-            <li>No awards added</li>
+       
             {% endfor %}
         </ul>
 
