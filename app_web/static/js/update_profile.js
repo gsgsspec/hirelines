@@ -522,6 +522,22 @@ $(document).on("submit", "#Person-detais", function (e) {
                 timer: 1500,
                 showConfirmButton: "OK"
             });
+            let sendMail = document.getElementById("sendWelcomeMail")?.checked;
+
+            if (sendMail) {
+                
+
+                $.post(CONFIG['portal'] + "/api/send-welcome-mail", {
+                    profile_id: profileId,
+                    csrfmiddlewaretoken: CSRF_TOKEN
+                })
+                    .done(function (mailRes) {
+                        console.log("Welcome Mail Sent:", mailRes);
+                    })
+                    .fail(function (mailErr) {
+                        console.error("Mail Failed:", mailErr);
+                    });
+            }
         })
         .fail(function (err) {
 

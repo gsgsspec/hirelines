@@ -25,7 +25,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService, getResumeData, softDeleteResume
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile,Resume,ResumeFile
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, saveProfileDetailsDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
@@ -2177,7 +2177,6 @@ def addProfileActivity(request):
     
     return JsonResponse(response)
 
-
 @csrf_exempt
 @api_view(['POST'])
 @authentication_classes([])
@@ -2236,3 +2235,130 @@ def candidateProfile(request):
         raise
 
     return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def sendwelcomemail(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+
+   
+
+    try:
+        profile_id = request.data.get("profile_id")
+      
+
+        if not profile_id:
+            print(" Missing profile_id")
+            response['error'] = "profile_id missing"
+            return JsonResponse(response)
+
+   
+        profile = Profile.objects.get(id=profile_id)
+       
+
+      
+        first_name = profile.firstname
+
+        to_email = profile.email
+        company_id = profile.companyid
+
+      
+        company = Company.objects.get(id=company_id)
+       
+       
+        acert_domain = getConfig()['DOMAIN']['acert']
+        endpoint = '/api/get-welcome-mail'
+        url = urljoin(acert_domain, endpoint)
+
+        
+
+        payload = {
+            "companyId": company_id,
+            "toEmail": to_email,
+            "first_name": first_name,
+          
+            "companyName": company.name
+        }
+
+        
+        acert_res = requests.post(
+            url,
+            json=payload,
+            headers={"Content-Type": "application/json"}
+        ).json()
+            
+        if acert_res.get("statusCode") != 0:
+            print(" ACERT email process failed")
+            response['error'] = "ACERT email process failed"
+            
+        response["statusCode"] = 0
+        response["data"] = {"email": to_email}
+
+        
+        last_activity = ProfileActivity.objects.filter(profileid=profile_id).order_by('-sequence').first()
+
+        if last_activity:
+            next_sequence = (last_activity.sequence or 0) + 1
+        else:
+            next_sequence = 1
+
+        user=request.user
+   
+
+        acvityuserid = User.objects.get(email=user).id
+       
+        ProfileActivity.objects.create(
+            profileid=profile_id,
+            datentime=datetime.now(),
+            sequence=next_sequence,
+            activitycode="WE",                     
+            acvityuserid=acvityuserid,                      
+            activityname="Welcome Email Sent",
+          
+        )
+                
+               
+     
+
+    except Exception as e:
+        print(" Exception in sendwelcomemail():", str(e))
+        response["error"] = str(e)
+    return JsonResponse(response)
+
+
+
+
+@api_view(['POST'])
+def check_welcome_mail_status(request):
+    response = {"email_sent": False, "statusCode": 1}
+
+    try:
+        profile_id = request.data.get("profile_id")
+       
+
+        if not profile_id:
+            response["error"] = "profile_id missing"
+            return JsonResponse(response)
+
+        exists = ProfileActivity.objects.filter(
+            profileid=profile_id,
+            activitycode="WE"
+        ).exists()
+
+        response["email_sent"] = exists
+        response["statusCode"] = 0
+        return JsonResponse(response)
+
+    except Exception as e:
+        response["error"] = str(e)
+        return JsonResponse(response)
+
+
+
+
+

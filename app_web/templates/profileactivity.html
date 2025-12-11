@@ -103,7 +103,8 @@
                         <!-- <span id="addActivity" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Add Activity</span> -->
                          <div class="tabsContainer"style="flex-direction: row-reverse;">
                         
-                        <button class="btn btn-primary" id="sendWelcome"  onclick="tabSwitch(this.id)"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button>
+                        <!-- <button class="btn btn-primary" id="sendWelcome"  onclick="tabSwitch(this.id)"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button> -->
+                         <button class="btn btn-primary" id="sendWelcome" onclick="sendWelcomeMail()"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button>
                         <button class="btn btn-primary" id="addActivity"  onclick="tabSwitch(this.id)"><i class="fas fa-user-plus"></i> Add activity</button>
                         </div>
                     <!-- </div> -->
@@ -203,12 +204,14 @@ function tabSwitch(element) {
 
     }
 
-    if (element === 'sendWelcome') {
+    // if (element === 'sendWelcome') {
 
-        window.location.href = "/profileactivity/" + pid;
+    //     window.location.href = "/profileactivity/" + pid;
 
 
-    }
+    // }
+   
+
 }
 $("#add-activity-details").submit(function (e) {
     e.preventDefault();
@@ -260,4 +263,81 @@ $("#add-activity-details").submit(function (e) {
 });
 
 
+</script>
+<script>
+function sendWelcomeMail() {
+    const pid = getPidFromUrl(); 
+
+    let final_data = {
+        profile_id: pid,
+        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+    };
+
+    $.post(CONFIG['portal'] + "/api/send-welcome-mail", final_data)
+        .done(function (res) {
+            console.log(res)
+            if (res.statusCode === 0) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Welcome Mail Sent!",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                let btn = document.getElementById("sendWelcome");
+                btn.disabled = true;
+                btn.style.background = "#ccc";
+                btn.style.cursor = "not-allowed";
+
+               
+                checkWelcomeStatus()
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Failed!",
+                    text: res.error || "Unable to send email."
+                });
+            }
+        })
+        .fail(function () {
+            Swal.fire({
+                icon: "error",
+                title: "Server Error",
+                text: "Unable to send email"
+            });
+        });
+}
+</script>
+<script>
+function checkWelcomeStatus() {
+    const pid = getPidFromUrl();
+
+    $.post(CONFIG['portal'] + "/api/check-welcome-mail-status", {
+        profile_id: pid,
+        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+    })
+    .done(function(res) {
+        let btn = document.getElementById("sendWelcome");
+
+        if (res.statusCode === 0 && res.email_sent) {
+         
+            btn.disabled = true;
+            btn.style.background = "#ccc";
+            btn.style.cursor = "not-allowed";
+        } else {
+           
+            btn.disabled = false;
+            btn.style.background = "";
+            btn.style.cursor = "pointer";
+        }
+    })
+    .fail(function() {
+        console.error("Error checking welcome mail status");
+    });
+}
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    checkWelcomeStatus();
+});
 </script>

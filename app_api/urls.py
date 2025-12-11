@@ -79,6 +79,10 @@ urlpatterns = [
     path('get-default-email-template',views.getDefaultEmailTemplate),
     path('add-profile-activity',views.addProfileActivity),
     path('candidate-profile',views.candidateProfile),
+    path("send-welcome-mail",views.sendwelcomemail),
+    path("check-welcome-mail-status",views.check_welcome_mail_status)
+    
+
 
 
 ]
