@@ -8,8 +8,10 @@ from app_api.functions.enc_dec import decrypt_code
 from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
-    IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates
+    IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
+    ResumeFile
 
+from .doc2pdf import convert_word_binary_to_pdf
 
 def addCompanyDataDB(dataObjs):
     try:
@@ -854,23 +856,54 @@ def addResumeProfileDB(dataObjs):
 
 
 
-def saveProfileDetailsDB(dataObjs):
+def addProfileDB(dataObjs,fileObjs, user_data):
     try:
 
+        sourceid = None
+
+        source = Source.objects.filter(companyid=user_data.companyid,code=dataObjs['source-code']).last()
+        
+        if source:
+            sourceid = source.id
+
+        else:
+            new_source = Source(
+                companyid=user_data.companyid,
+                code = dataObjs['source-code'],
+                label = dataObjs['source-code']
+            )
+            new_source.save()
+
+            sourceid = new_source.id
+
+        resume = Resume(
+            sourceid = sourceid,
+            companyid = user_data.companyid,
+            filename = fileObjs.name,
+            datentime = datetime.now(),
+            status = "A"
+        )
+
+        resume.save()
+
+        resume_file = ResumeFile(
+            resumeid = resume.id,
+            filename = fileObjs.name,
+            filecontent = fileObjs.read()
+        )
+
+        resume_file.save()
+
         profile = Profile(
+            sourceid = sourceid,
+            resumeid = resume.id,
+            companyid = user_data.companyid,
+            dateofcreation = datetime.now(),
             title = dataObjs["title"],
             firstname = dataObjs["firstname"],
             middlename = dataObjs["middlename"],
             lastname = dataObjs["lastname"],
             email = dataObjs["email"],
-            mobile = dataObjs["mobile"],
-            linkedin = dataObjs["linkedin"],
-            facebook = dataObjs["facebook"],
-            fathername = dataObjs["fathername"],
-            nativeof = dataObjs["nativeof"],
-            dateofcreation = datetime.now(),
-            passportnum = dataObjs["passportnum"],
-            dateofbirth = dataObjs["dateofbirth"],
             status = "D"
         )
 
@@ -1043,6 +1076,7 @@ def updateProfileSkillsDB(dataObjs):
     except Exception as e:
         raise
 
+
 def updateProfileActivityDB(dataObjs,userid):
     try:
         profile_id = dataObjs.get("profile_id")
@@ -1063,6 +1097,22 @@ def updateProfileActivityDB(dataObjs,userid):
         return True
 
       
+
+    except Exception as e:
+        raise
+
+
+def sampleConverter(fileObjs):
+    try:
+
+        word_binary = fileObjs.read()
+
+        pdf_binary = convert_word_binary_to_pdf(word_binary)
+
+        output_path = "C:\Srikanth\projects\hirelines\media\branded_resumes\converted_output.pdf"
+        with open(output_path, "wb") as f:
+            f.write(pdf_binary)
+
 
     except Exception as e:
         raise

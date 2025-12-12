@@ -17,6 +17,7 @@ var menuItemsUrls = {
     'company': ['/company-data'],
     'sources': ['/sources'],
     'resume-inbox': ['/resume-inbox'],
+    'profiles': ['profiles','/add-profile'],
     'logout': ['/']
 };
 

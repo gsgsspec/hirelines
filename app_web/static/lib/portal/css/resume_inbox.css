@@ -72,7 +72,13 @@
 
 .table-ctn {
     width: 100%;
+    transition: width 0.4s ease;
 }
+
+.table-ctn.half-width {
+    width: 50%;
+}
+
 
 /* For Chrome, Edge, Brave */
 ::-webkit-scrollbar {
@@ -98,4 +104,10 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+
+.active-row {
+    background-color: var(--light-primary-color) !important;
+    color: var(--primary-color);
 }

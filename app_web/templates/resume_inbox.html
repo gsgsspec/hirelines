@@ -2,24 +2,18 @@
 
 <link rel="stylesheet" href="{% static 'lib/portal/css/resume_inbox.css' %}" />
 
-
 <div class="container-center">
     <div class="w-100">
         <div class="card mb-4">
             <div class="card-title-table">
-                <!-- <div id="display_icon" style="display:block;cursor:pointer" onclick='showFullPage()'><i class="bx bx-menu bx-sm"></i></div>
-                <div id="hide_icon" style="display:none;cursor:pointer" onclick='hideFullPage()'><i class="bx bx-menu bx-sm"></i></div> -->
                 <h4 class="card-header">Resume Inbox</h4>
-            </div>
-            <!-- <div>
-                <div class="search-wrapper">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search..." />
-                        <button type="button"><i class="fas fa-arrow-right"></i> </button>
-                    </div>
+                <div>
+                    <i class='bx bx-info-circle' data-bs-toggle="tooltip" style="font-size: 25px;color: var(--primary-color);cursor: pointer;"
+                        data-bs-offset="0,6" data-bs-placement="top" data-bs-html="true"
+                        data-bs-original-title="<span>Resumes will sync every hour</span>"></i> &nbsp;
+                    <button class="btn btn-primary" id="sync-btn"><i class="fas fa-sync-alt"></i> &nbsp; Sync with email </button> &nbsp;&nbsp;
                 </div>
-            </div> -->
+            </div>
 
             {% if user_data.role == "HR-Admin" %}
                 <div class="sources-layout">
@@ -37,8 +31,8 @@
                         <table class="table table-hover" id="resume-table">
                             <thead>
                                 <tr>
-                                    <th> <strong> Name </strong></th>
                                     <th> <strong> Source </strong></th>
+                                    <th> <strong> Name </strong></th>
                                     <th> <strong> Date </strong></th>
                                     <th> <strong> Status </strong></th>
                                 </tr>
@@ -46,8 +40,8 @@
                             <tbody class="table-border-bottom-0">
                                 {% for resume_data in resumes_data %}
                                     <tr class="resume-row" data-id="{{ resume_data.id }}" data-status="{{ resume_data.status }}" style="cursor: pointer;">
-                                        <td> {{ resume_data.name }} </td>
                                         <td> {{ resume_data.source }} </td>
+                                        <td> {{ resume_data.name }} </td>
                                         <td> {{ resume_data.date }} </td>
                                         {% if resume_data.status == "P" %}
                                             <td>Review Pending</td>
@@ -87,7 +81,7 @@
         $.noConflict();
         $('#resume-table').DataTable({
             "order": [],
-            "ordering": false,
+            "ordering": true,
             "lengthChange": false,
             language: { search: "",searchPlaceholder: "Search..." } ,
             pagingType: 'simple_numbers'

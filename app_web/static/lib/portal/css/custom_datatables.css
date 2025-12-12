@@ -1,0 +1,66 @@
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Default pagination buttons (Prev/Next) */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 6px 12px !important;
+    margin: 0 4px !important;
+    border-radius: 6px !important;
+    cursor: pointer;
+    color: #333 !important;
+    border: 1px solid transparent;
+    transition: 0.25s ease;
+}
+
+/* ⭐ Only numeric buttons become circles */
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous):not(.next) {
+    width: 36px;
+    height: 36px;
+    line-height: 36px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    text-align: center;
+}
+
+/* ⭐ Hover effect ONLY for numeric buttons */
+.dataTables_wrapper 
+.dataTables_paginate 
+.paginate_button:not(.previous):not(.next):hover {
+    background: transparent !important;
+    border-color: var(--primary-color) !important;
+    color: #333 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* ❌ No hover effects for prev/next */
+.dataTables_wrapper 
+.dataTables_paginate 
+.paginate_button.previous:hover,
+.dataTables_wrapper 
+.dataTables_paginate 
+.paginate_button.next:hover {
+    background: transparent !important;
+    border-color: transparent !important;
+    color: #333 !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Active numeric page */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border-color: var(--primary-color) !important;
+}
+
+.dataTables_filter input {
+    padding: 6px !important;
+    border-radius: 6px !important;
+    border: 1px solid #ccc !important;
+    outline: none !important;
+    box-shadow: none !important;
+}

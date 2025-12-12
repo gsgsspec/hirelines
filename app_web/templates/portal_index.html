@@ -29,9 +29,6 @@
 
   <!-- jQuery (required for Select2) -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
-
 
   <!-- Animate css -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -43,9 +40,11 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 
 <!-- Include Moment.js and DataTables Moment Plugin -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> -->
 <!-- <script src="https://cdn.datatables.net/plug-ins/1.13.1/sorting/datetime-moment.js"></script> -->
+<script src="{% static 'lib/portal/js/moment_cust.js' %}"></script>
 <script src="{% static 'lib/portal/js/datetime_moment.js' %}"></script>
+
 <!-- DataTables Buttons (Excel Export) -->
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -58,6 +57,7 @@
 
   <!-- Custom css -->
   <link rel="stylesheet" href="{% static 'lib/portal/css/custom.css' %}" />
+  <link rel="stylesheet" href="{% static 'lib/portal/css/custom_datatables.css' %}" />
   <link rel="stylesheet" href="{% static 'lib/portal/css/responsive.css' %}" />
 
   <!-- Vendors CSS -->
@@ -69,10 +69,6 @@
   <link rel="stylesheet" href="{% static 'lib/portal/assets/vendor/css/pages/page-misc.css' %}" />
   <!-- Helpers -->
   <script src="{% static 'lib/portal/assets/vendor/js/helpers.js' %}"></script>
-
-  <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-  <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-
 
   <script>
     var CSRF_TOKEN = '{{ csrf_token }}';
@@ -114,8 +110,10 @@
   <script src="{% static 'lib/portal/assets/vendor/js/bootstrap.js' %}"></script>
   <script src="{% static 'lib/portal/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js' %}"></script>
 
-  <script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+  <script src="{% static 'lib/portal/js/sortable.min.js' %}"></script>
+  <script src="{% static 'lib/portal/js/jquery_sortable.js' %}"></script>
+  <!-- <script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script> -->
 
 </head>
 

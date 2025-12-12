@@ -1877,7 +1877,7 @@ def getCandidateWorkflowData(cid):
 
 def generateCandidateReport(cid):
     try:
-        print("cid.............",cid)
+
         acert_domain = getConfig()["DOMAIN"]["acert"]
         endpoint = "/api/hireline-candidate-report"
 
@@ -3187,11 +3187,17 @@ def getProfileDetailsService(pid):
         profile_det = {
             "id": profile.get("id"),
             "firstname": profile.get("firstname", ""),
+            "middlename": profile.get("middlename", ""),
             "lastname": profile.get("lastname", ""),
             "title": profile.get("title", ""),
             "email": profile.get("email", ""),
             "mobile": profile.get("mobile", ""),
-            "dateofcreation":profile.get("dateofcreation","")
+            "dateofcreation":profile.get("dateofcreation",""),
+            "linkedin":profile.get("linkedin",""),
+            "dateofbirth":profile.get("dateofbirth",""),
+            "nativeof":profile.get("nativeof",""),
+            "facebook":profile.get("facebook",""),
+            "passportnum":profile.get("passportnum",""),
         }
 
 
@@ -3547,4 +3553,133 @@ def getProfileData(pid,user_data):
         return profile_data
         
     except Exception as e:
+        raise
+
+
+def generateBrandedProfile(profile_id,user_data):
+    try:
+
+        profile_details = getProfileDetailsService(profile_id)
+
+        company = Company.objects.get(id=user_data.companyid)
+
+        print("profile_details",profile_details)
+
+        root_path = BASE_DIR
+
+        resume_template_path = open(
+            root_path + "/media/branded_resumes/branded_resume_template.html", "r"
+        )
+
+        resume_template = resume_template_path.read()
+
+        updated_resume = resume_template.replace("{#comapany_logo#}", profile_details["logo"] if profile_details["logo"] else "")
+        updated_resume = updated_resume.replace("{#creation_date#}", profile_details["dateofcreation"].strftime("%d-%B-%Y") )
+        updated_resume = updated_resume.replace("{#title#}", profile_details["title"])
+        updated_resume = updated_resume.replace("{#firstname#}", profile_details["firstname"] )
+        updated_resume = updated_resume.replace("{#lastname#}", profile_details["lastname"] )
+        updated_resume = updated_resume.replace("{#email#}", profile_details["email"] )
+        updated_resume = updated_resume.replace("{#dob#}", profile_details["dateofbirth"].strftime("%d-%m-%Y") if profile_details["dateofbirth"] else "" )
+        updated_resume = updated_resume.replace("{#linkedin#}", profile_details["linkedin"] if profile_details["linkedin"] else "" )
+        updated_resume = updated_resume.replace("{#nativeof#}", profile_details["nativeof"] if profile_details["nativeof"] else "" )
+        updated_resume = updated_resume.replace("{#final_experience#}", profile_details["final_experience"] )
+        updated_resume = updated_resume.replace("{#user_name#}", user_data.name )
+        updated_resume = updated_resume.replace("{#company_name#}", company.name )
+
+        education_data = ""
+
+        if profile_details["education"]:
+            for education in profile_details["education"]:
+                education_data += f"""
+                    <li class="custom-list">  { education["course"]} - { education["institute"] } ({ education["yearfrom"] } - { education["yearto"] }) - Grade: { education["grade"] } </li>
+                """
+        else:
+            education_data = """
+                <li class="custom-list">No education details available</li>
+            """
+
+        experience_data = ""
+
+        if profile_details["experience"]:
+            for experience in profile_details["experience"]:
+                experience_data += f"""
+                    <li class="custom-list">  { experience["jobtitle"]} at { experience["company"] } ({ experience["yearfrom"] } - { experience["yearto"] })</li>
+                """
+
+        else:
+            experience_data = """
+                <li class="custom-list">No Experience</li>
+            """
+
+        skills_data = ""
+
+        if profile_details["skills"]["primaryskills"]:
+            skills_data = f"""
+                <li class="custom-list">{profile_details["skills"]["primaryskills"]}</li>
+            """
+        else:
+            skills_data = """
+                <li class="custom-list">No Skills</li>
+            """
+
+        projects_data = ""
+
+        if profile_details["projects"]:
+            for project in profile_details["projects"]:
+                projects_data += f"""
+                    <li class="custom-list">  { project["projectname"]} - { project["clientname"] }, Role : { project["roleplayed"] } , Skills Used : { project["skillsused"] } ({ project["yearsfrom"] } - { project["yearsto"] })</li>
+                """
+
+        else:
+            projects_data = """
+                <li class="custom-list">No Projects</li>
+            """
+
+        certificates_data = ""
+        
+        if profile_details["certificates"]:
+            for certificate in profile_details["certificates"]:
+                certificates_data += f"""
+                    <li class="custom-list">  { certificate["certname"]} - { certificate["year"] }</li>
+                """
+        else:
+            certificates_data = """
+                <li class="custom-list">No Certificates</li>
+            """
+
+        awards_data = ""
+
+        if profile_details["awards"]:
+            for award in profile_details["awards"]:
+                awards_data += f"""
+                    <li class="custom-list">  { award["awardname"]} - { award["year"] }</li>
+                """
+        else:
+            awards_data = """
+                <li class="custom-list">No Awards</li>
+            """
+
+        updated_resume = updated_resume.replace("{#education_data#}",education_data)
+        updated_resume = updated_resume.replace("{#experience_data#}",experience_data)
+        updated_resume = updated_resume.replace("{#skills_data#}",skills_data)
+        updated_resume = updated_resume.replace("{#projects_data#}",projects_data)
+        updated_resume = updated_resume.replace("{#certificates_data#}",certificates_data)
+        updated_resume = updated_resume.replace("{#awards_data#}",awards_data)
+
+        output_filepath = root_path + f"/media/branded_resumes/resume_{profile_id}.pdf"
+        result_file = open(output_filepath, "w+b")
+
+        pisa_status = pisa.CreatePDF(updated_resume, dest=result_file)
+        result_file.close()
+
+        file_name = f"{profile_details['firstname']} {profile_details['title']} {profile_details['final_experience']}"
+
+        return {
+            "file_path": output_filepath,
+            "file_name": file_name or "",
+            "pisa_err": pisa_status.err,
+        }
+
+    except Exception as e:
+        print(str(e))
         raise

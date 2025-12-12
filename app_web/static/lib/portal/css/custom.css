@@ -495,3 +495,8 @@ table.dataTable thead th, table.dataTable thead td {
 #createQuestionModal .modal-dialog {
   max-width: 40%; 
 }
+
+.form-header {
+  background: var(--light-primary-color);
+  color: var(--primary-color);
+}

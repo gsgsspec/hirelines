@@ -55,6 +55,7 @@ def fetch_gmail_attachments():
         # print("\n[+] Checking Gmail inbox for emails that have attachments...\n")
 
         query = f"has:attachment newer_than:1d ({check_user_query})"
+        # query = f"has:attachment ({check_user_query})"
 
         results = service.users().messages().list(
             userId="me",
@@ -141,10 +142,12 @@ def fetch_gmail_attachments():
     except Exception as e:
         print("Saving resume failed:", e)
 
+
 def sampleProg():
-    print("Started",datetime.now())
+    print("Progammed ran",datetime.now())
+
 
 def processEmailsFetch():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(sampleProg, trigger='interval', seconds=5, id="email_process_hirelines",replace_existing=True)
+    scheduler.add_job(fetch_gmail_attachments, trigger='cron', minute=0, id="email_process_hirelines",replace_existing=True)
     scheduler.start()

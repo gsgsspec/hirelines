@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<style>
+    @page {
+        size: a4;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        margin-top: 1cm;
+        margin-bottom: 1.5cm;
+
+        @frame pg_no_footer {
+            -pdf-frame-content: pg_no_footer;
+            bottom: 0cm;
+            margin-top: 0.1cm;
+            margin-left: 18.6cm;
+            height: 1cm;
+
+        }
+
+
+        @frame footer_frame {
+            -pdf-frame-content: footer_frame;
+            bottom: 0.05cm;
+            height: 1cm;
+            margin-left: 1cm;
+            margin-right: 1cm;
+        }
+
+        @frame header_frame {
+            -pdf-frame-content: header_frame;
+            left: 1cm;
+            top: 1cm;
+            right: 1cm;
+        }
+    }
+</style>
+
+<body>
+
+    <div id="pg_no_footer"> Page <pdf:pagenumber>
+            of <pdf:pagecount>
+    </div>
+
+    <div id="footer_frame">
+        <hr>
+        <div class="footer">
+            <span>This resume is submitted by {#user_name#} @ {#company_name#} on {#creation_date#}</span>
+        </div>
+    </div>
+
+    <table cellpadding="0" cellspacing="0" style="width: 710px; height: 70px;">
+        <tr>
+            <td style="text-align: left; vertical-align: middle; width: 80px;">
+                <img src="{#comapany_logo#}" style="height: 70px; width: auto;">
+            </td>
+
+            <!-- NAME + EXP CENTERED -->
+            <td style="text-align: center; vertical-align: middle;">
+                <p style="font-size: 24px; font-weight: 700; margin: 0; color: #274699;">
+                    {#firstname#}
+                </p>
+                <p style="margin: 0; font-size: 15px;">
+                    {#title#} - Exp: {#final_experience#}
+                </p>
+            </td>
+
+            <!-- CIRCLE ON RIGHT -->
+            <td style="text-align: right; width: 80px; vertical-align: middle;">
+                <div style="
+                    width: 40px;
+                    height: 40px;
+                    font-size: 18px;
+                    line-height: 40px;
+                    text-align: center;
+                ">80%</div>
+            </td>
+        </tr>
+    </table>
+
+
+    <hr>
+    <br>
+    <span class="section-heading p-clr">Personal Details</span>
+
+    <table cellpadding=0 cellspacing=0 class="t0" style="margin-bottom: 20px;">
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Title</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">: &nbsp; {#title#}</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">First Name</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">: &nbsp; {#firstname#}</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Last Name</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">: &nbsp; XXXXX</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Email</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">: &nbsp; XXXXXXXXX@gmail.com </p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Mobile</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">: &nbsp; 91XXXXXXXXXX</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">DOB</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">: &nbsp; {#dob#}</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Linkedin</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">: &nbsp; {#linkedin#}</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="td_label">
+                <p class="label_text">Native of</p>
+            </td>
+            <td class="td_data">
+                <p class="data_text">: &nbsp; {#nativeof#}</p>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <span class="section-heading p-clr">Education</span>
+    {#education_data#}
+    <br>
+    <span class="section-heading p-clr">Experience</span>
+    {#experience_data#}
+    <br>
+    <span class="section-heading p-clr">Skills</span>
+    {#skills_data#}
+    <br>
+    <span class="section-heading p-clr">Projects</span>
+    {#projects_data#}
+    <br>
+    <span class="section-heading p-clr">Certificates</span>
+    {#certificates_data#}
+    <br>
+    <span class="section-heading p-clr">Awards</span>
+    {#awards_data#}
+
+</body>
+
+<style>
+    .section-margin {
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .custom-list {
+        margin: 0;
+        padding-left: 22px;
+        font-size: 18px;
+    }
+
+    .heading-text {
+        font-size: 20px;
+        font-weight: 600;
+        text-decoration: underline;
+        color: #274699;
+    }
+
+    .p-clr {
+        color: #274699 !important;
+    }
+
+    .td_label {
+        padding: 0px;
+        margin: 0px;
+        width: 23%;
+        vertical-align: bottom;
+        height: 32px;
+    }
+
+
+    .td_data {
+        padding: 0px;
+        margin: 0px;
+        width: 77%;
+        vertical-align: bottom;
+        height: 32px;
+    }
+
+
+    .label_text {
+        font-size: 16px !important;
+        font-weight: 800;
+        color: #000;
+        line-height: 20px;
+        text-align: left;
+        padding-right: 10px;
+        margin-top: 0px;
+        margin-right: 2%;
+        margin-bottom: 0px;
+        white-space: nowrap;
+    }
+
+
+    .data_text {
+        font-size: 16px !important;
+        color: #000;
+        line-height: 20px;
+        text-align: left;
+        padding-right: 9px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        white-space: nowrap;
+        font-weight: 500;
+    }
+
+
+    .t0 {
+        width: 691px;
+        margin-left: 13px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .footer {
+        font-size: 10px;
+        text-align: left;
+        margin-top: 0.2cm;
+    }
+
+    .section-heading {
+        font-size: 22px;
+        font-weight: 600;
+    }
+</style>
+
+</html>

@@ -1,0 +1,209 @@
+{% load static %}
+
+<style>
+    .upload-box {
+        /* width: 350px; */
+        height: 160px;
+        border: 1px solid #d9dee3;
+        border-radius: 12px;
+        background: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        flex-direction: column;
+        text-align: center;
+        transition: 0.2s;
+        position: relative;
+        padding: 10px;
+    }
+
+    .upload-text {
+        font-size: 18px;
+        color: #566a7f;
+    }
+
+    .file-preview {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .file-icon {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+    }
+
+    .file-name {
+        max-width: 260px;
+        font-size: 15px;
+        font-weight: bold;
+        color: #2f4d76;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-bottom: 8px;
+    }
+
+      .remove-btn {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        /* background: #ff4d4d;
+        color: white; */
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-size: 16px;
+        line-height: 22px;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+        display: none; /* hidden by default */
+    }
+/* 
+    .remove-btn:hover {
+        background: #e60000;
+    } */
+
+</style>
+
+<div class="container-center">
+    <div class="col-9">
+        <div class="card mb-4">
+            <div class="card-header form-header d-flex align-items-center justify-content-between">
+                <h4 class="mb-0 p-clr">Add Profile</h4>
+            </div>
+            <div class="card-body mt-4">
+                <form id="candidate-data">
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Title <span style="color: red;">*</span></label>
+                        <div class="col-sm-10">
+                            <div class="input-group input-group-merge">
+                                <input type="text" id="title" class="form-control" maxlength="100" placeholder="Title" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Name <span style="color: red;">*</span> </label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="firstname" placeholder="Firstname" maxlength="100" required>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group input-group-merge">
+                                <input type="text" class="form-control" id="middlename" placeholder="Middlename" maxlength="40">
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group input-group-merge">
+                                <input type="text" class="form-control" id="lastname" placeholder="Lastname" maxlength="100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Email <span style="color: red;">*</span></label>
+                        <div class="col-sm-10">
+                            <div class="input-group input-group-merge">
+                                <input type="email" id="email" class="form-control" maxlength="100" placeholder="Email" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Attach Resume <span style="color: red;">*</span></label>
+                        <div class="col-sm-5">
+
+                            <div class="upload-box" id="uploadBox" onclick="document.getElementById('resumeInput').click()" ondragover="dragOver(event)" 
+                                ondragleave="dragLeave(event)" 
+                                ondrop="dropFile(event)">
+
+                            <!-- Remove Icon (top-right) -->
+                            <div id="removeBtn" class="remove-btn" onclick="removeFile(event)"><i class="fas fa-times" style="color: #ff4d4d;"></i></div>
+
+                            <!-- Default text -->
+                                <div id="defaultText" class="upload-text">
+                                    Click to Attach Resume<br>
+                                    <small style="font-size:13px;">(PDF or Word only)</small>
+                                </div>
+
+                                <!-- Preview inside box -->
+                                <div id="filePreview" class="file-preview">
+                                    <img id="fileIcon" class="file-icon">
+                                    <div id="fileName" class="file-name"></div>
+                                </div>
+
+                            </div>
+
+                            <input type="file" id="resumeInput" accept=".pdf,.doc,.docx" hidden>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Source code <span style="color: red;">*</span></label>
+                        <div class="col-sm-5">
+                            <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5"
+                                maxlength="5" pattern="^[a-zA-Z0-9]*$" required>
+                            <div id="existing-sources" class="existing-sources"></div>
+                            <span style="color: red;display: none;" id="code-error"><small>* Code should be of 5
+                                    letters</small></span>
+                            <span style="color: red;display: none;" id="career-code-error"><small>* This code will be
+                                    used for careers page</small></span>
+                        </div>
+                        <div class="col-sm-3" style="padding-left: 0px;">
+                            <label class="col-form-label p-clr" id="selected-source"></label>
+                        </div>
+                    </div>
+
+
+                    <div class="row justify-content-end">
+                        <div class="col-sm-10 text-end">
+                            <button id="save-data" type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var sourcesData = JSON.parse('{{ sources_data|escapejs }}');
+</script>
+
+<script src="{% static 'js/add_profile.js' %}"></script>
+
+<style>
+    .existing-sources {
+        border: 1px solid #ddd;
+        max-height: 150px;
+        overflow-y: auto;
+        position: absolute;
+        background: #fff;
+        z-index: 1000;
+        width: 20%;
+        display: none;
+        /* Hide by default */
+    }
+
+    .existing-sources div {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .existing-sources div:hover {
+        background: #f0f0f0;
+    }
+
+    .upload-box.drag-over {
+        border: 2px dashed var(--primary-color) !important;
+        background: var(--light-primary-color);
+    }
+
+</style>

@@ -1,4 +1,5 @@
 import ast
+import os
 from datetime import datetime
 import json
 import logging
@@ -23,14 +24,15 @@ from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
-        downloadUploadReportService, getResumeData, softDeleteResume
+        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
-    updateCandidateInfoDB, updateDashboardDisplayFlagDB, saveProfileDetailsDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
+    updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
     updateProfileSkillsDB,updateProfileActivityDB
 from app_api.functions.constants import hirelines_registration_script
+from app_api.functions.email_resume import fetch_gmail_attachments
 
 # Create your views here.
 
@@ -1961,7 +1963,7 @@ def addResumeProfile(request):
 
 
 @api_view(['POST'])
-def saveProfileDetails(request):
+def addProfile(request):
     response = {
         'data': None,
         'error': None,
@@ -1970,8 +1972,11 @@ def saveProfileDetails(request):
     try:
         if request.method == "POST":
             dataObjs = json.loads(request.POST.get('data'))
+            fileObjs = request.FILES.get('attachment')
 
-            saveProfileDetailsDB(dataObjs)
+            user_data = auth_user(request.user)
+
+            addProfileDB(dataObjs,fileObjs,user_data)
 
             response['data'] = "success"
             response['statusCode'] = 0
@@ -2151,6 +2156,7 @@ def updateProfileSkills(request):
     
     return JsonResponse(response)
 
+
 @api_view(['POST'])
 def addProfileActivity(request):
     response = {
@@ -2234,6 +2240,29 @@ def candidateProfile(request):
         response['error'] = str(err)
         raise
 
+    return JsonResponse(response)
+
+
+@api_view(['GET'])
+def getMailResumes(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "GET":
+            
+            fetch_gmail_attachments()
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in getting resume from emails'
+        response['error'] = str(e)
+        raise
+    
     return JsonResponse(response)
 
 
@@ -2359,6 +2388,31 @@ def check_welcome_mail_status(request):
         return JsonResponse(response)
 
 
+@api_view(["POST"])
+def downloadBrandedProfile(request):
+    response = {"data": None, "error": None, "statusCode": 1}
+    pdf_file_path = None
+    try:
+        if request.method == "POST":
+            profile_id = request.POST.get("pid")
+            user_data = auth_user(request.user)
+            pdf_path = generateBrandedProfile(profile_id,user_data)
 
+            pdf_file_path = os.path.normpath(pdf_path['file_path'])
+            
+            with open(pdf_path['file_path'], 'rb') as pdf_file:
+                response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+                response['Content-Disposition'] = f'attachment; filename="{pdf_path["file_name"]}.pdf"'
 
+                return response
+        
+    except Exception as e:
+        response["data"] = "Error in downloading profile"
+        response["error"] = str(e)
 
+    finally:
+        if pdf_file_path:
+            if os.path.exists(pdf_file_path):
+                os.remove(pdf_file_path)
+
+    return JsonResponse(response)

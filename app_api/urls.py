@@ -66,7 +66,7 @@ urlpatterns = [
     path("delete-resume",views.deleteResume),
 
     path("add-resume-profile",views.addResumeProfile),
-    path("save-profile",views.saveProfileDetails),
+    path("add-profile",views.addProfile),
     path("update-profile",views.updateProfileDetails),
     path("update-education",views.updateProfileEducation),
     path("update-experience",views.updateProfileExperience),
@@ -80,9 +80,11 @@ urlpatterns = [
     path('add-profile-activity',views.addProfileActivity),
     path('candidate-profile',views.candidateProfile),
     path("send-welcome-mail",views.sendwelcomemail),
-    path("check-welcome-mail-status",views.check_welcome_mail_status)
+    path("check-welcome-mail-status",views.check_welcome_mail_status),
     
 
 
 
+    path('get-mail-resumes',views.getMailResumes),
+    path('download-branded-profile',views.downloadBrandedProfile),
 ]

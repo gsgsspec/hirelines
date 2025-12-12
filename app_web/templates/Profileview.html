@@ -151,7 +151,7 @@
                             onclick="window.location.href='/viewresume/{{profile_details.id}}'" type="button">
                             View Resume
                         </button>
-                        <button class="btn btn-primary" type="button" onclick="window.location.href=''"><i
+                        <button class="btn btn-primary" type="button" onclick="downloadResume('{{ profile_details.id }}')"><i
                                 class="fas fa-file-upload"></i>&ensp;
                             Download
                         </button>
@@ -168,7 +168,7 @@
                         <div style="text-align: right;font-size: 1.3rem;cursor: pointer;" data-bs-toggle="tooltip"
                             id="editIcon" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title=""
                             data-bs-original-title="<span>Edit Profile</span>">
-                            <i class="fas fa-edit p-clr"></i>
+                            <i class="fas fa-edit p-clr" onclick="window.location.href='/update-profile-data/{{profile_details.id}}'"></i>
                         </div>
                     </div>
 
@@ -389,22 +389,6 @@
     </main>
 </div>
 <script>
-
-    function tabSwitch(element) {
-
-        const pid = "{{ profile_details.id }}";
-
-        if (element === 'active') {
-            $('#active').addClass('activeTab shadow');
-            $('#Inactive').removeClass('activeTab shadow');
-            window.location.href = "/profileview/" + pid;
-        }
-
-        if (element === 'Inactive') {
-            $('#Inactive').addClass('activeTab shadow');
-            $('#active').removeClass('activeTab shadow');
-            window.location.href = "/profileactivity/" + pid;
-        }
-    }
-
+    const pid = "{{ profile_details.id }}";
 </script>
+<script src="{% static 'js/profile_view.js' %}"></script>

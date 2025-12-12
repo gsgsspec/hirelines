@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from functools import wraps
-from app_api.functions.masterdata import user_not_active,auth_user, get_current_path
+from app_api.functions.masterdata import user_not_active
 
 
 def active_user_required(view_func):

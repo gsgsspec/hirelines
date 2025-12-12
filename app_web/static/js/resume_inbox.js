@@ -10,33 +10,16 @@ function base64ToBlob(base64) {
     return new Blob([byteArray], { type: 'application/pdf' });
 }
 
-
-function showFullPage() {
-    $('#layout-menu').css('display', '')
-    $('#web-page').addClass('layout-menu-fixed')
-    $('#display_icon').css('display', 'none')
-    $('#hide_icon').css('display', 'block')
-}
-
-
-function hideFullPage() {
-    $('#layout-menu').css('display', 'none')
-    $('#web-page').removeClass('layout-menu-fixed')
-    $('#display_icon').css('display', 'block')
-    $('#hide_icon').css('display', 'none')
-}
-
-// if (window.innerWidth > 900) {
-//     $('#layout-menu').css('display', 'none');
-//     $('.container-xxl').css('max-width', 'none');
-// }
-
-$('#web-page').removeClass('layout-menu-fixed');
-
 function attachResumeRowClick() {
 
     document.querySelectorAll(".resume-row").forEach(row => {
         row.addEventListener("click", async function () {
+
+            document.querySelectorAll(".resume-row").forEach(r => {
+                r.classList.remove("active-row");
+            });
+
+            this.classList.add("active-row");
             
             const id = this.getAttribute("data-id");
             const status = this.getAttribute("data-status");
@@ -52,7 +35,8 @@ function attachResumeRowClick() {
                 `/static/pdfjs/web/viewer.html?file=${encodedUrl}`;
     
             document.getElementById("resumePreview").style.display = "block";
-            $('.table-ctn').css('width', '50%');
+            document.querySelector('.table-ctn').classList.add('half-width');
+
     
             document.getElementById("delete-resume-btn").setAttribute("data-id", id);
             document.getElementById("add-profile-btn").setAttribute("data-id", id);
@@ -66,7 +50,6 @@ function attachResumeRowClick() {
         });
     });
 }
-
 
 document.getElementById("delete-resume-btn").addEventListener("click", function () {
     const resumeId = this.getAttribute("data-id");
@@ -99,7 +82,8 @@ document.getElementById("delete-resume-btn").addEventListener("click", function 
                 }
 
                 document.getElementById("resumePreview").style.display = "none";
-                $('.table-ctn').css('width', '100%'); 
+                document.querySelector('.table-ctn').classList.remove('half-width');
+ 
             })
         }
     });
@@ -126,7 +110,6 @@ document.getElementById("add-profile-btn").addEventListener("click", function ()
     
     })
 });
-
 
 document.addEventListener("DOMContentLoaded", function () {
     let selectedSources = new Set();
@@ -162,14 +145,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateResumeTable(res.data);
                 attachResumeRowClick();
                 document.getElementById("resumePreview").style.display = "none";
-                $('.table-ctn').css('width', '100%'); 
+                document.querySelector('.table-ctn').classList.remove('half-width');
+ 
                 
             })
             
         });
     });
 });
-
 
 function updateResumeTable(resumes){
 
@@ -201,8 +184,8 @@ function updateResumeTable(resumes){
 
         let row = `
             <tr class="resume-row" data-id="${r.id}" style="cursor: pointer;">
-                <td>${r.name}</td>
                 <td>${r.source}</td>
+                <td>${r.name}</td>
                 <td>${r.date}</td>
                 <td>${status}</td>
             </tr>
@@ -210,3 +193,66 @@ function updateResumeTable(resumes){
         tbody.insertAdjacentHTML("beforeend", row);
     });
 }
+
+function syncClickHandler() {
+    const btn = $("#sync-btn");
+    const icon = btn.find("i");
+
+    btn.prop("disabled", true);
+    icon.addClass("fa-spin");
+
+    $.get("/api/get-mail-resumes", function(response) {
+
+        if(response.statusCode === 0){
+
+            let dataObj = { source_ids: [] };
+    
+            let final_data = {
+                data: JSON.stringify(dataObj),
+                csrfmiddlewaretoken: CSRF_TOKEN
+            };
+    
+            $.post(CONFIG['portal'] + "/api/get-filter-resume", final_data, function (res) {
+                updateResumeTable(res.data);
+                attachResumeRowClick();
+                document.getElementById("resumePreview").style.display = "none";
+                document.querySelector('.table-ctn').classList.remove('half-width');
+
+            });
+    
+            btn.html(`<i class="fas fa-check"></i> &nbsp; Synced Successfully`);
+    
+            btn.prop("disabled", false);
+        } else {
+
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Error in syncing with email',
+                text: 'Please try again after some time',
+                showConfirmButton: false,
+                timer: 1500
+            })
+
+            btn.html(`<i class="fas fa-times-circle text-danger"></i> &nbsp; Failed`);
+
+        }
+
+
+    })
+    .fail(function () {
+        Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'Error in syncing with email',
+            text: 'Please try again after some time',
+            showConfirmButton: false,
+            timer: 1500
+        })
+
+        btn.html(`<i class="fas fa-times-circle text-danger"></i> &nbsp; Failed`);
+    })
+    
+}
+
+$("#sync-btn").one("click", syncClickHandler);

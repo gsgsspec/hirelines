@@ -1047,7 +1047,6 @@ def resumeInboxPage(request):
         # gmail_data = fetch_gmail_attachments()
         sources_data = getCompanySourcesData(user_data.companyid)
 
-        filters = None
         resumes_data = getResumeData(user_data)
 
         return render(request, "portal_index.html", {"template_name": 'resume_inbox.html','menuItemList':menuItemList,
@@ -1088,7 +1087,9 @@ def addProfilePage(request):
 
         menuItemList = get_functions_service(user_role)
 
-        return render(request, "portal_index.html", {"template_name": 'add_profile.html','menuItemList':menuItemList})
+        sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+
+        return render(request, "portal_index.html", {"template_name": 'add_profile.html','menuItemList':menuItemList, "sources_data":sources_data})
 
     except Exception as e:
         raise
