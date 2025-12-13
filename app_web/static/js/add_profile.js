@@ -36,9 +36,9 @@ document.getElementById("save-data").onclick = function () {
         formData.append("data", JSON.stringify(dataObjs));
         formData.append("csrfmiddlewaretoken", CSRF_TOKEN);
 
-        var fileObj = $('#resumeInput')[0].files[0];
+        // var fileObj = $('#resumeInput')[0].files[0];
 
-        if (!fileObj) {
+        if (!selectedFile) {
             Swal.fire({
                 icon: "warning",
                 title: "Please attach resume",
@@ -48,7 +48,7 @@ document.getElementById("save-data").onclick = function () {
             return false; 
         }
 
-        formData.append("attachment", fileObj);
+        formData.append("attachment", selectedFile);
 
         $.ajax({
             url: CONFIG['portal'] + "/api/add-profile",
@@ -57,21 +57,21 @@ document.getElementById("save-data").onclick = function () {
             processData: false,
             contentType: false,
             success: function (res) {
-                // if (res.statusCode == 0) {
+                if (res.statusCode == 0) {
 
-                //     Swal.fire({
-                //         icon: "success",
-                //         title: "Profile added",
-                //         text: "The profile was created successfully!",
-                //         timer: 1500,
-                //         showConfirmButton: false
-                //     });
+                    Swal.fire({
+                        icon: "success",
+                        title: "Profile added",
+                        text: "The profile was created successfully!",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
 
-                //     setTimeout(function () {
-                //         window.location.href = "/profiles";
-                //     }, 1500);
+                    setTimeout(function () {
+                        window.location.href = "/profiles";
+                    }, 1500);
 
-                // }
+                }
             }
         });
 
