@@ -744,7 +744,7 @@ def getCompanyJdData(cid):
         raise
 
 
-def getCompanyJDsList(companyId):
+def getCompanyJDsList(companyId,user_role):
     try:
         company_jds = list(JobDesc.objects.filter(companyid=companyId).values())
         if len(company_jds) > 0:
@@ -763,7 +763,14 @@ def getCompanyJDsList(companyId):
                 if jd["status"] == "I":
                     InactiveJds.append(jd)  # Add to inactive jobs list
                 else:
-                    activeJds.append(jd)  # Add to active jobs list
+                    # activeJds.append(jd)  # Add to active jobs list
+                    if user_role == 'Recruiting-Manager':
+                        if jd['status'] in ['F', 'O', 'R', 'H']:
+                            activeJds.append(jd)
+                    else:
+                        activeJds.append(jd)
+
+
 
             return {"activeJd": activeJds, "inactiveJd": InactiveJds}
         else:

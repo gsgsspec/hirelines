@@ -156,12 +156,83 @@
                   </div>
                 </div>
 
-                <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
+                <!-- <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
                   <div class="px-0 my-0" style="display: flex;justify-content: end; width: max-content; padding-right: 2.5rem !important;">
                     <button type="button" id="" class="btn btn-secondary" onclick="window.location.href='/job-descriptions'" style="width: 90px; margin-right: 15px;">Back</button>
                     <button type="submit" id="submitJd" class="btn btn-primary" style="padding: 0.2625rem 1rem;">Update</button>
                   </div>
+                </div> -->
+
+              
+              {% if user_role == "HR-Admin"  %}
+
+                  <div class="row mb-1 container-center">
+                    <div style="display: flex; justify-content: flex-end; width: 100%; padding-right: 2.5rem; gap: 15px;">
+
+                      <button type="button" class="btn btn-secondary" 
+                              onclick="window.location.href='/job-descriptions'" 
+                              style="width: 90px;">
+                        Back
+                      </button>
+
+                      <button type="submit" id="submitJd" class="btn btn-primary">
+                        Update
+                      </button>
+
+                      <button type="button" id="sentforapproval"
+                            class="btn btn-primary"
+                            onclick="updateJDStatus('F', 'JD Sent for Approval')">
+                        Sent For Approval
+                    </button>
+
+
+                    </div>
+                  </div>
+
+                  {% else %}
+                <div class="row mt-3">
+                <div class="col-12 d-flex justify-content-between align-items-center">
+
+                  <!-- LEFT : Assign To -->
+                  <div class="d-flex align-items-center gap-2">
+                      <label class="col-form-label mb-0">Assign To</label>
+                      <select class="form-select" id="assignTo" style="width: 200px;">
+                          <option value="">Select User</option>
+                          <option value="1">Recruiter 1</option>
+                          <option value="2">Recruiter 2</option>
+                          <option value="3">Recruiter 3</option>
+                      </select>
+                  </div>
+
+
+                  <!-- Recruiting Manager Action Buttons -->
+                  <div id="rmActionButtons" style="display: flex; gap: 15px; margin-top: 10px; justify-content: flex-end;">
+                      
+                      <button type="submit" id="submitJd" class="btn btn-primary">Update</button>
+                      <button type="button" class="btn btn-primary"
+                              onclick="updateJDStatus('O', 'JD Approved')">
+                          Approve
+                      </button>
+
+                      <button type="button" class="btn btn-primary"
+                              onclick="updateJDStatus('R', 'JD Rejected')">
+                          Reject
+                      </button>
+
+                      <button type="button" class="btn btn-primary"
+                              onclick="updateJDStatus('H', 'JD Put On Hold')">
+                          Hold
+                      </button>
+
+
+                  </div>
+                     </div>
                 </div>
+
+                  {% endif %}
+
+             
+
                 
                 <div class="row mb-2 container-center" style="display: flex;justify-content: space-between; align-items: center;">
                   <div class="px-0 success" id="validater" hidden style="color: green; width: max-content;  margin-left: 3rem;">

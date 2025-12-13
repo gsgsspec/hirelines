@@ -245,12 +245,12 @@ class Vacation(models.Model):
 
 class WorkCal(models.Model):
     id = models.AutoField(primary_key=True)
-    empid = models.IntegerField(null=True)
-    startday = models.CharField(max_length=3, null=True)
+    userid = models.IntegerField(null=True)
+    startday = models.CharField(max_length=10, null=True)
     starttime = models.TimeField(max_length=20, null=True)
-    workhours = models.CharField(max_length=4,null=True)
-    weekoff1 = models.CharField(max_length=3, null=True)
-    weekoff2 = models.CharField(max_length=3, null=True)
+    hours = models.CharField(max_length=4,null=True)
+    weekoff1 = models.CharField(max_length=10, null=True)
+    weekoff2 = models.CharField(max_length=10, null=True)
     companyid = models.IntegerField(null=True)
 
     class Meta:

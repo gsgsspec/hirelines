@@ -288,7 +288,7 @@ def jobDescription(request):
                         child['menuItemLink'] == currentPath]
         if menuItemObjList:
             companyId = getCompanyId(user_mail)
-            allJds = getCompanyJDsList(companyId)
+            allJds = getCompanyJDsList(companyId,user_role)
             return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList,'activeJd':allJds['activeJd'], 'inactiveJd': allJds['inactiveJd']})
         else:
             return redirect('../')
@@ -330,6 +330,7 @@ def update_jobdescription(request,update_jd_id):
         user_mail = request.user
         user_data = auth_user(user_mail)
         user_role = user_data.role
+        print("user_role",user_role)
         compyId = getCompanyId(user_mail)
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
@@ -339,7 +340,7 @@ def update_jobdescription(request,update_jd_id):
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         
-        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details})
+        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details,'user_role':user_role})
     except Exception as e:
         raise
 
@@ -405,18 +406,13 @@ def brandingPage(request):
         user_companyid = user_data.companyid
         menuItemList = get_functions_service(user_role)
 
-        url = f'{acert_domain}/api/company-branding'
-
-        payload = {
-            'request_type':"get_branding_data",
-            'cid':encrypt_code(user_companyid)
-            }
         
-        api_res = requests.post(url, data=payload)
-        data = json.loads(api_res.text)
-        companyBranding = ''
-        if data['statusCode'] == 0:
-            companyBranding = data['data']
+        companyBranding = Branding.objects.filter(companyid=user_companyid ).first()
+         
+        if not companyBranding:
+            companyBranding = Branding.objects.filter(companyid=0).first()
+
+    
         return render(request, "portal_index.html", {"template_name": 'branding.html','menuItemList': menuItemList,
                                                      "companyBranding":companyBranding})
 
@@ -1118,3 +1114,28 @@ def view_resumePage(request,pid):
       
     except Exception as e:
         raise  
+
+
+
+
+
+def workCalenderPage(request):
+    try:
+        user_mail = request.user
+        print("user_mail",user_mail)
+        user_data = auth_user(user_mail)
+        print("user_data",user_data)
+        user_id = user_data.id
+        print("user_id",user_id)
+        company_id = user_data.companyid
+        print("company_id",company_id)
+
+        user_role = user_data.role
+
+
+        menuItemList = get_functions_service(user_role)
+
+        return render(request, "portal_index.html", {"template_name": 'work_calender.html','menuItemList':menuItemList,'user_id':user_id, 'company_id':company_id})
+
+    except Exception as e:
+        raise

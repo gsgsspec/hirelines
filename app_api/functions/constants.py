@@ -52,6 +52,7 @@ hirelines_registration_script ="""
     var name = '';
     var email = '';
     var mobile = '';
+    var source_code = '';
     var fileObj = null;   
 
     inputs.forEach(function(input) {
@@ -75,6 +76,24 @@ hirelines_registration_script ="""
         if (inputType === 'file') {
             fileObj = input.files[0];
         }
+        if (
+            inputType === "text" &&
+            (
+                (inputName && (
+                    inputName.toLowerCase().includes("source") ||
+                    inputName.toLowerCase().includes("referrer") ||
+                    inputName.toLowerCase().includes("reference")
+                )) ||
+                (inputId && (
+                    inputId.toLowerCase().includes("source") ||
+                    inputId.toLowerCase().includes("referrer") ||
+                    inputId.toLowerCase().includes("reference")
+                ))
+            )
+        ) {
+            source_code = inputValue;
+        }
+
         if (firstName || lastName) {
             name = (firstName ? firstName : "") + (lastName ? lastName : "");
             
@@ -92,6 +111,7 @@ hirelines_registration_script ="""
     console.log("Name:", name);
     console.log("Email:", email);
     console.log("Mobile:", mobile);
+    console.log("source-code:", source_code);
     
     var payload = {
         "encjdid": encjdid,
@@ -99,7 +119,7 @@ hirelines_registration_script ="""
         "lastname": lastName,
         "email": email,
         "mobile": mobile,
-        "source-code": "CARER",
+        "source-code": source_code,
         "fileObj": fileObj 
     };
     return register_candidate(payload);

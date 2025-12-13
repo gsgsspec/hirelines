@@ -492,3 +492,29 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
         console.error('Failed to send data to backend:', error);
     }
 });
+
+
+function updateJDStatus(statusCode, successMsg) {
+
+    const payload = {
+        JdID: JdId,
+        status: statusCode
+    };
+
+    $.ajax({
+        url: CONFIG['portal'] + "/api/update-status",
+        type: "POST",
+        data: {
+            data: JSON.stringify(payload),
+            csrfmiddlewaretoken: CSRF_TOKEN
+        },
+        success: function (res) {
+            if (res.statusCode === 0) {
+                alert(successMsg);
+                location.reload();
+            } else {
+                alert("Status update failed");
+            }
+        }
+    });
+}

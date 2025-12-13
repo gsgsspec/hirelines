@@ -628,4 +628,29 @@
 
 {{ profile_data|json_script:"profileData" }}
 <script src="{% static 'js/tech_list.js' %}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (!profileId) return;
+
+    $.post(CONFIG['portal'] + "/api/check-welcome-mail-status", {
+        profile_id: profileId,
+        csrfmiddlewaretoken: CSRF_TOKEN
+    })
+    .done(function (res) {
+
+        if (res.statusCode === 0 && res.email_sent) {
+            
+            document.getElementById("sendWelcomeMail")
+                ?.closest(".form-group")
+                ?.remove();
+        }
+
+    });
+});
+</script>
+
+
+
 <script src="{% static 'js/update_profile.js' %}"></script>

@@ -1,0 +1,40 @@
+{% load static %}
+
+<div class="container-center">
+  <div class="w-100">
+    <div class="card mb-4">
+
+      <div class="card-title-table">
+        <h4 class="card-header">Interviewer Availability Calendar</h4>
+      </div>
+
+      <div class="card-body">
+
+        <div id="rowsContainer" style="padding-bottom: 10px;"></div>
+
+        
+        <div class="mb-4">
+          <button class="btn btn-primary btn-sm" onclick="addRow()">
+            <i class="fa fa-plus me-1"></i> Add Row
+          </button>
+        </div>
+
+     
+        <div class="d-flex justify-content-end gap-3 mb-4">
+          <button class="btn btn-primary px-4" id="cancelBtn">Cancel</button>
+          <button class="btn btn-primary px-4" id="saveBtn">Save</button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const USER_ID = "{{ user_id }}";
+  const COMPANY_ID = "{{ company_id }}";
+</script>
+
+
+<script src="{% static 'js/work_calender.js' %}"></script>

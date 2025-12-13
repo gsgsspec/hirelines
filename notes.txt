@@ -188,3 +188,19 @@ ADD activityname VARCHAR(100) NULL,
 ADD activityremarks VARCHAR(200) NULL,
 ADD activitystatus VARCHAR(100) NULL;
 
+
+=====manikanta===============================================================
+
+ALTER TABLE workcal 
+CHANGE workhours hours VARCHAR(4) NULL;
+
+ALTER TABLE workcal 
+CHANGE empid userid INT NULL;
+
+INSERT INTO `rolespermissions` (`id`, `function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('14', 'Work Calender', 'Work Calender', 'work-calender', 'Interviewer', 'fas fa-calendar-day', '12');
+
+
+ALTER TABLE `workcal` 
+CHANGE COLUMN `startday` `startday` VARCHAR(10) NULL DEFAULT NULL ,
+CHANGE COLUMN `weekoff1` `weekoff1` VARCHAR(10) NULL DEFAULT NULL ,
+CHANGE COLUMN `weekoff2` `weekoff2` VARCHAR(10) NULL DEFAULT NULL ;

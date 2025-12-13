@@ -26,11 +26,11 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB,updateProfileActivityDB
+    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB
 from app_api.functions.constants import hirelines_registration_script
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -2414,5 +2414,134 @@ def downloadBrandedProfile(request):
         if pdf_file_path:
             if os.path.exists(pdf_file_path):
                 os.remove(pdf_file_path)
+
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def getworkcal(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+
+    try:
+        body = json.loads(request.POST.get("data"))
+        user_id = body.get("user_id")
+        company_id = body.get("company_id")
+
+        # Fetch ALL rows
+        rows = WorkCal.objects.filter(userid=user_id, companyid=company_id)
+
+        if not rows.exists():
+            response['data'] = []
+            response['weekoff1'] = ""
+            response['weekoff2'] = ""
+            response['statusCode'] = 0
+            return JsonResponse(response)
+
+        # Build list
+        data = []
+        for r in rows:
+            data.append({
+                "id": r.id,
+                "userid": r.userid,
+                "companyid": r.companyid,
+                "startday": r.startday,
+                "starttime": r.starttime.strftime("%H:%M:%S") if r.starttime else None,
+                "hours": r.hours,
+                "weekoff1": r.weekoff1,
+                "weekoff2": r.weekoff2
+            })
+
+      
+        first = rows.first()
+        response['weekoff1'] = first.weekoff1
+        response['weekoff2'] = first.weekoff2
+
+        response['data'] = data
+        response['statusCode'] = 0
+        return JsonResponse(response)
+
+    except Exception as e:
+        response["error"] = str(e)
+        return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def saveworkcal(request):
+    response = {
+        "data": None,
+        "error": None,
+        "statusCode": 1
+    }
+
+    try:
+        if request.method == "POST":
+
+            dataObjs = json.loads(request.POST.get("data"))
+            
+
+            saveWorkCalDB(dataObjs)
+
+            response["data"] = "success"
+            response["statusCode"] = 0
+
+    except Exception as e:
+        response["data"] = "Error in saving Details"
+        response["error"] = str(e)
+
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def delete_work_cal(request, id):
+    response = {
+        "data": None,
+        "error": None,
+        "statusCode": 1
+    }
+
+
+    try:
+        obj = WorkCal.objects.get(id=id)
+        
+
+        obj.delete()
+        response["statusCode"] = 0
+        response["data"] = "Deleted Successfully"
+
+    except WorkCal.DoesNotExist:
+        response["error"] = "Record not found"
+        response["statusCode"] = 1
+
+    except Exception as e:
+        response["error"] = str(e)
+        response["statusCode"] = 1
+
+    return JsonResponse(response)
+   
+
+
+@api_view(['POST'])
+def update_jd_status(request):
+    response = {"statusCode": 1, "error": None}
+
+    try:
+        body = json.loads(request.POST.get("data"))
+        print("body",body)
+        jd_id = body.get("JdID")
+        new_status = body.get("status")
+
+        jd = JobDesc.objects.get(id=jd_id)
+        jd.status = new_status  
+        jd.save()
+
+        response["statusCode"] = 0
+
+    except Exception as e:
+        response["error"] = str(e)
 
     return JsonResponse(response)

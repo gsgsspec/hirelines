@@ -81,7 +81,14 @@ urlpatterns = [
     path('candidate-profile',views.candidateProfile),
     path("send-welcome-mail",views.sendwelcomemail),
     path("check-welcome-mail-status",views.check_welcome_mail_status),
+    path('update-status', views.update_jd_status),
+
     
+    path("get-work-cal",views.getworkcal),
+    path("save-work-cal",views.saveworkcal),
+    path('delete-work-cal/<int:id>', views.delete_work_cal),
+
+   
 
 
 
