@@ -406,18 +406,13 @@ def brandingPage(request):
         user_companyid = user_data.companyid
         menuItemList = get_functions_service(user_role)
 
-        url = f'{acert_domain}/api/company-branding'
-
-        payload = {
-            'request_type':"get_branding_data",
-            'cid':encrypt_code(user_companyid)
-            }
         
-        api_res = requests.post(url, data=payload)
-        data = json.loads(api_res.text)
-        companyBranding = ''
-        if data['statusCode'] == 0:
-            companyBranding = data['data']
+        companyBranding = Branding.objects.filter(companyid=user_companyid ).first()
+         
+        if not companyBranding:
+            companyBranding = Branding.objects.filter(companyid=0).first()
+
+    
         return render(request, "portal_index.html", {"template_name": 'branding.html','menuItemList': menuItemList,
                                                      "companyBranding":companyBranding})
 
