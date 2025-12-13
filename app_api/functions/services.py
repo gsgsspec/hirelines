@@ -4231,10 +4231,10 @@ class ProfileScoringEngine:
         total_score = sum(breakdown.values())
 
         percentage = (
-                int(total_score)
-                if isinstance(total_score, int)
-                else round(total_score, 2)
-            )
+            int(total_score)
+            if isinstance(total_score, float) and total_score.is_integer()
+            else total_score
+        )
 
         return {
             "total_score": total_score,
