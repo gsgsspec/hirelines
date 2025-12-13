@@ -48,6 +48,7 @@ urlpatterns = [
     path("profileview/<int:pid>",views.profileviewPage),
     path("profileactivity/<int:pid>",views.profileactivityviewPage),
     path('viewresume/<int:pid>/', active_user_required(views.view_resumePage)),
+    path('work-calender', views.workCalenderPage),
 
     
 ]

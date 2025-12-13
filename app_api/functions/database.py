@@ -9,7 +9,7 @@ from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
-    ResumeFile
+    ResumeFile, WorkCal
 
 from .doc2pdf import convert_word_binary_to_pdf
 
@@ -1115,4 +1115,54 @@ def sampleConverter(fileObjs):
 
 
     except Exception as e:
+        raise
+
+def saveWorkCalDB(dataObjs):
+    try:
+        user_id = dataObjs.get("userid")
+        
+        
+        company_id = dataObjs.get("companyid")
+       
+        items = dataObjs.get("items", [])
+     
+ 
+
+        if not items:
+            raise Exception("No rows provided")
+
+        weekoff1 = items[0].get("weekoff1")
+       
+        weekoff2 = items[0].get("weekoff2")
+        
+
+        for item in items:
+
+            row_id = item.get("id")
+
+            if row_id:
+                # UPDATE existing row
+                WorkCal.objects.filter(id=row_id).update(
+                    startday=item.get("startday"),
+                    starttime=item.get("starttime"),
+                    hours=item.get("hours"),
+                    weekoff1=weekoff1,
+                    weekoff2=weekoff2
+                )
+            else:
+                # INSERT new row
+                WorkCal.objects.create(
+                    userid=user_id,
+                    companyid=company_id,
+                    startday=item.get("startday"),
+                    starttime=item.get("starttime"),
+                    hours=item.get("hours"),
+                    weekoff1=weekoff1,
+                    weekoff2=weekoff2
+                )
+
+        return True
+
+    except Exception as e:
+        print("saveWorkCalDB ERROR:", str(e))
         raise

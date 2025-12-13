@@ -1115,3 +1115,28 @@ def view_resumePage(request,pid):
       
     except Exception as e:
         raise  
+
+
+
+
+
+def workCalenderPage(request):
+    try:
+        user_mail = request.user
+        print("user_mail",user_mail)
+        user_data = auth_user(user_mail)
+        print("user_data",user_data)
+        user_id = user_data.id
+        print("user_id",user_id)
+        company_id = user_data.companyid
+        print("company_id",company_id)
+
+        user_role = user_data.role
+
+
+        menuItemList = get_functions_service(user_role)
+
+        return render(request, "portal_index.html", {"template_name": 'work_calender.html','menuItemList':menuItemList,'user_id':user_id, 'company_id':company_id})
+
+    except Exception as e:
+        raise
