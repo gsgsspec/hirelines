@@ -34,6 +34,15 @@
                     <span class="badge bg-label-success me-1" style="height: max-content; text-transform: capitalize;">Published</span>
                   {% elif jd.status == 'P' %}
                     <span class="badge bg-label-danger me-1" style="height: max-content; text-transform: capitalize;">Stopped</span>
+                  {%elif jd.status == 'F' %}
+                    <span class="badge bg-label-danger me-1" style="height: max-content; text-transform: capitalize;">Approval Pending</span>
+                  {% elif jd.status == 'O' %}
+                    <span class="badge bg-label-success me-1" style="height: max-content; text-transform: capitalize;">Approval</span>
+                  {%elif jd.status == 'H' %}
+                    <span class="badge bg-label-danger me-1" style="height: max-content; text-transform: capitalize;">Hold</span>
+                  {%elif jd.status == 'R' %}
+                    <span class="badge bg-label-danger me-1" style="height: max-content; text-transform: capitalize;">Rejected</span>
+                  
                   {% else %}
                   {% endif %}
                 </div>
@@ -46,10 +55,20 @@
               data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<span>Reports</span>">
             <svg height="25px" width="25px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 511.883 511.883" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#A0D468;" d="M138.64,437.228c0,5.89-4.765,10.67-10.67,10.67H63.985c-5.873,0-10.653-4.78-10.653-10.67V309.257 c0-5.889,4.78-10.654,10.653-10.654h63.985c5.905,0,10.67,4.766,10.67,10.654L138.64,437.228L138.64,437.228z"></path> <path style="fill:#4FC2E9;" d="M245.288,437.228c0,5.89-4.78,10.67-10.67,10.67h-63.985c-5.889,0-10.669-4.78-10.669-10.67V138.639 c0-5.89,4.78-10.669,10.669-10.669h63.985c5.89,0,10.67,4.779,10.67,10.669V437.228z"></path> <path style="fill:#48CFAD;" d="M351.92,437.228c0,5.89-4.765,10.67-10.654,10.67h-63.985c-5.89,0-10.67-4.78-10.67-10.67V245.271 c0-5.89,4.78-10.653,10.67-10.653h63.984c5.89,0,10.654,4.764,10.654,10.653v191.956H351.92z"></path> <path style="fill:#5D9CEC;" d="M458.567,437.228c0,5.89-4.78,10.67-10.669,10.67h-63.986c-5.889,0-10.653-4.78-10.653-10.67V74.654 c0-5.89,4.765-10.669,10.653-10.669h63.986c5.889,0,10.669,4.779,10.669,10.669V437.228z"></path></path> </g></svg>
             </button>
+            {% if jd.status == 'O' %}
             <button onclick="event.stopPropagation();redirectToJobDetails('{{ jd.id }}')" type="button" style="color: var(--primary-color);background: none;border: none;font-size: 1.25rem;"
               data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<span>Setup</span>">
               <i class="fas fa-cog"></i>&nbsp; 
             </button>
+            {% else %}
+              <button type="button" disabled
+                style="color: #b5b5b5;background: none;border: none;font-size: 1.25rem;cursor:not-allowed;"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-original-title="Approval Pending">
+                <i class="fas fa-cog"></i>
+              </button>
+            {% endif %}
           </div>
         </div>
       </div>

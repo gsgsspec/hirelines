@@ -2523,3 +2523,25 @@ def delete_work_cal(request, id):
 
     return JsonResponse(response)
    
+
+
+@api_view(['POST'])
+def update_jd_status(request):
+    response = {"statusCode": 1, "error": None}
+
+    try:
+        body = json.loads(request.POST.get("data"))
+        print("body",body)
+        jd_id = body.get("JdID")
+        new_status = body.get("status")
+
+        jd = JobDesc.objects.get(id=jd_id)
+        jd.status = new_status  
+        jd.save()
+
+        response["statusCode"] = 0
+
+    except Exception as e:
+        response["error"] = str(e)
+
+    return JsonResponse(response)

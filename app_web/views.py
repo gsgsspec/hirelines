@@ -288,7 +288,7 @@ def jobDescription(request):
                         child['menuItemLink'] == currentPath]
         if menuItemObjList:
             companyId = getCompanyId(user_mail)
-            allJds = getCompanyJDsList(companyId)
+            allJds = getCompanyJDsList(companyId,user_role)
             return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList,'activeJd':allJds['activeJd'], 'inactiveJd': allJds['inactiveJd']})
         else:
             return redirect('../')
@@ -330,6 +330,7 @@ def update_jobdescription(request,update_jd_id):
         user_mail = request.user
         user_data = auth_user(user_mail)
         user_role = user_data.role
+        print("user_role",user_role)
         compyId = getCompanyId(user_mail)
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
@@ -339,7 +340,7 @@ def update_jobdescription(request,update_jd_id):
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         
-        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details})
+        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details,'user_role':user_role})
     except Exception as e:
         raise
 

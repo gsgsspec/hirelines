@@ -24,6 +24,8 @@ document.getElementById('login-btn').onclick=function(){
                         window.location.href = '/interviews' 
                     } else if(res.data == 'Recruiter'){
                         window.location.href = '/resume-inbox' 
+                    } else if(res.data == 'Recruiting-Manager'){
+                        window.location.href = '/job-descriptions' 
                     }
                 }
                 else{
