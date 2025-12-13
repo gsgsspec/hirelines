@@ -1,0 +1,191 @@
+[
+   {
+      "profile_data": {
+         "id": 1,
+         "education": [
+            {
+               "course": "B-tech",
+               "institute": "Mall Reddy",
+               "yearfrom": 2020,
+               "yearto": 2024,
+               "grade": "68%"
+            },
+            {
+               "course": "Inter",
+               "institute": "Malla Reddy",
+               "yearfrom": 2018,
+               "yearto": 2020,
+               "grade": "86%"
+            },
+            {
+               "course": "SSC",
+               "institute": "Guru",
+               "yearfrom": 2008,
+               "yearto": 2018,
+               "grade": "8.6"
+            }
+         ],
+         "experience": [
+            {
+               "jobtitle": "Senior Developer",
+               "company": "Infosys",
+               "yearfrom": 2023,
+               "yearto": 2025
+            },
+            {
+               "jobtitle": "Junior Develoer",
+               "company": "TCS",
+               "yearfrom": 2022,
+               "yearto": 2023
+            }
+         ],
+         "skills": {
+            "primaryskills": "Python,Django,MySQL",
+            "secondaryskills": "None"
+         },
+         "projects": [
+            {
+               "projectname": "Myfinalyst",
+               "clientname": "Myfinalyst",
+               "roleplayed": "Devloper",
+               "skillsused": "React, Nodejs, MongoDB",
+               "yearsfrom": 2020,
+               "yearsto": 2021
+            },
+            {
+               "projectname": "Swarabharathi",
+               "clientname": "Swarabharathi",
+               "roleplayed": "Devloper",
+               "skillsused": "React, Nodejs, MongoDB",
+               "yearsfrom": 2018,
+               "yearsto": 2020
+            }
+         ],
+         "awards": [
+            {
+               "awardname": "Employee of the year",
+               "year": 2023
+            }
+         ],
+         "certificates": [
+            {
+               "certname": "AI Course",
+               "year": 2022
+            }
+         ]
+      }
+   },
+   {
+      "rules": {
+         "education": {
+            "set_1": {
+               "items": [
+                  "B-tech",
+                  "BCom",
+                  "BA"
+               ],
+               "points": 6
+            },
+            "set_2": {
+               "items": [
+                  "MBA",
+                  "MCA",
+                  "BBA"
+               ],
+               "points": 4
+            }
+         },
+         "experience": {
+            "sets": [
+             {
+                  "min": 1,
+                  "max": 3,
+                  "base_points": 5
+               },
+               {
+                  "min": 3,
+                  "max": 5,
+                  "base_points": 10
+               }
+            ],
+            "deduction": {
+               "per_item": 1,
+               "min_score": 0
+            }
+         },
+         "projects": {
+            "base_points": 10,
+            "deduction": {
+               "per_item": 1,
+               "min_score": 0
+            }
+         },
+         "certificates": {
+            "points_per_item": 1,
+            "max_points": 5
+         },
+         "awards": {
+            "points_per_item": 1,
+            "max_points": 5
+         },
+         "skills": {
+            "tier_1": {
+               "skills": [
+                  "python",
+                  "java",
+                  "c",
+                  "c++",
+                  "c#",
+                  "go",
+                  "rust",
+                  "scala",
+                  "kotlin",
+                  "swift",
+                  "mysql"
+               ],
+               "points_per_skill": 10,
+               "max_points": 20
+            },
+            "tier_2": {
+               "skills": [
+                  "react",
+                  "angular",
+                  "vue",
+                  "nodejs",
+                  "django",
+                  "flask",
+                  "fastapi",
+                  "spring",
+                  "spring boot",
+                  "express",
+                  "laravel",
+                  "dotnet",
+                  "nextjs"
+               ],
+               "points_per_skill": 5,
+               "max_points": 20
+            },
+            "tier_3": {
+               "skills": [
+                  "html",
+                  "css",
+                  "javascript",
+                  "typescript",
+                  "jquery",
+                  "bootstrap",
+                  "tailwind",
+                  "sass",
+                  "less",
+                  "webpack",
+                  "vite",
+                  "babel",
+                  "npm",
+                  "yarn"
+               ],
+               "points_per_skill": 5,
+               "max_points": 20
+            }
+         }
+      }
+   }
+]

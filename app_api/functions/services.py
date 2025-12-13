@@ -6,6 +6,7 @@ import secrets
 import ast
 import time
 import base64
+
 # import ffmpeg
 import re
 import pandas as pd
@@ -63,7 +64,7 @@ from app_api.models import (
     ProfileAwards,
     ProfileCertificates,
     ProfileAddress,
-    ResumeFile
+    ResumeFile,
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -146,7 +147,7 @@ def registerUserService(dataObjs):
                 freetrail="I",
             )
             company.save()
-            
+
             user = User(
                 name=dataObjs["reg-name"],
                 datentime=datetime.now(),
@@ -159,31 +160,41 @@ def registerUserService(dataObjs):
             )
 
             user.save()
-            
+
             free_trail_data = getConfig()["FREETRAIL"]
-            
-            payments = Payments(companyid=company.id,dateofpay=datetime.now(),
-                                modeofpay="T",
-                                amount=30000,credits=free_trail_data["registration_grace_credits"])
+
+            payments = Payments(
+                companyid=company.id,
+                dateofpay=datetime.now(),
+                modeofpay="T",
+                amount=30000,
+                credits=free_trail_data["registration_grace_credits"],
+            )
             payments.save()
-            
-            company_account,company_account_flag = Account.objects.get_or_create(
+
+            company_account, company_account_flag = Account.objects.get_or_create(
                 companyid=company.id,
             )
-            
-            company_account.credit=payments.credits
-            company_account.balance=int(payments.credits)+int(company_account.balance) if company_account.balance else payments.credits
+
+            company_account.credit = payments.credits
+            company_account.balance = (
+                int(payments.credits) + int(company_account.balance)
+                if company_account.balance
+                else payments.credits
+            )
             company_account.save()
-            
-            credits = Credits(companyid=company.id,
-                        transdatetime=payments.dateofpay,
-                        transtype="C",
-                        user=user.id,
-                        transid=payments.id,
-                        points=payments.credits,
-                        balance=company_account.balance)
+
+            credits = Credits(
+                companyid=company.id,
+                transdatetime=payments.dateofpay,
+                transtype="C",
+                user=user.id,
+                transid=payments.id,
+                points=payments.credits,
+                balance=company_account.balance,
+            )
             credits.save()
-            
+
             CompanyCredits(
                 companyid=company.id,
                 transtype="S",
@@ -202,15 +213,16 @@ def registerUserService(dataObjs):
                 credits=free_trail_data["interview_credits_charges"],
             ).save()
 
-
             default_branding = Branding.objects.filter(companyid=0).last()
 
             company_branding = Branding(
-                companyid=company.id, 
+                companyid=company.id,
                 content=default_branding.content,
-                logourl = default_branding.logourl if default_branding.logourl else "",
-                sociallinks = default_branding.sociallinks if default_branding.sociallinks else "",
-                status="A"
+                logourl=default_branding.logourl if default_branding.logourl else "",
+                sociallinks=(
+                    default_branding.sociallinks if default_branding.sociallinks else ""
+                ),
+                status="A",
             )
 
             company_branding.save()
@@ -225,8 +237,8 @@ def registerUserService(dataObjs):
                 "company_name": company.name,
                 "brand_content": company_branding.content,
                 "company_email": bussiness_email,
-                "company_logo":str(company_branding.logourl),
-                "sociallinks": company_branding.sociallinks
+                "company_logo": str(company_branding.logourl),
+                "sociallinks": company_branding.sociallinks,
             }
 
             send_company_data = requests.post(url, json=company_data)
@@ -252,7 +264,9 @@ def getJobDescData(jid, company_id):
 
         job_desc = JobDesc.objects.filter(id=jid).last()
 
-        deleted_candidate_ids = Candidate.objects.filter(jobid=jid,deleteflag="Y").values_list('id', flat=True)
+        deleted_candidate_ids = Candidate.objects.filter(
+            jobid=jid, deleteflag="Y"
+        ).values_list("id", flat=True)
 
         if job_desc:
 
@@ -266,8 +280,10 @@ def getJobDescData(jid, company_id):
             offer_letters = 0
             rejected = 0
 
-            registrations = Registration.objects.filter(companyid=company_id, jobid=jid).exclude(candidateid__in=deleted_candidate_ids)
-            
+            registrations = Registration.objects.filter(
+                companyid=company_id, jobid=jid
+            ).exclude(candidateid__in=deleted_candidate_ids)
+
             for registation in registrations:
 
                 if registation.papertype == "S":
@@ -292,12 +308,13 @@ def getJobDescData(jid, company_id):
                         rejected += 1
 
             jd_data = {
-                "jobid":job_desc.id,
+                "jobid": job_desc.id,
                 "title": job_desc.title,
                 "screening_tests": screening_tests,
-                "screening_pending": screening_tests - (screening_fail + screening_pass),
-                "screening_fail":screening_fail,
-                "screening_pass":screening_pass,
+                "screening_pending": screening_tests
+                - (screening_fail + screening_pass),
+                "screening_fail": screening_fail,
+                "screening_pass": screening_pass,
                 "coding_tests": coding_tests,
                 "coding_pending": coding_tests - (coding_fail + coding_pass),
                 "coding_fail": coding_fail,
@@ -306,7 +323,9 @@ def getJobDescData(jid, company_id):
                 "interview_pending": interviews - (offer_letters + rejected),
                 "offer_letters": offer_letters,
                 "rejected": rejected,
-                "display_flag": job_desc.dashboardflag if job_desc.dashboardflag else "N"
+                "display_flag": (
+                    job_desc.dashboardflag if job_desc.dashboardflag else "N"
+                ),
             }
             return jd_data
 
@@ -334,29 +353,29 @@ def addJdServices(addjdData, companyID, hrEmail):
 def companyUserLst(companyID):
     try:
         usersDataLst = []
-        userLst = User.objects.filter(companyid = companyID).order_by('-id')
+        userLst = User.objects.filter(companyid=companyID).order_by("-id")
         for user in userLst:
             userData = model_to_dict(user)
             usersDataLst.append(userData)
-        
+
         lstRoles = Role.objects.all()
         roleslst = []
-        
+
         for rolee in lstRoles:
             userRole = model_to_dict(rolee)
-            if userRole['Name'] != 'HR-Admin':
+            if userRole["Name"] != "HR-Admin":
                 roleslst.append(userRole)
 
-        return {'usrs':usersDataLst,'roles':roleslst}
+        return {"usrs": usersDataLst, "roles": roleslst}
     except Exception as e:
         raise
 
 
 def updateJdDataService(addjdData):
     try:
-        jdData = JobDesc.objects.filter(id=addjdData['JdID']).last()
+        jdData = JobDesc.objects.filter(id=addjdData["JdID"]).last()
         if jdData:
-            
+
             # modifiedSkillList = []
             # # Check if skillLst is a list-like string or a plain CSV string
             # parsed_skillLst = ast.literal_eval(jdData.skillset)  # Try parsing as a list of dictionaries
@@ -368,7 +387,7 @@ def updateJdDataService(addjdData):
             #     subSkills = skill[key].split(',') if ',' in skill[key] else [skill[key]]
 
             #     for subSkill in subSkills:
-            #         modifiedSkillList.append(subSkill.strip()) 
+            #         modifiedSkillList.append(subSkill.strip())
 
             jdDataDict = {
                 "id": jdData.id,
@@ -489,9 +508,11 @@ def getJdCandidatesData(jid, userid):
 
         user = User.objects.get(id=userid)
 
-        candidates = Candidate.objects.filter(
-            jobid=jid, companyid=user.companyid
-        ).exclude(deleteflag='Y').order_by("-id")
+        candidates = (
+            Candidate.objects.filter(jobid=jid, companyid=user.companyid)
+            .exclude(deleteflag="Y")
+            .order_by("-id")
+        )
 
         candidates_data = []
 
@@ -538,14 +559,18 @@ def getCandidatesData(userid):
 
         candidates_list = []
 
-        candidates = Candidate.objects.filter(companyid=user.companyid).exclude(deleteflag='Y').order_by("-id")
+        candidates = (
+            Candidate.objects.filter(companyid=user.companyid)
+            .exclude(deleteflag="Y")
+            .order_by("-id")
+        )
 
         for candidate in candidates:
 
             c_status = const_candidate_status.get(candidate.status, "")
 
             job_desc = JobDesc.objects.filter(id=candidate.jobid).last()
-            
+
             candidates_list.append(
                 {
                     "id": candidate.id,
@@ -554,7 +579,7 @@ def getCandidatesData(userid):
                     "lastname": candidate.lastname,
                     "email": candidate.email,
                     "status": c_status,
-                    "jd_title": job_desc.title if job_desc else ""
+                    "jd_title": job_desc.title if job_desc else "",
                 }
             )
 
@@ -701,7 +726,9 @@ def generate_random_password(length=15):
 
 def getCompanyJdData(cid):
     try:
-        company_jds = JobDesc.objects.filter(companyid=cid).exclude(status__in = ["D","I"])
+        company_jds = JobDesc.objects.filter(companyid=cid).exclude(
+            status__in=["D", "I"]
+        )
 
         jds_list = []
 
@@ -728,20 +755,20 @@ def getCompanyJDsList(companyId):
                     userName = userData.name
                 jd["createdbyUserName"] = userName
             company_jds.reverse()  # Reverse the list to show latest jobs first
-            
+
             InactiveJds = []
             activeJds = []
             # Separate the jobs based on status
             for jd in company_jds:
-                if jd['status'] == 'I':
+                if jd["status"] == "I":
                     InactiveJds.append(jd)  # Add to inactive jobs list
                 else:
                     activeJds.append(jd)  # Add to active jobs list
 
-            return {'activeJd': activeJds, 'inactiveJd': InactiveJds}
+            return {"activeJd": activeJds, "inactiveJd": InactiveJds}
         else:
             # If no jobs are found, return empty lists for both
-            return {'activeJd': [], 'inactiveJd': []}
+            return {"activeJd": [], "inactiveJd": []}
 
     except Exception as e:
         raise
@@ -806,12 +833,13 @@ def getCompanyJDsList(companyId):
 #     except Exception as e:
 #         raise
 
+
 def jdDetails(jdId, companyId):
     try:
         # Get the last JobDesc object for the provided jdId
         jdData = JobDesc.objects.filter(id=jdId).last()
         workFlowDetails = []
-        
+
         # skillLst = jdData.skillset.split(',')
         skillLst = jdData.skillset
 
@@ -819,41 +847,57 @@ def jdDetails(jdId, companyId):
             modifiedSkillList = []
 
             # Check if skillLst is a list-like string or a plain CSV string
-            print('skillLst :: ',skillLst)
-            parsed_skillLst = ast.literal_eval(skillLst)  # Try parsing as a list of dictionaries
-
+            print("skillLst :: ", skillLst)
+            parsed_skillLst = ast.literal_eval(
+                skillLst
+            )  # Try parsing as a list of dictionaries
 
             for skill in parsed_skillLst:
                 key = list(skill.keys())[0]  # Extract the first key
-                subSkills = skill[key].split(',') if ',' in skill[key] else [skill[key]]
+                subSkills = skill[key].split(",") if "," in skill[key] else [skill[key]]
 
                 for subSkill in subSkills:
-                    modifiedSkillList.append(subSkill.strip())  # Clean and append each sub-skill
+                    modifiedSkillList.append(
+                        subSkill.strip()
+                    )  # Clean and append each sub-skill
 
         selectedInterviewerLst = []
         total_interviewers_lst = []
         if jdData:
             # Manually create the dictionary with conditions for None values
 
-            interviewes_lst = User.objects.filter(status="A", companyid=companyId).values("id", "name")
-            workFlowDetails = Workflow.objects.filter(jobid=jdId, teststatus='A').values()
+            interviewes_lst = User.objects.filter(
+                status="A", companyid=companyId
+            ).values("id", "name")
+            workFlowDetails = Workflow.objects.filter(
+                jobid=jdId, teststatus="A"
+            ).values()
             workFlowList = {}
 
             for workFlowData in workFlowDetails:
                 # Replace None values with empty strings
-                cleanData = {key: (value if value is not None else '') for key, value in workFlowData.items()}
-                workFlowList[workFlowData['id']] = cleanData
+                cleanData = {
+                    key: (value if value is not None else "")
+                    for key, value in workFlowData.items()
+                }
+                workFlowList[workFlowData["id"]] = cleanData
 
             for interviewer in interviewes_lst:
                 if interviewer:
-                    total_interviewers_lst.append({"id": interviewer["id"], "name": interviewer["name"]})
+                    total_interviewers_lst.append(
+                        {"id": interviewer["id"], "name": interviewer["name"]}
+                    )
 
                 selectedInterviewerLst = []
                 if jdData.interviewers:
                     jd_interviewers = ast.literal_eval(jdData.interviewers)
                     for selectedInterviewer in jd_interviewers:
                         if selectedInterviewer:
-                            userData = list(User.objects.filter(id=selectedInterviewer).values("id", "name"))
+                            userData = list(
+                                User.objects.filter(id=selectedInterviewer).values(
+                                    "id", "name"
+                                )
+                            )
                             if userData:
                                 if selectedInterviewer:
                                     selectedInterviewerLst.append(
@@ -969,10 +1013,10 @@ def saveInterviewersService(user, dataObjs):
 #             JdStatus = jdData[0]['status']
 #             print('==========================')
 #             print('jdData :: ',jdData[0]['skillset'])
-            
+
 #             if jdData[0]['interviewers']:
 #                 selectedJdInterviewers = ast.literal_eval(jdData[0]['interviewers'])
-            
+
 #         return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus, 'selectedJDInterviewers':selectedJdInterviewers}
 #     except Exception as e:
 #         raise
@@ -1009,27 +1053,33 @@ def workFlowDataService(data, cmpyId):
         jdData = list(JobDesc.objects.filter(id=data).values())
 
         JdStatus = None
-        selectedJdInterviewers = ''
+        selectedJdInterviewers = ""
         if len(jdData) > 0:
-            JdStatus = jdData[0]['status']
+            JdStatus = jdData[0]["status"]
 
             jdSkillsList = []
-            skillList = jdData[0]['skillset'].split(',')
+            skillList = jdData[0]["skillset"].split(",")
             for skill in skillList:
                 jdSkillsList.append(skill.strip())
-            
-            if jdData[0]['interviewers']:
-                selectedJdInterviewers = ast.literal_eval(jdData[0]['interviewers'])
-            
-        return {"workFlowData": list(papersDetails), "jdInterviewers": interviewersLst,'jdStatus':JdStatus, 'selectedJDInterviewers':selectedJdInterviewers,'skillsLst':jdSkillsList}
+
+            if jdData[0]["interviewers"]:
+                selectedJdInterviewers = ast.literal_eval(jdData[0]["interviewers"])
+
+        return {
+            "workFlowData": list(papersDetails),
+            "jdInterviewers": interviewersLst,
+            "jdStatus": JdStatus,
+            "selectedJDInterviewers": selectedJdInterviewers,
+            "skillsLst": jdSkillsList,
+        }
     except Exception as e:
         raise
 
 
 def skillsWithTopicsWithSubtopicsWithQuestionsService(dataObjs):
     try:
-         # Extract skills list from input
-        skillList = dataObjs.get('skillsSetLst', [])
+        # Extract skills list from input
+        skillList = dataObjs.get("skillsSetLst", [])
         if not skillList:
             print("Error: 'skillsSetLst' is empty or missing.")
             return
@@ -1040,9 +1090,7 @@ def skillsWithTopicsWithSubtopicsWithQuestionsService(dataObjs):
         url = urljoin(acert_domain, endpoint)
 
         # Prepare request payload
-        startQuestionData = {
-            'data': skillList
-        }
+        startQuestionData = {"data": skillList}
 
         # Make the POST request
         response = requests.post(url, json=startQuestionData)
@@ -1107,7 +1155,7 @@ def getCallScheduleDetails(cid):
 
         if jd.interviewers:
             jd_interviewers = ast.literal_eval(jd.interviewers)
-        else :
+        else:
             jd_interviewers = ""
 
         job_interviewers = []
@@ -1356,7 +1404,9 @@ def interviewSchedulingService(aplid, int_id):
 def getInterviewerCandidates(userid):
     try:
 
-        call_details = CallSchedule.objects.filter(interviewerid=userid, status="S").order_by("-id")
+        call_details = CallSchedule.objects.filter(
+            interviewerid=userid, status="S"
+        ).order_by("-id")
         candidates = []
 
         for call_data in call_details:
@@ -1425,16 +1475,18 @@ def getCandidateInterviewData(scd_id):
             # resp['profiling_video_url'] = profiling_video_url
 
         job_desc = JobDesc.objects.get(id=candidate.jobid)
-        
+
         skillsString = ""
 
         if job_desc:
             if job_desc.skillset:
                 skillesSet = ast.literal_eval(job_desc.skillset)
-                
+
                 skillCount = 0
                 for skill in skillesSet:
-                    value = next(iter(skill.values()))  # Get the first value dynamically
+                    value = next(
+                        iter(skill.values())
+                    )  # Get the first value dynamically
                     skillCount += 1
 
                     if len(skillesSet) == skillCount:
@@ -1448,7 +1500,7 @@ def getCandidateInterviewData(scd_id):
             "location": job_desc.location,
             "skills": skillsString,
             "notes": job_desc.skillnotes,
-            'instructions':call_details.instructions
+            "instructions": call_details.instructions,
         }
 
         int_paper_title = (
@@ -1591,7 +1643,7 @@ def interviewCompletionService(dataObjs, user_id):
             "interviewed_by": interviewed_by,
             "to_mail": to_mail,
             "paper_id": call_sch_details.paper_id,
-            'int_notes':call_sch_details.intnotes
+            "int_notes": call_sch_details.intnotes,
         }
 
         acert_domain = getConfig()["DOMAIN"]["acert"]
@@ -1719,7 +1771,11 @@ def getCandidateWorkflowData(cid):
 
         candidate = Candidate.objects.filter(id=cid).last()
 
-        candidate_data = {"candidate_info": None, "registrations_data": None,"feedbacks_data":None}
+        candidate_data = {
+            "candidate_info": None,
+            "registrations_data": None,
+            "feedbacks_data": None,
+        }
 
         if candidate:
 
@@ -1729,14 +1785,15 @@ def getCandidateWorkflowData(cid):
 
             if candidate.source:
 
-                source = Source.objects.filter(companyid=candidate.companyid,code=candidate.source).last()
-                
+                source = Source.objects.filter(
+                    companyid=candidate.companyid, code=candidate.source
+                ).last()
+
                 if source:
                     source_label = f"{source.code} - {source.label}"
 
             else:
                 source_label = "NA"
-
 
             candidate_info = {
                 "cid": candidate.id,
@@ -1746,7 +1803,7 @@ def getCandidateWorkflowData(cid):
                 "email": candidate.email,
                 "mobile": candidate.mobile,
                 "jd": jd.title,
-                "source_label":source_label
+                "source_label": source_label,
             }
 
             candidate_data["candidate_info"] = candidate_info
@@ -1762,7 +1819,6 @@ def getCandidateWorkflowData(cid):
             registration_data = {
                 "candidate_code": candidate.candidateid,
             }
-
 
             acert_domain = getConfig()["DOMAIN"]["acert"]
             endpoint = "/api/candiate-workflow-percentage"
@@ -1786,22 +1842,38 @@ def getCandidateWorkflowData(cid):
                     interviewer_name = ""
                     hold_percentage = ""
                     pass_percentage = ""
-                    hold_check =""
+                    hold_check = ""
 
                     if workflow.papertype == "S":
 
                         paper_type = "Screening"
-                        paper_brules = Brules.objects.get(paperid=registration.paperid,jobdescid=registration.jobid)
-                        hold_percentage = paper_brules.holdpercentage if paper_brules.holdpercentage is not None else ""
-                        pass_percentage = paper_brules.passscore if paper_brules.passscore else ""
+                        paper_brules = Brules.objects.get(
+                            paperid=registration.paperid, jobdescid=registration.jobid
+                        )
+                        hold_percentage = (
+                            paper_brules.holdpercentage
+                            if paper_brules.holdpercentage is not None
+                            else ""
+                        )
+                        pass_percentage = (
+                            paper_brules.passscore if paper_brules.passscore else ""
+                        )
                         hold_check = paper_brules.hold
 
                     elif workflow.papertype == "E":
 
                         paper_type = "Coding"
-                        paper_brules = Brules.objects.get(paperid=registration.paperid,jobdescid=registration.jobid)
-                        hold_percentage = paper_brules.holdpercentage if paper_brules.holdpercentage else ""
-                        pass_percentage = paper_brules.passscore if paper_brules.passscore else ""
+                        paper_brules = Brules.objects.get(
+                            paperid=registration.paperid, jobdescid=registration.jobid
+                        )
+                        hold_percentage = (
+                            paper_brules.holdpercentage
+                            if paper_brules.holdpercentage
+                            else ""
+                        )
+                        pass_percentage = (
+                            paper_brules.passscore if paper_brules.passscore else ""
+                        )
                         hold_check = paper_brules.hold
 
                     elif workflow.papertype == "I":
@@ -1811,14 +1883,26 @@ def getCandidateWorkflowData(cid):
                         ).last()
                         if call_schedule:
                             call_status = call_schedule.status
-                            scheduled_time = call_schedule.datentime.strftime("%d-%b-%Y %I:%M %p") if call_schedule.datentime else ""
+                            scheduled_time = (
+                                call_schedule.datentime.strftime("%d-%b-%Y %I:%M %p")
+                                if call_schedule.datentime
+                                else ""
+                            )
 
                             if scheduled_time:
-                                interviewer_name = User.objects.get(id=call_schedule.interviewerid).name
+                                interviewer_name = User.objects.get(
+                                    id=call_schedule.interviewerid
+                                ).name
 
                             if call_schedule.status == "C":
                                 notify_check = "Y"
-                                call_completion_date = call_schedule.callendeddtt.strftime("%d-%b-%Y %I:%M %p") if call_schedule.callendeddtt else ""
+                                call_completion_date = (
+                                    call_schedule.callendeddtt.strftime(
+                                        "%d-%b-%Y %I:%M %p"
+                                    )
+                                    if call_schedule.callendeddtt
+                                    else ""
+                                )
                     else:
                         paper_type = ""
 
@@ -1839,25 +1923,33 @@ def getCandidateWorkflowData(cid):
                         {
                             "reg_id": registration.id,
                             "paper_title": workflow.papertitle,
-                            "paperid":workflow.paperid,
+                            "paperid": workflow.paperid,
                             "paper_type": workflow.papertype,
                             "type_title": paper_type,
                             "call_status": call_status,
                             "candidateid": candidate.id,
                             "reg_status": registration.status,
-                            "completion_date": registration.completiondate.strftime("%d-%b-%Y %I:%M %p") if registration.completiondate else "",
+                            "completion_date": (
+                                registration.completiondate.strftime(
+                                    "%d-%b-%Y %I:%M %p"
+                                )
+                                if registration.completiondate
+                                else ""
+                            ),
                             "notify_check": notify_check,
-                            "call_completion_date":call_completion_date,
+                            "call_completion_date": call_completion_date,
                             "scheduled_time": scheduled_time,
-                            "interviewer_name":interviewer_name,
-                            "hold_percentage":hold_percentage,
-                            "pass_percentage":pass_percentage,
-                            "score_percentage":score_percentage,
-                            "scored_marks" : scored_marks,
-                            "paper_marks" : paper_marks,
-                            "hold_check" : hold_check,
-                            "hold_range" : int(pass_percentage) - 1 if pass_percentage else "",
-                            "star_zero" : star_zero
+                            "interviewer_name": interviewer_name,
+                            "hold_percentage": hold_percentage,
+                            "pass_percentage": pass_percentage,
+                            "score_percentage": score_percentage,
+                            "scored_marks": scored_marks,
+                            "paper_marks": paper_marks,
+                            "hold_check": hold_check,
+                            "hold_range": (
+                                int(pass_percentage) - 1 if pass_percentage else ""
+                            ),
+                            "star_zero": star_zero,
                         }
                     )
 
@@ -1865,7 +1957,7 @@ def getCandidateWorkflowData(cid):
 
             candidate_data["candidate_info"]["notify_check"] = notify_check
 
-        feedback_data =  feedbacksData(candidate.id)
+        feedback_data = feedbacksData(candidate.id)
 
         candidate_data["feedbacks_data"] = feedback_data
 
@@ -1910,7 +2002,7 @@ def generateCandidateReport(cid):
                 root_path + "/media/reports/candidate_report.html", "r"
             )
             report_template = report_template_path.read()
-        
+
             screening_data = acert_data["screening_data"]
             coding_data = acert_data["coding_data"]
             interview_data = acert_data["interview_data"]
@@ -1938,13 +2030,22 @@ def generateCandidateReport(cid):
                 "{interview_section}", interview_data
             )
             updated_report = updated_report.replace("{#jd_title#}", jd.title)
-            updated_report = updated_report.replace("{#comapany_logo#}", str(branding.logourl) if str(branding.logourl) else "")
+            updated_report = updated_report.replace(
+                "{#comapany_logo#}",
+                str(branding.logourl) if str(branding.logourl) else "",
+            )
 
             source_label = "NA"
 
             if candidate.source:
-                source_label = Source.objects.filter(companyid=candidate.companyid,code=candidate.source).last().label
-            
+                source_label = (
+                    Source.objects.filter(
+                        companyid=candidate.companyid, code=candidate.source
+                    )
+                    .last()
+                    .label
+                )
+
             updated_report = updated_report.replace("{#c_source#}", source_label)
 
             call_schedule = CallSchedule.objects.filter(candidateid=candidate.id).last()
@@ -2074,12 +2175,12 @@ def jdPublishService(dataObjs, companyId):
                     tempDct["holdpercentage"] = brulesData.holdpercentage
                 else:
                     tempDct["promotPercentage"] = None
-                    tempDct["hold"] = 'N'
+                    tempDct["hold"] = "N"
                     tempDct["holdpercentage"] = 0
 
                 paperData.append(tempDct)
                 test.save()
-            
+
             # len(paperLst) == 1
 
             paperLst = paperData
@@ -2090,7 +2191,7 @@ def jdPublishService(dataObjs, companyId):
                     paperLst[paper + 1],
                 ]  # Create a list with two items
                 newPaperLst.append(tempLst)
-            
+
             return {
                 "companyid": companyId,
                 "papersData": newPaperLst,
@@ -2176,7 +2277,7 @@ def notifyCandidateService(dataObjs):
 #                 )
 #                 save_user.save()
 #                 return {'userAlreadyExisted':'N','event':'created'}
-            
+
 #         if user_data['event'] == 'update':
 #             userFind = User.objects.filter(email = user_data['userEmail']).last()
 #             if userFind:
@@ -2184,7 +2285,7 @@ def notifyCandidateService(dataObjs):
 #                 userFind.password = user_data['userPswd']
 #                 userFind.location = user_data['newUserLocation']
 #                 userFind.save()
-                
+
 #                 # return JsonResponse
 #                 return {'event':'update','userid':userFind,'name':userFind.name,'pswd':userFind.password,'location':userFind.location}
 #             # else:
@@ -2198,27 +2299,27 @@ def notifyCandidateService(dataObjs):
 #                 #     status = 'A'
 #                 # )
 #                 # save_user.save()
-                
+
 #     except Exception as e:
 #         raise
 
 
 def addNewUserService(company_id, user_data):
     try:
-        if user_data['event'] == 'create':
-            userFind = User.objects.filter(email=user_data['userEmail']).last()
+        if user_data["event"] == "create":
+            userFind = User.objects.filter(email=user_data["userEmail"]).last()
             if userFind:
-                return {'userAlreadyExisted': 'Y'}
+                return {"userAlreadyExisted": "Y"}
             else:
-                userRole = Role.objects.filter(id = user_data['userRole']).last()
+                userRole = Role.objects.filter(id=user_data["userRole"]).last()
                 save_user = User(
                     companyid=company_id,
-                    name=user_data['userName'],
-                    email=user_data['userEmail'],
-                    password=user_data['userPswd'],
-                    role= userRole.Name,
-                    location=user_data['newUserLocation'],
-                    status='A'
+                    name=user_data["userName"],
+                    email=user_data["userEmail"],
+                    password=user_data["userPswd"],
+                    role=userRole.Name,
+                    location=user_data["newUserLocation"],
+                    status="A",
                 )
                 save_user.save()
 
@@ -2226,37 +2327,42 @@ def addNewUserService(company_id, user_data):
                     code = f"REC{save_user.id:02}"
 
                     source = Source(
-                        code = code,
-                        label = save_user.name,
-                        companyid = save_user.companyid,
-                        userid= save_user.id
+                        code=code,
+                        label=save_user.name,
+                        companyid=save_user.companyid,
+                        userid=save_user.id,
                     )
 
                     source.save()
 
+                return {
+                    "userAlreadyExisted": "N",
+                    "event": "created",
+                    "userid": save_user.id,
+                }
 
-                return {'userAlreadyExisted': 'N', 'event': 'created','userid':save_user.id}
+        if user_data["event"] == "update":
+            userFind = User.objects.filter(email=user_data["userEmail"]).last()
 
-        if user_data['event'] == 'update':
-            userFind = User.objects.filter(email=user_data['userEmail']).last()
-            
-            userAuthdata = User_data.objects.filter(username = userFind.email).last()
+            userAuthdata = User_data.objects.filter(username=userFind.email).last()
             if userAuthdata:
-                userAuthdata.usr_password = user_data['userPswd']
+                userAuthdata.usr_password = user_data["userPswd"]
                 userAuthdata.save()
 
             if userFind:
 
-                userFind.name = user_data['userName']
-                userFind.password = user_data['userPswd']
-                userFind.location = user_data['newUserLocation']
+                userFind.name = user_data["userName"]
+                userFind.password = user_data["userPswd"]
+                userFind.location = user_data["newUserLocation"]
                 userFind.save()
 
                 if userFind.role == "Recruiter":
 
                     code = f"REC{userFind.id:02}"
 
-                    source = Source.objects.filter(code=code,companyid=userFind.companyid).last()
+                    source = Source.objects.filter(
+                        code=code, companyid=userFind.companyid
+                    ).last()
 
                     if source:
                         source.label = userFind.name
@@ -2264,21 +2370,21 @@ def addNewUserService(company_id, user_data):
 
                     else:
                         source = Source(
-                            code = code,
-                            label = userFind.name,
-                            companyid = userFind.companyid,
-                            userid = userFind.id
+                            code=code,
+                            label=userFind.name,
+                            companyid=userFind.companyid,
+                            userid=userFind.id,
                         )
 
                     source.save()
-                
+
                 # Convert userFind to a dictionary format for JSON serialization
                 user_data_response = {
-                    'event': 'update',
-                    'userid': userFind.id,
-                    'name': userFind.name,
-                    'pswd': userFind.password,
-                    'location': userFind.location
+                    "event": "update",
+                    "userid": userFind.id,
+                    "name": userFind.name,
+                    "pswd": userFind.password,
+                    "location": userFind.location,
                 }
                 return user_data_response
     except Exception as e:
@@ -2287,12 +2393,12 @@ def addNewUserService(company_id, user_data):
 
 def changeUserstatusService(company_id, user_data):
     try:
-        userid = user_data['userid']
-        userdata = User.objects.filter(id = userid).last()
+        userid = user_data["userid"]
+        userdata = User.objects.filter(id=userid).last()
         if userdata:
-            userdata.status = user_data['status']
+            userdata.status = user_data["status"]
             userdata.save()
-            
+
     except Exception as e:
         raise
 
@@ -2320,7 +2426,7 @@ def deductCreditsService(company_id, paper_type, paper_id=None):
             points=company_credits.credits,
             user=job_desc_data.createdby,
             transid=paper_id,
-            balance = company_account.balance
+            balance=company_account.balance,
         )
         transaction.save()
     except Exception as e:
@@ -2329,17 +2435,17 @@ def deductCreditsService(company_id, paper_type, paper_id=None):
 
 def getCompanyCreditsUsageService(dataObjs):
     try:
-        company_credits_usage = Credits.objects.filter(
-            companyid=dataObjs["cid"]
-        ).values().order_by("-id")
-        
+        company_credits_usage = (
+            Credits.objects.filter(companyid=dataObjs["cid"]).values().order_by("-id")
+        )
+
         usage_list = []
-        
+
         for usage in company_credits_usage:
             if usage["user"]:
                 user = User.objects.get(id=usage["user"]).name
             else:
-                user= ""
+                user = ""
             usage_dict = dict(usage)
             # usage_dict["transtype"] = paper_type
             # usage_dict["paper_title"] = paper_title
@@ -2347,39 +2453,45 @@ def getCompanyCreditsUsageService(dataObjs):
             usage_dict["credit"] = ""
             usage_dict["debit"] = ""
             usage_dict["description"] = ""
-            usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
+            usage_dict["transdatetime"] = usage["transdatetime"].strftime(
+                "%d-%b-%Y %I:%M %p"
+            )
             if usage["transtype"] == "D":
                 workflow = Workflow.objects.filter(
-                companyid=dataObjs["cid"],
-                papertype=usage["papertype"],
-                paperid=usage["transid"]
+                    companyid=dataObjs["cid"],
+                    papertype=usage["papertype"],
+                    paperid=usage["transid"],
                 ).last()
                 JD = JobDesc.objects.get(id=workflow.jobid)
                 paper_type = const_paper_types.get(usage["papertype"], "")
                 paper_title = workflow.papertitle if workflow else "-"
                 # usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
-                usage_dict["description"] = f"""{paper_type}
+                usage_dict[
+                    "description"
+                ] = f"""{paper_type}
                 {paper_title} - JD ({JD.title})"""
                 usage_dict["debit"] = f'{usage_dict["points"]}'
             if usage["transtype"] == "C":
                 payments = Payments.objects.get(id=usage_dict["transid"])
                 if payments.modeofpay == "T":
-                    usage_dict["description"] = f"""Free Trial
+                    usage_dict[
+                        "description"
+                    ] = f"""Free Trial
                     {usage_dict['points']} Credits added
                     """
                 else:
-                    usage_dict["description"] = f"""Payment Successfull {payments.amount} INR
+                    usage_dict[
+                        "description"
+                    ] = f"""Payment Successfull {payments.amount} INR
                     {usage_dict['points']} Credits added
                     """
                 usage_dict["credit"] = f'{usage_dict["points"]}'
-                
-            
+
             usage_list.append(usage_dict)
-            
+
         return usage_list
     except Exception as e:
         raise
-
 
 
 def getCompanyData(cid):
@@ -2393,7 +2505,7 @@ def getCompanyData(cid):
 
             branding = Branding.objects.filter(companyid=company.id).last()
 
-            keywords = ['Linkedin', 'Facebook', 'Instagram', 'Youtube', 'Twitter']
+            keywords = ["Linkedin", "Facebook", "Instagram", "Youtube", "Twitter"]
 
             # Initialize variables in a dictionary
             social_links_vars = {key: "" for key in keywords}
@@ -2403,36 +2515,38 @@ def getCompanyData(cid):
 
                 if social_links_string:
 
-                    social_links = social_links_string.strip(',').split(', ')
+                    social_links = social_links_string.strip(",").split(", ")
 
                     for link in social_links:
-                        if link: 
-                            key, value = link.split(':', 1)  # Split at the first colon
+                        if link:
+                            key, value = link.split(":", 1)  # Split at the first colon
                             if key in keywords:
                                 social_links_vars[key] = value
 
-                Linkedin = social_links_vars['Linkedin']
-                Facebook = social_links_vars['Facebook']
-                Instagram = social_links_vars['Instagram']
-                Youtube = social_links_vars['Youtube']
-                Twitter = social_links_vars['Twitter']
+                Linkedin = social_links_vars["Linkedin"]
+                Facebook = social_links_vars["Facebook"]
+                Instagram = social_links_vars["Instagram"]
+                Youtube = social_links_vars["Youtube"]
+                Twitter = social_links_vars["Twitter"]
 
             company_data = {
-                'id': company.id,
-                'name': company.name if company.name else "",
-                'email': company.email if company.email else "",
-                'website': company.website if company.website else "",
-                'phone': company.phone1 if company.phone1 else "",
-                'company_type': company.companytype if company.companytype else "",
-                'address': company.address1 if company.address1 else "",
-                'city': company.city if company.city else "",
-                'country': company.country if company.country else "",
-                'Linkedin': Linkedin if Linkedin else "",
-                'Facebook': Facebook if Facebook else "",
-                'Instagram': Instagram if Instagram else "",
-                'Youtube': Youtube if Youtube else "",
-                'Twitter': Twitter if Twitter else "",
-                'contact_person': company.contactperson if company.contactperson else ""
+                "id": company.id,
+                "name": company.name if company.name else "",
+                "email": company.email if company.email else "",
+                "website": company.website if company.website else "",
+                "phone": company.phone1 if company.phone1 else "",
+                "company_type": company.companytype if company.companytype else "",
+                "address": company.address1 if company.address1 else "",
+                "city": company.city if company.city else "",
+                "country": company.country if company.country else "",
+                "Linkedin": Linkedin if Linkedin else "",
+                "Facebook": Facebook if Facebook else "",
+                "Instagram": Instagram if Instagram else "",
+                "Youtube": Youtube if Youtube else "",
+                "Twitter": Twitter if Twitter else "",
+                "contact_person": (
+                    company.contactperson if company.contactperson else ""
+                ),
             }
 
         return company_data
@@ -2445,11 +2559,11 @@ def demoUserService(dataObjs):
     try:
 
         company_data = CompanyData(
-            companyname = dataObjs['company-name'],
-            companyemail = dataObjs['email'],
-            location = dataObjs['location'],
-            contactperson = dataObjs['contact-person'],
-            registerationtime = datetime.now()
+            companyname=dataObjs["company-name"],
+            companyemail=dataObjs["email"],
+            location=dataObjs["location"],
+            contactperson=dataObjs["contact-person"],
+            registerationtime=datetime.now(),
         )
 
         company_data.save()
@@ -2460,11 +2574,10 @@ def demoUserService(dataObjs):
         raise
 
 
-
 def updateCandidateWorkflowService(dataObjs):
     try:
 
-        registration = Registration.objects.filter(id=dataObjs['reg_id']).last()
+        registration = Registration.objects.filter(id=dataObjs["reg_id"]).last()
 
         if registration:
 
@@ -2474,12 +2587,12 @@ def updateCandidateWorkflowService(dataObjs):
 
             workflow_data = {
                 "candidate_code": candidate.candidateid,
-                "status" : None,
+                "status": None,
                 "paperid": registration.paperid,
-                "paper_type":registration.papertype,
-                "companyid":candidate.companyid,
+                "paper_type": registration.papertype,
+                "companyid": candidate.companyid,
                 "job_desc": job_desc.description if job_desc.description else "",
-                "job_title": job_desc.title if job_desc.title else ""
+                "job_title": job_desc.title if job_desc.title else "",
             }
 
             acert_domain = getConfig()["DOMAIN"]["acert"]
@@ -2491,18 +2604,28 @@ def updateCandidateWorkflowService(dataObjs):
 
                 workflow_data["status"] = dataObjs["status"]
 
-                current_workflow = Workflow.objects.filter(companyid=candidate.companyid,jobid=job_desc.id,paperid=registration.paperid).last()
+                current_workflow = Workflow.objects.filter(
+                    companyid=candidate.companyid,
+                    jobid=job_desc.id,
+                    paperid=registration.paperid,
+                ).last()
 
                 if current_workflow:
 
-                    next_workflow = Workflow.objects.filter(
-                        companyid=candidate.companyid,
-                        jobid=job_desc.id,
-                        id__gt=current_workflow.id
-                    ).order_by('id').first()
+                    next_workflow = (
+                        Workflow.objects.filter(
+                            companyid=candidate.companyid,
+                            jobid=job_desc.id,
+                            id__gt=current_workflow.id,
+                        )
+                        .order_by("id")
+                        .first()
+                    )
 
                     company_account = Account.objects.get(companyid=candidate.companyid)
-                    company_credits = CompanyCredits.objects.get(companyid=candidate.companyid,transtype=next_workflow.papertype)
+                    company_credits = CompanyCredits.objects.get(
+                        companyid=candidate.companyid, transtype=next_workflow.papertype
+                    )
 
                     if company_account.balance >= company_credits.credits:
 
@@ -2513,26 +2636,26 @@ def updateCandidateWorkflowService(dataObjs):
                         if response_content:
                             json_data = json.loads(response_content.decode("utf-8"))
 
-                            if json_data['statusCode'] == 0:
+                            if json_data["statusCode"] == 0:
 
                                 c_registration = Registration(
-                                    candidateid = candidate.id,
-                                    paperid = next_workflow.paperid,
-                                    registrationdate = candidate.registrationdate,
-                                    companyid = candidate.companyid,
-                                    jobid = candidate.jobid,
-                                    status = 'I',
-                                    papertype = next_workflow.papertype,
+                                    candidateid=candidate.id,
+                                    paperid=next_workflow.paperid,
+                                    registrationdate=candidate.registrationdate,
+                                    companyid=candidate.companyid,
+                                    jobid=candidate.jobid,
+                                    status="I",
+                                    papertype=next_workflow.papertype,
                                 )
 
                                 c_registration.save()
 
-                                if c_registration.papertype == 'I':
+                                if c_registration.papertype == "I":
                                     call_schedule = CallSchedule(
-                                        candidateid = candidate.id,
-                                        paper_id = next_workflow.paperid,
-                                        status = 'N',
-                                        companyid = candidate.companyid
+                                        candidateid=candidate.id,
+                                        paper_id=next_workflow.paperid,
+                                        status="N",
+                                        companyid=candidate.companyid,
                                     )
                                     call_schedule.save()
 
@@ -2547,7 +2670,11 @@ def updateCandidateWorkflowService(dataObjs):
                                     candidate.save()
                                     registration.save()
 
-                                deductCreditsService(candidate.companyid,c_registration.papertype,c_registration.paperid)
+                                deductCreditsService(
+                                    candidate.companyid,
+                                    c_registration.papertype,
+                                    c_registration.paperid,
+                                )
 
                             else:
                                 return 2
@@ -2564,7 +2691,7 @@ def updateCandidateWorkflowService(dataObjs):
                 if response_content:
                     json_data = json.loads(response_content.decode("utf-8"))
 
-                    if json_data['statusCode'] == 0:
+                    if json_data["statusCode"] == 0:
                         registration.status = "F"
                         registration.save()
                     else:
@@ -2576,13 +2703,12 @@ def updateCandidateWorkflowService(dataObjs):
         raise
 
 
-
 def dashBoardGraphDataService(companyid):
     try:
 
         dashboard_data = {
-            'line_graph_data': None,
-            'jd_reg_data': None,
+            "line_graph_data": None,
+            "jd_reg_data": None,
         }
 
         company = Company.objects.filter(id=companyid).last()
@@ -2593,16 +2719,34 @@ def dashBoardGraphDataService(companyid):
 
             # job_desc_ids = list(JobDesc.objects.filter(companyid=company.id).exclude(status__in=['D','I']).values_list('id', flat=True)[:5])
 
-            jd_ids_with_dashboard = list(JobDesc.objects.filter(companyid=company.id, dashboardflag='Y').exclude(status__in=['D', 'I']).order_by('-createdon').values_list('id', flat=True)[:5])
+            jd_ids_with_dashboard = list(
+                JobDesc.objects.filter(companyid=company.id, dashboardflag="Y")
+                .exclude(status__in=["D", "I"])
+                .order_by("-createdon")
+                .values_list("id", flat=True)[:5]
+            )
 
             if len(jd_ids_with_dashboard) < 5:
-                jd_ids_with_dashboard += list(JobDesc.objects.filter(companyid=company.id).exclude(status__in=['D', 'I']).exclude(id__in=jd_ids_with_dashboard) .order_by('-createdon').values_list('id', flat=True)[:(5 - len(jd_ids_with_dashboard))])
+                jd_ids_with_dashboard += list(
+                    JobDesc.objects.filter(companyid=company.id)
+                    .exclude(status__in=["D", "I"])
+                    .exclude(id__in=jd_ids_with_dashboard)
+                    .order_by("-createdon")
+                    .values_list("id", flat=True)[: (5 - len(jd_ids_with_dashboard))]
+                )
 
-            
-            job_descs = JobDesc.objects.filter(id__in=jd_ids_with_dashboard).order_by('-createdon')
+            job_descs = JobDesc.objects.filter(id__in=jd_ids_with_dashboard).order_by(
+                "-createdon"
+            )
 
-            jd_reg_data = {"jdtitle":[],"screening_count":[],"coding_count":[],"interview_count":[],"offered_count":[]}
-            
+            jd_reg_data = {
+                "jdtitle": [],
+                "screening_count": [],
+                "coding_count": [],
+                "interview_count": [],
+                "offered_count": [],
+            }
+
             jd_titles = []
             screening_count = []
             coding_count = []
@@ -2610,21 +2754,23 @@ def dashBoardGraphDataService(companyid):
             offered_count = []
 
             for job_data in job_descs:
-                
-                jd_analysis = JdAnalysis.objects.filter(companyid=company.id,jobid=job_data.id)
+
+                jd_analysis = JdAnalysis.objects.filter(
+                    companyid=company.id, jobid=job_data.id
+                )
 
                 sc_reg_count = 0
                 cd_reg_count = 0
                 int_reg_count = 0
                 offer_count = 0
 
-                if jd_analysis :
+                if jd_analysis:
                     for analysis_data in jd_analysis:
-                        if analysis_data.papertype == 'S':
+                        if analysis_data.papertype == "S":
                             sc_reg_count += analysis_data.registration
-                        elif analysis_data.papertype == 'E':
+                        elif analysis_data.papertype == "E":
                             cd_reg_count += analysis_data.registration
-                        elif analysis_data.papertype == 'I':
+                        elif analysis_data.papertype == "I":
                             int_reg_count += analysis_data.registration
                             offer_count += analysis_data.efficiency or 0
 
@@ -2636,12 +2782,11 @@ def dashBoardGraphDataService(companyid):
                 interview_count.append(int_reg_count)
                 offered_count.append(offer_count)
 
-            jd_reg_data['jdtitle'] = jd_titles
-            jd_reg_data['screening_count'] = screening_count
-            jd_reg_data['coding_count'] = coding_count
-            jd_reg_data['interview_count'] = interview_count
-            jd_reg_data['offered_count'] = offered_count
-
+            jd_reg_data["jdtitle"] = jd_titles
+            jd_reg_data["screening_count"] = screening_count
+            jd_reg_data["coding_count"] = coding_count
+            jd_reg_data["interview_count"] = interview_count
+            jd_reg_data["offered_count"] = offered_count
 
             # line graph data or day wise registrations
 
@@ -2651,33 +2796,38 @@ def dashBoardGraphDataService(companyid):
             start_date = current_date - timedelta(days=15)
             date_range = [start_date + timedelta(days=i) for i in range(16)]
 
-            date_map = {date.strftime("%Y-%m-%d"): {"screening": 0, "coding": 0, "interview": 0} for date in date_range}
+            date_map = {
+                date.strftime("%Y-%m-%d"): {"screening": 0, "coding": 0, "interview": 0}
+                for date in date_range
+            }
 
             queryset = (
-                Registration.objects.filter(registrationdate__gte=start_date,companyid=company.id)
-                .values('papertype', 'registrationdate')
-                .annotate(count=Count('id'))
+                Registration.objects.filter(
+                    registrationdate__gte=start_date, companyid=company.id
+                )
+                .values("papertype", "registrationdate")
+                .annotate(count=Count("id"))
             )
 
             for entry in queryset:
-                date_key = entry['registrationdate'].strftime("%Y-%m-%d")
-                papertype = entry['papertype']
-                
+                date_key = entry["registrationdate"].strftime("%Y-%m-%d")
+                papertype = entry["papertype"]
+
                 if date_key in date_map:
-                    if papertype == 'S':  # Screening
-                        date_map[date_key]["screening"] += entry['count']
-                    elif papertype == 'E':  # Coding
-                        date_map[date_key]["coding"] += entry['count']
-                    elif papertype == 'I':  # Interview
-                        date_map[date_key]["interview"] += entry['count']
+                    if papertype == "S":  # Screening
+                        date_map[date_key]["screening"] += entry["count"]
+                    elif papertype == "E":  # Coding
+                        date_map[date_key]["coding"] += entry["count"]
+                    elif papertype == "I":  # Interview
+                        date_map[date_key]["interview"] += entry["count"]
 
             line_graph["dates"] = [date.strftime("%d-%m-%Y") for date in date_range]
             line_graph["screening"] = [date_map[date]["screening"] for date in date_map]
             line_graph["coding"] = [date_map[date]["coding"] for date in date_map]
             line_graph["interview"] = [date_map[date]["interview"] for date in date_map]
 
-            dashboard_data['line_graph_data'] = line_graph
-            dashboard_data['jd_reg_data'] = jd_reg_data
+            dashboard_data["line_graph_data"] = line_graph
+            dashboard_data["jd_reg_data"] = jd_reg_data
 
         return dashboard_data
 
@@ -2689,65 +2839,86 @@ def dashBoardGraphDataService(companyid):
 def getDashboardData(company_id):
     try:
 
-        dashboard_data = {
-            'durations_data':None,
-            'sources_data':None
-        }
+        dashboard_data = {"durations_data": None, "sources_data": None}
 
         company = Company.objects.filter(id=company_id).last()
 
         if company:
-            
+
             # Duration data
 
             durations_data = {
-                'screening_min':0,
-                'screening_avg':0,
-                'screening_max':0,
-                'screening_min_lt':0,
-                'screening_avg_lt':0,
-                'screening_max_lt':0,
-                'coding_min':0,
-                'coding_avg':0,
-                'coding_max':0,
-                'coding_min_lt':0,
-                'coding_avg_lt':0,
-                'coding_max_lt':0,
-                'interview_min':0,
-                'interview_avg':0,
-                'interview_max':0,
-                'interview_min_lt':0,
-                'interview_avg_lt':0,
-                'interview_max_lt':0,
+                "screening_min": 0,
+                "screening_avg": 0,
+                "screening_max": 0,
+                "screening_min_lt": 0,
+                "screening_avg_lt": 0,
+                "screening_max_lt": 0,
+                "coding_min": 0,
+                "coding_avg": 0,
+                "coding_max": 0,
+                "coding_min_lt": 0,
+                "coding_avg_lt": 0,
+                "coding_max_lt": 0,
+                "interview_min": 0,
+                "interview_avg": 0,
+                "interview_max": 0,
+                "interview_min_lt": 0,
+                "interview_avg_lt": 0,
+                "interview_max_lt": 0,
             }
 
-            papertype_mapping = {
-                'S': 'screening',
-                'E': 'coding',
-                'I': 'interview'
-            }
+            papertype_mapping = {"S": "screening", "E": "coding", "I": "interview"}
 
-            paperwise_duration = JdAnalysis.objects.filter(companyid=company.id).values('papertype').annotate(
-                avg_duration_min=Avg('durationmin'),
-                avg_duration_avg=Avg('durationavg'),
-                avg_duration_max=Avg('durationmax'),
-                avg_leadtime_min=Avg('leadtimemin'),
-                avg_leadtime_avg=Avg('leadtimeavg'),
-                avg_leadtime_max=Avg('leadtimemax'),
+            paperwise_duration = (
+                JdAnalysis.objects.filter(companyid=company.id)
+                .values("papertype")
+                .annotate(
+                    avg_duration_min=Avg("durationmin"),
+                    avg_duration_avg=Avg("durationavg"),
+                    avg_duration_max=Avg("durationmax"),
+                    avg_leadtime_min=Avg("leadtimemin"),
+                    avg_leadtime_avg=Avg("leadtimeavg"),
+                    avg_leadtime_max=Avg("leadtimemax"),
+                )
             )
 
             for duration_data in paperwise_duration:
 
-                key_prefix = papertype_mapping.get(duration_data['papertype'])
+                key_prefix = papertype_mapping.get(duration_data["papertype"])
 
                 if key_prefix:
-                    
-                    durations_data[f'{key_prefix}_min'] = format_duration(duration_data['avg_duration_min']) if duration_data['avg_duration_min'] else 0
-                    durations_data[f'{key_prefix}_avg'] = format_duration(duration_data['avg_duration_avg']) if duration_data['avg_duration_avg'] else 0
-                    durations_data[f'{key_prefix}_max'] = format_duration(duration_data['avg_duration_max']) if duration_data['avg_duration_max'] else 0
-                    durations_data[f'{key_prefix}_min_lt'] = format_duration(duration_data['avg_leadtime_min']) if duration_data['avg_leadtime_min'] else 0
-                    durations_data[f'{key_prefix}_avg_lt'] = format_duration(duration_data['avg_leadtime_avg']) if duration_data['avg_leadtime_avg'] else 0
-                    durations_data[f'{key_prefix}_max_lt'] = format_duration(duration_data['avg_leadtime_max']) if duration_data['avg_leadtime_max'] else 0
+
+                    durations_data[f"{key_prefix}_min"] = (
+                        format_duration(duration_data["avg_duration_min"])
+                        if duration_data["avg_duration_min"]
+                        else 0
+                    )
+                    durations_data[f"{key_prefix}_avg"] = (
+                        format_duration(duration_data["avg_duration_avg"])
+                        if duration_data["avg_duration_avg"]
+                        else 0
+                    )
+                    durations_data[f"{key_prefix}_max"] = (
+                        format_duration(duration_data["avg_duration_max"])
+                        if duration_data["avg_duration_max"]
+                        else 0
+                    )
+                    durations_data[f"{key_prefix}_min_lt"] = (
+                        format_duration(duration_data["avg_leadtime_min"])
+                        if duration_data["avg_leadtime_min"]
+                        else 0
+                    )
+                    durations_data[f"{key_prefix}_avg_lt"] = (
+                        format_duration(duration_data["avg_leadtime_avg"])
+                        if duration_data["avg_leadtime_avg"]
+                        else 0
+                    )
+                    durations_data[f"{key_prefix}_max_lt"] = (
+                        format_duration(duration_data["avg_leadtime_max"])
+                        if duration_data["avg_leadtime_max"]
+                        else 0
+                    )
 
             # Sources Data
 
@@ -2759,7 +2930,9 @@ def getDashboardData(company_id):
 
                 for source in company_sources:
 
-                    source_data = JdAnalysis.objects.filter(companyid=company_id,sourcecode=source.code)
+                    source_data = JdAnalysis.objects.filter(
+                        companyid=company_id, sourcecode=source.code
+                    )
 
                     screening_count = 0
                     screening_efficiency = 0
@@ -2770,37 +2943,56 @@ def getDashboardData(company_id):
 
                     for data in source_data:
 
-                        if data.papertype == 'S':
+                        if data.papertype == "S":
                             screening_count += data.registration or 0
                             screening_efficiency += data.efficiency or 0
 
-                        if data.papertype == 'E':
+                        if data.papertype == "E":
                             coding_count += data.registration or 0
                             coding_efficiency += data.efficiency or 0
 
-                        if data.papertype == 'I':
+                        if data.papertype == "I":
                             interview_count += data.registration or 0
                             interview_efficiency += data.efficiency or 0
 
+                    screening_efficiency_percentage = (
+                        (screening_efficiency / screening_count) * 100
+                        if screening_count != 0
+                        else 0
+                    )
+                    coding_efficiency_percentage = (
+                        (coding_efficiency / coding_count) * 100
+                        if coding_count != 0
+                        else 0
+                    )
+                    interview_efficiency_percentage = (
+                        (interview_efficiency / interview_count) * 100
+                        if interview_count != 0
+                        else 0
+                    )
 
-                    screening_efficiency_percentage = (screening_efficiency / screening_count) * 100 if screening_count != 0 else 0
-                    coding_efficiency_percentage = (coding_efficiency / coding_count) * 100 if coding_count != 0 else 0
-                    interview_efficiency_percentage = (interview_efficiency / interview_count) * 100 if interview_count != 0 else 0
-                    
-                    sources_data.append({
-                        'source_label': source.label,
-                        'screening_count':screening_count,
-                        'coding_count':coding_count,
-                        'interview_count':interview_count,
-                        'screening_efficiency_percentage': int(screening_efficiency_percentage),
-                        'coding_efficiency_percentage': int(coding_efficiency_percentage),
-                        'interview_efficiency_percentage': int(interview_efficiency_percentage),
-                        'offered': interview_efficiency
-                    })
-                
-                dashboard_data['sources_data'] = sources_data
+                    sources_data.append(
+                        {
+                            "source_label": source.label,
+                            "screening_count": screening_count,
+                            "coding_count": coding_count,
+                            "interview_count": interview_count,
+                            "screening_efficiency_percentage": int(
+                                screening_efficiency_percentage
+                            ),
+                            "coding_efficiency_percentage": int(
+                                coding_efficiency_percentage
+                            ),
+                            "interview_efficiency_percentage": int(
+                                interview_efficiency_percentage
+                            ),
+                            "offered": interview_efficiency,
+                        }
+                    )
 
-            dashboard_data['durations_data'] = durations_data
+                dashboard_data["sources_data"] = sources_data
+
+            dashboard_data["durations_data"] = durations_data
 
             return dashboard_data
 
@@ -2808,44 +3000,46 @@ def getDashboardData(company_id):
         raise
 
 
-
 def format_duration(minutes):
     try:
 
         minutes = int(minutes)  # Ensure it's an integer
-    
+
         if minutes < 60:
             return f"{minutes} minutes"
-        
+
         elif minutes < 1440:  # 1440 minutes = 1 day
-        
+
             hours = minutes // 60
             remaining_minutes = minutes % 60
             hour_str = "hour" if hours == 1 else "hours"
-        
-            return f"{hours} {hour_str} {remaining_minutes} minutes" if remaining_minutes else f"{hours} {hour_str}"
-        
+
+            return (
+                f"{hours} {hour_str} {remaining_minutes} minutes"
+                if remaining_minutes
+                else f"{hours} {hour_str}"
+            )
+
         else:
             days = minutes // 1440
             remaining_minutes = minutes % 1440
             hours = remaining_minutes // 60
             remaining_minutes = remaining_minutes % 60
-            
+
             day_str = "day" if days == 1 else "days"
             hour_str = "hour" if hours == 1 else "hours"
             result = f"{days} {day_str}"
-            
+
             if hours:
                 result += f" {hours} {hour_str}"
-            
+
             if remaining_minutes:
                 result += f" {remaining_minutes} minutes"
 
             return result
-    
+
     except Exception as e:
         raise
-
 
 
 def getCompanySourcesData(company_id):
@@ -2859,11 +3053,9 @@ def getCompanySourcesData(company_id):
 
             for source in sources:
 
-                sources_data.append({
-                    "id":source.id,
-                    "code": source.code,
-                    "label":source.label
-                })
+                sources_data.append(
+                    {"id": source.id, "code": source.code, "label": source.label}
+                )
 
             return sources_data
 
@@ -2871,11 +3063,10 @@ def getCompanySourcesData(company_id):
         raise
 
 
-
-def mapUploadedCandidateFields(company_id,user,fileObjs):
+def mapUploadedCandidateFields(company_id, user, fileObjs):
     try:
-        
-        uploaded_excel = fileObjs.get('file')
+
+        uploaded_excel = fileObjs.get("file")
 
         if uploaded_excel:
 
@@ -2886,19 +3077,23 @@ def mapUploadedCandidateFields(company_id,user,fileObjs):
 
             user_file_name = f"{formatted_company_id}_candidates{excel_extension}"
 
-            excel_path = os.path.join(settings.MEDIA_ROOT,'uploads','candidate_upload',user_file_name)
+            excel_path = os.path.join(
+                settings.MEDIA_ROOT, "uploads", "candidate_upload", user_file_name
+            )
 
-            with open(excel_path, 'wb+') as user_file:
+            with open(excel_path, "wb+") as user_file:
                 for chunk in uploaded_excel.chunks():
                     user_file.write(chunk)
 
-            root_path = getConfig()["DIR"]['root_path']
+            root_path = getConfig()["DIR"]["root_path"]
 
             file_path = f"{root_path}/app_api/functions/data_configs/mapping.json"
 
-            mappings_data = validate_excel_with_json(file_path,excel_path)
+            mappings_data = validate_excel_with_json(file_path, excel_path)
 
-            candidate_upload_file = Uploads.objects.filter(companyid=company_id,type="C").last()
+            candidate_upload_file = Uploads.objects.filter(
+                companyid=company_id, type="C"
+            ).last()
 
             if candidate_upload_file:
 
@@ -2909,11 +3104,11 @@ def mapUploadedCandidateFields(company_id,user,fileObjs):
 
             else:
                 uploaded_file = Uploads(
-                    companyid = company_id,
-                    type = "C",
-                    filepath = excel_path,
-                    filename = user_file_name,
-                    status = "U"
+                    companyid=company_id,
+                    type="C",
+                    filepath=excel_path,
+                    filename=user_file_name,
+                    status="U",
                 )
 
                 uploaded_file.save()
@@ -2924,21 +3119,21 @@ def mapUploadedCandidateFields(company_id,user,fileObjs):
         raise
 
 
-
 def processAddCandidateService(company_id, dataObjs, user_id):
     try:
-        candidate_upload_file = Uploads.objects.filter(companyid=company_id,type="C").last()
+        candidate_upload_file = Uploads.objects.filter(
+            companyid=company_id, type="C"
+        ).last()
 
         if candidate_upload_file:
-            candidate_upload_file.status="I"
+            candidate_upload_file.status = "I"
             candidate_upload_file.save()
-
 
         # Format the company ID to be 3 digits
         formatted_company_id = str(company_id).zfill(3)
 
         # Define the file storage directory
-        upload_dir = os.path.join(settings.MEDIA_ROOT, 'uploads', 'candidate_upload')
+        upload_dir = os.path.join(settings.MEDIA_ROOT, "uploads", "candidate_upload")
 
         # List all files in the directory
         files = os.listdir(upload_dir)
@@ -2959,12 +3154,12 @@ def processAddCandidateService(company_id, dataObjs, user_id):
             df = pd.read_excel(excel_file_path)
 
             # Extract column index mapping from the dataObjs
-            column_mapping = dataObjs['columns-data']
+            column_mapping = dataObjs["columns-data"]
 
             # Additional data needed
-            jd_id = dataObjs['jd']
+            jd_id = dataObjs["jd"]
             begin_from = Workflow.objects.filter(jobid=jd_id).first().paperid
-            source_code = dataObjs['source-code']
+            source_code = dataObjs["source-code"]
 
             # List to hold status for each row
             status_list = []
@@ -2973,10 +3168,26 @@ def processAddCandidateService(company_id, dataObjs, user_id):
             for index, row in df.iterrows():
                 try:
                     # Extract values using the column mapping
-                    first_name = row.iloc[column_mapping.get('First Name', -1)] if column_mapping.get('First Name', -1) != -1 else None
-                    last_name = row.iloc[column_mapping.get('Last Name', -1)] if column_mapping.get('Last Name', -1) != -1 else None
-                    email = row.iloc[column_mapping.get('Email', -1)] if column_mapping.get('Email', -1) != -1 else None
-                    mobile = row.iloc[column_mapping.get('Mobile', -1)] if column_mapping.get('Mobile', -1) != -1 else None
+                    first_name = (
+                        row.iloc[column_mapping.get("First Name", -1)]
+                        if column_mapping.get("First Name", -1) != -1
+                        else None
+                    )
+                    last_name = (
+                        row.iloc[column_mapping.get("Last Name", -1)]
+                        if column_mapping.get("Last Name", -1) != -1
+                        else None
+                    )
+                    email = (
+                        row.iloc[column_mapping.get("Email", -1)]
+                        if column_mapping.get("Email", -1) != -1
+                        else None
+                    )
+                    mobile = (
+                        row.iloc[column_mapping.get("Mobile", -1)]
+                        if column_mapping.get("Mobile", -1) != -1
+                        else None
+                    )
 
                     # Handle NaN values
                     first_name = None if pd.isna(first_name) else first_name
@@ -3003,18 +3214,20 @@ def processAddCandidateService(company_id, dataObjs, user_id):
 
                     # Prepare candidate data
                     candidate_data = {
-                        'firstname': first_name,
-                        'lastname': last_name,
-                        'email': email,
-                        'mobile': mobile,
-                        'jd': dataObjs['jd'],
-                        'begin-from': begin_from,
-                        'source-code': source_code
+                        "firstname": first_name,
+                        "lastname": last_name,
+                        "email": email,
+                        "mobile": mobile,
+                        "jd": dataObjs["jd"],
+                        "begin-from": begin_from,
+                        "source-code": source_code,
                     }
 
                     try:
                         # Call the function and handle errors
-                        c_data = addCandidateDB(candidate_data, company_id, None, user_id)
+                        c_data = addCandidateDB(
+                            candidate_data, company_id, None, user_id
+                        )
 
                         if c_data == "insufficient_credits":
                             status_list.append("Skipped: Insufficient Credits")
@@ -3034,11 +3247,13 @@ def processAddCandidateService(company_id, dataObjs, user_id):
                     status_list.append(f"Skipped: Error occurred ({str(row_error)})")
 
             # Add the status column to the DataFrame
-            df['hirelines-status'] = status_list
+            df["hirelines-status"] = status_list
 
             # Save the updated DataFrame back to Excel
             report_file = f"{formatted_company_id}_candidate_report.xlsx"
-            output_file_path = os.path.join(settings.MEDIA_ROOT,'uploads','candidate_upload',report_file)
+            output_file_path = os.path.join(
+                settings.MEDIA_ROOT, "uploads", "candidate_upload", report_file
+            )
             df.to_excel(output_file_path, index=False)
 
             # Load the workbook to remove borders from the first row
@@ -3046,10 +3261,12 @@ def processAddCandidateService(company_id, dataObjs, user_id):
             sheet = workbook.active
 
             # Define no-border style
-            no_border = Border(left=Side(border_style=None), 
-                                right=Side(border_style=None), 
-                                top=Side(border_style=None), 
-                                bottom=Side(border_style=None))
+            no_border = Border(
+                left=Side(border_style=None),
+                right=Side(border_style=None),
+                top=Side(border_style=None),
+                bottom=Side(border_style=None),
+            )
 
             # Apply no-border style to header row cells
             for cell in sheet[1]:  # First row (headers)
@@ -3072,9 +3289,8 @@ def processAddCandidateService(company_id, dataObjs, user_id):
 
 def is_valid_email(email):
     """Basic regex pattern to validate email format."""
-    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     return re.match(pattern, email) is not None
-
 
 
 def checkJdCandidateRegistrationService(dataObjs):
@@ -3093,19 +3309,20 @@ def checkJdCandidateRegistrationService(dataObjs):
         raise
 
 
-
 def getCompanyCandidateUploadData(company_id):
     try:
-        
+
         upload_data = {}
 
-        candidate_uploaded_data = Uploads.objects.filter(companyid=company_id,type="C").last()
+        candidate_uploaded_data = Uploads.objects.filter(
+            companyid=company_id, type="C"
+        ).last()
 
         if candidate_uploaded_data:
-            upload_data['status'] = candidate_uploaded_data.status
-            upload_data['display_flag'] = "Y"
+            upload_data["status"] = candidate_uploaded_data.status
+            upload_data["display_flag"] = "Y"
         else:
-            upload_data['display_flag'] = "N"
+            upload_data["display_flag"] = "N"
 
         return upload_data
 
@@ -3116,16 +3333,20 @@ def getCompanyCandidateUploadData(company_id):
 def downloadUploadReportService(company_id):
     try:
 
-        uploaded_data = Uploads.objects.filter(type="C",companyid=company_id,status="C").last()
+        uploaded_data = Uploads.objects.filter(
+            type="C", companyid=company_id, status="C"
+        ).last()
 
         if uploaded_data:
             formatted_company_id = str(company_id).zfill(3)
             report_file = f"{formatted_company_id}_candidate_report.xlsx"
-            report_file_path = os.path.join(settings.MEDIA_ROOT,'uploads','candidate_upload',report_file)
+            report_file_path = os.path.join(
+                settings.MEDIA_ROOT, "uploads", "candidate_upload", report_file
+            )
 
             return {
                 "report_file_path": report_file_path,
-                "report_file_name" : report_file
+                "report_file_name": report_file,
             }
 
     except Exception as e:
@@ -3172,13 +3393,12 @@ def downloadUploadReportService(company_id):
 
 #     except Exception as e:
 #         print(f"Error: {e}")
-#         raise         
-
+#         raise
 
 
 def getProfileDetailsService(pid):
     try:
-     
+
         profile = Profile.objects.filter(id=pid).values().first()
 
         if not profile:
@@ -3192,14 +3412,13 @@ def getProfileDetailsService(pid):
             "title": profile.get("title", ""),
             "email": profile.get("email", ""),
             "mobile": profile.get("mobile", ""),
-            "dateofcreation":profile.get("dateofcreation",""),
-            "linkedin":profile.get("linkedin",""),
-            "dateofbirth":profile.get("dateofbirth",""),
-            "nativeof":profile.get("nativeof",""),
-            "facebook":profile.get("facebook",""),
-            "passportnum":profile.get("passportnum",""),
+            "dateofcreation": profile.get("dateofcreation", ""),
+            "linkedin": profile.get("linkedin", ""),
+            "dateofbirth": profile.get("dateofbirth", ""),
+            "nativeof": profile.get("nativeof", ""),
+            "facebook": profile.get("facebook", ""),
+            "passportnum": profile.get("passportnum", ""),
         }
-
 
         education_list = (
             ProfileEducation.objects.filter(profileid=pid)
@@ -3214,7 +3433,7 @@ def getProfileDetailsService(pid):
             .values("jobtitle", "company", "yearfrom", "yearto")
             .order_by("sequence")
         )
-     
+
         profile_det["experience"] = list(experience_list)
 
         total_exp = 0
@@ -3224,7 +3443,7 @@ def getProfileDetailsService(pid):
                 yt = int(exp.get("yearto", 0))
 
                 if yt >= yf:
-                    total_exp += (yt - yf)
+                    total_exp += yt - yf
             except:
                 pass
 
@@ -3236,16 +3455,24 @@ def getProfileDetailsService(pid):
             .first()
         )
 
-        profile_det["skills"] = skills if skills else {"primaryskills": "", "secondaryskills": ""}
+        profile_det["skills"] = (
+            skills if skills else {"primaryskills": "", "secondaryskills": ""}
+        )
 
         projects_list = (
             ProfileProjects.objects.filter(profileid=pid)
-            .values("projectname", "clientname", "roleplayed", "skillsused", "yearsfrom", "yearsto")
+            .values(
+                "projectname",
+                "clientname",
+                "roleplayed",
+                "skillsused",
+                "yearsfrom",
+                "yearsto",
+            )
             .order_by("sequence")
         )
 
         profile_det["projects"] = list(projects_list)
-
 
         awards_list = (
             ProfileAwards.objects.filter(profileid=pid)
@@ -3263,19 +3490,23 @@ def getProfileDetailsService(pid):
 
         # ADDRESS (NEW)
         address_list = list(
-            ProfileAddress.objects.filter(profileid=pid)
-            .values("addline1", "addline2", "city", "state", "country", "zipcode")
+            ProfileAddress.objects.filter(profileid=pid).values(
+                "addline1", "addline2", "city", "state", "country", "zipcode"
+            )
         )
 
         profile_det["address"] = address_list
 
-        branding = Branding.objects.filter(companyid=profile.get("companyid")).values("logourl").first()
+        branding = (
+            Branding.objects.filter(companyid=profile.get("companyid"))
+            .values("logourl")
+            .first()
+        )
 
         if branding and branding.get("logourl"):
             profile_det["logo"] = branding.get("logourl")
         else:
             profile_det["logo"] = None
-
 
         return profile_det
 
@@ -3287,10 +3518,7 @@ def getProfileactivityDetailsService(pid):
     try:
         # Fetch all activity rows for this profile
         activity_list = (
-            ProfileActivity.objects
-            .filter(profileid=pid)
-            .values()
-            .order_by("sequence")
+            ProfileActivity.objects.filter(profileid=pid).values().order_by("sequence")
         )
 
         final_list = []
@@ -3303,7 +3531,9 @@ def getProfileactivityDetailsService(pid):
             "CT": "Profile Coding Test",
             "P2": "Profile Coding Test - Promoted",
         }
-        user_ids = set(row.get("acvityuserid") for row in activity_list if row.get("acvityuserid"))
+        user_ids = set(
+            row.get("acvityuserid") for row in activity_list if row.get("acvityuserid")
+        )
 
         user_map = {
             u["id"]: u["name"]
@@ -3312,8 +3542,7 @@ def getProfileactivityDetailsService(pid):
 
         # Fetch profile details ONCE
         job_title = (
-            Profile.objects
-            .filter(id=pid)
+            Profile.objects.filter(id=pid)
             .values("title", "firstname", "lastname")
             .first()
         )
@@ -3329,32 +3558,37 @@ def getProfileactivityDetailsService(pid):
 
             userid = row.get("acvityuserid")
 
-            final_list.append({
-                "id": row.get("id"),
-                "profileid": row.get("profileid"),
-                "sequence": row.get("sequence"),
-                "datentime": formatted_dt,
-                "activitycode": row.get("activitycode"),
-                "activity_text": activity_map.get(row.get("activitycode"), "Unknown Activity"),
-                "activityuserid": row.get("acvityuserid"),
-                "activityusername": user_map.get(userid, ""),
-                "activityremarks": row.get("activityremarks"),
-                "activitystatus": row.get("activitystatus"),
-                "activityname": row.get("activityname"),
-
-                # Adding job title details
-                "jobtitle": job_title["title"] if job_title else "",
-                "firstname": job_title["firstname"] if job_title else "",
-                "lastname": job_title["lastname"] if job_title else "",
-            })
+            final_list.append(
+                {
+                    "id": row.get("id"),
+                    "profileid": row.get("profileid"),
+                    "sequence": row.get("sequence"),
+                    "datentime": formatted_dt,
+                    "activitycode": row.get("activitycode"),
+                    "activity_text": activity_map.get(
+                        row.get("activitycode"), "Unknown Activity"
+                    ),
+                    "activityuserid": row.get("acvityuserid"),
+                    "activityusername": user_map.get(userid, ""),
+                    "activityremarks": row.get("activityremarks"),
+                    "activitystatus": row.get("activitystatus"),
+                    "activityname": row.get("activityname"),
+                    # Adding job title details
+                    "jobtitle": job_title["title"] if job_title else "",
+                    "firstname": job_title["firstname"] if job_title else "",
+                    "lastname": job_title["lastname"] if job_title else "",
+                }
+            )
         return final_list
 
     except Exception as e:
         raise
+
+
 #         raise
 
 
-def getResumeData(user_data,filters=None):
+def getResumeData(user_data, filters=None):
     try:
 
         resumes_data = []
@@ -3366,9 +3600,13 @@ def getResumeData(user_data,filters=None):
         else:
             sources = Source.objects.filter(userid=user_data.id)
 
-        source_ids = sources.values_list('id', flat=True)
+        source_ids = sources.values_list("id", flat=True)
 
-        resumes = Resume.objects.filter(sourceid__in=source_ids).exclude(status="D").order_by("-datentime")
+        resumes = (
+            Resume.objects.filter(sourceid__in=source_ids)
+            .exclude(status="D")
+            .order_by("-datentime")
+        )
 
         if resumes:
 
@@ -3376,16 +3614,21 @@ def getResumeData(user_data,filters=None):
 
                 source = sources.filter(id=resume.sourceid).first()
 
-                resumes_data.append({
-                    "id":resume.id,
-                    "name": resume.filename or "",
-                    "source": source.label or "",
-                    "date": resume.datentime.strftime("%d-%b-%Y") if resume.datentime else "",
-                    "status": resume.status
-                })
+                resumes_data.append(
+                    {
+                        "id": resume.id,
+                        "name": resume.filename or "",
+                        "source": source.label or "",
+                        "date": (
+                            resume.datentime.strftime("%d-%b-%Y")
+                            if resume.datentime
+                            else ""
+                        ),
+                        "status": resume.status,
+                    }
+                )
 
         return resumes_data
-
 
     except Exception as e:
         raise
@@ -3394,7 +3637,11 @@ def getResumeData(user_data,filters=None):
 def getEmailFetchUsers():
     try:
 
-        users = list(User.objects.filter(role__icontains="Recruiter").values("id","email","companyid"))
+        users = list(
+            User.objects.filter(role__icontains="Recruiter").values(
+                "id", "email", "companyid"
+            )
+        )
         return users
 
     except Exception as e:
@@ -3407,28 +3654,28 @@ def softDeleteResume(rid):
         resume = Resume.objects.get(id=rid)
         resume.status = "D"
         resume.save()
-        
+
     except Exception as e:
         raise
 
 
-def getProfileData(pid,user_data):
+def getProfileData(pid, user_data):
     try:
-        
-        profile = Profile.objects.filter(id=pid,companyid=user_data.companyid).last()
+
+        profile = Profile.objects.filter(id=pid, companyid=user_data.companyid).last()
 
         if not profile:
             return None
-        
+
         profile_data = {
             "personal": None,
             "education": None,
-            "experience":None,
-            "projects":None,
-            "awards":None,
-            "certificates":None,
-            "skills":None,
-            "resume_file": None
+            "experience": None,
+            "projects": None,
+            "awards": None,
+            "certificates": None,
+            "skills": None,
+            "resume_file": None,
         }
 
         # Profile details
@@ -3444,29 +3691,37 @@ def getProfileData(pid,user_data):
             "passportnum": profile.passportnum or "",
             "fathername": profile.fathername or "",
             "nativeof": profile.nativeof or "",
-            "status":profile.status,
-            "dateofbirth": profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
-        }    
+            "status": profile.status,
+            "dateofbirth": (
+                profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
+            ),
+        }
 
         # Education
-        education_data = ProfileEducation.objects.filter(profileid=profile.id).order_by("sequence")
+        education_data = ProfileEducation.objects.filter(profileid=profile.id).order_by(
+            "sequence"
+        )
 
         profile_education = []
-        
+
         if education_data:
 
             for education in education_data:
 
-                profile_education.append({
-                    "course": education.course or "",
-                    "institute": education.institute or "",
-                    "yearfrom": education.yearfrom or "",
-                    "yearto": education.yearto or "",
-                    "grade": education.grade or "",
-                })
+                profile_education.append(
+                    {
+                        "course": education.course or "",
+                        "institute": education.institute or "",
+                        "yearfrom": education.yearfrom or "",
+                        "yearto": education.yearto or "",
+                        "grade": education.grade or "",
+                    }
+                )
 
         # Experience
-        experience_data = ProfileExperience.objects.filter(profileid=profile.id).order_by("sequence")
+        experience_data = ProfileExperience.objects.filter(
+            profileid=profile.id
+        ).order_by("sequence")
 
         profile_experience = []
 
@@ -3474,15 +3729,19 @@ def getProfileData(pid,user_data):
 
             for experience in experience_data:
 
-                profile_experience.append({
-                    "jobtitle": experience.jobtitle or "",
-                    "company": experience.company or "",
-                    "yearfrom": experience.yearfrom or "",
-                    "yearto": experience.yearto or ""
-                })
+                profile_experience.append(
+                    {
+                        "jobtitle": experience.jobtitle or "",
+                        "company": experience.company or "",
+                        "yearfrom": experience.yearfrom or "",
+                        "yearto": experience.yearto or "",
+                    }
+                )
 
         # Projects
-        projects_data = ProfileProjects.objects.filter(profileid=profile.id).order_by("sequence")
+        projects_data = ProfileProjects.objects.filter(profileid=profile.id).order_by(
+            "sequence"
+        )
 
         profile_projects = []
 
@@ -3490,17 +3749,21 @@ def getProfileData(pid,user_data):
 
             for project in projects_data:
 
-                profile_projects.append({
-                    "projectname": project.projectname or "",
-                    "clientname": project.clientname or "",
-                    "roleplayed": project.roleplayed or "",
-                    "skillsused": project.skillsused or "",
-                    "yearsfrom": project.yearsfrom or "",
-                    "yearsto": project.yearsto or "",
-                })
-        
+                profile_projects.append(
+                    {
+                        "projectname": project.projectname or "",
+                        "clientname": project.clientname or "",
+                        "roleplayed": project.roleplayed or "",
+                        "skillsused": project.skillsused or "",
+                        "yearsfrom": project.yearsfrom or "",
+                        "yearsto": project.yearsto or "",
+                    }
+                )
+
         # Awards
-        awards_data = ProfileAwards.objects.filter(profileid=profile.id).order_by("sequence")
+        awards_data = ProfileAwards.objects.filter(profileid=profile.id).order_by(
+            "sequence"
+        )
 
         profile_awards = []
 
@@ -3508,13 +3771,17 @@ def getProfileData(pid,user_data):
 
             for award in awards_data:
 
-                profile_awards.append({
-                    "awardname": award.awardname or "",
-                    "year": award.year or "",
-                })
+                profile_awards.append(
+                    {
+                        "awardname": award.awardname or "",
+                        "year": award.year or "",
+                    }
+                )
 
         # Cerificates
-        certificates_data = ProfileCertificates.objects.filter(profileid=profile.id).order_by("sequence")
+        certificates_data = ProfileCertificates.objects.filter(
+            profileid=profile.id
+        ).order_by("sequence")
 
         profile_certificates = []
 
@@ -3522,10 +3789,12 @@ def getProfileData(pid,user_data):
 
             for certificate in certificates_data:
 
-                profile_certificates.append({
-                    "certname": certificate.certname or "",
-                    "year": certificate.year or "",
-                })
+                profile_certificates.append(
+                    {
+                        "certname": certificate.certname or "",
+                        "year": certificate.year or "",
+                    }
+                )
 
         skills_data = ProfileSkills.objects.filter(profileid=profile.id).last()
 
@@ -3540,30 +3809,30 @@ def getProfileData(pid,user_data):
 
             resume_file = ResumeFile.objects.get(id=profile.resumeid)
             file_base64 = base64.b64encode(resume_file.filecontent).decode("utf-8")
-        
-        profile_data["personal"] = personal_details    
+
+        profile_data["personal"] = personal_details
         profile_data["experience"] = profile_experience
-        profile_data["education"] = profile_education    
+        profile_data["education"] = profile_education
         profile_data["projects"] = profile_projects
         profile_data["awards"] = profile_awards
         profile_data["certificates"] = profile_certificates
-        profile_data["skills"] = profile_skills 
+        profile_data["skills"] = profile_skills
         profile_data["resume_file"] = f"data:application/pdf;base64,{file_base64}"
 
         return profile_data
-        
+
     except Exception as e:
         raise
 
 
-def generateBrandedProfile(profile_id,user_data):
+def generateBrandedProfile(profile_id, user_data):
     try:
 
         profile_details = getProfileDetailsService(profile_id)
 
         company = Company.objects.get(id=user_data.companyid)
 
-        print("profile_details",profile_details)
+        print("profile_details", profile_details)
 
         root_path = BASE_DIR
 
@@ -3573,18 +3842,42 @@ def generateBrandedProfile(profile_id,user_data):
 
         resume_template = resume_template_path.read()
 
-        updated_resume = resume_template.replace("{#comapany_logo#}", profile_details["logo"] if profile_details["logo"] else "")
-        updated_resume = updated_resume.replace("{#creation_date#}", profile_details["dateofcreation"].strftime("%d-%B-%Y") )
+        updated_resume = resume_template.replace(
+            "{#comapany_logo#}",
+            profile_details["logo"] if profile_details["logo"] else "",
+        )
+        updated_resume = updated_resume.replace(
+            "{#creation_date#}", profile_details["dateofcreation"].strftime("%d-%B-%Y")
+        )
         updated_resume = updated_resume.replace("{#title#}", profile_details["title"])
-        updated_resume = updated_resume.replace("{#firstname#}", profile_details["firstname"] )
-        updated_resume = updated_resume.replace("{#lastname#}", profile_details["lastname"] )
-        updated_resume = updated_resume.replace("{#email#}", profile_details["email"] )
-        updated_resume = updated_resume.replace("{#dob#}", profile_details["dateofbirth"].strftime("%d-%m-%Y") if profile_details["dateofbirth"] else "" )
-        updated_resume = updated_resume.replace("{#linkedin#}", profile_details["linkedin"] if profile_details["linkedin"] else "" )
-        updated_resume = updated_resume.replace("{#nativeof#}", profile_details["nativeof"] if profile_details["nativeof"] else "" )
-        updated_resume = updated_resume.replace("{#final_experience#}", profile_details["final_experience"] )
-        updated_resume = updated_resume.replace("{#user_name#}", user_data.name )
-        updated_resume = updated_resume.replace("{#company_name#}", company.name )
+        updated_resume = updated_resume.replace(
+            "{#firstname#}", profile_details["firstname"]
+        )
+        updated_resume = updated_resume.replace(
+            "{#lastname#}", profile_details["lastname"]
+        )
+        updated_resume = updated_resume.replace("{#email#}", profile_details["email"])
+        updated_resume = updated_resume.replace(
+            "{#dob#}",
+            (
+                profile_details["dateofbirth"].strftime("%d-%m-%Y")
+                if profile_details["dateofbirth"]
+                else ""
+            ),
+        )
+        updated_resume = updated_resume.replace(
+            "{#linkedin#}",
+            profile_details["linkedin"] if profile_details["linkedin"] else "",
+        )
+        updated_resume = updated_resume.replace(
+            "{#nativeof#}",
+            profile_details["nativeof"] if profile_details["nativeof"] else "",
+        )
+        updated_resume = updated_resume.replace(
+            "{#final_experience#}", profile_details["final_experience"]
+        )
+        updated_resume = updated_resume.replace("{#user_name#}", user_data.name)
+        updated_resume = updated_resume.replace("{#company_name#}", company.name)
 
         education_data = ""
 
@@ -3636,7 +3929,7 @@ def generateBrandedProfile(profile_id,user_data):
             """
 
         certificates_data = ""
-        
+
         if profile_details["certificates"]:
             for certificate in profile_details["certificates"]:
                 certificates_data += f"""
@@ -3659,12 +3952,14 @@ def generateBrandedProfile(profile_id,user_data):
                 <li class="custom-list">No Awards</li>
             """
 
-        updated_resume = updated_resume.replace("{#education_data#}",education_data)
-        updated_resume = updated_resume.replace("{#experience_data#}",experience_data)
-        updated_resume = updated_resume.replace("{#skills_data#}",skills_data)
-        updated_resume = updated_resume.replace("{#projects_data#}",projects_data)
-        updated_resume = updated_resume.replace("{#certificates_data#}",certificates_data)
-        updated_resume = updated_resume.replace("{#awards_data#}",awards_data)
+        updated_resume = updated_resume.replace("{#education_data#}", education_data)
+        updated_resume = updated_resume.replace("{#experience_data#}", experience_data)
+        updated_resume = updated_resume.replace("{#skills_data#}", skills_data)
+        updated_resume = updated_resume.replace("{#projects_data#}", projects_data)
+        updated_resume = updated_resume.replace(
+            "{#certificates_data#}", certificates_data
+        )
+        updated_resume = updated_resume.replace("{#awards_data#}", awards_data)
 
         output_filepath = root_path + f"/media/branded_resumes/resume_{profile_id}.pdf"
         result_file = open(output_filepath, "w+b")
@@ -3683,3 +3978,259 @@ def generateBrandedProfile(profile_id,user_data):
     except Exception as e:
         print(str(e))
         raise
+
+
+from datetime import datetime
+
+RULES = {
+    "education": {
+        "set_1": {"items": ["B-tech", "BCom", "BA"], "points": 6},
+        "set_2": {"items": ["MBA", "MCA", "BBA"], "points": 4},
+    },
+    "experience": {
+        "sets": [
+            # {"min": 1, "max": 3, "base_points": 5},
+            {"min": 3, "max": 5, "base_points": 10},
+        ],
+        "deduction": {"per_item": 1, "min_score": 0},
+    },
+    "projects": {
+        "base_points": 10,
+        "deduction": {"per_item": 1, "min_score": 0},
+    },
+    "certificates": {"points_per_item": 1, "max_points": 5},
+    "awards": {"points_per_item": 1, "max_points": 5},
+    "skills": {
+        "tier_1": {
+            "skills": [
+                "python",
+                "java",
+                "c",
+                "c++",
+                "c#",
+                "go",
+                "rust",
+                "scala",
+                "kotlin",
+                "swift",
+                "mysql",
+            ],
+            "points_per_skill": 10,
+            "max_points": 20,
+        },
+        "tier_2": {
+            "skills": [
+                "react",
+                "angular",
+                "vue",
+                "nodejs",
+                "django",
+                "flask",
+                "fastapi",
+                "spring",
+                "spring boot",
+                "express",
+                "laravel",
+                "dotnet",
+                "nextjs",
+            ],
+            "points_per_skill": 5,
+            "max_points": 20,
+        },
+        "tier_3": {
+            "skills": [
+                "html",
+                "css",
+                "javascript",
+                "typescript",
+                "jquery",
+                "bootstrap",
+                "tailwind",
+                "sass",
+                "less",
+                "webpack",
+                "vite",
+                "babel",
+                "npm",
+                "yarn",
+            ],
+            "points_per_skill": 5,
+            "max_points": 20,
+        },
+    },
+}
+
+
+class ProfileScoringEngine:
+    def __init__(self):
+        self.rules = RULES
+        self.current_year = datetime.now().year
+
+        # NEW: normalize rules once
+        for rule in self.rules["education"].values():
+            rule["items"] = set(rule["items"])
+
+        for tier in self.rules["skills"].values():
+            tier["skills"] = {s.lower() for s in tier["skills"]}
+
+    # ---------- HELPERS ----------
+
+    def calculate_experience_years(self, experience):
+        years = 0
+        for job in experience:
+            if not isinstance(job, dict):
+                continue
+            start = job.get("yearfrom")
+            end = job.get("yearto") or self.current_year
+            if start and end:
+                years += max(0, end - start)
+        return years
+
+    def apply_deduction(self, base_score, item_count, rule):
+        deduction = item_count * rule.get("per_item", 0)
+        return max(rule.get("min_score", 0), base_score - deduction)
+
+    def calculate_capped_item_score(self, items, points_per_item, max_points):
+        if not isinstance(items, list):
+            return 0
+        return min(len(items) * points_per_item, max_points)
+
+    # ---------- SCORERS ----------
+
+    def score_education(self, profile):
+        score = 0
+
+        education = profile.get("education", [])
+        if not isinstance(education, list):
+            return 0
+
+        # 🔧 FIX: guard against bad items
+        courses = {
+            e.get("course")
+            for e in education
+            if isinstance(e, dict) and isinstance(e.get("course"), str)
+        }
+
+        for rule in self.rules["education"].values():
+            if courses & rule["items"]:
+                score += rule["points"]
+
+        return score
+
+    def score_experience(self, profile):
+        experience = profile.get("experience", [])
+        if not isinstance(experience, list):
+            return 0
+
+        base_points = self.rules["experience"]["sets"][0]["base_points"]
+        min_required = self.rules["experience"]["sets"][0]["min"]
+
+        # Calculate years per company
+        company_years = []
+        total_years = 0
+
+        for job in experience:
+            if not isinstance(job, dict):
+                continue
+
+            start = job.get("yearfrom")
+            end = job.get("yearto") or self.current_year
+
+            if isinstance(start, int) and isinstance(end, int) and end > start:
+                years = end - start
+                company_years.append(years)
+                total_years += years
+
+        score = base_points
+
+        # ---------- Rule 1: below minimum total experience ----------
+        if total_years < min_required:
+            score -= (min_required - total_years)
+
+        # ---------- Rule 2: per-company deduction ONLY if company < min ----------
+        for yrs in company_years:
+            if yrs < min_required:
+                score -= 1
+
+        return max(0, score)
+
+    def score_projects(self, profile):
+        projects = profile.get("projects", [])
+        if not isinstance(projects, list):
+            projects = []
+
+        return self.apply_deduction(
+            self.rules["projects"]["base_points"],
+            len([p for p in projects if isinstance(p, dict)])-1,
+            self.rules["projects"]["deduction"],
+        )
+
+    def score_certificates(self, profile):
+        return self.calculate_capped_item_score(
+            profile.get("certificates", []),
+            self.rules["certificates"]["points_per_item"],
+            self.rules["certificates"]["max_points"],
+        )
+
+    def score_awards(self, profile):
+        return self.calculate_capped_item_score(
+            profile.get("awards", []),
+            self.rules["awards"]["points_per_item"],
+            self.rules["awards"]["max_points"],
+        )
+
+    def score_skills(self, profile):
+        primary = profile.get("skills", {}).get("primaryskills") or ""
+        secondary = profile.get("skills", {}).get("secondaryskills") or ""
+
+        skills_text = f"{primary},{secondary}".lower()
+
+        remaining_skills = {s.strip() for s in skills_text.split(",") if s.strip()}
+
+        score = 0
+
+        # 🔧 FIX: tier priority + no double count
+        for tier_key in ["tier_1", "tier_2", "tier_3"]:
+            tier = self.rules["skills"][tier_key]
+
+            matched = remaining_skills & tier["skills"]
+
+            score += min(
+                len(matched) * tier["points_per_skill"],
+                tier["max_points"],
+            )
+
+            remaining_skills -= matched
+
+            if not remaining_skills:
+                break
+
+        return score
+
+    # ---------- MAIN ENTRY ----------
+
+    def score_profile(self, profile_id):
+        profile = getProfileDetailsService(profile_id)
+
+        breakdown = {
+            "education": self.score_education(profile),
+            "experience": self.score_experience(profile),
+            "projects": self.score_projects(profile),
+            "certificates": self.score_certificates(profile),
+            "awards": self.score_awards(profile),
+            "skills": self.score_skills(profile),
+        }
+
+        total_score = sum(breakdown.values())
+
+        percentage = (
+                int(total_score)
+                if isinstance(total_score, int)
+                else round(total_score, 2)
+            )
+
+        return {
+            "total_score": total_score,
+            "percentage": percentage,
+            "breakdown": breakdown,
+        }
