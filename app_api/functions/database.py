@@ -3,7 +3,7 @@ import json
 import requests
 from datetime import datetime
 from urllib.parse import urljoin, unquote
-from django.db.models import Q
+from django.db.models import Q, Max
 from app_api.functions.enc_dec import decrypt_code
 
 from hirelines.metadata import getConfig
@@ -837,7 +837,7 @@ def updateDashboardDisplayFlagDB(dataObjs, company_id):
         raise
 
 
-def addResumeProfileDB(dataObjs):
+def addResumeProfileDB(dataObjs,user_data):
     try:
 
         resume = Resume.objects.get(id=dataObjs["resume_id"])
@@ -854,6 +854,13 @@ def addResumeProfileDB(dataObjs):
 
         resume.status = "A"
         resume.save()
+
+        activity_data = {
+            "profileid":profile.id,
+            "acvityuserid": user_data.id,
+        }
+        
+        createProfileActivityDB(activity_data)
 
         return {"profile_id":profile.id}
 
@@ -931,6 +938,13 @@ def addProfileDB(dataObjs,fileObjs, user_data):
         )
 
         profile.save()
+
+        activity_data = {
+            "profileid":profile.id,
+            "acvityuserid": user_data.id,
+        }
+        
+        createProfileActivityDB(activity_data)
 
     except Exception as e:
         raise
@@ -1292,3 +1306,29 @@ def scheduleCandidateInterviewLinkDB(enc_candidate_id):
     except Exception as e:
                     raise
     
+
+
+def createProfileActivityDB(dataObjs):
+    try:
+
+        last_seq = (
+            ProfileActivity.objects
+            .filter(profileid=dataObjs["profileid"])
+            .aggregate(max_seq=Max("sequence"))
+            .get("max_seq")
+        )
+
+        next_seq = (last_seq or 0) + 1
+
+        profile_activity = ProfileActivity(
+            profileid = dataObjs["profileid"],
+            datentime = datetime.now(),
+            sequence = next_seq,
+            activitycode = "PC",
+            acvityuserid = dataObjs["acvityuserid"]
+        )
+
+        profile_activity.save()
+
+    except Exception as e:
+        raise

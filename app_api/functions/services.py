@@ -3845,7 +3845,7 @@ def generateBrandedProfile(profile_id, user_data):
 
         company = Company.objects.get(id=user_data.companyid)
 
-        print("profile_details", profile_details)
+        # print("profile_details", profile_details)
 
         root_path = BASE_DIR
 

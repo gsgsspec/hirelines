@@ -21,6 +21,7 @@ document.getElementById("save-data").onclick = function () {
         // }
 
         $("#save-data").prop("disabled", true);
+        $("#save-data").html('Please wait &nbsp; <i class="fas fa-circle-notch fa-spin"></i>');
     
         dataObjs = {
             'title': $('#title').val(),
@@ -47,6 +48,7 @@ document.getElementById("save-data").onclick = function () {
             });
 
             $("#save-data").prop("disabled", false);
+            $("#save-data").html('Save');
             return false; 
         }
 
@@ -75,6 +77,7 @@ document.getElementById("save-data").onclick = function () {
 
                 }else {
                     $("#save-data").prop("disabled", false);
+                    $("#save-data").html('Save');
 
                     Swal.fire(
                         "Error",
@@ -84,10 +87,8 @@ document.getElementById("save-data").onclick = function () {
                 }
             }
         });
-
     })
 }
-
 
 
 const existingSources = Array.isArray(sourcesData) ? sourcesData : [];

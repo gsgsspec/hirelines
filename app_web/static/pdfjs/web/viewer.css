@@ -7473,7 +7473,9 @@ dialog :link {
 #viewFindButton,
 #toolbarViewerRight,
 #pageNumber,
-#numPages {
+#numPages,
+#toolbarViewerLeft,
+#sidebarContainer {
     display: none;
 }
 
@@ -7503,3 +7505,8 @@ dialog :link {
   scrollbar-width: thin;
   scrollbar-color: #c1c1c1 #f1f1f1;
 }
+
+#toolbarViewerMiddle{
+    margin-left: auto;
+}
+

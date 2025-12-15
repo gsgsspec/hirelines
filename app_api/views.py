@@ -1949,7 +1949,9 @@ def addResumeProfile(request):
         if request.method == "POST":
             dataObjs = json.loads(request.POST.get('data'))
 
-            add_profile = addResumeProfileDB(dataObjs)
+            user_data = auth_user(request.user)
+
+            add_profile = addResumeProfileDB(dataObjs,user_data)
 
             response['data'] = add_profile
             response['statusCode'] = 0
@@ -1977,7 +1979,6 @@ def addProfile(request):
             user_data = auth_user(request.user)
 
             addProfileDB(dataObjs,fileObjs,user_data)
-            # sampleConverter(fileObjs)
 
             response['data'] = "success"
             response['statusCode'] = 0

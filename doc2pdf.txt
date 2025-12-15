@@ -1,3 +1,7 @@
 1. Install Libreoffice
     URL : https://www.libreoffice.org/download/download-libreoffice/
     Version : 25.8.3
+
+2. Add in system variable path : C:\Program Files\LibreOffice\program\soffice.exe (might change according to your PC configuration)
+
+3. Add the path in doc2pdf file

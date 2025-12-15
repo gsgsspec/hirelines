@@ -195,7 +195,7 @@ function updateResumeTable(resumes){
         }
 
         let row = `
-            <tr class="resume-row" data-id="${r.id}" style="cursor: pointer;">
+            <tr class="resume-row" data-id="${r.id}" data-status="${r.status}" style="cursor: pointer;">
                 <td>${r.source}</td>
                 <td>${r.name}</td>
                 <td>${r.date}</td>

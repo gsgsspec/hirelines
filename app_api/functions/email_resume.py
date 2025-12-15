@@ -12,6 +12,7 @@ from hirelines.metadata import getConfig
 from app_api.models import Resume, ResumeFile, Source
 from .services import getEmailFetchUsers
 from apscheduler.schedulers.background import BackgroundScheduler
+from .doc2pdf import convert_word_binary_to_pdf
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
@@ -100,6 +101,12 @@ def fetch_gmail_attachments():
                     ).execute()
 
                     file_data = base64.urlsafe_b64decode(att["data"])  # BLOB-ready bytes
+
+                    if filename.lower().endswith((".doc", ".docx")):
+                        try:
+                            file_data = convert_word_binary_to_pdf(file_data)
+                        except Exception as e:
+                            print(f"PDF conversion failed for {filename}: {e}")
 
                     user = next((u for u in from_emails if u["email"].lower() == from_email.lower()), None)
                     
