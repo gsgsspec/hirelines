@@ -582,7 +582,7 @@ class ProfileActivity(models.Model):
     profileid = models.IntegerField(null=True, blank=True)
     datentime = models.DateTimeField(null=True, blank=True)
     sequence = models.IntegerField(null=True, blank=True)
-    activitycode = models.CharField(max_length=2, null=True, blank=True) #"PC - Profile Created | PS - Profile Screened | P1 - Profile Screening - Promoted | PC - Profile Coding Test | P2 - Profile Coding Test - Promoted"
+    activitycode = models.CharField(max_length=2, null=True, blank=True) #"PC - Profile Created | PS - Profile Screened | P1 - Profile Screening - Promoted | PC - Profile Coding Test | P2 - Profile Coding Test - Promoted | WE - Welcome Email Sent"
     acvityuserid = models.IntegerField(null=True, blank=True)
     activityname= models.CharField(null=True, blank=True, max_length=100)
     activityremarks = models.CharField(null=True, blank=True, max_length=200)
