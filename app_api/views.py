@@ -30,10 +30,11 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB
+    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB
 from app_api.functions.constants import hirelines_registration_script
 from app_api.functions.email_resume import fetch_gmail_attachments
 
+from app_api.functions.enc_dec import encrypt_code
 # Create your views here.
 
 @csrf_exempt
@@ -340,7 +341,6 @@ def addCandidate(request):
             company_id = getCompanyId(user_email)
 
             c_data = addCandidateDB(dataObjs,company_id,None,user.id)
-                
             response['data'] = c_data
             response['statusCode'] = 0
         else:
@@ -2542,5 +2542,53 @@ def update_jd_status(request):
 
     except Exception as e:
         response["error"] = str(e)
+
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def scheduleCandidateInterview(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    print("scheduleCandidateInterview")
+    try:
+        if request.method == "POST":
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get('data'))
+            res = scheduleInterviewDB(user.id, dataObjs)
+            response['data'] = res
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Scheduling Interview'
+        response['error'] = str(e)
+    return JsonResponse(response) 
+
+
+@api_view(['POST'])
+def scheduleCandidateInterviewLink(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            candidate_id = dataObjs["candidate_id"]
+            enc_candidate_id = encrypt_code(candidate_id)
+            c_data = scheduleCandidateInterviewLinkDB(enc_candidate_id)
+            response['data'] = c_data
+            response['statusCode'] = 0
+        else:
+            return HttpResponseForbidden('Request Blocked')
+       
+    except Exception as e:
+        response['data'] = 'Error in saving Job Description'
+        response['error'] = str(e)
+        raise
 
     return JsonResponse(response)

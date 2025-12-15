@@ -218,18 +218,18 @@ def scheduleInterviewDB(user_id, dataObjs):
         # company_account = Account.objects.get(companyid=user.companyid)
         # company_credits = CompanyCredits.objects.get(companyid=user.companyid,transtype="I")
         # if company_account.balance >= company_credits.credits:
-
+        dataObjs['candidate_id'] = decrypt_code(dataObjs['candidate_id'])
         call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
-        if call_details:
+        if call_details:    
             datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
             datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p') 
             interviewer = dataObjs['slot_id'].split('__')[2:]
             interviewer_id = interviewer[0]
-
+            
             scheduled_check = CallSchedule.objects.filter(Q(interviewerid=interviewer_id), Q(datentime=datentime),
                                                             Q(status='S')|Q(status='R'))
             
-
+            print("scheduled_check",scheduled_check)
             # Updating Not scheduled Call
 
             if not scheduled_check:
@@ -275,6 +275,8 @@ def scheduleInterviewDB(user_id, dataObjs):
                 send_interview_data = requests.post(url, json=interview_data)
 
                 return "Slot Booked"
+            else: 
+                return "Please select another slot"
         else:
             return "No Candidate"
         # else:
@@ -1167,3 +1169,123 @@ def saveWorkCalDB(dataObjs):
     except Exception as e:
         print("saveWorkCalDB ERROR:", str(e))
         raise
+
+
+
+
+
+def scheduleInterviewLinkDB(user_id, dataObjs):
+    try:
+        user = User.objects.get(id=user_id)
+        # company_account = Account.objects.get(companyid=user.companyid)
+        # company_credits = CompanyCredits.objects.get(companyid=user.companyid,transtype="I")
+        # if company_account.balance >= company_credits.credits:
+
+        call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
+        if call_details:    
+            datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
+            datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p') 
+            interviewer = dataObjs['slot_id'].split('__')[2:]
+            interviewer_id = interviewer[0]
+            
+            scheduled_check = CallSchedule.objects.filter(Q(interviewerid=interviewer_id), Q(datentime=datentime),
+                                                            Q(status='S')|Q(status='R'))
+            
+            print("scheduled_check",scheduled_check)
+            # Updating Not scheduled Call
+
+            if not scheduled_check:
+                candidate = Candidate.objects.get(id=call_details.candidateid)
+                meeting_config = getConfig()['MEETING_CONFIG']['meeting_link']
+                string_ = str(interviewer_id) + (str(candidate.candidateid).replace("-", "")) + str(call_details.id)
+                enc_st_ = string_.encode('utf-8')
+                hex_code = enc_st_.hex()
+                meeting_link = meeting_config + hex_code
+                call_details.datentime = datentime
+                call_details.interviewerid = interviewer_id
+                call_details.instructions = dataObjs['instructions']
+                call_details.status = 'S'
+                call_details.meetinglink = meeting_link
+                call_details.hrid = user_id
+                call_details.companyid = user.companyid
+                call_details.save()
+
+                # Mail Replacements
+                job_desc = JobDesc.objects.get(id=candidate.jobid)
+                interview_time = call_details.datentime.strftime("%d-%b-%Y %I:%M %p") 
+
+                interviewer = User.objects.get(id=call_details.interviewerid)
+                to_mails = f"{candidate.email},{interviewer.email}"
+
+                interview_data = {
+                    'job_title':job_desc.title,
+                    'meetinglink':call_details.meetinglink,
+                    'int_paper': call_details.paper_id,
+                    'candidate_code': candidate.candidateid,
+                    'interviewer': call_details.interviewerid,
+                    'interview_time': interview_time,
+                    'to_emails': to_mails,
+                    'instructions': call_details.instructions,
+                    'schedule_type':dataObjs['schedule_type']
+                }
+
+                acert_domain = getConfig()['DOMAIN']['acert']
+                endpoint = '/api/schedule-interview'
+
+                url = urljoin(acert_domain, endpoint)
+
+                send_interview_data = requests.post(url, json=interview_data)
+
+                return "Slot Booked"
+        else:
+            return "No Candidate"
+        # else:
+        #     return "insufficient_credits"
+    except Exception as e:
+        print(str(e))
+        raise
+
+
+
+def scheduleCandidateInterviewLinkDB(enc_candidate_id):
+    try:
+                candidate_id = decrypt_code(enc_candidate_id)
+                candidate_details=Candidate.objects.get(id=candidate_id)
+                # CallSchedule.objects.filter(candidateid=candidate_id).update(status='W')
+                
+                acert_domain = getConfig()['DOMAIN']['acert']
+                hirelines_domain = getConfig()['DOMAIN']['hirelines']
+                # Adding candidate at acert via api
+                endpoint = '/api/hirelines-send-candidate-schedule-link'
+
+                schedule_link_endpoint = f'/candidate-schedule-interview/{enc_candidate_id}/'
+                schedule_link_url = urljoin(hirelines_domain, schedule_link_endpoint)
+
+                url = urljoin(acert_domain, endpoint)
+                print("url",url)
+
+                candidate_data = {
+                    'firstname' : candidate_details.firstname,
+                    'lastname' : candidate_details.lastname,
+                    'email': candidate_details.email,
+                    'mobile': candidate_details.mobile,
+                    'company_id': candidate_details.companyid,
+                    'reference_id': candidate_details.candidateid,
+                    'job_id': candidate_details.jobid,
+                    'candidate_id': candidate_details.id,
+                    'url': schedule_link_url
+                }
+
+                response = requests.post(url, json=candidate_data, verify=False, timeout=10)
+                response.raise_for_status()
+                response_json = response.json()
+                if response_json.get('statusCode') == 0:
+                        CallSchedule.objects.filter(candidateid=candidate_id).update(status='W')
+                        return True
+
+                else:
+                        raise Exception(response_json.get('error', 'Email sending failed'))
+
+    except Exception as e:
+                    raise
+    

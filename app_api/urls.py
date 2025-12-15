@@ -15,6 +15,8 @@ urlpatterns = [
     path('add-candidate',views.addCandidate),
     path('interview-scheduling/<int:cid>',views.interviewScheduling),
     path('schedule-interview',views.scheduleInterviewView),
+    path('schedule-candidate-interview-link',views.scheduleCandidateInterviewLink),
+    path('schedule-candidiate-interview',views.scheduleCandidateInterview),
     # path('work-flow-data',views.workFlowData),
     path('work-flow-data',views.workFlowData),
     path('candidate-registration-cdn/<str:enc_jdid>/',views.candidateRegistrationCDNForm),

@@ -76,7 +76,8 @@ document.getElementById("save-data").onclick = function () {
                 }
 
                 if(candidateData['papertype'] == 'I'){
-                    window.location.href = '/interview-schedule/'+ candidateData['candidateid']
+                    // window.location.href = '/interview-schedule/'+ candidateData['candidateid']
+                    window.location.href =  '/candidates'
                 } else {
                     Swal.fire({
                         position: 'center',

@@ -50,5 +50,9 @@ urlpatterns = [
     path('viewresume/<int:pid>/', active_user_required(views.view_resumePage)),
     path('work-calender', views.workCalenderPage),
 
+
+    path("candidate-schedule-interview/<str:cid>/",views.scheduleInterviewPage),
+   
+
     
 ]

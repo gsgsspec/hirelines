@@ -61,7 +61,7 @@
         }
     }
 
-    /* HIDE ALL TABLE BORDERS */
+    
     .table,
     .table td,
     .table th {
@@ -92,15 +92,15 @@
             </h4>
             </div>
             <div class="card-body">
-                <!-- <div class="pb-3"> -->
+              
                 <div class="tabsContainer">
-                    <!-- <div style="display: flex; gap: 12px;"> -->
+                   
                         <div class="tabsContainer">
                         <span id="active" class="custm-tab p-clr"
                             onclick="tabSwitch(this.id)">Profile</span>
                         <span id="Inactive" class="custm-tab p-clr activeTab shadow" onclick="tabSwitch(this.id)">Activity</span>
                         </div>
-                        <!-- <span id="addActivity" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Add Activity</span> -->
+                       
                          <div class="tabsContainer"style="flex-direction: row-reverse;">
                         
                         <!-- <button class="btn btn-primary" id="sendWelcome"  onclick="tabSwitch(this.id)"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button> -->
@@ -127,6 +127,7 @@
                                         {% if act.activitystatus %} status- {{ act.activitystatus }}{% endif %}
                                     {% else %}
                                         {{ act.activity_text }}
+                                        
                                     {% endif %}
                                 </td>   
 
@@ -174,12 +175,12 @@
 
 function getPidFromUrl() {
     const parts = window.location.pathname.split("/");
-    return parts[parts.length - 1];   // last part always PID
+    return parts[parts.length - 1];   
 }
 
 function tabSwitch(element) {
 
-    const pid = getPidFromUrl();   // GET PID FROM URL
+    const pid = getPidFromUrl();  
 
     if (element === 'active') {
         $('#active').addClass('activeTab shadow');
@@ -198,9 +199,7 @@ function tabSwitch(element) {
         $('#Inactive').removeClass('activeTab shadow');
         $('#activity_details_table').addClass('display-none');
         $('.add-activity').removeClass('display-none');
-        
-
-        // window.location.href = "/addactivity/" + pid;
+    
 
     }
 
@@ -238,7 +237,7 @@ $("#add-activity-details").submit(function (e) {
 
     console.log("final_data", final_data);
 
-    // POST request
+    
     $.post(CONFIG['portal'] + "/api/add-profile-activity", final_data)
         .done(function (res) {
             Swal.fire({
@@ -261,8 +260,6 @@ $("#add-activity-details").submit(function (e) {
             });
         });
 });
-
-
 </script>
 <script>
 function sendWelcomeMail() {

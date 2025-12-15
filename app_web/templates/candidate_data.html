@@ -53,7 +53,19 @@
               <b><label class="p-clr mb-1">{{ registration.paper_title }}</label></b>
               {% if registration.paper_type == "I"%}
                 {%  if registration.call_status == "N"  %}
+                <div style="display: flex;">
                   <button class="btn btn-primary" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
+                  <button class="btn btn-primary" style="margin-left: 12px;" onclick="sendSchedulingLink()">Request To Schedule Interview</button>
+                  </div>
+                {% elif registration.call_status == "W" %}
+                 <label>Interview Scheduling mail sent.</label>
+                 <label>Waiting for Candidate to Schedule.</label>
+                  <div class="mt-2 d-flex justify-content-start">
+                    <button class="btn btn-primary " onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
+                  </div>
+
+                   <!-- <label>Waiting for Candidate to Schedule</label> -->
+
                 {% elif registration.call_status == "S" %}
                   <label>Interview scheduled</label>
                   <label>Scheduled Time : {{ registration.scheduled_time }}</label>
@@ -123,6 +135,7 @@
                 {% endif %}
               {% endif %}
             </div>
+            
             {% if not forloop.last %}
             <div class="line"></div>
             {% endif %}

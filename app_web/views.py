@@ -7,13 +7,14 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills
 from app_api.functions.services import ProfileScoringEngine, getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
 import json
 import requests
 from app_api.functions.email_resume import fetch_gmail_attachments
+from  app_api.functions.enc_dec import decrypt_code
 
 domains = getConfig()['DOMAIN']
 acert_domain = domains['acert']
@@ -1074,7 +1075,7 @@ def updateProfileDetailsPage(request, pid):
         raise
 
 
-def addProfilePage(request):
+def addProfilePage(request): 
     try:
         user_mail = request.user
         user_data = auth_user(user_mail)
@@ -1139,3 +1140,24 @@ def workCalenderPage(request):
 
     except Exception as e:
         raise
+def scheduleInterviewPage(request, cid):
+    try:
+        
+        deccrypt_cid = decrypt_code(cid)
+        print("decrypt_cid",deccrypt_cid)
+        
+        # 1. Fetch the raw list of slots from the backend function
+        slots_available_list, job_title, company_name,status = getSlotsAvailable(deccrypt_cid)
+        
+        
+        # 2. Correct way to pass context: {string_key: python_variable_value}
+        # The key 'slots_available' will be used in your HTML template ({{ slots_available|safe }})
+        return render(request, "candidate_interview_schedule.html", {
+            'slots_available': slots_available_list,'company_name': company_name , 'job_title': job_title , 'status': status
+        })
+
+    except Exception as e:
+        # Proper error handling or logging here
+        print(f"Error processing interview page for candidate {cid}: {e}")
+        # Optionally render a safe error page instead of raising
+        raise # Reraise the exception for development debugging

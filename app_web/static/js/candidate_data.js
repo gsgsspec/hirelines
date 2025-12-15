@@ -283,3 +283,47 @@ function updateCandidateWorkflow(regId){
 
 
 }
+
+function sendSchedulingLink(){
+
+            // get id from URL
+        let cid = window.location.pathname.split("/").pop();
+
+
+        let dataObj = {
+            
+            "candidate_id": cid      // ← injected from URL
+        };
+
+        // Prepare final POST object
+        let final_data = {
+            "data": JSON.stringify(dataObj),
+            csrfmiddlewaretoken: CSRF_TOKEN
+        };
+
+        console.log("final_data", final_data);
+
+        $.post(CONFIG['portal'] + "/api/schedule-candidate-interview-link", final_data)
+            .done(function (res) {
+                Swal.fire({
+                    title: "Sent Successfully!",
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                setTimeout(() => {
+                    window.location.href = "/candidates";
+                }, 1000);
+            })
+            .fail(function (err) {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Something went wrong while saving.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                
+            });
+
+    }

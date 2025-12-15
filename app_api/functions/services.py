@@ -11,7 +11,11 @@ import base64
 import re
 import pandas as pd
 from django.db.models import Q, Count, Avg
-from datetime import datetime, timedelta, date
+from datetime import datetime, date
+from datetime import datetime, timedelta, time, date
+from django.db.models import Q
+
+
 from django.utils import timezone
 from django.shortcuts import redirect
 from urllib.parse import urljoin, urlparse
@@ -1157,6 +1161,7 @@ def getJdWorkflowService(jid, cid):
 def getCallScheduleDetails(cid):
     try:
         candidate = Candidate.objects.get(id=cid)
+        
 
         jd = JobDesc.objects.get(id=candidate.jobid)
 
@@ -1184,7 +1189,6 @@ def getCallScheduleDetails(cid):
     except Exception as e:
         raise
 
-
 def interviewSchedulingService(aplid, int_id):
     try:
 
@@ -1200,23 +1204,26 @@ def interviewSchedulingService(aplid, int_id):
         )
 
         scheduling_data = []
-
         scheduled_calls = list(
             CallSchedule.objects.filter(Q(status="S") | Q(status="R")).values_list(
                 "datentime", "interviewerid"
             )
         )
+
         scheduled_calls_list = []
         for scheduled_call in scheduled_calls:
             if scheduled_call[0]:
+                # FIX: Convert DB time (UTC) to Local Time before formatting
+                local_db_time = timezone.localtime(scheduled_call[0])
+                
                 scheduled_calls_list.append(
-                    [scheduled_call[0].strftime("%Y-%m-%d %I:%M %p"), scheduled_call[1]]
+                    [local_db_time.strftime("%Y-%m-%d %I:%M %p"), scheduled_call[1]]
                 )
 
         vacation_data = Vacation.objects.filter(empid=int_id).values(
             "empid", "fromdate", "todate"
         )
-        workcal_data = WorkCal.objects.filter(empid=int_id).values()
+        workcal_data = WorkCal.objects.filter(userid=int_id).values()
 
         alter_timings_data = ExtendedHours.objects.filter(
             empid=int_id, status="A"
@@ -1231,7 +1238,7 @@ def interviewSchedulingService(aplid, int_id):
                     alter_timings["fromdate"] + timedelta(days=x),
                     alter_timings["starttime"],
                     alter_timings["workhours"],
-                    alter_timings["empid"],
+                    alter_timings["userid"],
                 ]
                 for x in range(
                     (alter_timings["todate"] - alter_timings["fromdate"]).days + 1
@@ -1277,13 +1284,13 @@ def interviewSchedulingService(aplid, int_id):
                 if (work_data["weekoff1"] == date_formated.split("-")[0]) and (
                     date_formated not in alter_timings_dates_list
                 ):
-                    if work_data["empid"] in telecallers:
-                        telecallers.remove(work_data["empid"])
+                    if work_data["userid"] in telecallers:
+                        telecallers.remove(work_data["userid"])
                 if work_data["weekoff2"] == date_formated.split("-")[0] and (
                     date_formated not in alter_timings_dates_list
                 ):
-                    if work_data["empid"] in telecallers:
-                        telecallers.remove(work_data["empid"])
+                    if work_data["userid"] in telecallers:
+                        telecallers.remove(work_data["userid"])
             for i in range(0, WORK_HOURS * 2):  # (0,24) 24 means 12 Hours
                 slot_time = basedt + timedelta(minutes=30 * i)
                 curr_time = datetime.now().replace(
@@ -1323,7 +1330,7 @@ def interviewSchedulingService(aplid, int_id):
                         if slot_date_str in alter_timings_list:
                             alter_data = alter_timings_list[slot_date_str]
                             start_datetime = datetime.combine(
-                                datetime.date.today(), alter_data[1]
+                                datetime.today(), alter_data[1]
                             )
                             if len(str(alter_data[2]).split(".")) == 2:
                                 work_hours = int(alter_data[2].split(".")[0])
@@ -1352,7 +1359,7 @@ def interviewSchedulingService(aplid, int_id):
 
                         else:
                             start_datetime = datetime.combine(
-                                datetime.date.today(), work_data["starttime"]
+                                datetime.today(), work_data["starttime"]
                             )
                             if len(work_data["workhours"].split(".")) == 2:
                                 work_hours = int(work_data["workhours"].split(".")[0])
@@ -1372,12 +1379,12 @@ def interviewSchedulingService(aplid, int_id):
 
                             if work_data["starttime"] > slot_time.time():
 
-                                if work_data["empid"] in available_tc_list:
-                                    available_tc_list.remove(work_data["empid"])
+                                if work_data["userid"] in available_tc_list:
+                                    available_tc_list.remove(work_data["userid"])
 
                             if slot_time.time() >= end_time:
-                                if work_data["empid"] in available_tc_list:
-                                    available_tc_list.remove(work_data["empid"])
+                                if work_data["userid"] in available_tc_list:
+                                    available_tc_list.remove(work_data["userid"])
 
                     if not available_tc_list:
                         status_list.append("No_Vacancy")
@@ -1406,7 +1413,6 @@ def interviewSchedulingService(aplid, int_id):
 
     except Exception as e:
         raise
-
 
 def getInterviewerCandidates(userid):
     try:
@@ -4276,3 +4282,195 @@ class ProfileScoringEngine:
             "percentage": percentage,
             "breakdown": breakdown,
         }
+
+def getSlotsAvailable(cid):
+    """
+    Main function to find available interview slots for a candidate's job.
+    
+    :param cid: Candidate ID.
+    :return: List of available 30-minute slots.
+    """
+    try:
+        # 1. Get Job Interviewer IDs
+        candidate = Candidate.objects.get(id=cid)
+          
+        jd = JobDesc.objects.get(id=candidate.jobid)
+        candidate_id=candidate.id
+        call_schedule = CallSchedule.objects.filter(candidateid=candidate_id).first()
+
+        status = call_schedule.status if call_schedule else None
+      
+        job_title = jd.title
+        company_id = jd.companyid
+        company = Company.objects.get(id=company_id)
+        company_name = company.name
+        if jd.interviewers:
+            # Safely evaluate the string list of interviewer IDs (e.g., '["101", "102"]')
+            jd_interviewers_raw = ast.literal_eval(jd.interviewers)
+            # Ensure the list contains only integers
+            job_interviewer_ids = [int(i) for i in jd_interviewers_raw]
+        else :
+            job_interviewer_ids = []
+        
+        if not job_interviewer_ids:
+             # Handle case where no interviewers are assigned to the job
+             print(f"No interviewers found for job ID {candidate.jobid}.")
+             return []
+
+        # 2. Call the new logic function
+        slots_available = get_open_slots(job_interviewer_ids )
+        
+        
+        return slots_available, job_title, company_name , status
+    
+    except Candidate.DoesNotExist:
+        print(f"Error: Candidate with ID {cid} not found.")
+        return []
+    except JobDesc.DoesNotExist:
+        print(f"Error: Job Description for candidate {cid} (Job ID {candidate.jobid}) not found.")
+        return []
+    except Exception as e:
+        # Log the error and re-raise (or handle gracefully in a web context)
+        print(f"An unexpected error occurred: {e}")
+        # raise # Uncomment if you want errors to halt execution
+        return []
+
+
+def get_full_day_name(date_obj):
+    return date_obj.strftime('%A')
+
+def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, scheduled_call_buffer_minutes=30):
+    """
+    Returns available slots for exactly the next 'num_days' (Calendar Days).
+    - If a day is a 'Week Off', it returns no slots for that day (it does not look further).
+    - Filters out any slots that are in the past relative to the current system time.
+    """
+    
+    # 1. SETUP: Get Current Time
+    # We use naive 'datetime.now()' to act as the "Candidate's Wall Clock"
+    now_naive = datetime.now() 
+    
+    # We use aware time for database queries
+    now_aware = timezone.now()
+
+    # 2. Fetch Data
+    work_cals = WorkCal.objects.filter(userid__in=job_interviewer_ids)
+    work_cal_map = {wc.userid: wc for wc in work_cals}
+    
+    # Fetch scheduled calls for the exact window (Today + num_days)
+    # end_date_limit = now_aware + timedelta(days=num_days + 1)
+    # scheduled_calls = CallSchedule.objects.filter(
+    #     interviewerid__in=job_interviewer_ids,
+    #     datentime__gte=now_aware,
+    #     datentime__lte=end_date_limit, 
+    #     status="A"
+    # ).order_by('datentime')
+    end_date_limit = now_aware + timedelta(days=num_days + 1)
+    scheduled_calls = CallSchedule.objects.filter(
+       
+        Q(status="S") | Q(status="R"), 
+       
+        interviewerid__in=job_interviewer_ids,
+        datentime__gte=now_aware,
+        datentime__lte=end_date_limit
+    ).order_by('datentime')
+    print("scheduled_calls",scheduled_calls)
+
+    unavailable_slots = {iid: [] for iid in job_interviewer_ids}
+    buffer_timedelta = timedelta(minutes=scheduled_call_buffer_minutes)
+
+    for call in scheduled_calls:
+        start_time = call.datentime
+        end_time = start_time + buffer_timedelta
+        unavailable_slots[call.interviewerid].append((start_time, end_time))
+
+    slots_available_per_interviewer = {iid: [] for iid in job_interviewer_ids}
+    slot_timedelta = timedelta(minutes=slot_duration_minutes)
+    
+    # --- 3. CALENDAR DAY LOOP (Exactly num_days) ---
+    # We just loop 0, 1, 2... to get Today, Tomorrow, Day After
+    for day_offset in range(num_days):
+        
+        # Calculate the specific date to check
+        # We use now_naive to ensure we stick to the system's day definition
+        current_date = (now_naive + timedelta(days=day_offset)).date()
+        day_name = get_full_day_name(current_date)
+        
+        # Define the "Start Check Time" for this day
+        if day_offset == 0:
+            # For TODAY: Slots must be later than 'Right Now'
+            # We make it aware to compare with the slot times later
+            day_min_start = timezone.make_aware(now_naive, timezone.get_current_timezone())
+        else:
+            # For FUTURE DAYS: Slots can start from 00:00
+            naive_start = datetime.combine(current_date, time(0, 0))
+            day_min_start = timezone.make_aware(naive_start, timezone.get_current_timezone())
+
+        # Check this day against every interviewer
+        for interviewer_id in job_interviewer_ids:
+            work_cal = work_cal_map.get(interviewer_id)
+            if not work_cal: continue
+            
+            # 1. Week Off Check: If OFF, strictly skip (do not look for next day)
+            if day_name in [work_cal.weekoff1, work_cal.weekoff2]:
+                continue
+            
+            # 2. Shift Logic
+            try:
+                naive_work_start = datetime.combine(current_date, work_cal.starttime)
+                shift_start = timezone.make_aware(naive_work_start, timezone.get_current_timezone())
+                
+                work_hours = int(work_cal.hours)
+                shift_end = shift_start + timedelta(hours=work_hours)
+                
+                # Start generating slots from the later of: Shift Start OR Allowed Time (Now)
+                slot_start = max(day_min_start, shift_start)
+
+                # Clean seconds (14:10:55 -> 14:10:00)
+                slot_start = slot_start.replace(second=0, microsecond=0)
+
+                # Align to 30-min grid
+                if slot_start.minute % slot_duration_minutes != 0:
+                    add_mins = slot_duration_minutes - (slot_start.minute % slot_duration_minutes)
+                    slot_start += timedelta(minutes=add_mins)
+                
+                # EDGE CASE: If rounding/alignment pushed slot back into the past (before Now)
+                if slot_start <= day_min_start:
+                     slot_start += slot_timedelta
+
+                slot_end = slot_start + slot_timedelta
+
+                # 3. Generate Slots
+                while slot_end <= shift_end:
+                    is_booked = False
+                    for b_start, b_end in unavailable_slots.get(interviewer_id, []):
+                        if slot_start < b_end and slot_end > b_start:
+                            is_booked = True
+                            break
+                    
+                    if not is_booked:
+                        slots_available_per_interviewer[interviewer_id].append({
+                            'start': slot_start,
+                            'end': slot_end,
+                        })
+                    
+                    slot_start = slot_end
+                    slot_end = slot_start + slot_timedelta
+            
+            except Exception:
+                continue
+
+    # 4. Consolidate Results
+    all_available_slots = {}
+    for iid, slots in slots_available_per_interviewer.items():
+        for slot in slots:
+            key_iso = slot['start'].isoformat()
+            if key_iso not in all_available_slots:
+                all_available_slots[key_iso] = {
+                    'start_time': key_iso,
+                    'end_time': slot['end'].isoformat(),
+                    'available_interviewers': []
+                }
+            all_available_slots[key_iso]['available_interviewers'].append(iid)
+        
+    return sorted(all_available_slots.values(), key=lambda x: x['start_time'])
