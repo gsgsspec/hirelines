@@ -4003,7 +4003,11 @@ RULES = {
     },
     "projects": {
         "base_points": 10,
-        "deduction": {"per_item": 1, "min_score": 0},
+        "min_required": 3,
+        "deduction": {
+            "per_short_project": 1,
+            "min_score": 0
+        }
     },
     "certificates": {"points_per_item": 1, "max_points": 5},
     "awards": {"points_per_item": 1, "max_points": 5},
@@ -4169,14 +4173,39 @@ class ProfileScoringEngine:
     def score_projects(self, profile):
         projects = profile.get("projects", [])
 
+        # No projects → 0
         if not isinstance(projects, list) or len(projects) == 0:
             return 0
 
-        valid_projects = [p for p in projects if isinstance(p, dict)]
+        rules = self.rules["projects"]
+        base_points = rules["base_points"]
+        min_required = rules["min_required"]
+        per_short_project = rules["deduction"]["per_short_project"]
+        min_score = rules["deduction"]["min_score"]
 
-        score = self.rules["projects"]["base_points"] - len(valid_projects)
+        score = base_points
+        valid_project_found = False
 
-        return max(0, score)
+        for project in projects:
+            if not isinstance(project, dict):
+                continue
+
+            start = project.get("yearsfrom")
+            end = project.get("yearsto") or self.current_year
+
+            if isinstance(start, int) and isinstance(end, int) and end > start:
+                valid_project_found = True
+                years = end - start
+
+                # ONLY deduction logic
+                if years < min_required:
+                    score -= per_short_project
+
+        # Projects exist but no valid durations
+        if not valid_project_found:
+            return 0
+
+        return max(min_score, score)
 
     def score_certificates(self, profile):
         return self.calculate_capped_item_score(
