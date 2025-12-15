@@ -2,7 +2,7 @@ import os
 import json
 import requests
 from datetime import datetime
-from urllib.parse import urljoin
+from urllib.parse import urljoin, unquote
 from django.db.models import Q
 from app_api.functions.enc_dec import decrypt_code
 
@@ -11,6 +11,7 @@ from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
     ResumeFile, WorkCal
+
 
 from .doc2pdf import convert_word_binary_to_pdf
 
@@ -218,6 +219,8 @@ def scheduleInterviewDB(user_id, dataObjs):
         # company_account = Account.objects.get(companyid=user.companyid)
         # company_credits = CompanyCredits.objects.get(companyid=user.companyid,transtype="I")
         # if company_account.balance >= company_credits.credits:
+        encrypted_cid = unquote(dataObjs.get('candidate_id'))
+        dataObjs['candidate_id'] = encrypted_cid
         dataObjs['candidate_id'] = decrypt_code(dataObjs['candidate_id'])
         call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
         if call_details:    
