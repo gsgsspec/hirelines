@@ -18,7 +18,8 @@ var menuItemsUrls = {
     'sources': ['/sources'],
     'resume-inbox': ['/resume-inbox'],
     'profiles': ['profiles','/add-profile'],
-    'logout': ['/']
+    'logout': ['/'],
+    'work-calender':['/work-calender']
 };
 
 var menuItems = document.querySelectorAll('.menu-item');

@@ -78,15 +78,15 @@ $(document).ready(function () {
         <div class="row work-row mt-3" data-id="${hasID ? item.id : ''}">
 
             <div class="col-md-3">
-                <label>Start Day</label>
-                <select class="form-control startDay">
+                <label class="form-label">Start Day</label>
+                <select class="form-select startDay">
                     <option value="">Select</option>
                     ${dayOptions(hasID ? item.startday : "")}
                 </select>
             </div>
 
             <div class="col-md-3">
-                <label>Start Time (HH:MM)</label>
+                <label class="form-label">Start Time (HH:MM)</label>
                 <div class="d-flex gap-2">
                     <select class="form-control startHour">
                         ${hourOptions(time[0])}
@@ -99,7 +99,7 @@ $(document).ready(function () {
             </div>
 
             <div class="col-md-3">
-                <label>Hours</label>
+                <label class="form-label">Hours</label>
                 <input type="number" class="form-control Hours" value="${hasID ? item.hours : ''}">
             </div>
 
@@ -134,16 +134,16 @@ $(document).ready(function () {
         <div class="row mt-4 weekoff-section">
 
             <div class="col-md-3">
-                <label>Week Off 1</label>
-                <select class="form-control weekOff1">
+                <label class="form-label">Week Off 1</label>
+                <select class="form-select weekOff1">
                     <option value="">Select</option>
                     ${dayOptions(wo1)}
                 </select>
             </div>
 
             <div class="col-md-3">
-                <label>Week Off 2</label>
-                <select class="form-control weekOff2">
+                <label class="form-label">Week Off 2</label>
+                <select class="form-select weekOff2">
                     <option value="">Select</option>
                     ${dayOptions(wo2)}
                 </select>
