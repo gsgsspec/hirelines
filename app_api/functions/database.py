@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 from datetime import datetime
@@ -861,6 +862,23 @@ def addProfileDB(dataObjs,fileObjs, user_data):
 
         sourceid = None
 
+        file_binary = fileObjs.read()
+
+        ext = os.path.splitext(fileObjs.name)[1].lower()
+
+        if ext in [".doc", ".docx"]:
+            
+            try:
+                pdf_binary = convert_word_binary_to_pdf(file_binary)
+            except:
+                pdf_binary = file_binary
+
+        elif ext == ".pdf":
+            pdf_binary = file_binary
+
+        else:
+            raise Exception("Unsupported file format")
+
         source = Source.objects.filter(companyid=user_data.companyid,code=dataObjs['source-code']).last()
         
         if source:
@@ -889,7 +907,7 @@ def addProfileDB(dataObjs,fileObjs, user_data):
         resume_file = ResumeFile(
             resumeid = resume.id,
             filename = fileObjs.name,
-            filecontent = fileObjs.read()
+            filecontent = pdf_binary
         )
 
         resume_file.save()
@@ -1096,26 +1114,9 @@ def updateProfileActivityDB(dataObjs,userid):
 
         return True
 
-      
-
     except Exception as e:
         raise
 
-
-def sampleConverter(fileObjs):
-    try:
-
-        word_binary = fileObjs.read()
-
-        pdf_binary = convert_word_binary_to_pdf(word_binary)
-
-        output_path = "C:\Srikanth\projects\hirelines\media\branded_resumes\converted_output.pdf"
-        with open(output_path, "wb") as f:
-            f.write(pdf_binary)
-
-
-    except Exception as e:
-        raise
 
 def saveWorkCalDB(dataObjs):
     try:

@@ -30,7 +30,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB
+    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB, sampleConverter
 from app_api.functions.constants import hirelines_registration_script
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -1977,6 +1977,7 @@ def addProfile(request):
             user_data = auth_user(request.user)
 
             addProfileDB(dataObjs,fileObjs,user_data)
+            # sampleConverter(fileObjs)
 
             response['data'] = "success"
             response['statusCode'] = 0
@@ -2252,9 +2253,7 @@ def getMailResumes(request):
     }
     try:
         if request.method == "GET":
-            
             fetch_gmail_attachments()
-
             response['data'] = "success"
             response['statusCode'] = 0
 

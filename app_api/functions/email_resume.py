@@ -52,8 +52,6 @@ def fetch_gmail_attachments():
 
         check_user_query = " OR ".join([f"from:{u['email']}" for u in from_emails])
 
-        # print("\n[+] Checking Gmail inbox for emails that have attachments...\n")
-
         query = f"has:attachment newer_than:1d ({check_user_query})"
         # query = f"has:attachment ({check_user_query})"
 
@@ -65,10 +63,7 @@ def fetch_gmail_attachments():
         messages = results.get("messages", [])
 
         if not messages:
-            # print("[!] No emails with attachments found in inbox.")
             return
-
-        # print(f"[+] Found {len(messages)} email(s) with attachments.\n")
 
         for msg in messages:
 
@@ -82,13 +77,7 @@ def fetch_gmail_attachments():
             raw_from = next((h["value"] for h in headers if h["name"] == "From"), None)
             name, from_email = parseaddr(raw_from)
 
-            # print("---------------------------------------------")
-            # print("📨 Email From :", from_email)
-            # print("📅 Email Date :", date_raw)
-            # print("📎 Attachments:")
-
             if Resume.objects.filter(mailid=msg["id"]).exists():
-                # print(f"⛔ Skipping duplicate attachment: {msg['id']}")
                 continue
 
             # Check attachment parts
@@ -136,15 +125,8 @@ def fetch_gmail_attachments():
                     )
                     resume_file.save()
 
-        #         print("    -", part["filename"])
-
-        # print("\n[+] Finished checking emails with attachments.\n")
     except Exception as e:
         print("Saving resume failed:", e)
-
-
-def sampleProg():
-    print("Progammed ran",datetime.now())
 
 
 def processEmailsFetch():

@@ -14,13 +14,13 @@ document.getElementById("save-data").onclick = function () {
             return false;
         }
 
-        if (inputValue == "CARER") {
-            event.preventDefault();
-            $('#career-code-error').show();
-            return false;
-        }
+        // if (inputValue == "CARER") {
+        //     event.preventDefault();
+        //     $('#career-code-error').show();
+        //     return false;
+        // }
 
-        // $("#save-data").prop("disabled", true);
+        $("#save-data").prop("disabled", true);
     
         dataObjs = {
             'title': $('#title').val(),
@@ -45,6 +45,8 @@ document.getElementById("save-data").onclick = function () {
                 text: "Resume file is required.",
                 confirmButtonColor: '#274699'
             });
+
+            $("#save-data").prop("disabled", false);
             return false; 
         }
 
@@ -71,6 +73,14 @@ document.getElementById("save-data").onclick = function () {
                         window.location.href = "/profiles";
                     }, 1500);
 
+                }else {
+                    $("#save-data").prop("disabled", false);
+
+                    Swal.fire(
+                        "Error",
+                        "Unable to add profile",
+                        "error"
+                    );
                 }
             }
         });

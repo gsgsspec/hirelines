@@ -15,6 +15,18 @@ function attachResumeRowClick() {
     document.querySelectorAll(".resume-row").forEach(row => {
         row.addEventListener("click", async function () {
 
+            const isAlreadyActive = this.classList.contains("active-row");
+
+            if(isAlreadyActive){
+
+                this.classList.remove("active-row");
+
+                document.getElementById("resumePreview").style.display = "none";
+                document.querySelector('.table-ctn').classList.remove('half-width');
+
+                return;
+            }
+
             document.querySelectorAll(".resume-row").forEach(r => {
                 r.classList.remove("active-row");
             });
