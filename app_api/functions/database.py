@@ -10,7 +10,7 @@ from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
-    ResumeFile, WorkCal
+    ResumeFile, WorkCal,ProfileAddress
 
 
 from .doc2pdf import convert_word_binary_to_pdf
@@ -954,6 +954,9 @@ def updateProfileDetailsDB(dataObjs):
     try:
 
         profile = Profile.objects.get(id=dataObjs["profileid"])
+        profile_address, created = ProfileAddress.objects.get_or_create(
+            profileid=dataObjs["profileid"]
+        )
 
         profile.title = dataObjs["title"]
         profile.firstname = dataObjs["firstname"]
@@ -966,6 +969,15 @@ def updateProfileDetailsDB(dataObjs):
         profile.passportnum = dataObjs["passport"]
         profile.fathername = dataObjs["father_name"]
         profile.nativeof = dataObjs["native_of"]
+
+        profile_address.addline1 = dataObjs["AddressLine1"]
+        profile_address.addline2 = dataObjs["AddressLine2"]
+        profile_address.city = dataObjs["city"]
+        profile_address.state = dataObjs["state"]
+        profile_address.country = dataObjs["country"]
+        profile_address.zipcode = dataObjs["zipcode"]
+        profile_address.profileid = profile.id
+        profile_address.save()
 
         dob_str = dataObjs["dob"]
         if dob_str:

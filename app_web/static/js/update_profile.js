@@ -502,6 +502,12 @@ $(document).on("submit", "#Person-detais", function (e) {
         dob: $("#DateOfBirth").val(),
         father_name: $("#FatherName").val(),
         native_of: $("#NativeOf").val(),
+        AddressLine1: $("#AddressLine1").val(),
+        AddressLine2: $("#AddressLine2").val(),
+        city: $("#City").val(),
+        state: $("#State").val(),
+        country: $("#Country").val(),
+        zipcode: $("#Zipcode").val(),
         profileid: profileId
     };
 

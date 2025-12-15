@@ -3676,6 +3676,10 @@ def getProfileData(pid, user_data):
     try:
 
         profile = Profile.objects.filter(id=pid, companyid=user_data.companyid).last()
+        profile_address= ProfileAddress.objects.filter(profileid=pid).last()
+
+        if not profile_address:
+            return None
 
         if not profile:
             return None
@@ -3690,7 +3694,6 @@ def getProfileData(pid, user_data):
             "skills": None,
             "resume_file": None,
         }
-
         # Profile details
         personal_details = {
             "title": profile.title or "",
@@ -3708,6 +3711,12 @@ def getProfileData(pid, user_data):
             "dateofbirth": (
                 profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
             ),
+            "addressline1": profile_address.addline1 or "",
+            "addressline2": profile_address.addline2 or "",
+            "city": profile_address.city or "",
+            "state": profile_address.state or "",
+            "country": profile_address.country or "",
+            "zipcode": profile_address.zipcode or "",
         }
 
         # Education
