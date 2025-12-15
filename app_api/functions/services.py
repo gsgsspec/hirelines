@@ -1361,13 +1361,13 @@ def interviewSchedulingService(aplid, int_id):
                             start_datetime = datetime.combine(
                                 datetime.today(), work_data["starttime"]
                             )
-                            if len(work_data["workhours"].split(".")) == 2:
-                                work_hours = int(work_data["workhours"].split(".")[0])
+                            if len(work_data["hours"].split(".")) == 2:
+                                work_hours = int(work_data["hours"].split(".")[0])
                                 if work_hours - 1 > ((WORK_HOURS * 2) / 2):
                                     work_hours = ((WORK_HOURS * 2) / 2) - 1
                                 work_mins = 30
                             else:
-                                work_hours = int(work_data["workhours"])
+                                work_hours = int(work_data["hours"])
                                 if work_hours > ((WORK_HOURS * 2) / 2):
                                     work_hours = (WORK_HOURS * 2) / 2
                                 work_mins = 0
