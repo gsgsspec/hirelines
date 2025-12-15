@@ -3991,7 +3991,7 @@ from datetime import datetime
 
 RULES = {
     "education": {
-        "set_1": {"items": ["B-tech", "BCom", "BA"], "points": 6},
+        "set_1": {"items": ["B-Tech", "BCom", "BA"], "points": 6},
         "set_2": {"items": ["MBA", "MCA", "BBA"], "points": 4},
     },
     "experience": {
@@ -4073,10 +4073,11 @@ class ProfileScoringEngine:
         self.rules = RULES
         self.current_year = datetime.now().year
 
-        # NEW: normalize rules once
+        # Normalize education items to lowercase (NEW)
         for rule in self.rules["education"].values():
-            rule["items"] = set(rule["items"])
+            rule["items"] = {item.lower() for item in rule["items"]}
 
+        # Skills already case-insensitive
         for tier in self.rules["skills"].values():
             tier["skills"] = {s.lower() for s in tier["skills"]}
 
@@ -4111,9 +4112,9 @@ class ProfileScoringEngine:
         if not isinstance(education, list):
             return 0
 
-        # 🔧 FIX: guard against bad items
+        # Case-insensitive education matching
         courses = {
-            e.get("course")
+            e.get("course").lower()
             for e in education
             if isinstance(e, dict) and isinstance(e.get("course"), str)
         }
@@ -4126,13 +4127,13 @@ class ProfileScoringEngine:
 
     def score_experience(self, profile):
         experience = profile.get("experience", [])
-        if not isinstance(experience, list):
+        
+        if not isinstance(experience, list) or len(experience) == 0:
             return 0
 
         base_points = self.rules["experience"]["sets"][0]["base_points"]
         min_required = self.rules["experience"]["sets"][0]["min"]
 
-        # Calculate years per company
         company_years = []
         total_years = 0
 
@@ -4148,13 +4149,17 @@ class ProfileScoringEngine:
                 company_years.append(years)
                 total_years += years
 
+        
+        if total_years == 0:
+            return 0
+
         score = base_points
 
-        # ---------- Rule 1: below minimum total experience ----------
+        # Rule 1: below minimum total experience
         if total_years < min_required:
             score -= (min_required - total_years)
 
-        # ---------- Rule 2: per-company deduction ONLY if company < min ----------
+        # Rule 2: company-level deduction
         for yrs in company_years:
             if yrs < min_required:
                 score -= 1
@@ -4163,14 +4168,15 @@ class ProfileScoringEngine:
 
     def score_projects(self, profile):
         projects = profile.get("projects", [])
-        if not isinstance(projects, list):
-            projects = []
 
-        return self.apply_deduction(
-            self.rules["projects"]["base_points"],
-            len([p for p in projects if isinstance(p, dict)])-1,
-            self.rules["projects"]["deduction"],
-        )
+        if not isinstance(projects, list) or len(projects) == 0:
+            return 0
+
+        valid_projects = [p for p in projects if isinstance(p, dict)]
+
+        score = self.rules["projects"]["base_points"] - len(valid_projects)
+
+        return max(0, score)
 
     def score_certificates(self, profile):
         return self.calculate_capped_item_score(
