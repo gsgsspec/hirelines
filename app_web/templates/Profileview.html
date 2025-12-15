@@ -328,7 +328,12 @@
                             <tbody>
                                 {% for p in profile_details.projects %}
                                 <tr>
-                                    <td>
+                <td style="
+                    white-space: normal;
+                    word-break: break-word;
+                    overflow-wrap: break-word;
+                    line-height: 1.6;
+                ">
                                         <strong>{{ p.projectname }}</strong>
                                         — {{ p.clientname }}
                                         — {{ p.roleplayed }}
