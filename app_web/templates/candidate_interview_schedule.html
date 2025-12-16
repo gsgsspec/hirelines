@@ -320,7 +320,7 @@
                     return;
                 }
 
-                header.textContent = `Times for ${activeDayData.fullDate}`;
+                header.textContent = `Slots for ${activeDayData.fullDate}`;
 
                 let slotsHtml = activeDayData.slots.map(time => {
                     const isSelected = state.selectedTime === time;

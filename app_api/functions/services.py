@@ -1189,21 +1189,246 @@ def getCallScheduleDetails(cid):
     except Exception as e:
         raise
 
+# def interviewSchedulingService(aplid, int_id):
+#     try:
+
+#         call_scheduling_constraints = getConfig()["CALL_SCHEDULING_CONSTRAINTS"]
+
+#         WORK_HOURS = int(call_scheduling_constraints["work_hours"])
+#         STARTING_HOUR = int(call_scheduling_constraints["starting_hour"])
+#         BLOCK_HOURS = int(call_scheduling_constraints["block_hours"])
+#         FREQUENCY = int(call_scheduling_constraints["frequency_mins"])
+
+#         basedt = datetime.today().replace(
+#             hour=STARTING_HOUR, minute=00, second=00, microsecond=00
+#         )
+
+#         scheduling_data = []
+#         scheduled_calls = list(
+#             CallSchedule.objects.filter(Q(status="S") | Q(status="R")).values_list(
+#                 "datentime", "interviewerid"
+#             )
+#         )
+
+#         scheduled_calls_list = []
+#         for scheduled_call in scheduled_calls:
+#             if scheduled_call[0]:
+#                 # FIX: Convert DB time (UTC) to Local Time before formatting
+#                 local_db_time = timezone.localtime(scheduled_call[0])
+                
+#                 scheduled_calls_list.append(
+#                     [local_db_time.strftime("%Y-%m-%d %I:%M %p"), scheduled_call[1]]
+#                 )
+
+#         vacation_data = Vacation.objects.filter(empid=int_id).values(
+#             "empid", "fromdate", "todate"
+#         )
+#         workcal_data = WorkCal.objects.filter(userid=int_id).values()
+
+#         alter_timings_data = ExtendedHours.objects.filter(
+#             empid=int_id, status="A"
+#         ).values()
+#         alter_timings_dates_list = []
+#         alter_timings_list = {}
+
+#         for alter_timings in alter_timings_data:
+
+#             alter_dates_ = [
+#                 [
+#                     alter_timings["fromdate"] + timedelta(days=x),
+#                     alter_timings["starttime"],
+#                     alter_timings["workhours"],
+#                     alter_timings["userid"],
+#                 ]
+#                 for x in range(
+#                     (alter_timings["todate"] - alter_timings["fromdate"]).days + 1
+#                 )
+#             ]
+#             for alter_date in alter_dates_:
+#                 formated_alter_date = alter_date[0].strftime("%a-%d-%b-%Y")
+#                 alter_timings_dates_list.append(formated_alter_date)
+#                 alter_timings_list[str(alter_date[0].strftime("%Y-%m-%d"))] = [
+#                     alter_date[0],
+#                     alter_date[1],
+#                     alter_date[2],
+#                     alter_date[3],
+#                 ]
+
+#         for x in range(0, 15):  # days
+#             hours_list = []
+#             slots_list = []
+#             status_list = []
+
+#             telecallers = list(
+#                 User.objects.filter(status="A", id=int_id).values_list("id", flat=True)
+#             )
+
+#             _date = (basedt + timedelta(days=x)).strftime("%Y-%m-%d")
+#             _datetime = datetime.strptime(
+#                 (
+#                     basedt.replace(hour=00, minute=00, second=00, microsecond=00)
+#                     + timedelta(days=x)
+#                 ).strftime("%Y-%m-%d %H:%M:%S"),
+#                 "%Y-%m-%d %H:%M:%S",
+#             )
+#             date_formated = (basedt + timedelta(days=x)).strftime("%a-%d-%b-%Y")
+#             for vacation in vacation_data:
+#                 from_date = datetime.strptime(str(vacation["fromdate"]), "%Y-%m-%d")
+#                 to_date = datetime.strptime(str(vacation["todate"]), "%Y-%m-%d")
+#                 if from_date <= _datetime <= to_date:
+#                     if vacation["empid"] in telecallers:
+#                         telecallers.remove(vacation["empid"])
+#             # for alter_hours in
+#             for work_data in workcal_data:
+#                 # print("work_data['weekoff1']",work_data['weekoff1'],date_formated,alter_timings_dates_list)
+#                 if (work_data["weekoff1"] == date_formated.split("-")[0]) and (
+#                     date_formated not in alter_timings_dates_list
+#                 ):
+#                     if work_data["userid"] in telecallers:
+#                         telecallers.remove(work_data["userid"])
+#                 if work_data["weekoff2"] == date_formated.split("-")[0] and (
+#                     date_formated not in alter_timings_dates_list
+#                 ):
+#                     if work_data["userid"] in telecallers:
+#                         telecallers.remove(work_data["userid"])
+#             for i in range(0, WORK_HOURS * 2):  # (0,24) 24 means 12 Hours
+#                 slot_time = basedt + timedelta(minutes=30 * i)
+#                 curr_time = datetime.now().replace(
+#                     second=00
+#                 )  # + datetime.timedelta(hours=4)
+#                 hours_list.append(slot_time.strftime("%I:%M %p"))
+#                 # print('_date',_date)
+#                 # print('d_time',datetime.today().strftime("%Y-%m-%d"))
+#                 # print('slot_time',slot_time)
+#                 # print('slot_time ------- 2',(curr_time + timedelta(hours=BLOCK_HOURS, minutes=30)))
+#                 if (_date == datetime.today().strftime("%Y-%m-%d")) and (
+#                     slot_time <= (curr_time + timedelta(hours=BLOCK_HOURS, minutes=30))
+#                 ):
+#                     status_list.append("Blocked")
+#                     slots_list.append([])
+#                 else:
+
+#                     occupied_tc = []
+
+#                     tc = telecallers
+#                     telecallers_set = set(tc)
+#                     for slot in scheduled_calls_list:
+
+#                         if slot[0] == _date + " " + slot_time.strftime("%I:%M %p"):
+
+#                             if slot[1] in tc:
+#                                 occupied_tc.append(slot[1])
+
+#                     available_tc_list = list(
+#                         telecallers_set.difference(set(occupied_tc))
+#                     )
+#                     for work_data in workcal_data:
+
+#                         slot_date = datetime.strptime(_date, "%Y-%m-%d").date()
+#                         slot_date_str = str(slot_date.strftime("%Y-%m-%d"))
+
+#                         if slot_date_str in alter_timings_list:
+#                             alter_data = alter_timings_list[slot_date_str]
+#                             start_datetime = datetime.combine(
+#                                 datetime.today(), alter_data[1]
+#                             )
+#                             if len(str(alter_data[2]).split(".")) == 2:
+#                                 work_hours = int(alter_data[2].split(".")[0])
+#                                 if work_hours - 1 > ((WORK_HOURS * 2) / 2):
+#                                     work_hours = ((WORK_HOURS * 2) / 2) - 1
+#                                 work_mins = 30
+#                             else:
+#                                 work_hours = int(alter_data[2])
+#                                 if work_hours > ((WORK_HOURS * 2) / 2):
+#                                     work_hours = (WORK_HOURS * 2) / 2
+#                                 work_mins = 0
+
+#                             end_datetime = start_datetime + timedelta(
+#                                 hours=work_hours, minutes=work_mins
+#                             )
+#                             end_time = end_datetime.time()
+
+#                             if alter_data[1] > slot_time.time():
+
+#                                 if alter_data[3] in available_tc_list:
+#                                     available_tc_list.remove(alter_data[3])
+
+#                             if slot_time.time() >= end_time:
+#                                 if alter_data[3] in available_tc_list:
+#                                     available_tc_list.remove(alter_data[3])
+
+#                         else:
+#                             start_datetime = datetime.combine(
+#                                 datetime.today(), work_data["starttime"]
+#                             )
+#                             if len(work_data["hours"].split(".")) == 2:
+#                                 work_hours = int(work_data["hours"].split(".")[0])
+#                                 if work_hours - 1 > ((WORK_HOURS * 2) / 2):
+#                                     work_hours = ((WORK_HOURS * 2) / 2) - 1
+#                                 work_mins = 30
+#                             else:
+#                                 work_hours = int(work_data["hours"])
+#                                 if work_hours > ((WORK_HOURS * 2) / 2):
+#                                     work_hours = (WORK_HOURS * 2) / 2
+#                                 work_mins = 0
+
+#                             end_datetime = start_datetime + timedelta(
+#                                 hours=work_hours, minutes=work_mins
+#                             )
+#                             end_time = end_datetime.time()
+
+#                             if work_data["starttime"] > slot_time.time():
+
+#                                 if work_data["userid"] in available_tc_list:
+#                                     available_tc_list.remove(work_data["userid"])
+
+#                             if slot_time.time() >= end_time:
+#                                 if work_data["userid"] in available_tc_list:
+#                                     available_tc_list.remove(work_data["userid"])
+
+#                     if not available_tc_list:
+#                         status_list.append("No_Vacancy")
+#                     else:
+#                         status_list.append("Available")
+#                     slots_list.append(available_tc_list)
+#                 if HolidayCal.objects.filter(holidaydt=_date).exists():
+#                     status_list = []
+#                     while len(status_list) <= WORK_HOURS * 2:
+#                         status_list.append("Holiday")
+
+#             ids = []
+#             for slo in slots_list:
+#                 ids.append(list(slo))
+
+#             dataObj = {
+#                 "day": date_formated,
+#                 "hours_list": hours_list,
+#                 "slots_list": slots_list,
+#                 "status": status_list,
+#                 "ids": ids,
+#             }
+#             scheduling_data.append(dataObj)
+
+#         return scheduling_data
+
+#     except Exception as e:
+#         raise
 def interviewSchedulingService(aplid, int_id):
     try:
-
         call_scheduling_constraints = getConfig()["CALL_SCHEDULING_CONSTRAINTS"]
 
         WORK_HOURS = int(call_scheduling_constraints["work_hours"])
         STARTING_HOUR = int(call_scheduling_constraints["starting_hour"])
         BLOCK_HOURS = int(call_scheduling_constraints["block_hours"])
-        FREQUENCY = int(call_scheduling_constraints["frequency_mins"])
+        # FREQUENCY = int(call_scheduling_constraints["frequency_mins"]) # Unused in snippet
 
         basedt = datetime.today().replace(
             hour=STARTING_HOUR, minute=00, second=00, microsecond=00
         )
 
         scheduling_data = []
+        
+        # 1. Fetch Scheduled Calls (Blockers)
         scheduled_calls = list(
             CallSchedule.objects.filter(Q(status="S") | Q(status="R")).values_list(
                 "datentime", "interviewerid"
@@ -1215,193 +1440,163 @@ def interviewSchedulingService(aplid, int_id):
             if scheduled_call[0]:
                 # FIX: Convert DB time (UTC) to Local Time before formatting
                 local_db_time = timezone.localtime(scheduled_call[0])
-                
                 scheduled_calls_list.append(
                     [local_db_time.strftime("%Y-%m-%d %I:%M %p"), scheduled_call[1]]
                 )
 
-        vacation_data = Vacation.objects.filter(empid=int_id).values(
-            "empid", "fromdate", "todate"
-        )
-        workcal_data = WorkCal.objects.filter(userid=int_id).values()
-
-        alter_timings_data = ExtendedHours.objects.filter(
-            empid=int_id, status="A"
-        ).values()
-        alter_timings_dates_list = []
+        # 2. Fetch Helper Data
+        vacation_data = list(Vacation.objects.filter(empid=int_id).values("empid", "fromdate", "todate"))
+        workcal_data = list(WorkCal.objects.filter(userid=int_id).values()) # Your Roster
+        
+        # 3. Fetch Alter Timings (Overrides)
+        alter_timings_data = ExtendedHours.objects.filter(empid=int_id, status="A").values()
         alter_timings_list = {}
 
-        for alter_timings in alter_timings_data:
+        # Process Alter Timings into a Dictionary keyed by Date string
+        for alter in alter_timings_data:
+            days_diff = (alter["todate"] - alter["fromdate"]).days + 1
+            for x in range(days_diff):
+                curr_alter_date = alter["fromdate"] + timedelta(days=x)
+                date_str = curr_alter_date.strftime("%Y-%m-%d")
+                
+                alter_timings_list[date_str] = {
+                    "starttime": alter["starttime"],
+                    "workhours": alter["workhours"],
+                    "userid": alter["userid"]
+                }
 
-            alter_dates_ = [
-                [
-                    alter_timings["fromdate"] + timedelta(days=x),
-                    alter_timings["starttime"],
-                    alter_timings["workhours"],
-                    alter_timings["userid"],
-                ]
-                for x in range(
-                    (alter_timings["todate"] - alter_timings["fromdate"]).days + 1
-                )
-            ]
-            for alter_date in alter_dates_:
-                formated_alter_date = alter_date[0].strftime("%a-%d-%b-%Y")
-                alter_timings_dates_list.append(formated_alter_date)
-                alter_timings_list[str(alter_date[0].strftime("%Y-%m-%d"))] = [
-                    alter_date[0],
-                    alter_date[1],
-                    alter_date[2],
-                    alter_date[3],
-                ]
-
-        for x in range(0, 15):  # days
+        # 4. Main Scheduling Loop (Next 15 Days)
+        for x in range(0, 15): 
             hours_list = []
             slots_list = []
             status_list = []
 
-            telecallers = list(
-                User.objects.filter(status="A", id=int_id).values_list("id", flat=True)
-            )
+            # Initialize Telecallers (Active Users)
+            telecallers = list(User.objects.filter(status="A", id=int_id).values_list("id", flat=True))
 
-            _date = (basedt + timedelta(days=x)).strftime("%Y-%m-%d")
-            _datetime = datetime.strptime(
-                (
-                    basedt.replace(hour=00, minute=00, second=00, microsecond=00)
-                    + timedelta(days=x)
-                ).strftime("%Y-%m-%d %H:%M:%S"),
-                "%Y-%m-%d %H:%M:%S",
-            )
-            date_formated = (basedt + timedelta(days=x)).strftime("%a-%d-%b-%Y")
+            # Current Date Calculation
+            current_date_obj = basedt + timedelta(days=x)
+            _date_str = current_date_obj.strftime("%Y-%m-%d") # YYYY-MM-DD
+            _day_name = current_date_obj.strftime("%A")       # Monday, Tuesday...
+            date_formatted = current_date_obj.strftime("%a-%d-%b-%Y") # Mon-15-Dec-2025
+
+            # A. Remove users on Vacation
+            # Check if this specific day is inside any vacation range
+            current_date_start = datetime.strptime(_date_str + " 00:00:00", "%Y-%m-%d %H:%M:%S")
+            
             for vacation in vacation_data:
-                from_date = datetime.strptime(str(vacation["fromdate"]), "%Y-%m-%d")
-                to_date = datetime.strptime(str(vacation["todate"]), "%Y-%m-%d")
-                if from_date <= _datetime <= to_date:
+                v_from = datetime.combine(vacation["fromdate"], time.min)
+                v_to = datetime.combine(vacation["todate"], time.max)
+                
+                if v_from <= current_date_start <= v_to:
                     if vacation["empid"] in telecallers:
                         telecallers.remove(vacation["empid"])
-            # for alter_hours in
-            for work_data in workcal_data:
-                # print("work_data['weekoff1']",work_data['weekoff1'],date_formated,alter_timings_dates_list)
-                if (work_data["weekoff1"] == date_formated.split("-")[0]) and (
-                    date_formated not in alter_timings_dates_list
-                ):
-                    if work_data["userid"] in telecallers:
-                        telecallers.remove(work_data["userid"])
-                if work_data["weekoff2"] == date_formated.split("-")[0] and (
-                    date_formated not in alter_timings_dates_list
-                ):
-                    if work_data["userid"] in telecallers:
-                        telecallers.remove(work_data["userid"])
-            for i in range(0, WORK_HOURS * 2):  # (0,24) 24 means 12 Hours
-                slot_time = basedt + timedelta(minutes=30 * i)
-                curr_time = datetime.now().replace(
-                    second=00
-                )  # + datetime.timedelta(hours=4)
-                hours_list.append(slot_time.strftime("%I:%M %p"))
-                # print('_date',_date)
-                # print('d_time',datetime.today().strftime("%Y-%m-%d"))
-                # print('slot_time',slot_time)
-                # print('slot_time ------- 2',(curr_time + timedelta(hours=BLOCK_HOURS, minutes=30)))
-                if (_date == datetime.today().strftime("%Y-%m-%d")) and (
-                    slot_time <= (curr_time + timedelta(hours=BLOCK_HOURS, minutes=30))
-                ):
-                    status_list.append("Blocked")
+
+            # B. Check for Holidays
+            if HolidayCal.objects.filter(holidaydt=_date_str).exists():
+                 # Fill entire day as Holiday
+                for i in range(WORK_HOURS * 2):
+                    slot_time = basedt + timedelta(minutes=30 * i)
+                    hours_list.append(slot_time.strftime("%I:%M %p"))
+                    status_list.append("Holiday")
                     slots_list.append([])
-                else:
+            else:
+                # C. Generate Slots for the Day
+                for i in range(0, WORK_HOURS * 2):
+                    slot_dt = current_date_obj + timedelta(minutes=30 * i)
+                    slot_time_str = slot_dt.strftime("%I:%M %p")
+                    hours_list.append(slot_time_str)
+                    
+                    # Logic to block past times
+                    curr_time_limit = datetime.now() + timedelta(hours=BLOCK_HOURS, minutes=30)
+                    is_past_or_blocked = (_date_str == datetime.today().strftime("%Y-%m-%d") and slot_dt <= curr_time_limit)
 
-                    occupied_tc = []
+                    if is_past_or_blocked:
+                        status_list.append("Blocked")
+                        slots_list.append([])
+                        continue
 
-                    tc = telecallers
-                    telecallers_set = set(tc)
-                    for slot in scheduled_calls_list:
+                    # D. Determine Availability for THIS SPECIFIC SLOT
+                    
+                    # Start with assumption: No one is working this slot unless proven otherwise
+                    working_users_this_slot = set()
 
-                        if slot[0] == _date + " " + slot_time.strftime("%I:%M %p"):
+                    # We check every potential telecaller
+                    for user_id in telecallers:
+                        is_working = False
+                        
+                        # 1. Check Alter Timings (Priority)
+                        if _date_str in alter_timings_list:
+                            alter_data = alter_timings_list[_date_str]
+                            if alter_data["userid"] == user_id:
+                                # Calculate Alter Start/End
+                                start_t = alter_data["starttime"]
+                                w_hours = float(alter_data["workhours"]) # Ensure float for half hours
+                                
+                                start_dt_alter = datetime.combine(current_date_obj.date(), start_t)
+                                end_dt_alter = start_dt_alter + timedelta(hours=w_hours)
 
-                            if slot[1] in tc:
-                                occupied_tc.append(slot[1])
-
-                    available_tc_list = list(
-                        telecallers_set.difference(set(occupied_tc))
-                    )
-                    for work_data in workcal_data:
-
-                        slot_date = datetime.strptime(_date, "%Y-%m-%d").date()
-                        slot_date_str = str(slot_date.strftime("%Y-%m-%d"))
-
-                        if slot_date_str in alter_timings_list:
-                            alter_data = alter_timings_list[slot_date_str]
-                            start_datetime = datetime.combine(
-                                datetime.today(), alter_data[1]
-                            )
-                            if len(str(alter_data[2]).split(".")) == 2:
-                                work_hours = int(alter_data[2].split(".")[0])
-                                if work_hours - 1 > ((WORK_HOURS * 2) / 2):
-                                    work_hours = ((WORK_HOURS * 2) / 2) - 1
-                                work_mins = 30
-                            else:
-                                work_hours = int(alter_data[2])
-                                if work_hours > ((WORK_HOURS * 2) / 2):
-                                    work_hours = (WORK_HOURS * 2) / 2
-                                work_mins = 0
-
-                            end_datetime = start_datetime + timedelta(
-                                hours=work_hours, minutes=work_mins
-                            )
-                            end_time = end_datetime.time()
-
-                            if alter_data[1] > slot_time.time():
-
-                                if alter_data[3] in available_tc_list:
-                                    available_tc_list.remove(alter_data[3])
-
-                            if slot_time.time() >= end_time:
-                                if alter_data[3] in available_tc_list:
-                                    available_tc_list.remove(alter_data[3])
-
+                                # Check if slot is within Alter window
+                                if start_dt_alter <= slot_dt < end_dt_alter:
+                                    is_working = True
+                        
+                        # 2. Check Standard WorkCal (Only if no Alter override or to strictly follow requirement)
+                        # Assuming Alter replaces standard roster. If not in Alter, check WorkCal.
                         else:
-                            start_datetime = datetime.combine(
-                                datetime.today(), work_data["starttime"]
-                            )
-                            if len(work_data["hours"].split(".")) == 2:
-                                work_hours = int(work_data["hours"].split(".")[0])
-                                if work_hours - 1 > ((WORK_HOURS * 2) / 2):
-                                    work_hours = ((WORK_HOURS * 2) / 2) - 1
-                                work_mins = 30
-                            else:
-                                work_hours = int(work_data["hours"])
-                                if work_hours > ((WORK_HOURS * 2) / 2):
-                                    work_hours = (WORK_HOURS * 2) / 2
-                                work_mins = 0
+                            # Get all shifts for this user on this specific day name (e.g., "Monday")
+                            user_shifts = [
+                                w for w in workcal_data 
+                                if w['userid'] == user_id and w['startday'] == _day_name
+                            ]
+                            
+                            for shift in user_shifts:
+                                # Parse Shift Start
+                                start_t = shift['starttime'] # Time object or string? Assuming Time object from DB
+                                if isinstance(start_t, str):
+                                    start_t = datetime.strptime(start_t, "%H:%M:%S").time()
 
-                            end_datetime = start_datetime + timedelta(
-                                hours=work_hours, minutes=work_mins
-                            )
-                            end_time = end_datetime.time()
+                                w_hours = float(shift['hours'])
 
-                            if work_data["starttime"] > slot_time.time():
+                                start_dt_shift = datetime.combine(current_date_obj.date(), start_t)
+                                end_dt_shift = start_dt_shift + timedelta(hours=w_hours)
 
-                                if work_data["userid"] in available_tc_list:
-                                    available_tc_list.remove(work_data["userid"])
+                                # Check if slot is within this specific shift window
+                                if start_dt_shift <= slot_dt < end_dt_shift:
+                                    is_working = True
+                                    break # Found a valid shift for this slot, no need to check other shifts for same user
 
-                            if slot_time.time() >= end_time:
-                                if work_data["userid"] in available_tc_list:
-                                    available_tc_list.remove(work_data["userid"])
+                        if is_working:
+                            working_users_this_slot.add(user_id)
 
-                    if not available_tc_list:
+                    # E. Filter out users who are working but have a Scheduled Call (Booking)
+                    available_for_slot = []
+                    for user_id in working_users_this_slot:
+                        # Construct key to check against scheduled calls
+                        call_key = f"{_date_str} {slot_time_str}"
+                        
+                        is_booked = False
+                        for call in scheduled_calls_list:
+                            if call[0] == call_key and call[1] == user_id:
+                                is_booked = True
+                                break
+                        
+                        if not is_booked:
+                            available_for_slot.append(user_id)
+
+                    # F. Final Status for Slot
+                    if not available_for_slot:
                         status_list.append("No_Vacancy")
                     else:
                         status_list.append("Available")
-                    slots_list.append(available_tc_list)
-                if HolidayCal.objects.filter(holidaydt=_date).exists():
-                    status_list = []
-                    while len(status_list) <= WORK_HOURS * 2:
-                        status_list.append("Holiday")
+                    
+                    slots_list.append(available_for_slot)
 
-            ids = []
-            for slo in slots_list:
-                ids.append(list(slo))
+            # Prepare Response Object
+            # Convert sets/lists to required ID format
+            ids = [list(s) for s in slots_list]
 
             dataObj = {
-                "day": date_formated,
+                "day": date_formatted,
                 "hours_list": hours_list,
                 "slots_list": slots_list,
                 "status": status_list,
@@ -1412,8 +1607,10 @@ def interviewSchedulingService(aplid, int_id):
         return scheduling_data
 
     except Exception as e:
-        raise
-
+        import traceback
+        print(traceback.format_exc()) # Helpful for debugging
+        raise e
+    
 def getInterviewerCandidates(userid):
     try:
 
@@ -3676,10 +3873,6 @@ def getProfileData(pid, user_data):
     try:
 
         profile = Profile.objects.filter(id=pid, companyid=user_data.companyid).last()
-        profile_address= ProfileAddress.objects.filter(profileid=pid).last()
-
-        if not profile_address:
-            return None
 
         if not profile:
             return None
@@ -3694,6 +3887,7 @@ def getProfileData(pid, user_data):
             "skills": None,
             "resume_file": None,
         }
+
         # Profile details
         personal_details = {
             "title": profile.title or "",
@@ -3711,12 +3905,6 @@ def getProfileData(pid, user_data):
             "dateofbirth": (
                 profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
             ),
-            "addressline1": profile_address.addline1 or "",
-            "addressline2": profile_address.addline2 or "",
-            "city": profile_address.city or "",
-            "state": profile_address.state or "",
-            "country": profile_address.country or "",
-            "zipcode": profile_address.zipcode or "",
         }
 
         # Education
@@ -4348,128 +4536,292 @@ def getSlotsAvailable(cid):
 def get_full_day_name(date_obj):
     return date_obj.strftime('%A')
 
+# def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, scheduled_call_buffer_minutes=30):
+#     """
+#     Returns available slots for exactly the next 'num_days' (Calendar Days).
+#     - If a day is a 'Week Off', it returns no slots for that day (it does not look further).
+#     - Filters out any slots that are in the past relative to the current system time.
+#     """
+    
+#     # 1. SETUP: Get Current Time
+#     # We use naive 'datetime.now()' to act as the "Candidate's Wall Clock"
+#     now_naive = datetime.now() 
+    
+#     # We use aware time for database queries
+#     now_aware = timezone.now()
+
+#     # 2. Fetch Data
+#     work_cals = WorkCal.objects.filter(userid__in=job_interviewer_ids)
+#     work_cal_map = {wc.userid: wc for wc in work_cals}
+    
+#     # Fetch scheduled calls for the exact window (Today + num_days)
+#     # end_date_limit = now_aware + timedelta(days=num_days + 1)
+#     # scheduled_calls = CallSchedule.objects.filter(
+#     #     interviewerid__in=job_interviewer_ids,
+#     #     datentime__gte=now_aware,
+#     #     datentime__lte=end_date_limit, 
+#     #     status="A"
+#     # ).order_by('datentime')
+#     end_date_limit = now_aware + timedelta(days=num_days + 1)
+#     scheduled_calls = CallSchedule.objects.filter(
+       
+#         Q(status="S") | Q(status="R"), 
+       
+#         interviewerid__in=job_interviewer_ids,
+#         datentime__gte=now_aware,
+#         datentime__lte=end_date_limit
+#     ).order_by('datentime')
+#     print("scheduled_calls",scheduled_calls)
+
+#     unavailable_slots = {iid: [] for iid in job_interviewer_ids}
+#     buffer_timedelta = timedelta(minutes=scheduled_call_buffer_minutes)
+
+#     for call in scheduled_calls:
+#         start_time = call.datentime
+#         end_time = start_time + buffer_timedelta
+#         unavailable_slots[call.interviewerid].append((start_time, end_time))
+
+#     slots_available_per_interviewer = {iid: [] for iid in job_interviewer_ids}
+#     slot_timedelta = timedelta(minutes=slot_duration_minutes)
+    
+#     # --- 3. CALENDAR DAY LOOP (Exactly num_days) ---
+#     # We just loop 0, 1, 2... to get Today, Tomorrow, Day After
+#     for day_offset in range(num_days):
+        
+#         # Calculate the specific date to check
+#         # We use now_naive to ensure we stick to the system's day definition
+#         current_date = (now_naive + timedelta(days=day_offset)).date()
+#         day_name = get_full_day_name(current_date)
+        
+#         # Define the "Start Check Time" for this day
+#         if day_offset == 0:
+#             # For TODAY: Slots must be later than 'Right Now'
+#             # We make it aware to compare with the slot times later
+#             day_min_start = timezone.make_aware(now_naive, timezone.get_current_timezone())
+#         else:
+#             # For FUTURE DAYS: Slots can start from 00:00
+#             naive_start = datetime.combine(current_date, time(0, 0))
+#             day_min_start = timezone.make_aware(naive_start, timezone.get_current_timezone())
+
+#         # Check this day against every interviewer
+#         for interviewer_id in job_interviewer_ids:
+#             work_cal = work_cal_map.get(interviewer_id)
+#             if not work_cal: continue
+            
+#             # 1. Week Off Check: If OFF, strictly skip (do not look for next day)
+#             if day_name in [work_cal.weekoff1, work_cal.weekoff2]:
+#                 continue
+            
+#             # 2. Shift Logic
+#             try:
+#                 naive_work_start = datetime.combine(current_date, work_cal.starttime)
+#                 shift_start = timezone.make_aware(naive_work_start, timezone.get_current_timezone())
+                
+#                 work_hours = int(work_cal.hours)
+#                 shift_end = shift_start + timedelta(hours=work_hours)
+                
+#                 # Start generating slots from the later of: Shift Start OR Allowed Time (Now)
+#                 slot_start = max(day_min_start, shift_start)
+
+#                 # Clean seconds (14:10:55 -> 14:10:00)
+#                 slot_start = slot_start.replace(second=0, microsecond=0)
+
+#                 # Align to 30-min grid
+#                 if slot_start.minute % slot_duration_minutes != 0:
+#                     add_mins = slot_duration_minutes - (slot_start.minute % slot_duration_minutes)
+#                     slot_start += timedelta(minutes=add_mins)
+                
+#                 # EDGE CASE: If rounding/alignment pushed slot back into the past (before Now)
+#                 if slot_start <= day_min_start:
+#                      slot_start += slot_timedelta
+
+#                 slot_end = slot_start + slot_timedelta
+
+#                 # 3. Generate Slots
+#                 while slot_end <= shift_end:
+#                     is_booked = False
+#                     for b_start, b_end in unavailable_slots.get(interviewer_id, []):
+#                         if slot_start < b_end and slot_end > b_start:
+#                             is_booked = True
+#                             break
+                    
+#                     if not is_booked:
+#                         slots_available_per_interviewer[interviewer_id].append({
+#                             'start': slot_start,
+#                             'end': slot_end,
+#                         })
+                    
+#                     slot_start = slot_end
+#                     slot_end = slot_start + slot_timedelta
+            
+#             except Exception:
+#                 continue
+
+#     # 4. Consolidate Results
+#     all_available_slots = {}
+#     for iid, slots in slots_available_per_interviewer.items():
+#         for slot in slots:
+#             key_iso = slot['start'].isoformat()
+#             if key_iso not in all_available_slots:
+#                 all_available_slots[key_iso] = {
+#                     'start_time': key_iso,
+#                     'end_time': slot['end'].isoformat(),
+#                     'available_interviewers': []
+#                 }
+#             all_available_slots[key_iso]['available_interviewers'].append(iid)
+        
+#     return sorted(all_available_slots.values(), key=lambda x: x['start_time'])
+from collections import defaultdict
+
 def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, scheduled_call_buffer_minutes=30):
     """
-    Returns available slots for exactly the next 'num_days' (Calendar Days).
-    - If a day is a 'Week Off', it returns no slots for that day (it does not look further).
-    - Filters out any slots that are in the past relative to the current system time.
+    Returns available slots considering multiple shifts per day per user.
     """
     
-    # 1. SETUP: Get Current Time
-    # We use naive 'datetime.now()' to act as the "Candidate's Wall Clock"
-    now_naive = datetime.now() 
-    
-    # We use aware time for database queries
+    # --- 1. SETUP ---
+    # Naive for "Wall Clock" (Calendar loops), Aware for DB comparisons
+    now_naive = datetime.now()
     now_aware = timezone.now()
 
-    # 2. Fetch Data
+    # --- 2. FETCH AND GROUP WORK CALENDARS ---
+    # We fetch ALL rows. 
+    # CRITICAL: One user can have multiple rows (Shifts), so we group them in a list.
     work_cals = WorkCal.objects.filter(userid__in=job_interviewer_ids)
-    work_cal_map = {wc.userid: wc for wc in work_cals}
     
-    # Fetch scheduled calls for the exact window (Today + num_days)
-    # end_date_limit = now_aware + timedelta(days=num_days + 1)
-    # scheduled_calls = CallSchedule.objects.filter(
-    #     interviewerid__in=job_interviewer_ids,
-    #     datentime__gte=now_aware,
-    #     datentime__lte=end_date_limit, 
-    #     status="A"
-    # ).order_by('datentime')
+    # Structure: { userid: [WorkCal_Obj1, WorkCal_Obj2, ...] }
+    work_cal_map = defaultdict(list)
+    for wc in work_cals:
+        if wc.userid is not None:
+            work_cal_map[wc.userid].append(wc)
+
+    # --- 3. FETCH BOOKED SLOTS ---
     end_date_limit = now_aware + timedelta(days=num_days + 1)
     scheduled_calls = CallSchedule.objects.filter(
-       
-        Q(status="S") | Q(status="R"), 
-       
+        Q(status="S") | Q(status="R"),
         interviewerid__in=job_interviewer_ids,
         datentime__gte=now_aware,
         datentime__lte=end_date_limit
     ).order_by('datentime')
-    print("scheduled_calls",scheduled_calls)
 
     unavailable_slots = {iid: [] for iid in job_interviewer_ids}
     buffer_timedelta = timedelta(minutes=scheduled_call_buffer_minutes)
 
     for call in scheduled_calls:
         start_time = call.datentime
+        # Block from StartTime to (StartTime + Buffer)
         end_time = start_time + buffer_timedelta
         unavailable_slots[call.interviewerid].append((start_time, end_time))
 
+    # --- 4. CALCULATE SLOTS ---
     slots_available_per_interviewer = {iid: [] for iid in job_interviewer_ids}
     slot_timedelta = timedelta(minutes=slot_duration_minutes)
-    
-    # --- 3. CALENDAR DAY LOOP (Exactly num_days) ---
-    # We just loop 0, 1, 2... to get Today, Tomorrow, Day After
+
+    # Helper to clean day names (Handle "Monday " vs "Monday" vs "Mon")
+    def clean_day(d_name):
+        return d_name.strip().lower()[:3] if d_name else ""
+
     for day_offset in range(num_days):
-        
-        # Calculate the specific date to check
-        # We use now_naive to ensure we stick to the system's day definition
-        current_date = (now_naive + timedelta(days=day_offset)).date()
-        day_name = get_full_day_name(current_date)
-        
-        # Define the "Start Check Time" for this day
+        # Determine the date and the day name (e.g., "Monday")
+        target_date = (now_naive + timedelta(days=day_offset)).date()
+        target_day_full = target_date.strftime("%A") 
+        target_day_abbr = clean_day(target_day_full) # e.g. "mon"
+
+        # Define the earliest possible start time for this specific day
         if day_offset == 0:
-            # For TODAY: Slots must be later than 'Right Now'
-            # We make it aware to compare with the slot times later
-            day_min_start = timezone.make_aware(now_naive, timezone.get_current_timezone())
+            # For TODAY: Slots must start after 'Now'
+            day_min_time = timezone.make_aware(now_naive, timezone.get_current_timezone())
         else:
             # For FUTURE DAYS: Slots can start from 00:00
-            naive_start = datetime.combine(current_date, time(0, 0))
-            day_min_start = timezone.make_aware(naive_start, timezone.get_current_timezone())
+            start_of_day = datetime.combine(target_date, time(0, 0))
+            day_min_time = timezone.make_aware(start_of_day, timezone.get_current_timezone())
 
-        # Check this day against every interviewer
+        # Check every interviewer
         for interviewer_id in job_interviewer_ids:
-            work_cal = work_cal_map.get(interviewer_id)
-            if not work_cal: continue
+            # Get all shifts defined for this user
+            all_shifts = work_cal_map.get(interviewer_id, [])
             
-            # 1. Week Off Check: If OFF, strictly skip (do not look for next day)
-            if day_name in [work_cal.weekoff1, work_cal.weekoff2]:
-                continue
-            
-            # 2. Shift Logic
-            try:
-                naive_work_start = datetime.combine(current_date, work_cal.starttime)
-                shift_start = timezone.make_aware(naive_work_start, timezone.get_current_timezone())
+            # Filter shifts that match the Current Loop Day
+            todays_shifts = []
+            for wc in all_shifts:
+                # Compare cleaned DB value with cleaned Target Day
+                # This handles "Monday" == "Monday" and "Mon" == "Monday"
+                wc_day = clean_day(wc.startday)
+                if wc_day == target_day_abbr:
+                    todays_shifts.append(wc)
+
+            if not todays_shifts:
+                continue # No work scheduled for this user on this day
+
+            # Process EACH shift found for today
+            for shift in todays_shifts:
+                # 1. Check WeekOffs
+                # (If explicitly marked as weekoff, skip even if a shift exists)
+                w_off1 = clean_day(shift.weekoff1)
+                w_off2 = clean_day(shift.weekoff2)
                 
-                work_hours = int(work_cal.hours)
-                shift_end = shift_start + timedelta(hours=work_hours)
-                
-                # Start generating slots from the later of: Shift Start OR Allowed Time (Now)
-                slot_start = max(day_min_start, shift_start)
+                if target_day_abbr in [w_off1, w_off2]:
+                    continue
 
-                # Clean seconds (14:10:55 -> 14:10:00)
-                slot_start = slot_start.replace(second=0, microsecond=0)
-
-                # Align to 30-min grid
-                if slot_start.minute % slot_duration_minutes != 0:
-                    add_mins = slot_duration_minutes - (slot_start.minute % slot_duration_minutes)
-                    slot_start += timedelta(minutes=add_mins)
-                
-                # EDGE CASE: If rounding/alignment pushed slot back into the past (before Now)
-                if slot_start <= day_min_start:
-                     slot_start += slot_timedelta
-
-                slot_end = slot_start + slot_timedelta
-
-                # 3. Generate Slots
-                while slot_end <= shift_end:
-                    is_booked = False
-                    for b_start, b_end in unavailable_slots.get(interviewer_id, []):
-                        if slot_start < b_end and slot_end > b_start:
-                            is_booked = True
-                            break
+                try:
+                    # 2. Parse Start Time and Duration
+                    if not shift.starttime or not shift.hours:
+                        continue
+                        
+                    # Build Shift Start/End (Aware Datetimes)
+                    naive_shift_start = datetime.combine(target_date, shift.starttime)
+                    shift_start = timezone.make_aware(naive_shift_start, timezone.get_current_timezone())
                     
-                    if not is_booked:
-                        slots_available_per_interviewer[interviewer_id].append({
-                            'start': slot_start,
-                            'end': slot_end,
-                        })
-                    
-                    slot_start = slot_end
-                    slot_end = slot_start + slot_timedelta
-            
-            except Exception:
-                continue
+                    work_hours = float(shift.hours)
+                    shift_end = shift_start + timedelta(hours=work_hours)
 
-    # 4. Consolidate Results
+                    # 3. Determine actual Slot Generation Start
+                    # Start at the later of: The Shift Start OR The Constraint (Now)
+                    current_slot_start = max(shift_start, day_min_time)
+
+                    # 4. Align to 30-minute grid
+                    # Reset seconds/microseconds
+                    current_slot_start = current_slot_start.replace(second=0, microsecond=0)
+                    
+                    # If 10:10 -> Move to 10:30
+                    remainder = current_slot_start.minute % slot_duration_minutes
+                    if remainder != 0:
+                        add_mins = slot_duration_minutes - remainder
+                        current_slot_start += timedelta(minutes=add_mins)
+
+                    # If alignment pushed it before "Now" (on current day), push it forward
+                    if day_offset == 0 and current_slot_start < day_min_time:
+                         current_slot_start += slot_timedelta
+                    
+                    current_slot_end = current_slot_start + slot_timedelta
+
+                    # 5. Generate Slots
+                    while current_slot_end <= shift_end:
+                        
+                        # Check against booked calls
+                        is_booked = False
+                        user_bookings = unavailable_slots.get(interviewer_id, [])
+                        
+                        for b_start, b_end in user_bookings:
+                            # Standard Overlap: (StartA < EndB) and (EndA > StartB)
+                            if current_slot_start < b_end and current_slot_end > b_start:
+                                is_booked = True
+                                break
+                        
+                        if not is_booked:
+                            slots_available_per_interviewer[interviewer_id].append({
+                                'start': current_slot_start,
+                                'end': current_slot_end
+                            })
+
+                        # Next slot
+                        current_slot_start = current_slot_end
+                        current_slot_end = current_slot_start + slot_timedelta
+
+                except Exception as e:
+                    print(f"Error processing shift {shift.id}: {e}")
+                    continue
+
+    # --- 5. MERGE RESULTS ---
     all_available_slots = {}
     for iid, slots in slots_available_per_interviewer.items():
         for slot in slots:
@@ -4480,6 +4832,7 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
                     'end_time': slot['end'].isoformat(),
                     'available_interviewers': []
                 }
-            all_available_slots[key_iso]['available_interviewers'].append(iid)
-        
+            if iid not in all_available_slots[key_iso]['available_interviewers']:
+                all_available_slots[key_iso]['available_interviewers'].append(iid)
+
     return sorted(all_available_slots.values(), key=lambda x: x['start_time'])

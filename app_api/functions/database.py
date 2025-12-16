@@ -216,12 +216,20 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
 def scheduleInterviewDB(user_id, dataObjs):
     try:
         user = User.objects.get(id=user_id)
+        raw_cid = str(dataObjs.get('candidate_id'))
         # company_account = Account.objects.get(companyid=user.companyid)
         # company_credits = CompanyCredits.objects.get(companyid=user.companyid,transtype="I")
         # if company_account.balance >= company_credits.credits:
-        encrypted_cid = unquote(dataObjs.get('candidate_id'))
-        dataObjs['candidate_id'] = encrypted_cid
-        dataObjs['candidate_id'] = decrypt_code(dataObjs['candidate_id'])
+        # encrypted_cid = unquote(dataObjs.get('candidate_id'))
+        # dataObjs['candidate_id'] = encrypted_cid
+        # dataObjs['candidate_id'] = decrypt_code(dataObjs['candidate_id'])
+        if raw_cid.isdigit():
+            # If it's just numbers (e.g., "432"), use it directly
+            dataObjs['candidate_id'] = raw_cid
+        else:
+            # If it's not a number, assume it's encrypted and decrypt it
+            encrypted_cid = unquote(raw_cid)
+            dataObjs['candidate_id'] = decrypt_code(encrypted_cid)
         call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
         if call_details:    
             datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
