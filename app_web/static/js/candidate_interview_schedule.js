@@ -355,7 +355,7 @@
 
                 let final_data = {
                     "data": JSON.stringify(dataObj),
-                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    csrfmiddlewaretoken: CSRF_TOKEN,
                 };
 
                 // Log the final payload for debugging
