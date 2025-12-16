@@ -180,7 +180,19 @@ $(document).ready(function () {
         let [h, m] = t.split(":");
         return (+h * 60) + (+m);
     }
+    function exceeds24Hours(row) {
 
+        let h = row.querySelector(".startHour").value;
+        let m = row.querySelector(".startMinute").value;
+        let hrs = row.querySelector(".Hours").value;
+
+        if (!h || !m || hrs === "" || Number(hrs) <= 0) return false;
+
+        let startMinutes = toMinutes(`${h}:${m}`);
+        let endMinutes = startMinutes + (Number(hrs) * 60);
+
+        return endMinutes > 1440; // 24 * 60
+    }
     function hasConflict(row) {
 
         let day = row.querySelector(".startDay").value;
@@ -228,7 +240,6 @@ $(document).ready(function () {
         }
     );
 
-
     $(document).on(
         "input change",
         ".startDay, .startHour, .startMinute, .Hours",
@@ -238,6 +249,20 @@ $(document).ready(function () {
 
             if (row.dataset.conflict === "1") return;
 
+            if (exceeds24Hours(row)) {
+
+                Swal.fire({
+                    icon: "warning",
+                    title: "Invalid Duration",
+                    text: "Hours cannot exceed 24 hours from the selected start time.",
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#274699'
+                });
+
+                row.querySelector(".Hours").value = "";
+                return;
+            }
+
             if (hasConflict(row)) {
 
                 row.dataset.conflict = "1";
@@ -245,7 +270,9 @@ $(document).ready(function () {
                 Swal.fire({
                     icon: "warning",
                     title: "Time Conflict",
-                    text: "This time overlaps with an existing schedule for the same day."
+                    text: "This time overlaps with an existing schedule for the same day.",
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#274699'
                 });
 
                 row.querySelector(".startHour").value = "";
@@ -254,7 +281,6 @@ $(document).ready(function () {
             }
         }
     );
-
 
     $(document).on("click", ".deleteDbBtn", function () {
 
@@ -297,7 +323,6 @@ $(document).ready(function () {
 
 
 
-
     $("#saveBtn").click(function () {
 
         let rows = document.querySelectorAll(".work-row");
@@ -306,20 +331,45 @@ $(document).ready(function () {
         let weekoff1 = document.querySelector(".weekOff1").value;
         let weekoff2 = document.querySelector(".weekOff2").value;
 
-        rows.forEach(row => {
+        let isValid = true;
+        let errorMsg = "";
+
+        rows.forEach((row, index) => {
+
+            let day = row.querySelector(".startDay").value;
             let hour = row.querySelector(".startHour").value;
             let minute = row.querySelector(".startMinute").value;
+            let hours = row.querySelector(".Hours").value;
+
+            
+            if (!day || !hour || !minute || hours === "" || Number(hours) <= 0) {
+                isValid = false;
+                errorMsg = `Please fill all required fields in row ${index + 1}`;
+                return false;
+            }
 
             list.push({
                 id: row.dataset.id || null,
-                startday: row.querySelector(".startDay").value,
-                starttime: (hour && minute) ? `${hour}:${minute}` : "",
-                hours: row.querySelector(".Hours").value,
+                startday: day,
+                starttime: `${hour}:${minute}`,
+                hours: hours,
                 weekoff1: weekoff1,
                 weekoff2: weekoff2
             });
         });
 
+        if (!isValid) {
+            Swal.fire({
+                icon: "warning",
+                title: "Missing Feild Details",
+                text: errorMsg,
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#274699'
+            });
+            return;
+        }
+
+        
         $.post(
             CONFIG['portal'] + "/api/save-work-cal",
             {
@@ -340,6 +390,7 @@ $(document).ready(function () {
             }
         );
     });
+
 
     $("#cancelBtn").click(function () {
         location.reload();
