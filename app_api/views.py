@@ -30,7 +30,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB
+    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB
 from app_api.functions.constants import hirelines_registration_script
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -2548,6 +2548,8 @@ def update_jd_status(request):
 
 
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
 def scheduleCandidateInterview(request):
     response = {
         'data': None,
@@ -2557,9 +2559,9 @@ def scheduleCandidateInterview(request):
     print("scheduleCandidateInterview")
     try:
         if request.method == "POST":
-            user = auth_user(request.user)
+            # user = auth_user(request.user)
             dataObjs = json.loads(request.POST.get('data'))
-            res = scheduleInterviewDB(user.id, dataObjs)
+            res = scheduleCandidateInterviewDB(dataObjs)
             response['data'] = res
             response['statusCode'] = 0
 

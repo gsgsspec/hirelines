@@ -1352,3 +1352,93 @@ def createProfileActivityDB(dataObjs):
 
     except Exception as e:
         raise
+
+
+
+
+
+
+
+
+def scheduleCandidateInterviewDB(dataObjs):
+    try:
+       
+        raw_cid = str(dataObjs.get('candidate_id'))
+        # company_account = Account.objects.get(companyid=user.companyid)
+        # company_credits = CompanyCredits.objects.get(companyid=user.companyid,transtype="I")
+        # if company_account.balance >= company_credits.credits:
+        # encrypted_cid = unquote(dataObjs.get('candidate_id'))
+        # dataObjs['candidate_id'] = encrypted_cid
+        # dataObjs['candidate_id'] = decrypt_code(dataObjs['candidate_id'])
+        if raw_cid.isdigit():
+            # If it's just numbers (e.g., "432"), use it directly
+            dataObjs['candidate_id'] = raw_cid
+        else:
+            # If it's not a number, assume it's encrypted and decrypt it
+            encrypted_cid = unquote(raw_cid)
+            dataObjs['candidate_id'] = decrypt_code(encrypted_cid)
+        call_details = CallSchedule.objects.filter(candidateid=dataObjs['candidate_id']).last()
+        if call_details:    
+            datentime_str = ' '.join(dataObjs['slot_id'].split('__')[:2])
+            datentime = datetime.strptime(datentime_str, '%a-%d-%b-%Y %I_%M_%p') 
+            interviewer = dataObjs['slot_id'].split('__')[2:]
+            interviewer_id = interviewer[0]
+            
+            scheduled_check = CallSchedule.objects.filter(Q(interviewerid=interviewer_id), Q(datentime=datentime),
+                                                            Q(status='S')|Q(status='R'))
+            
+            print("scheduled_check",scheduled_check)
+            # Updating Not scheduled Call
+
+            if not scheduled_check:
+                candidate = Candidate.objects.get(id=call_details.candidateid)
+                meeting_config = getConfig()['MEETING_CONFIG']['meeting_link']
+                string_ = str(interviewer_id) + (str(candidate.candidateid).replace("-", "")) + str(call_details.id)
+                enc_st_ = string_.encode('utf-8')
+                hex_code = enc_st_.hex()
+                meeting_link = meeting_config + hex_code
+                call_details.datentime = datentime
+                call_details.interviewerid = interviewer_id
+                call_details.instructions = dataObjs['instructions']
+                call_details.status = 'S'
+                call_details.meetinglink = meeting_link
+           
+                call_details.companyid = candidate.companyid
+                call_details.save()
+
+                # Mail Replacements
+                job_desc = JobDesc.objects.get(id=candidate.jobid)
+                interview_time = call_details.datentime.strftime("%d-%b-%Y %I:%M %p") 
+
+                interviewer = User.objects.get(id=call_details.interviewerid)
+                to_mails = f"{candidate.email},{interviewer.email}"
+
+                interview_data = {
+                    'job_title':job_desc.title,
+                    'meetinglink':call_details.meetinglink,
+                    'int_paper': call_details.paper_id,
+                    'candidate_code': candidate.candidateid,
+                    'interviewer': call_details.interviewerid,
+                    'interview_time': interview_time,
+                    'to_emails': to_mails,
+                    'instructions': call_details.instructions,
+                    'schedule_type':dataObjs['schedule_type']
+                }
+
+                acert_domain = getConfig()['DOMAIN']['acert']
+                endpoint = '/api/schedule-interview'
+
+                url = urljoin(acert_domain, endpoint)
+
+                send_interview_data = requests.post(url, json=interview_data)
+
+                return "Slot Booked"
+            else: 
+                return "Please select another slot"
+        else:
+            return "No Candidate"
+        # else:
+        #     return "insufficient_credits"
+    except Exception as e:
+        print(str(e))
+        raise
