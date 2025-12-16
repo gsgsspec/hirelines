@@ -3876,11 +3876,8 @@ def getProfileData(pid, user_data):
 
         if not profile:
             return None
+        
         profile_address = ProfileAddress.objects.filter(profileid=pid).last()
-
-        if not profile_address:
-            return None
-
         
         profile_data = {
             "personal": None,
@@ -3910,12 +3907,12 @@ def getProfileData(pid, user_data):
             "dateofbirth": (
                 profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
             ),
-            "addline1": profile_address.addline1 or "",
-            "addline2": profile_address.addline2 or "",
-            "city": profile_address.city or "",
-            "state": profile_address.state or "",
-            "country": profile_address.country or "",
-            "zipcode": profile_address.zipcode or "",
+            "addline1": profile_address.addline1 if profile_address else"" ,
+            "addline2": profile_address.addline2 if profile_address else"" ,
+            "city": profile_address.city if profile_address else"" ,
+            "state": profile_address.state if profile_address else"" ,
+            "country": profile_address.country if profile_address else"" ,
+            "zipcode": profile_address.zipcode if profile_address else"" ,
         }
 
         # Education

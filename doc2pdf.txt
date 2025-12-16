@@ -5,3 +5,5 @@
 2. Add in system variable path : C:\Program Files\LibreOffice\program\soffice.exe (might change according to your PC configuration)
 
 3. Add the path in doc2pdf file
+
+4. If you see a popup waiting for printer, Go setting > Printer & scanners and set a printer as default or Microsoft Print to PDF

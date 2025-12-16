@@ -148,12 +148,12 @@
                 
                 let calendarHtml = `
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <button type="button" onclick="navigateMonth(-1)" class="btn btn-sm btn-outline-secondary rounded-circle">
-                            <i class="fas fa-chevron-left"></i>
+                        <button type="button" onclick="navigateMonth(-1)" class="btn btn-sm">
+                            <i class="fas fa-chevron-left p-clr"></i>
                         </button>
-                        <h3 class="fs-6 fw-bold text-dark mb-0">${formatDate(state.currentMonth)}</h3>
-                        <button type="button" onclick="navigateMonth(1)" class="btn btn-sm btn-outline-secondary rounded-circle">
-                            <i class="fas fa-chevron-right"></i>
+                        <h3 class="fs-6 fw-bold text-dark mb-0 p-clr">${formatDate(state.currentMonth)}</h3>
+                        <button type="button" onclick="navigateMonth(1)" class="btn btn-sm">
+                            <i class="fas fa-chevron-right p-clr"></i>
                         </button>
                     </div>
                     <div class="calendar-grid text-center text-secondary fw-semibold mb-2">
@@ -179,7 +179,7 @@
                     let title = isAvailable ? `Available slots on ${formatDate(date, 'full')}` : 'No slots available';
                     
                     if (isAvailable) {
-                        classes += ' text-dark btn-link p-0 ';
+                        classes += ' text-dark btn-link p-0 available';
                     } else {
                         classes += ' text-muted ';
                     }
@@ -232,7 +232,7 @@
                         <button type="button"
                             onclick="selectTime('${time}')"
                             ${state.isSubmitting ? 'disabled' : ''}
-                            class="${classes}"
+                            class="${classes} slot-btn"
                         >
                             ${time}
                         </button>
