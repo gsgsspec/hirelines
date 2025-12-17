@@ -13,7 +13,7 @@ from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candida
     ResumeFile, WorkCal,ProfileAddress
 
 
-from .doc2pdf import convert_word_binary_to_pdf
+# from .doc2pdf import convert_word_binary_to_pdf
 
 def addCompanyDataDB(dataObjs):
     try:

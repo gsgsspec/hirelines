@@ -748,7 +748,7 @@ def getCompanyJdData(cid):
         raise
 
 
-def getCompanyJDsList(companyId,user_role):
+def getCompanyJDsList(companyId, user_role):
     try:
         company_jds = list(JobDesc.objects.filter(companyid=companyId).values())
         if len(company_jds) > 0:
@@ -768,13 +768,11 @@ def getCompanyJDsList(companyId,user_role):
                     InactiveJds.append(jd)  # Add to inactive jobs list
                 else:
                     # activeJds.append(jd)  # Add to active jobs list
-                    if user_role == 'Recruiting-Manager':
-                        if jd['status'] in ['F', 'O', 'R', 'H']:
+                    if user_role == "Recruiting-Manager":
+                        if jd["status"] in ["F", "O", "R", "H"]:
                             activeJds.append(jd)
                     else:
                         activeJds.append(jd)
-
-
 
             return {"activeJd": activeJds, "inactiveJd": InactiveJds}
         else:
@@ -1161,7 +1159,6 @@ def getJdWorkflowService(jid, cid):
 def getCallScheduleDetails(cid):
     try:
         candidate = Candidate.objects.get(id=cid)
-        
 
         jd = JobDesc.objects.get(id=candidate.jobid)
 
@@ -1189,6 +1186,7 @@ def getCallScheduleDetails(cid):
     except Exception as e:
         raise
 
+
 # def interviewSchedulingService(aplid, int_id):
 #     try:
 
@@ -1215,7 +1213,7 @@ def getCallScheduleDetails(cid):
 #             if scheduled_call[0]:
 #                 # FIX: Convert DB time (UTC) to Local Time before formatting
 #                 local_db_time = timezone.localtime(scheduled_call[0])
-                
+
 #                 scheduled_calls_list.append(
 #                     [local_db_time.strftime("%Y-%m-%d %I:%M %p"), scheduled_call[1]]
 #                 )
@@ -1411,6 +1409,7 @@ def getCallScheduleDetails(cid):
 
 #         return scheduling_data
 
+
 #     except Exception as e:
 #         raise
 def interviewSchedulingService(aplid, int_id):
@@ -1427,7 +1426,7 @@ def interviewSchedulingService(aplid, int_id):
         )
 
         scheduling_data = []
-        
+
         # 1. Fetch Scheduled Calls (Blockers)
         scheduled_calls = list(
             CallSchedule.objects.filter(Q(status="S") | Q(status="R")).values_list(
@@ -1445,11 +1444,17 @@ def interviewSchedulingService(aplid, int_id):
                 )
 
         # 2. Fetch Helper Data
-        vacation_data = list(Vacation.objects.filter(empid=int_id).values("empid", "fromdate", "todate"))
-        workcal_data = list(WorkCal.objects.filter(userid=int_id).values()) # Your Roster
-        
+        vacation_data = list(
+            Vacation.objects.filter(empid=int_id).values("empid", "fromdate", "todate")
+        )
+        workcal_data = list(
+            WorkCal.objects.filter(userid=int_id).values()
+        )  # Your Roster
+
         # 3. Fetch Alter Timings (Overrides)
-        alter_timings_data = ExtendedHours.objects.filter(empid=int_id, status="A").values()
+        alter_timings_data = ExtendedHours.objects.filter(
+            empid=int_id, status="A"
+        ).values()
         alter_timings_list = {}
 
         # Process Alter Timings into a Dictionary keyed by Date string
@@ -1458,43 +1463,47 @@ def interviewSchedulingService(aplid, int_id):
             for x in range(days_diff):
                 curr_alter_date = alter["fromdate"] + timedelta(days=x)
                 date_str = curr_alter_date.strftime("%Y-%m-%d")
-                
+
                 alter_timings_list[date_str] = {
                     "starttime": alter["starttime"],
                     "workhours": alter["workhours"],
-                    "userid": alter["userid"]
+                    "userid": alter["userid"],
                 }
 
         # 4. Main Scheduling Loop (Next 15 Days)
-        for x in range(0, 15): 
+        for x in range(0, 15):
             hours_list = []
             slots_list = []
             status_list = []
 
             # Initialize Telecallers (Active Users)
-            telecallers = list(User.objects.filter(status="A", id=int_id).values_list("id", flat=True))
+            telecallers = list(
+                User.objects.filter(status="A", id=int_id).values_list("id", flat=True)
+            )
 
             # Current Date Calculation
             current_date_obj = basedt + timedelta(days=x)
-            _date_str = current_date_obj.strftime("%Y-%m-%d") # YYYY-MM-DD
-            _day_name = current_date_obj.strftime("%A")       # Monday, Tuesday...
-            date_formatted = current_date_obj.strftime("%a-%d-%b-%Y") # Mon-15-Dec-2025
+            _date_str = current_date_obj.strftime("%Y-%m-%d")  # YYYY-MM-DD
+            _day_name = current_date_obj.strftime("%A")  # Monday, Tuesday...
+            date_formatted = current_date_obj.strftime("%a-%d-%b-%Y")  # Mon-15-Dec-2025
 
             # A. Remove users on Vacation
             # Check if this specific day is inside any vacation range
-            current_date_start = datetime.strptime(_date_str + " 00:00:00", "%Y-%m-%d %H:%M:%S")
-            
+            current_date_start = datetime.strptime(
+                _date_str + " 00:00:00", "%Y-%m-%d %H:%M:%S"
+            )
+
             for vacation in vacation_data:
                 v_from = datetime.combine(vacation["fromdate"], time.min)
                 v_to = datetime.combine(vacation["todate"], time.max)
-                
+
                 if v_from <= current_date_start <= v_to:
                     if vacation["empid"] in telecallers:
                         telecallers.remove(vacation["empid"])
 
             # B. Check for Holidays
             if HolidayCal.objects.filter(holidaydt=_date_str).exists():
-                 # Fill entire day as Holiday
+                # Fill entire day as Holiday
                 for i in range(WORK_HOURS * 2):
                     slot_time = basedt + timedelta(minutes=30 * i)
                     hours_list.append(slot_time.strftime("%I:%M %p"))
@@ -1506,10 +1515,15 @@ def interviewSchedulingService(aplid, int_id):
                     slot_dt = current_date_obj + timedelta(minutes=30 * i)
                     slot_time_str = slot_dt.strftime("%I:%M %p")
                     hours_list.append(slot_time_str)
-                    
+
                     # Logic to block past times
-                    curr_time_limit = datetime.now() + timedelta(hours=BLOCK_HOURS, minutes=30)
-                    is_past_or_blocked = (_date_str == datetime.today().strftime("%Y-%m-%d") and slot_dt <= curr_time_limit)
+                    curr_time_limit = datetime.now() + timedelta(
+                        hours=BLOCK_HOURS, minutes=30
+                    )
+                    is_past_or_blocked = (
+                        _date_str == datetime.today().strftime("%Y-%m-%d")
+                        and slot_dt <= curr_time_limit
+                    )
 
                     if is_past_or_blocked:
                         status_list.append("Blocked")
@@ -1517,53 +1531,64 @@ def interviewSchedulingService(aplid, int_id):
                         continue
 
                     # D. Determine Availability for THIS SPECIFIC SLOT
-                    
+
                     # Start with assumption: No one is working this slot unless proven otherwise
                     working_users_this_slot = set()
 
                     # We check every potential telecaller
                     for user_id in telecallers:
                         is_working = False
-                        
+
                         # 1. Check Alter Timings (Priority)
                         if _date_str in alter_timings_list:
                             alter_data = alter_timings_list[_date_str]
                             if alter_data["userid"] == user_id:
                                 # Calculate Alter Start/End
                                 start_t = alter_data["starttime"]
-                                w_hours = float(alter_data["workhours"]) # Ensure float for half hours
-                                
-                                start_dt_alter = datetime.combine(current_date_obj.date(), start_t)
+                                w_hours = float(
+                                    alter_data["workhours"]
+                                )  # Ensure float for half hours
+
+                                start_dt_alter = datetime.combine(
+                                    current_date_obj.date(), start_t
+                                )
                                 end_dt_alter = start_dt_alter + timedelta(hours=w_hours)
 
                                 # Check if slot is within Alter window
                                 if start_dt_alter <= slot_dt < end_dt_alter:
                                     is_working = True
-                        
+
                         # 2. Check Standard WorkCal (Only if no Alter override or to strictly follow requirement)
                         # Assuming Alter replaces standard roster. If not in Alter, check WorkCal.
                         else:
                             # Get all shifts for this user on this specific day name (e.g., "Monday")
                             user_shifts = [
-                                w for w in workcal_data 
-                                if w['userid'] == user_id and w['startday'] == _day_name
+                                w
+                                for w in workcal_data
+                                if w["userid"] == user_id and w["startday"] == _day_name
                             ]
-                            
+
                             for shift in user_shifts:
                                 # Parse Shift Start
-                                start_t = shift['starttime'] # Time object or string? Assuming Time object from DB
+                                start_t = shift[
+                                    "starttime"
+                                ]  # Time object or string? Assuming Time object from DB
                                 if isinstance(start_t, str):
-                                    start_t = datetime.strptime(start_t, "%H:%M:%S").time()
+                                    start_t = datetime.strptime(
+                                        start_t, "%H:%M:%S"
+                                    ).time()
 
-                                w_hours = float(shift['hours'])
+                                w_hours = float(shift["hours"])
 
-                                start_dt_shift = datetime.combine(current_date_obj.date(), start_t)
+                                start_dt_shift = datetime.combine(
+                                    current_date_obj.date(), start_t
+                                )
                                 end_dt_shift = start_dt_shift + timedelta(hours=w_hours)
 
                                 # Check if slot is within this specific shift window
                                 if start_dt_shift <= slot_dt < end_dt_shift:
                                     is_working = True
-                                    break # Found a valid shift for this slot, no need to check other shifts for same user
+                                    break  # Found a valid shift for this slot, no need to check other shifts for same user
 
                         if is_working:
                             working_users_this_slot.add(user_id)
@@ -1573,13 +1598,13 @@ def interviewSchedulingService(aplid, int_id):
                     for user_id in working_users_this_slot:
                         # Construct key to check against scheduled calls
                         call_key = f"{_date_str} {slot_time_str}"
-                        
+
                         is_booked = False
                         for call in scheduled_calls_list:
                             if call[0] == call_key and call[1] == user_id:
                                 is_booked = True
                                 break
-                        
+
                         if not is_booked:
                             available_for_slot.append(user_id)
 
@@ -1588,7 +1613,7 @@ def interviewSchedulingService(aplid, int_id):
                         status_list.append("No_Vacancy")
                     else:
                         status_list.append("Available")
-                    
+
                     slots_list.append(available_for_slot)
 
             # Prepare Response Object
@@ -1608,9 +1633,11 @@ def interviewSchedulingService(aplid, int_id):
 
     except Exception as e:
         import traceback
-        print(traceback.format_exc()) # Helpful for debugging
+
+        print(traceback.format_exc())  # Helpful for debugging
         raise e
-    
+
+
 def getInterviewerCandidates(userid):
     try:
 
@@ -3876,9 +3903,9 @@ def getProfileData(pid, user_data):
 
         if not profile:
             return None
-        
+
         profile_address = ProfileAddress.objects.filter(profileid=pid).last()
-        
+
         profile_data = {
             "personal": None,
             "education": None,
@@ -3907,12 +3934,12 @@ def getProfileData(pid, user_data):
             "dateofbirth": (
                 profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
             ),
-            "addline1": profile_address.addline1 if profile_address else"" ,
-            "addline2": profile_address.addline2 if profile_address else"" ,
-            "city": profile_address.city if profile_address else"" ,
-            "state": profile_address.state if profile_address else"" ,
-            "country": profile_address.country if profile_address else"" ,
-            "zipcode": profile_address.zipcode if profile_address else"" ,
+            "addline1": profile_address.addline1 if profile_address else "",
+            "addline2": profile_address.addline2 if profile_address else "",
+            "city": profile_address.city if profile_address else "",
+            "state": profile_address.state if profile_address else "",
+            "country": profile_address.country if profile_address else "",
+            "zipcode": profile_address.zipcode if profile_address else "",
         }
 
         # Education
@@ -4202,12 +4229,50 @@ from datetime import datetime
 
 RULES = {
     "education": {
-        "set_1": {"items": ["B-Tech", "BCom", "BA"], "points": 6},
-        "set_2": {"items": ["MBA", "MCA", "BBA"], "points": 4},
+        "set_1": {
+            "items": [
+                "B-Tech",
+                "Btech",
+                "BE",
+                "BSc",
+                "BCom",
+                "BA",
+                "BBA",
+                "BBM",
+                "BCA",
+                "BHM",
+                "BDes",
+                "BFA",
+                "BS",
+            ],
+            "points": 6,
+        },
+        "set_2": {
+            "items": [
+                "MBA",
+                "MCA",
+                "MTech",
+                "M-Tech",
+                "ME",
+                "MS",
+                "MA",
+                "MCom",
+                "MSc",
+                "M.Sc",
+                "MPhil",
+                "LLM",
+                "MPH",
+                "MDes",
+                "MFA",
+                "MEd",
+                "PGDM",
+                "PGDBM",
+            ],
+            "points": 4,
+        },
     },
     "experience": {
         "sets": [
-            # {"min": 1, "max": 3, "base_points": 5},
             {"min": 3, "max": 5, "base_points": 10},
         ],
         "deduction": {"per_item": 1, "min_score": 0},
@@ -4215,10 +4280,7 @@ RULES = {
     "projects": {
         "base_points": 10,
         "min_required": 3,
-        "deduction": {
-            "per_short_project": 1,
-            "min_score": 0
-        }
+        "deduction": {"per_short_project": 1, "min_score": 0},
     },
     "certificates": {"points_per_item": 1, "max_points": 5},
     "awards": {"points_per_item": 1, "max_points": 5},
@@ -4236,6 +4298,16 @@ RULES = {
                 "kotlin",
                 "swift",
                 "mysql",
+                "postgresql",
+                "oracle",
+                "mongodb",
+                "redis",
+                "sqlite",
+                "bash",
+                "powershell",
+                "aws",
+                "azure",
+                "gcp",
             ],
             "points_per_skill": 10,
             "max_points": 20,
@@ -4245,16 +4317,26 @@ RULES = {
                 "react",
                 "angular",
                 "vue",
+                "svelte",
                 "nodejs",
+                "express",
+                "nestjs",
                 "django",
                 "flask",
                 "fastapi",
                 "spring",
                 "spring boot",
-                "express",
                 "laravel",
                 "dotnet",
                 "nextjs",
+                "nuxtjs",
+                "graphql",
+                "rest api",
+                "docker",
+                "kubernetes",
+                "jenkins",
+                "gitlab ci",
+                "github actions",
             ],
             "points_per_skill": 5,
             "max_points": 20,
@@ -4268,6 +4350,8 @@ RULES = {
                 "jquery",
                 "bootstrap",
                 "tailwind",
+                "material ui",
+                "chakra ui",
                 "sass",
                 "less",
                 "webpack",
@@ -4275,6 +4359,16 @@ RULES = {
                 "babel",
                 "npm",
                 "yarn",
+                "pnpm",
+                "eslint",
+                "prettier",
+                "git",
+                "github",
+                "bitbucket",
+                "json",
+                "xml",
+                "responsive design",
+                "cross browser testing",
             ],
             "points_per_skill": 5,
             "max_points": 20,
@@ -4288,7 +4382,7 @@ class ProfileScoringEngine:
         self.rules = RULES
         self.current_year = datetime.now().year
 
-        # Normalize education items to lowercase (NEW)
+        # Normalize education items to lowercase
         for rule in self.rules["education"].values():
             rule["items"] = {item.lower() for item in rule["items"]}
 
@@ -4297,6 +4391,15 @@ class ProfileScoringEngine:
             tier["skills"] = {s.lower() for s in tier["skills"]}
 
     # ---------- HELPERS ----------
+
+    def _normalize_text(self, text: str) -> str:
+        """Normalize text for case-insensitive + substring match"""
+        return (
+            text.lower()
+            .replace(".", "")
+            .replace("-", "")
+            .strip()
+        )
 
     def calculate_experience_years(self, experience):
         years = 0
@@ -4327,22 +4430,30 @@ class ProfileScoringEngine:
         if not isinstance(education, list):
             return 0
 
-        # Case-insensitive education matching
-        courses = {
-            e.get("course").lower()
+        # Normalize candidate course strings
+        courses = [
+            self._normalize_text(e.get("course"))
             for e in education
             if isinstance(e, dict) and isinstance(e.get("course"), str)
-        }
+        ]
 
         for rule in self.rules["education"].values():
-            if courses & rule["items"]:
-                score += rule["points"]
+            for rule_item in rule["items"]:
+                rule_norm = self._normalize_text(rule_item)
+
+                # SUBSTRING MATCH (both directions)
+                if any(
+                    rule_norm in course or course in rule_norm
+                    for course in courses
+                ):
+                    score += rule["points"]
+                    break  # avoid double add for same rule
 
         return score
 
     def score_experience(self, profile):
         experience = profile.get("experience", [])
-        
+
         if not isinstance(experience, list) or len(experience) == 0:
             return 0
 
@@ -4364,17 +4475,14 @@ class ProfileScoringEngine:
                 company_years.append(years)
                 total_years += years
 
-        
         if total_years == 0:
             return 0
 
         score = base_points
 
-        # Rule 1: below minimum total experience
         if total_years < min_required:
-            score -= (min_required - total_years)
+            score -= min_required - total_years
 
-        # Rule 2: company-level deduction
         for yrs in company_years:
             if yrs < min_required:
                 score -= 1
@@ -4384,7 +4492,6 @@ class ProfileScoringEngine:
     def score_projects(self, profile):
         projects = profile.get("projects", [])
 
-        # No projects → 0
         if not isinstance(projects, list) or len(projects) == 0:
             return 0
 
@@ -4408,11 +4515,9 @@ class ProfileScoringEngine:
                 valid_project_found = True
                 years = end - start
 
-                # ONLY deduction logic
                 if years < min_required:
                     score -= per_short_project
 
-        # Projects exist but no valid durations
         if not valid_project_found:
             return 0
 
@@ -4437,15 +4542,12 @@ class ProfileScoringEngine:
         secondary = profile.get("skills", {}).get("secondaryskills") or ""
 
         skills_text = f"{primary},{secondary}".lower()
-
         remaining_skills = {s.strip() for s in skills_text.split(",") if s.strip()}
 
         score = 0
 
-        # 🔧 FIX: tier priority + no double count
         for tier_key in ["tier_1", "tier_2", "tier_3"]:
             tier = self.rules["skills"][tier_key]
-
             matched = remaining_skills & tier["skills"]
 
             score += min(
@@ -4454,7 +4556,6 @@ class ProfileScoringEngine:
             )
 
             remaining_skills -= matched
-
             if not remaining_skills:
                 break
 
@@ -4488,23 +4589,25 @@ class ProfileScoringEngine:
             "breakdown": breakdown,
         }
 
+
+
 def getSlotsAvailable(cid):
     """
     Main function to find available interview slots for a candidate's job.
-    
+
     :param cid: Candidate ID.
     :return: List of available 30-minute slots.
     """
     try:
         # 1. Get Job Interviewer IDs
         candidate = Candidate.objects.get(id=cid)
-          
+
         jd = JobDesc.objects.get(id=candidate.jobid)
-        candidate_id=candidate.id
+        candidate_id = candidate.id
         call_schedule = CallSchedule.objects.filter(candidateid=candidate_id).first()
 
         status = call_schedule.status if call_schedule else None
-      
+
         job_title = jd.title
         company_id = jd.companyid
         company = Company.objects.get(id=company_id)
@@ -4514,25 +4617,26 @@ def getSlotsAvailable(cid):
             jd_interviewers_raw = ast.literal_eval(jd.interviewers)
             # Ensure the list contains only integers
             job_interviewer_ids = [int(i) for i in jd_interviewers_raw]
-        else :
+        else:
             job_interviewer_ids = []
-        
+
         if not job_interviewer_ids:
-             # Handle case where no interviewers are assigned to the job
-             print(f"No interviewers found for job ID {candidate.jobid}.")
-             return []
+            # Handle case where no interviewers are assigned to the job
+            print(f"No interviewers found for job ID {candidate.jobid}.")
+            return []
 
         # 2. Call the new logic function
-        slots_available = get_open_slots(job_interviewer_ids )
-        
-        
-        return slots_available, job_title, company_name , status
-    
+        slots_available = get_open_slots(job_interviewer_ids)
+
+        return slots_available, job_title, company_name, status
+
     except Candidate.DoesNotExist:
         print(f"Error: Candidate with ID {cid} not found.")
         return []
     except JobDesc.DoesNotExist:
-        print(f"Error: Job Description for candidate {cid} (Job ID {candidate.jobid}) not found.")
+        print(
+            f"Error: Job Description for candidate {cid} (Job ID {candidate.jobid}) not found."
+        )
         return []
     except Exception as e:
         # Log the error and re-raise (or handle gracefully in a web context)
@@ -4542,7 +4646,8 @@ def getSlotsAvailable(cid):
 
 
 def get_full_day_name(date_obj):
-    return date_obj.strftime('%A')
+    return date_obj.strftime("%A")
+
 
 # def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, scheduled_call_buffer_minutes=30):
 #     """
@@ -4550,31 +4655,31 @@ def get_full_day_name(date_obj):
 #     - If a day is a 'Week Off', it returns no slots for that day (it does not look further).
 #     - Filters out any slots that are in the past relative to the current system time.
 #     """
-    
+
 #     # 1. SETUP: Get Current Time
 #     # We use naive 'datetime.now()' to act as the "Candidate's Wall Clock"
-#     now_naive = datetime.now() 
-    
+#     now_naive = datetime.now()
+
 #     # We use aware time for database queries
 #     now_aware = timezone.now()
 
 #     # 2. Fetch Data
 #     work_cals = WorkCal.objects.filter(userid__in=job_interviewer_ids)
 #     work_cal_map = {wc.userid: wc for wc in work_cals}
-    
+
 #     # Fetch scheduled calls for the exact window (Today + num_days)
 #     # end_date_limit = now_aware + timedelta(days=num_days + 1)
 #     # scheduled_calls = CallSchedule.objects.filter(
 #     #     interviewerid__in=job_interviewer_ids,
 #     #     datentime__gte=now_aware,
-#     #     datentime__lte=end_date_limit, 
+#     #     datentime__lte=end_date_limit,
 #     #     status="A"
 #     # ).order_by('datentime')
 #     end_date_limit = now_aware + timedelta(days=num_days + 1)
 #     scheduled_calls = CallSchedule.objects.filter(
-       
-#         Q(status="S") | Q(status="R"), 
-       
+
+#         Q(status="S") | Q(status="R"),
+
 #         interviewerid__in=job_interviewer_ids,
 #         datentime__gte=now_aware,
 #         datentime__lte=end_date_limit
@@ -4591,16 +4696,16 @@ def get_full_day_name(date_obj):
 
 #     slots_available_per_interviewer = {iid: [] for iid in job_interviewer_ids}
 #     slot_timedelta = timedelta(minutes=slot_duration_minutes)
-    
+
 #     # --- 3. CALENDAR DAY LOOP (Exactly num_days) ---
 #     # We just loop 0, 1, 2... to get Today, Tomorrow, Day After
 #     for day_offset in range(num_days):
-        
+
 #         # Calculate the specific date to check
 #         # We use now_naive to ensure we stick to the system's day definition
 #         current_date = (now_naive + timedelta(days=day_offset)).date()
 #         day_name = get_full_day_name(current_date)
-        
+
 #         # Define the "Start Check Time" for this day
 #         if day_offset == 0:
 #             # For TODAY: Slots must be later than 'Right Now'
@@ -4615,19 +4720,19 @@ def get_full_day_name(date_obj):
 #         for interviewer_id in job_interviewer_ids:
 #             work_cal = work_cal_map.get(interviewer_id)
 #             if not work_cal: continue
-            
+
 #             # 1. Week Off Check: If OFF, strictly skip (do not look for next day)
 #             if day_name in [work_cal.weekoff1, work_cal.weekoff2]:
 #                 continue
-            
+
 #             # 2. Shift Logic
 #             try:
 #                 naive_work_start = datetime.combine(current_date, work_cal.starttime)
 #                 shift_start = timezone.make_aware(naive_work_start, timezone.get_current_timezone())
-                
+
 #                 work_hours = int(work_cal.hours)
 #                 shift_end = shift_start + timedelta(hours=work_hours)
-                
+
 #                 # Start generating slots from the later of: Shift Start OR Allowed Time (Now)
 #                 slot_start = max(day_min_start, shift_start)
 
@@ -4638,7 +4743,7 @@ def get_full_day_name(date_obj):
 #                 if slot_start.minute % slot_duration_minutes != 0:
 #                     add_mins = slot_duration_minutes - (slot_start.minute % slot_duration_minutes)
 #                     slot_start += timedelta(minutes=add_mins)
-                
+
 #                 # EDGE CASE: If rounding/alignment pushed slot back into the past (before Now)
 #                 if slot_start <= day_min_start:
 #                      slot_start += slot_timedelta
@@ -4652,16 +4757,16 @@ def get_full_day_name(date_obj):
 #                         if slot_start < b_end and slot_end > b_start:
 #                             is_booked = True
 #                             break
-                    
+
 #                     if not is_booked:
 #                         slots_available_per_interviewer[interviewer_id].append({
 #                             'start': slot_start,
 #                             'end': slot_end,
 #                         })
-                    
+
 #                     slot_start = slot_end
 #                     slot_end = slot_start + slot_timedelta
-            
+
 #             except Exception:
 #                 continue
 
@@ -4677,25 +4782,31 @@ def get_full_day_name(date_obj):
 #                     'available_interviewers': []
 #                 }
 #             all_available_slots[key_iso]['available_interviewers'].append(iid)
-        
+
 #     return sorted(all_available_slots.values(), key=lambda x: x['start_time'])
 from collections import defaultdict
 
-def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, scheduled_call_buffer_minutes=30):
+
+def get_open_slots(
+    job_interviewer_ids,
+    num_days=3,
+    slot_duration_minutes=30,
+    scheduled_call_buffer_minutes=30,
+):
     """
     Returns available slots considering multiple shifts per day per user.
     """
-    
+
     # --- 1. SETUP ---
     # Naive for "Wall Clock" (Calendar loops), Aware for DB comparisons
     now_naive = datetime.now()
     now_aware = timezone.now()
 
     # --- 2. FETCH AND GROUP WORK CALENDARS ---
-    # We fetch ALL rows. 
+    # We fetch ALL rows.
     # CRITICAL: One user can have multiple rows (Shifts), so we group them in a list.
     work_cals = WorkCal.objects.filter(userid__in=job_interviewer_ids)
-    
+
     # Structure: { userid: [WorkCal_Obj1, WorkCal_Obj2, ...] }
     work_cal_map = defaultdict(list)
     for wc in work_cals:
@@ -4708,8 +4819,8 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
         Q(status="S") | Q(status="R"),
         interviewerid__in=job_interviewer_ids,
         datentime__gte=now_aware,
-        datentime__lte=end_date_limit
-    ).order_by('datentime')
+        datentime__lte=end_date_limit,
+    ).order_by("datentime")
 
     unavailable_slots = {iid: [] for iid in job_interviewer_ids}
     buffer_timedelta = timedelta(minutes=scheduled_call_buffer_minutes)
@@ -4731,23 +4842,27 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
     for day_offset in range(num_days):
         # Determine the date and the day name (e.g., "Monday")
         target_date = (now_naive + timedelta(days=day_offset)).date()
-        target_day_full = target_date.strftime("%A") 
-        target_day_abbr = clean_day(target_day_full) # e.g. "mon"
+        target_day_full = target_date.strftime("%A")
+        target_day_abbr = clean_day(target_day_full)  # e.g. "mon"
 
         # Define the earliest possible start time for this specific day
         if day_offset == 0:
             # For TODAY: Slots must start after 'Now'
-            day_min_time = timezone.make_aware(now_naive, timezone.get_current_timezone())
+            day_min_time = timezone.make_aware(
+                now_naive, timezone.get_current_timezone()
+            )
         else:
             # For FUTURE DAYS: Slots can start from 00:00
             start_of_day = datetime.combine(target_date, time(0, 0))
-            day_min_time = timezone.make_aware(start_of_day, timezone.get_current_timezone())
+            day_min_time = timezone.make_aware(
+                start_of_day, timezone.get_current_timezone()
+            )
 
         # Check every interviewer
         for interviewer_id in job_interviewer_ids:
             # Get all shifts defined for this user
             all_shifts = work_cal_map.get(interviewer_id, [])
-            
+
             # Filter shifts that match the Current Loop Day
             todays_shifts = []
             for wc in all_shifts:
@@ -4758,7 +4873,7 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
                     todays_shifts.append(wc)
 
             if not todays_shifts:
-                continue # No work scheduled for this user on this day
+                continue  # No work scheduled for this user on this day
 
             # Process EACH shift found for today
             for shift in todays_shifts:
@@ -4766,7 +4881,7 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
                 # (If explicitly marked as weekoff, skip even if a shift exists)
                 w_off1 = clean_day(shift.weekoff1)
                 w_off2 = clean_day(shift.weekoff2)
-                
+
                 if target_day_abbr in [w_off1, w_off2]:
                     continue
 
@@ -4774,11 +4889,13 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
                     # 2. Parse Start Time and Duration
                     if not shift.starttime or not shift.hours:
                         continue
-                        
+
                     # Build Shift Start/End (Aware Datetimes)
                     naive_shift_start = datetime.combine(target_date, shift.starttime)
-                    shift_start = timezone.make_aware(naive_shift_start, timezone.get_current_timezone())
-                    
+                    shift_start = timezone.make_aware(
+                        naive_shift_start, timezone.get_current_timezone()
+                    )
+
                     work_hours = float(shift.hours)
                     shift_end = shift_start + timedelta(hours=work_hours)
 
@@ -4788,8 +4905,10 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
 
                     # 4. Align to 30-minute grid
                     # Reset seconds/microseconds
-                    current_slot_start = current_slot_start.replace(second=0, microsecond=0)
-                    
+                    current_slot_start = current_slot_start.replace(
+                        second=0, microsecond=0
+                    )
+
                     # If 10:10 -> Move to 10:30
                     remainder = current_slot_start.minute % slot_duration_minutes
                     if remainder != 0:
@@ -4798,28 +4917,30 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
 
                     # If alignment pushed it before "Now" (on current day), push it forward
                     if day_offset == 0 and current_slot_start < day_min_time:
-                         current_slot_start += slot_timedelta
-                    
+                        current_slot_start += slot_timedelta
+
                     current_slot_end = current_slot_start + slot_timedelta
 
                     # 5. Generate Slots
                     while current_slot_end <= shift_end:
-                        
+
                         # Check against booked calls
                         is_booked = False
                         user_bookings = unavailable_slots.get(interviewer_id, [])
-                        
+
                         for b_start, b_end in user_bookings:
                             # Standard Overlap: (StartA < EndB) and (EndA > StartB)
-                            if current_slot_start < b_end and current_slot_end > b_start:
+                            if (
+                                current_slot_start < b_end
+                                and current_slot_end > b_start
+                            ):
                                 is_booked = True
                                 break
-                        
+
                         if not is_booked:
-                            slots_available_per_interviewer[interviewer_id].append({
-                                'start': current_slot_start,
-                                'end': current_slot_end
-                            })
+                            slots_available_per_interviewer[interviewer_id].append(
+                                {"start": current_slot_start, "end": current_slot_end}
+                            )
 
                         # Next slot
                         current_slot_start = current_slot_end
@@ -4833,14 +4954,14 @@ def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, sc
     all_available_slots = {}
     for iid, slots in slots_available_per_interviewer.items():
         for slot in slots:
-            key_iso = slot['start'].isoformat()
+            key_iso = slot["start"].isoformat()
             if key_iso not in all_available_slots:
                 all_available_slots[key_iso] = {
-                    'start_time': key_iso,
-                    'end_time': slot['end'].isoformat(),
-                    'available_interviewers': []
+                    "start_time": key_iso,
+                    "end_time": slot["end"].isoformat(),
+                    "available_interviewers": [],
                 }
-            if iid not in all_available_slots[key_iso]['available_interviewers']:
-                all_available_slots[key_iso]['available_interviewers'].append(iid)
+            if iid not in all_available_slots[key_iso]["available_interviewers"]:
+                all_available_slots[key_iso]["available_interviewers"].append(iid)
 
-    return sorted(all_available_slots.values(), key=lambda x: x['start_time'])
+    return sorted(all_available_slots.values(), key=lambda x: x["start_time"])
