@@ -4232,6 +4232,7 @@ RULES = {
         "set_1": {
             "items": [
                 "B-Tech",
+                "Bachelor of Technology"
                 "Btech",
                 "BE",
                 "BSc",
@@ -4250,8 +4251,11 @@ RULES = {
         "set_2": {
             "items": [
                 "MBA",
+                "Master of business applications",
                 "MCA",
+                "Master of computer applications",
                 "MTech",
+                "Master of Technology",
                 "M-Tech",
                 "ME",
                 "MS",
@@ -4268,8 +4272,9 @@ RULES = {
                 "PGDM",
                 "PGDBM",
             ],
-            "points": 4,
+            "points": 10,
         },
+        "max_points": 10,
     },
     "experience": {
         "sets": [
@@ -4384,7 +4389,8 @@ class ProfileScoringEngine:
 
         # Normalize education items to lowercase
         for rule in self.rules["education"].values():
-            rule["items"] = {item.lower() for item in rule["items"]}
+            if isinstance(rule, dict) and "items" in rule:
+                rule["items"] = {item.lower() for item in rule["items"]}
 
         # Skills already case-insensitive
         for tier in self.rules["skills"].values():
@@ -4424,32 +4430,30 @@ class ProfileScoringEngine:
     # ---------- SCORERS ----------
 
     def score_education(self, profile):
-        score = 0
-
         education = profile.get("education", [])
         if not isinstance(education, list):
             return 0
 
-        # Normalize candidate course strings
-        courses = [
-            self._normalize_text(e.get("course"))
+        # Case-insensitive matching
+        courses = {
+            e.get("course").lower()
             for e in education
             if isinstance(e, dict) and isinstance(e.get("course"), str)
-        ]
+        }
 
-        for rule in self.rules["education"].values():
-            for rule_item in rule["items"]:
-                rule_norm = self._normalize_text(rule_item)
+        score = 0
 
-                # SUBSTRING MATCH (both directions)
-                if any(
-                    rule_norm in course or course in rule_norm
-                    for course in courses
-                ):
-                    score += rule["points"]
-                    break  # avoid double add for same rule
+        for key, rule in self.rules["education"].items():
+            if key == "max_points":
+                continue
 
-        return score
+            rule_items = {item.lower() for item in rule["items"]}
+            if courses & rule_items:
+                score += rule["points"]
+
+        # ✅ CAP education score
+        max_points = self.rules["education"].get("max_points", score)
+        return min(score, max_points)
 
     def score_experience(self, profile):
         experience = profile.get("experience", [])
