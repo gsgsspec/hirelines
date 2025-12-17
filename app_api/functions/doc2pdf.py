@@ -16,7 +16,7 @@ def get_libreoffice_cmd():
         return "soffice"
     else:
         # Linux / macOS
-        return "libreoffice"
+        return "soffice"
 
 
 def convert_word_binary_to_pdf(word_binary_data):
