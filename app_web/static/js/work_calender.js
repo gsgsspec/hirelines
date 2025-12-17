@@ -381,8 +381,17 @@ $(document).ready(function () {
                 csrfmiddlewaretoken: CSRF_TOKEN
             },
             function (res) {
+                // if (res.statusCode === 0) {
+                //     Swal.fire("Saved!", "", "success");
                 if (res.statusCode === 0) {
-                    Swal.fire("Saved!", "", "success");
+                    Swal.fire({
+                        title: "Saved Successfully!",
+                        text: "Your changes have been saved successfully.",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#274699" 
+                    });
+                
                     getWorkCal();
                 } else {
                     Swal.fire("Error!", res.error || "Unknown error", "error");
