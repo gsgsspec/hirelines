@@ -14,6 +14,7 @@ from django.db.models import Q, Count, Avg
 from datetime import datetime, date
 from datetime import datetime, timedelta, time, date
 from django.db.models import Q
+from collections import defaultdict
 
 
 from django.utils import timezone
@@ -3655,6 +3656,7 @@ def getProfileDetailsService(pid):
             "nativeof": profile.get("nativeof", ""),
             "facebook": profile.get("facebook", ""),
             "passportnum": profile.get("passportnum", ""),
+            "strength": profile.get("strength","")
         }
 
         education_list = (
@@ -4095,12 +4097,8 @@ def generateBrandedProfile(profile_id, user_data):
             "{#creation_date#}", profile_details["dateofcreation"].strftime("%d-%B-%Y")
         )
         updated_resume = updated_resume.replace("{#title#}", profile_details["title"])
-        updated_resume = updated_resume.replace(
-            "{#firstname#}", profile_details["firstname"]
-        )
-        updated_resume = updated_resume.replace(
-            "{#lastname#}", profile_details["lastname"]
-        )
+        updated_resume = updated_resume.replace("{#firstname#}", profile_details["firstname"])
+        updated_resume = updated_resume.replace("{#lastname#}", profile_details["lastname"])
         updated_resume = updated_resume.replace("{#email#}", profile_details["email"])
         updated_resume = updated_resume.replace(
             "{#dob#}",
@@ -4110,19 +4108,12 @@ def generateBrandedProfile(profile_id, user_data):
                 else ""
             ),
         )
-        updated_resume = updated_resume.replace(
-            "{#linkedin#}",
-            profile_details["linkedin"] if profile_details["linkedin"] else "",
-        )
-        updated_resume = updated_resume.replace(
-            "{#nativeof#}",
-            profile_details["nativeof"] if profile_details["nativeof"] else "",
-        )
-        updated_resume = updated_resume.replace(
-            "{#final_experience#}", profile_details["final_experience"]
-        )
+        updated_resume = updated_resume.replace("{#linkedin#}", profile_details["linkedin"] if profile_details["linkedin"] else "")
+        updated_resume = updated_resume.replace("{#nativeof#}",profile_details["nativeof"] if profile_details["nativeof"] else "")
+        updated_resume = updated_resume.replace("{#final_experience#}", profile_details["final_experience"])
         updated_resume = updated_resume.replace("{#user_name#}", user_data.name)
         updated_resume = updated_resume.replace("{#company_name#}", company.name)
+        updated_resume = updated_resume.replace("{#strength#}", f"{profile_details['strength']}%" if profile_details["strength"] else "")
 
         education_data = ""
 
@@ -4651,144 +4642,6 @@ def getSlotsAvailable(cid):
 
 def get_full_day_name(date_obj):
     return date_obj.strftime("%A")
-
-
-# def get_open_slots(job_interviewer_ids, num_days=3, slot_duration_minutes=30, scheduled_call_buffer_minutes=30):
-#     """
-#     Returns available slots for exactly the next 'num_days' (Calendar Days).
-#     - If a day is a 'Week Off', it returns no slots for that day (it does not look further).
-#     - Filters out any slots that are in the past relative to the current system time.
-#     """
-
-#     # 1. SETUP: Get Current Time
-#     # We use naive 'datetime.now()' to act as the "Candidate's Wall Clock"
-#     now_naive = datetime.now()
-
-#     # We use aware time for database queries
-#     now_aware = timezone.now()
-
-#     # 2. Fetch Data
-#     work_cals = WorkCal.objects.filter(userid__in=job_interviewer_ids)
-#     work_cal_map = {wc.userid: wc for wc in work_cals}
-
-#     # Fetch scheduled calls for the exact window (Today + num_days)
-#     # end_date_limit = now_aware + timedelta(days=num_days + 1)
-#     # scheduled_calls = CallSchedule.objects.filter(
-#     #     interviewerid__in=job_interviewer_ids,
-#     #     datentime__gte=now_aware,
-#     #     datentime__lte=end_date_limit,
-#     #     status="A"
-#     # ).order_by('datentime')
-#     end_date_limit = now_aware + timedelta(days=num_days + 1)
-#     scheduled_calls = CallSchedule.objects.filter(
-
-#         Q(status="S") | Q(status="R"),
-
-#         interviewerid__in=job_interviewer_ids,
-#         datentime__gte=now_aware,
-#         datentime__lte=end_date_limit
-#     ).order_by('datentime')
-#     print("scheduled_calls",scheduled_calls)
-
-#     unavailable_slots = {iid: [] for iid in job_interviewer_ids}
-#     buffer_timedelta = timedelta(minutes=scheduled_call_buffer_minutes)
-
-#     for call in scheduled_calls:
-#         start_time = call.datentime
-#         end_time = start_time + buffer_timedelta
-#         unavailable_slots[call.interviewerid].append((start_time, end_time))
-
-#     slots_available_per_interviewer = {iid: [] for iid in job_interviewer_ids}
-#     slot_timedelta = timedelta(minutes=slot_duration_minutes)
-
-#     # --- 3. CALENDAR DAY LOOP (Exactly num_days) ---
-#     # We just loop 0, 1, 2... to get Today, Tomorrow, Day After
-#     for day_offset in range(num_days):
-
-#         # Calculate the specific date to check
-#         # We use now_naive to ensure we stick to the system's day definition
-#         current_date = (now_naive + timedelta(days=day_offset)).date()
-#         day_name = get_full_day_name(current_date)
-
-#         # Define the "Start Check Time" for this day
-#         if day_offset == 0:
-#             # For TODAY: Slots must be later than 'Right Now'
-#             # We make it aware to compare with the slot times later
-#             day_min_start = timezone.make_aware(now_naive, timezone.get_current_timezone())
-#         else:
-#             # For FUTURE DAYS: Slots can start from 00:00
-#             naive_start = datetime.combine(current_date, time(0, 0))
-#             day_min_start = timezone.make_aware(naive_start, timezone.get_current_timezone())
-
-#         # Check this day against every interviewer
-#         for interviewer_id in job_interviewer_ids:
-#             work_cal = work_cal_map.get(interviewer_id)
-#             if not work_cal: continue
-
-#             # 1. Week Off Check: If OFF, strictly skip (do not look for next day)
-#             if day_name in [work_cal.weekoff1, work_cal.weekoff2]:
-#                 continue
-
-#             # 2. Shift Logic
-#             try:
-#                 naive_work_start = datetime.combine(current_date, work_cal.starttime)
-#                 shift_start = timezone.make_aware(naive_work_start, timezone.get_current_timezone())
-
-#                 work_hours = int(work_cal.hours)
-#                 shift_end = shift_start + timedelta(hours=work_hours)
-
-#                 # Start generating slots from the later of: Shift Start OR Allowed Time (Now)
-#                 slot_start = max(day_min_start, shift_start)
-
-#                 # Clean seconds (14:10:55 -> 14:10:00)
-#                 slot_start = slot_start.replace(second=0, microsecond=0)
-
-#                 # Align to 30-min grid
-#                 if slot_start.minute % slot_duration_minutes != 0:
-#                     add_mins = slot_duration_minutes - (slot_start.minute % slot_duration_minutes)
-#                     slot_start += timedelta(minutes=add_mins)
-
-#                 # EDGE CASE: If rounding/alignment pushed slot back into the past (before Now)
-#                 if slot_start <= day_min_start:
-#                      slot_start += slot_timedelta
-
-#                 slot_end = slot_start + slot_timedelta
-
-#                 # 3. Generate Slots
-#                 while slot_end <= shift_end:
-#                     is_booked = False
-#                     for b_start, b_end in unavailable_slots.get(interviewer_id, []):
-#                         if slot_start < b_end and slot_end > b_start:
-#                             is_booked = True
-#                             break
-
-#                     if not is_booked:
-#                         slots_available_per_interviewer[interviewer_id].append({
-#                             'start': slot_start,
-#                             'end': slot_end,
-#                         })
-
-#                     slot_start = slot_end
-#                     slot_end = slot_start + slot_timedelta
-
-#             except Exception:
-#                 continue
-
-#     # 4. Consolidate Results
-#     all_available_slots = {}
-#     for iid, slots in slots_available_per_interviewer.items():
-#         for slot in slots:
-#             key_iso = slot['start'].isoformat()
-#             if key_iso not in all_available_slots:
-#                 all_available_slots[key_iso] = {
-#                     'start_time': key_iso,
-#                     'end_time': slot['end'].isoformat(),
-#                     'available_interviewers': []
-#                 }
-#             all_available_slots[key_iso]['available_interviewers'].append(iid)
-
-#     return sorted(all_available_slots.values(), key=lambda x: x['start_time'])
-from collections import defaultdict
 
 
 def get_open_slots(

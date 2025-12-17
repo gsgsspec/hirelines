@@ -520,6 +520,7 @@ class Profile(models.Model):
     fathername = models.CharField(max_length=100, null=True, blank=True)
     nativeof = models.CharField(max_length=100, null=True, blank=True)
     status = models.CharField(max_length=1, null=True, blank=True) #  D - Draft, R - Rejected, O - Offered, E - Employee
+    strength = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'profile'
