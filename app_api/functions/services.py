@@ -958,6 +958,7 @@ def jdDetails(jdId, companyId):
                 "positions": "" if jdData.positions is None else jdData.positions,
                 "createdby": "" if jdData.createdby is None else jdData.createdby,
                 "status": "" if jdData.status is None else jdData.status,
+                "comments": "" if jdData.comments is None else jdData.comments,
                 "approval_status": "" if jdData.approval_status is None else jdData.approval_status,
                 "companyid": "" if jdData.companyid is None else jdData.companyid,
                 "interviewes_lst": total_interviewers_lst,

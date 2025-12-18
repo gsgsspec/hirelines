@@ -129,6 +129,17 @@
                                         </span>
                                     </div>
                                 </div>
+                                {% if user_role == "HR-Admin" and jd_details.approval_status == "R"  %}
+                                <div class="row mb-3 container-center">
+                                    <label class="col-sm-2 col-form-label">Revise Comment</label>
+                                    <div class="col-sm-9">
+                                       <textarea id="JdanySpecialNotes" class="form-control"
+                                            placeholder="Any Special instruction"
+                                            aria-describedby="basic-icon-default-message2" rows="3" readonly> {{ jd_details.comments }}</textarea>
+                                    </div>
+                                </div>
+                                {% endif %}
+
 
                                 <!-- <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
                   <div class="px-0 my-0" style="display: flex;justify-content: end; width: max-content; padding-right: 2.5rem !important;">
@@ -171,11 +182,11 @@
                                         {% if jd_details.approval_status == "" or jd_details.approval_status == "R" %}
 
                                         <!-- Draft OR Rejected -->
-                                        <button type="submit" class="btn btn-secondary">
+                                        <button type="submit" class="btn btn-primary">
                                             Update
                                         </button>
 
-                                        <button type="button" class="btn btn-primary"
+                                        <button type="button" class="btn btn-success"
                                             onclick="updateJDStatus('F','JD Sent for Approval')">
                                             Send for approval
                                         </button>
