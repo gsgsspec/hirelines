@@ -765,15 +765,36 @@ def getCompanyJDsList(companyId, user_role):
             activeJds = []
             # Separate the jobs based on status
             for jd in company_jds:
+                # if jd["status"] == "I":
+                #     InactiveJds.append(jd)  # Add to inactive jobs list
+                # else:
+                #     # activeJds.append(jd)  # Add to active jobs list
+                #     if user_role == "Hiring-Manager":
+                #         if jd["approval_status"] in ["F", "O", "R", "H","A"]:
+                #             activeJds.append(jd)
+                #     else:
+                #         activeJds.append(jd)
+                # -------- INACTIVE TAB --------
                 if jd["status"] == "I":
-                    InactiveJds.append(jd)  # Add to inactive jobs list
+                    InactiveJds.append(jd)
+                    continue
+
+                # -------- HIRING MANAGER VIEW --------
+                if user_role == "Hiring-Manager":
+
+                    # Draft without approval → hide
+                    if jd["status"] == "D" and not jd["approval_status"]:
+                        continue
+
+                    # Stopped jobs → hide
+                    if jd["status"] == "P":
+                        continue
+
+                    activeJds.append(jd)
+
+                # -------- OTHER ROLES (HR / ADMIN) --------
                 else:
-                    # activeJds.append(jd)  # Add to active jobs list
-                    if user_role == "Recruiting-Manager":
-                        if jd["status"] in ["F", "O", "R", "H"]:
-                            activeJds.append(jd)
-                    else:
-                        activeJds.append(jd)
+                    activeJds.append(jd)
 
             return {"activeJd": activeJds, "inactiveJd": InactiveJds}
         else:
@@ -937,6 +958,7 @@ def jdDetails(jdId, companyId):
                 "positions": "" if jdData.positions is None else jdData.positions,
                 "createdby": "" if jdData.createdby is None else jdData.createdby,
                 "status": "" if jdData.status is None else jdData.status,
+                "approval_status": "" if jdData.approval_status is None else jdData.approval_status,
                 "companyid": "" if jdData.companyid is None else jdData.companyid,
                 "interviewes_lst": total_interviewers_lst,
                 "selectedInterviewerLst": selectedInterviewerLst,

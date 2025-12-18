@@ -510,10 +510,12 @@ function updateJDStatus(statusCode, successMsg) {
         },
         success: function (res) {
             if (res.statusCode === 0) {
-                alert(successMsg);
-                location.reload();
+                showSuccessMessage(successMsg);
+                setInterval(5000)
+                window.location.href = '/job-descriptions';
+
             } else {
-                alert("Status update failed");
+                showFailureMessage("Status update failed");
             }
         }
     });

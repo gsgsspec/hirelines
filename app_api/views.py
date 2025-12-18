@@ -2536,7 +2536,7 @@ def update_jd_status(request):
         new_status = body.get("status")
 
         jd = JobDesc.objects.get(id=jd_id)
-        jd.status = new_status  
+        jd.approval_status = new_status  
         jd.save()
 
         response["statusCode"] = 0

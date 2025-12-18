@@ -175,38 +175,44 @@
                         Back
                       </button>
 
-                      <button type="submit" id="submitJd" class="btn btn-primary">
+                      
+                      {% if jd_details.approval_status == "" or jd_details.approval_status == "R" %}
+
+                      <!-- Draft OR Rejected -->
+                      <button type="submit" class="btn btn-primary">
                         Update
                       </button>
 
-                      <button type="button" id="sentforapproval"
-                            class="btn btn-primary"
-                            onclick="updateJDStatus('F', 'JD Sent for Approval')">
+                      <button type="button" class="btn btn-primary"
+                              onclick="updateJDStatus('F','JD Sent for Approval')">
                         Sent For Approval
-                    </button>
+                      </button>
+
+                    {% else %}
+
+                      <!-- Already in approval flow -->
+                      <button type="submit" class="btn btn-primary" hidden>
+                        Update
+                      </button>
+
+                      <button type="button" class="btn btn-primary" hidden>
+                        Sent For Approval
+                      </button>
+
+                    {% endif %}
+
 
 
                     </div>
                   </div>
 
                   {% else %}
-                <div class="row mt-3">
-                <div class="col-12 d-flex justify-content-between align-items-center">
+                  <div class="row mb-1 container-center">
+                    <div style="display: flex; justify-content: flex-end; width: 100%; padding-right: 2.5rem; gap: 15px;">
 
-                  <!-- LEFT : Assign To -->
-                  <div class="d-flex align-items-center gap-2">
-                      <label class="col-form-label mb-0">Assign To</label>
-                      <select class="form-select" id="assignTo" style="width: 200px;">
-                          <option value="">Select User</option>
-                          <option value="1">Recruiter 1</option>
-                          <option value="2">Recruiter 2</option>
-                          <option value="3">Recruiter 3</option>
-                      </select>
-                  </div>
+                    <!-- Recruiting Manager Action Buttons -->
+                    <div id="rmActionButtons" style="display: flex; gap: 15px;">
 
-
-                  <!-- Recruiting Manager Action Buttons -->
-                  <div id="rmActionButtons" style="display: flex; gap: 15px; margin-top: 10px; justify-content: flex-end;">
                       
                       <button type="submit" id="submitJd" class="btn btn-primary">Update</button>
                       <button type="button" class="btn btn-primary"
@@ -216,7 +222,7 @@
 
                       <button type="button" class="btn btn-primary"
                               onclick="updateJDStatus('R', 'JD Rejected')">
-                          Reject
+                          Rivise
                       </button>
 
                       <button type="button" class="btn btn-primary"

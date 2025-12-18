@@ -84,6 +84,8 @@ class JobDesc(models.Model):
     companyid = models.IntegerField(null=True)
     status = models.CharField(max_length=1, null=True) # D - Draft, P - Publish , S - Stopped , I - Close 
     dashboardflag = models.CharField(max_length=1, null=True)
+    approval_status = models.CharField(max_length=1, null=True)
+
 
     class Meta:
         db_table = 'jobdesc'

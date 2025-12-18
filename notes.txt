@@ -212,3 +212,8 @@ alter table profile add column strength int null;
 alter table source add column userid int null;
 
 =================
+
+
+
+ALTER TABLE jobdesc
+ADD approval_status VARCHAR(1) NULL,
