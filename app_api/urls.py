@@ -91,4 +91,5 @@ urlpatterns = [
 
     path('get-mail-resumes',views.getMailResumes),
     path('download-branded-profile',views.downloadBrandedProfile),
+    path('jd-recruiter-assign',views.jdRecruiterAssign)
 ]

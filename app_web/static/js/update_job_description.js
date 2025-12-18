@@ -530,3 +530,55 @@ function updateJDStatus(statusCode, successMsg) {
         }
     });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$(document).on("click", "#assign-recruiters", function () {
+
+    let selectedIds = [];
+
+    $(".recruiter-checkbox:checked").each(function () {
+        selectedIds.push($(this).val());
+    });
+
+    dataObjs = {
+        "jdid": JdId,
+        "recruiter_ids":selectedIds
+    }
+
+    var final_data = {
+        "data":JSON.stringify(dataObjs),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    };
+
+    try {
+        $.post(CONFIG['portal'] + "/api/jd-recruiter-assign", final_data, function (res) {
+            if (res.statusCode == 0){   
+
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Recruiter assigned successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        })
+
+    } catch (error) {
+        console.error('Failed to send data to backend:', error);
+    }
+});

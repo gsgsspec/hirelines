@@ -7,7 +7,7 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills
 from app_api.functions.services import ProfileScoringEngine, getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -337,11 +337,12 @@ def update_jobdescription(request,update_jd_id):
         currentPath = get_current_path(request.path)
 
         jd_details = jdDetails(update_jd_id, compyId)
+        recruiters_data = getRecruitersData(update_jd_id, compyId)
 
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         
-        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details,'user_role':user_role})
+        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details,'user_role':user_role,'recruiters_data':recruiters_data})
     except Exception as e:
         raise
 

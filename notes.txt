@@ -210,14 +210,10 @@ CHANGE COLUMN `weekoff2` `weekoff2` VARCHAR(10) NULL DEFAULT NULL ;
 
 alter table profile add column strength int null;
 alter table source add column userid int null;
+alter table jobdesc add column recruiterids varchar(100) NULL;
 
 =================
 
 
-
-ALTER TABLE jobdesc
-ADD approval_status VARCHAR(1) NULL,
-
-
-ALTER TABLE jobdesc
-ADD COLUMN comments VARCHAR(100) NULL;
+ALTER TABLE jobdesc ADD COLUMN approval_status VARCHAR(1) NULL;
+ALTER TABLE jobdesc ADD COLUMN comments VARCHAR(100) NULL;

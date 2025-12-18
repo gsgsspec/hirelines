@@ -141,28 +141,27 @@
                                 {% endif %}
 
 
-                                <!-- <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
-                  <div class="px-0 my-0" style="display: flex;justify-content: end; width: max-content; padding-right: 2.5rem !important;">
-                    <button type="button" id="" class="btn btn-secondary" onclick="window.location.href='/job-descriptions'" style="width: 90px; margin-right: 15px;">Back</button>
-                    <button type="submit" id="submitJd" class="btn btn-primary" style="padding: 0.2625rem 1rem;">Update</button>
-                  </div>
-                </div> -->
-
                                 {% if user_role == "Hiring-Manager" and jd_details.approval_status == "O" %}
                                 <div style="margin-left: 4%;">
                                     <hr>
                                     <h5>Assign Recruiters</h5>
-                                    {% for recruiter in recruiters_data.all_recruiters %}
-                                    <div class="form-check mt-2">
-                                        <input class="form-check-input recruiter-checkbox" type="checkbox"
-                                            value="{{ recruiter.id }}" id="rec_{{ recruiter.id }}" {% if recruiter in recruiters_data.selected_recruiters %} checked {% endif %}>
-                                        <label class="form-check-label" for="rec_{{ recruiter.id }}"> {{ recruiter.name }} </label>
-                                    </div>
-                                    {% endfor %}
-                                    <div>
-                                        <button type="button" class="btn btn-primary mt-3" style="padding: 5px 15px;"
-                                            id="assign-recruiters"> Assign</button>
-                                    </div>
+                                    {% if recruiters_data.all_recruiters %}
+                                        {% for recruiter in recruiters_data.all_recruiters %}
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input recruiter-checkbox" type="checkbox"
+                                                value="{{ recruiter.id }}" id="rec_{{ recruiter.id }}" {% if recruiter in recruiters_data.selected_recruiters %} checked {% endif %}>
+                                            <label class="form-check-label" for="rec_{{ recruiter.id }}"> {{ recruiter.name }} </label>
+                                        </div>
+                                        {% endfor %}
+                                        <div>
+                                            <button type="button" class="btn btn-primary mt-3" style="padding: 5px 15px;"
+                                                id="assign-recruiters"> Assign</button>
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted mt-3">
+                                            No recruiters found
+                                        </p>
+                                    {% endif %}
                                 </div>
                                 {% endif %}
 

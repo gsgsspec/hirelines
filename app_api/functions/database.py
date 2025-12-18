@@ -1442,3 +1442,16 @@ def scheduleCandidateInterviewDB(dataObjs):
     except Exception as e:
         print(str(e))
         raise
+
+
+def jdRecruiterAssignDB(dataObjs):
+    try:
+
+        recruiter_ids_str = ",".join(map(str, dataObjs["recruiter_ids"]))
+
+        jd = JobDesc.objects.get(id=dataObjs["jdid"])
+        jd.recruiterids = recruiter_ids_str
+        jd.save()
+        
+    except Exception as e:
+        raise

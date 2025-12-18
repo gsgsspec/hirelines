@@ -4845,3 +4845,33 @@ def get_open_slots(
                 all_available_slots[key_iso]["available_interviewers"].append(iid)
 
     return sorted(all_available_slots.values(), key=lambda x: x["start_time"])
+
+
+
+def getRecruitersData(jdid,companyid):
+    try:
+
+        recruiters = User.objects.filter(companyid=companyid,role="Recruiter",status="A")
+        jd = JobDesc.objects.get(id=jdid)
+        jd_recruiters = jd.recruiterids
+
+        selected_recruiters = []
+
+        if jd_recruiters:
+
+            # Convert "1,2,3" → [1, 2, 3]
+            recruiter_ids = [
+                int(rid.strip())
+                for rid in jd_recruiters.split(",")
+                if rid.strip().isdigit()
+            ]
+
+            selected_recruiters = recruiters.filter(id__in=recruiter_ids)
+
+        return {
+            "all_recruiters": recruiters,
+            "selected_recruiters": selected_recruiters
+        }
+
+    except Exception as e:
+        raise

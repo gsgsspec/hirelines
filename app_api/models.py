@@ -86,8 +86,7 @@ class JobDesc(models.Model):
     dashboardflag = models.CharField(max_length=1, null=True)
     approval_status = models.CharField(max_length=1, null=True)
     comments = models.CharField(max_length=100, null=True)
-
-
+    recruiterids = models.CharField(max_length=100,null=True)
 
     class Meta:
         db_table = 'jobdesc'
