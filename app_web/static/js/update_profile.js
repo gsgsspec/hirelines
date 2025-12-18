@@ -393,18 +393,35 @@ function getTableData(tableSelector) {
 
             // Basic validation
             if (value === "" || value === null || value === undefined) {
-                hasEmpty = true;
+                // hasEmpty = true;
+                hasEmpty = false; 
             }
             
             // Additional 'year' validation (check if it's 4 digits if empty check passes)
-            if ($(this).data('type') === 'year' && value !== "" && !/^\d{4}$/.test(value)) {
-                 Swal.fire({
-                    title: "Validation Error",
-                    text: `${columnName.charAt(0).toUpperCase() + columnName.slice(1)} must be a 4-digit year.`,
-                    icon: "error",
-                    confirmButtonColor: "#3085d6",
-                 });
-                 hasEmpty = true; // Treat as empty/invalid for saving purpose
+            // if ($(this).data('type') === 'year' && value !== "" && !/^\d{4}$/.test(value)) {
+            //      Swal.fire({
+            //         title: "Validation Error",
+            //         text: `${columnName.charAt(0).toUpperCase() + columnName.slice(1)} must be a 4-digit year.`,
+            //         icon: "error",
+            //         confirmButtonColor: "#3085d6",
+            //      });
+            //      hasEmpty = true; // Treat as empty/invalid for saving purpose
+            // }
+                if ($(this).data('type') === 'year') {
+                    if (value !== "" && !/^\d{4}$/.test(value)) {
+                        Swal.fire({
+                            title: "Validation Error",
+                            text: `${columnName.charAt(0).toUpperCase() + columnName.slice(1)} must be a 4-digit year.`,
+                            icon: "error",
+                            confirmButtonColor: "#3085d6",
+                        });
+                        hasEmpty = true; // Treat as invalid
+                    }
+                            // else empty is fine
+                    else if (value === "") {
+                    // Convert empty string to null for backend
+                    value = null;
+                    }
             }
 
 

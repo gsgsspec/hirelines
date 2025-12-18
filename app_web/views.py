@@ -940,10 +940,15 @@ def profilesPage(request):
             exp = ProfileExperience.objects.filter(profileid=p["id"]).values("yearfrom", "yearto").first()
 
             if exp:
-                year_from = int(exp["yearfrom"])
-                year_to = int(exp["yearto"])
+                year_from = int(exp["yearfrom"]) if exp["yearfrom"] else ''
+                year_to = int(exp["yearto"])  if exp["yearto"] else ''
 
-                total_exp = year_to - year_from  
+                if year_from and year_to :
+                     total_exp = year_to - year_from  
+                else:
+                    total_exp = 0
+
+               
 
                 p["final_experience"] = f"{total_exp} Years"
             else:
