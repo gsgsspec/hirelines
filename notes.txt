@@ -217,3 +217,7 @@ alter table source add column userid int null;
 
 ALTER TABLE jobdesc
 ADD approval_status VARCHAR(1) NULL,
+
+
+ALTER TABLE jobdesc
+ADD COLUMN comments VARCHAR(100) NULL;
