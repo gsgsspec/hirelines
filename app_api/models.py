@@ -85,6 +85,8 @@ class JobDesc(models.Model):
     status = models.CharField(max_length=1, null=True) # D - Draft, P - Publish , S - Stopped , I - Close 
     dashboardflag = models.CharField(max_length=1, null=True)
     approval_status = models.CharField(max_length=1, null=True)
+    comments = models.CharField(max_length=100, null=True)
+
 
 
     class Meta:

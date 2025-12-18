@@ -495,10 +495,17 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
 
 
 function updateJDStatus(statusCode, successMsg) {
+    let comments = "";
+
+    if (statusCode === 'R') {
+        comments = document.getElementById("reviseComments")?.value.trim() || "";
+    }
 
     const payload = {
         JdID: JdId,
-        status: statusCode
+        status: statusCode,
+        comments: comments
+
     };
 
     $.ajax({
@@ -510,6 +517,9 @@ function updateJDStatus(statusCode, successMsg) {
         },
         success: function (res) {
             if (res.statusCode === 0) {
+                if (statusCode === 'R') {
+                    $('#reviseModal').modal('hide');
+                }
                 showSuccessMessage(successMsg);
                 setInterval(5000)
                 window.location.href = '/job-descriptions';

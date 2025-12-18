@@ -2534,9 +2534,15 @@ def update_jd_status(request):
         print("body",body)
         jd_id = body.get("JdID")
         new_status = body.get("status")
+        comments = body.get("comments")  
+
 
         jd = JobDesc.objects.get(id=jd_id)
-        jd.approval_status = new_status  
+        jd.approval_status = new_status
+        if comments is not None:
+            jd.comments = comments
+  
+        
         jd.save()
 
         response["statusCode"] = 0

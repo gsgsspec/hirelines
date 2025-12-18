@@ -193,15 +193,21 @@
                                         <div id="rmActionButtons" style="display: flex; gap: 15px;">
 
                                             <button type="submit" id="submitJd" class="btn btn-primary">Update</button>
+
+                                            {% if jd_details.approval_status != "O" %}
                                             <button type="button" class="btn btn-success"
                                                 onclick="updateJDStatus('O', 'JD Approved')">
                                                 Approve
                                             </button>
 
-                                            <button type="button" class="btn btn-danger"
+                                            <!-- <button type="button" class="btn btn-danger"
                                                 onclick="updateJDStatus('R', 'JD Rejected')">
                                                 Send for Rivise
+                                            </button> -->
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reviseModal">
+                                                Send for Revise
                                             </button>
+                                            {% endif %}
 
                                             <button type="button" class="btn btn-secondary"
                                                 onclick="updateJDStatus('H', 'JD Put On Hold')">
@@ -236,6 +242,40 @@
     </div>
     <!-- / Content -->
 </div>
+
+<!-- Revise Modal -->
+<div class="modal fade" id="reviseModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Revise Comments</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <textarea id="reviseComments" class="form-control" rows="4"
+          placeholder="Enter revise comments..."></textarea>
+        <small class="text-danger d-none" id="reviseError">
+          Please enter comments
+        </small>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+         <button type="button" class="btn btn-danger"
+                                                onclick="updateJDStatus('R', 'JD Rejected')">Send for Revise
+
+                                            </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 
 <style>
     #suggestionsBox {
