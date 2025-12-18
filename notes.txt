@@ -204,3 +204,11 @@ ALTER TABLE `workcal`
 CHANGE COLUMN `startday` `startday` VARCHAR(10) NULL DEFAULT NULL ,
 CHANGE COLUMN `weekoff1` `weekoff1` VARCHAR(10) NULL DEFAULT NULL ,
 CHANGE COLUMN `weekoff2` `weekoff2` VARCHAR(10) NULL DEFAULT NULL ;
+
+
+======Srikanth=========
+
+alter table profile add column strength int null;
+alter table source add column userid int null;
+
+=================
