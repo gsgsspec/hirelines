@@ -1,368 +1,353 @@
 {% load static %}
 
 <div class="content-wrapper">
-  <!-- Content -->
+    <!-- Content -->
 
-  <div class="container-xxl flex-grow-1 container-p-y">
-    <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Horizontal Layouts</h4> -->
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms/</span> Horizontal Layouts</h4> -->
 
-    <!-- Basic Layout & Basic with Icons -->
-    <div class="row">
-      <!-- Basic Layout -->
-      <div class="col-xxl">
-        <div class="container-center">
-          <div class="card mb-4 w-75">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <h5 class="mb-0">Add Job Description</h5>
-            </div>
-            <div class="card-body">
-              <form id="addJD">
+        <!-- Basic Layout & Basic with Icons -->
+        <div class="row">
+            <!-- Basic Layout -->
+            <div class="col-xxl">
+                <div class="container-center">
+                    <div class="card mb-4 w-75">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <h5 class="mb-0">Add Job Description</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="addJD">
 
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="JdTitle">Title</label>
-                  <div class="col-sm-9">
-                    <input type="text" name="" class="form-control" id="JdTitle" value="">
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label class="col-sm-2 col-form-label" for="JdTitle">Title</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" name="" class="form-control" id="JdTitle" value="">
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center">
-                  <label for="JobDescription" class="col-sm-2 col-form-label">Description</label>
-                  <div class="col-sm-9 ">
-                    <textarea class="form-control" id="JobDescription" rows="3"></textarea>
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label for="JobDescription" class="col-sm-2 col-form-label">Description</label>
+                                    <div class="col-sm-9 ">
+                                        <textarea class="form-control" id="JobDescription" rows="3"></textarea>
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="jdRole">Role</label>
-                  <div class="col-sm-9">
-                    <select class="form-select" id="jdRole" aria-label="Default select example">
-                      <option value="0"></option>
-                      <option value="Development" >Development</option>
-                      <option value="Testing">Testing</option>
-                      <option value="Deployment">Deployment</option>
-                      <option value="Administrator">Administrator</option>
-                    </select>
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label class="col-sm-2 col-form-label" for="jdRole">Role</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-select" id="jdRole" aria-label="Default select example">
+                                            <option value="0"></option>
+                                            <option value="Development">Development</option>
+                                            <option value="Testing">Testing</option>
+                                            <option value="Deployment">Deployment</option>
+                                            <option value="Administrator">Administrator</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center">
-                  <label for="min_experince" class="col-sm-2 col-form-label">Experinces</label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input
-                    type="number"
-                    class="form-control w-25 mr-2 custm-sm-input-width"
-                    id="min_experince"
-                    placeholder=""
-                    aria-describedby="defaultFormControlHelp"
-                    style="margin-right: 1rem;height: max-content;"
-                    value=""
-                  />
-                  <input
-                    type="number"
-                    class="form-control w-25 custm-sm-input-width"
-                    id="max_experince"
-                    placeholder=""
-                    aria-describedby="defaultFormControlHelp"
-                    value=""
-                    style="height: max-content;"
-                  />
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label for="min_experince" class="col-sm-2 col-form-label">Experinces</label>
+                                    <div style="display: flex; justify-content: start;" class="col-sm-9">
+                                        <input type="number" class="form-control w-25 mr-2 custm-sm-input-width"
+                                            id="min_experince" placeholder="" aria-describedby="defaultFormControlHelp"
+                                            style="margin-right: 1rem;height: max-content;" value="" />
+                                        <input type="number" class="form-control w-25 custm-sm-input-width"
+                                            id="max_experince" placeholder="" aria-describedby="defaultFormControlHelp"
+                                            value="" style="height: max-content;" />
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center">
-                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Budget <small>(LPA)</small></label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input
-                    type="number"
-                    class="form-control w-25 mr-2 custm-sm-input-width"
-                    id="jdBudget"
-                    placeholder=""
-                    aria-describedby="defaultFormControlHelp"
-                    style="margin-right: 1rem; height: max-content;"
-                    value=""
-                  />
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">Budget
+                                        <small>(LPA)</small></label>
+                                    <div style="display: flex; justify-content: start;" class="col-sm-9">
+                                        <input type="number" class="form-control w-25 mr-2 custm-sm-input-width"
+                                            id="jdBudget" placeholder="" aria-describedby="defaultFormControlHelp"
+                                            style="margin-right: 1rem; height: max-content;" value="" />
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center">
-                  <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">No of Positions</label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input
-                    type="number"
-                    class="form-control w-25 mr-2 custm-sm-input-width"
-                    id="jdNoPositions"
-                    placeholder="Members count.."
-                    aria-describedby="defaultFormControlHelp"
-                    style="margin-right: 1rem; height: max-content;"
-                    value=""
-                  />
-                  </div>
-                </div>
-  
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="jdWorkLocation">Work Location</label>
-                  <div class="col-sm-9">
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="jdWorkLocation"
-                      placeholder=""
-                      value=""
-                      style="height: max-content;"
-                    />
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label for="exampleFormControlTextarea1" class="col-sm-2 col-form-label">No of
+                                        Positions</label>
+                                    <div style="display: flex; justify-content: start;" class="col-sm-9">
+                                        <input type="number" class="form-control w-25 mr-2 custm-sm-input-width"
+                                            id="jdNoPositions" placeholder="Members count.."
+                                            aria-describedby="defaultFormControlHelp"
+                                            style="margin-right: 1rem; height: max-content;" value="" />
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="">Add Skill</label>
-                  <div class="autocomplete col-sm-9">
-                    <input class="form-control custm-sm-input-width" id="searchNewSkill" type="text" name="" placeholder="Add New Skill">
-                    <div class="suggestions-box border" id="suggestionsBox" style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;"></div>
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label class="col-sm-2 col-form-label" for="jdWorkLocation">Work Location</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="jdWorkLocation" placeholder=""
+                                            value="" style="height: max-content;" />
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center" id="jdSkillsContainer" hidden> 
-                  <label for="jdSkills" class="col-sm-2 col-form-label"></label>
-                  <div class="col-sm-9">
-                    <div class="skillsListContainer" id="skillsListMainContainer">
-                    </div>
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label class="col-sm-2 col-form-label" for="">Add Skill</label>
+                                    <div class="autocomplete col-sm-9">
+                                        <input class="form-control custm-sm-input-width" id="searchNewSkill" type="text"
+                                            name="" placeholder="Add New Skill">
+                                        <div class="suggestions-box border" id="suggestionsBox"
+                                            style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;">
+                                        </div>
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Any Special Notes <small>(optional)</small></label>
-                  <div class="col-sm-9">
-                    <textarea
-                      id="JdanySpecialNotes"
-                      class="form-control"
-                      placeholder="Any Special instruction"
-                      aria-describedby="basic-icon-default-message2"
-                      rows="3"
-                    ></textarea>
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center" id="jdSkillsContainer" hidden>
+                                    <label for="jdSkills" class="col-sm-2 col-form-label"></label>
+                                    <div class="col-sm-9">
+                                        <div class="skillsListContainer" id="skillsListMainContainer">
+                                        </div>
+                                    </div>
+                                </div>
 
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="jdStatus">Status</label>
-                  <div class="col-sm-9" style="display: flex; align-items: center;">
-                    <div class="form-check form-switch"> 
-                      <input class="form-check-input" type="checkbox" id="jdStatus" onclick="activeJDOrInactiveJd()"  style="height: 2em; width: 4em;"> 
-                      &nbsp;&nbsp; 
-                      
-                    </div>
-                    <span class="col-form-label" id="statusLabel" style="font-size: 1rem;">
-                      
-                    </span>
-                  </div>
-                </div>
+                                <div class="row mb-3 container-center">
+                                    <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Any Special Notes
+                                        <small>(optional)</small></label>
+                                    <div class="col-sm-9">
+                                        <textarea id="JdanySpecialNotes" class="form-control"
+                                            placeholder="Any Special instruction"
+                                            aria-describedby="basic-icon-default-message2" rows="3"></textarea>
+                                    </div>
+                                </div>
 
-                <!-- <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
+                                <div class="row mb-3 container-center">
+                                    <label class="col-sm-2 col-form-label" for="jdStatus">Status</label>
+                                    <div class="col-sm-9" style="display: flex; align-items: center;">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="jdStatus"
+                                                onclick="activeJDOrInactiveJd()" style="height: 2em; width: 4em;">
+                                            &nbsp;&nbsp;
+
+                                        </div>
+                                        <span class="col-form-label" id="statusLabel" style="font-size: 1rem;">
+
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
                   <div class="px-0 my-0" style="display: flex;justify-content: end; width: max-content; padding-right: 2.5rem !important;">
                     <button type="button" id="" class="btn btn-secondary" onclick="window.location.href='/job-descriptions'" style="width: 90px; margin-right: 15px;">Back</button>
                     <button type="submit" id="submitJd" class="btn btn-primary" style="padding: 0.2625rem 1rem;">Update</button>
                   </div>
                 </div> -->
 
-              
-              {% if user_role == "HR-Admin"  %}
-
-                  <div class="row mb-1 container-center">
-                    <div style="display: flex; justify-content: flex-end; width: 100%; padding-right: 2.5rem; gap: 15px;">
-
-                      <button type="button" class="btn btn-secondary" 
-                              onclick="window.location.href='/job-descriptions'" 
-                              style="width: 90px;">
-                        Back
-                      </button>
-
-                      
-                      {% if jd_details.approval_status == "" or jd_details.approval_status == "R" %}
-
-                      <!-- Draft OR Rejected -->
-                      <button type="submit" class="btn btn-primary">
-                        Update
-                      </button>
-
-                      <button type="button" class="btn btn-primary"
-                              onclick="updateJDStatus('F','JD Sent for Approval')">
-                        Sent For Approval
-                      </button>
-
-                    {% else %}
-
-                      <!-- Already in approval flow -->
-                      <button type="submit" class="btn btn-primary" hidden>
-                        Update
-                      </button>
-
-                      <button type="button" class="btn btn-primary" hidden>
-                        Sent For Approval
-                      </button>
-
-                    {% endif %}
+                                {% if user_role == "Hiring-Manager" and jd_details.approval_status == "O" %}
+                                <div style="margin-left: 4%;">
+                                    <hr>
+                                    <h5>Assign Recruiters</h5>
+                                    {% for recruiter in recruiters_data.all_recruiters %}
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input recruiter-checkbox" type="checkbox"
+                                            value="{{ recruiter.id }}" id="rec_{{ recruiter.id }}" {% if recruiter in recruiters_data.selected_recruiters %} checked {% endif %}>
+                                        <label class="form-check-label" for="rec_{{ recruiter.id }}"> {{ recruiter.name }} </label>
+                                    </div>
+                                    {% endfor %}
+                                    <div>
+                                        <button type="button" class="btn btn-primary mt-3" style="padding: 5px 15px;"
+                                            id="assign-recruiters"> Assign</button>
+                                    </div>
+                                </div>
+                                {% endif %}
 
 
+                                {% if user_role == "HR-Admin" %}
 
+                                <div class="row mb-1 container-center">
+                                    <div
+                                        style="display: flex; justify-content: flex-end; width: 100%; padding-right: 2.5rem; gap: 15px;">
+
+                                        <button type="button" class="btn btn-secondary"
+                                            onclick="window.location.href='/job-descriptions'" style="width: 90px;">
+                                            Back
+                                        </button>
+
+
+                                        {% if jd_details.approval_status == "" or jd_details.approval_status == "R" %}
+
+                                        <!-- Draft OR Rejected -->
+                                        <button type="submit" class="btn btn-secondary">
+                                            Update
+                                        </button>
+
+                                        <button type="button" class="btn btn-primary"
+                                            onclick="updateJDStatus('F','JD Sent for Approval')">
+                                            Send for approval
+                                        </button>
+
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                {% elif user_role == "Hiring-Manager" %}
+                                <div class="row mb-1 container-center">
+                                    <div
+                                        style="display: flex; justify-content: flex-end; width: 100%; padding-right: 2.5rem; gap: 15px;">
+
+                                        <!-- Recruiting Manager Action Buttons -->
+                                        <div id="rmActionButtons" style="display: flex; gap: 15px;">
+
+                                            <button type="submit" id="submitJd" class="btn btn-primary">Update</button>
+                                            <button type="button" class="btn btn-success"
+                                                onclick="updateJDStatus('O', 'JD Approved')">
+                                                Approve
+                                            </button>
+
+                                            <button type="button" class="btn btn-danger"
+                                                onclick="updateJDStatus('R', 'JD Rejected')">
+                                                Send for Rivise
+                                            </button>
+
+                                            <button type="button" class="btn btn-secondary"
+                                                onclick="updateJDStatus('H', 'JD Put On Hold')">
+                                                Hold
+                                            </button>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% endif %}
+
+                                <div class="row mb-2 container-center"
+                                    style="display: flex;justify-content: space-between; align-items: center;">
+                                    <div class="px-0 success" id="validater" hidden
+                                        style="color: green; width: max-content;  margin-left: 3rem;">
+                                        <i class="fas fa-check-circle"></i>
+                                        &nbsp;
+                                        Job Description Updated
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
-                  </div>
-
-                  {% else %}
-                  <div class="row mb-1 container-center">
-                    <div style="display: flex; justify-content: flex-end; width: 100%; padding-right: 2.5rem; gap: 15px;">
-
-                    <!-- Recruiting Manager Action Buttons -->
-                    <div id="rmActionButtons" style="display: flex; gap: 15px;">
-
-                      
-                      <button type="submit" id="submitJd" class="btn btn-primary">Update</button>
-                      <button type="button" class="btn btn-primary"
-                              onclick="updateJDStatus('O', 'JD Approved')">
-                          Approve
-                      </button>
-
-                      <button type="button" class="btn btn-primary"
-                              onclick="updateJDStatus('R', 'JD Rejected')">
-                          Rivise
-                      </button>
-
-                      <button type="button" class="btn btn-primary"
-                              onclick="updateJDStatus('H', 'JD Put On Hold')">
-                          Hold
-                      </button>
-
-
-                  </div>
-                     </div>
                 </div>
 
-                  {% endif %}
-
-             
-
-                
-                <div class="row mb-2 container-center" style="display: flex;justify-content: space-between; align-items: center;">
-                  <div class="px-0 success" id="validater" hidden style="color: green; width: max-content;  margin-left: 3rem;">
-                    <i class="fas fa-check-circle"></i>
-                    &nbsp;
-                    Job Description Updated
-                  </div>
-                </div>
-
-              </form>
             </div>
-          </div>
+
         </div>
-        
-      </div>
-   
     </div>
-  </div>
-  <!-- / Content -->
+    <!-- / Content -->
 </div>
 
 <style>
+    #suggestionsBox {
+        width: 200px !important;
+        border-radius: 7px;
+        margin-top: 5px;
+    }
 
-#suggestionsBox{
-  width: 200px !important;
-  border-radius: 7px;
-  margin-top: 5px;
-}
-.search_item:hover{
-  background-color: var(--primary-color);
-  color: #fff;
-}
-#searchJobDescription {
-    text-align: left; /* Ensure text is aligned to the left */
-}
-#searchJobDescription {
-    text-align: left;  /* Ensures the text is always aligned left */
-    padding-left: 5px; /* Optional: Adds a little space from the left edge */
-}
+    .search_item:hover {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+    #searchJobDescription {
+        text-align: left;
+        /* Ensure text is aligned to the left */
+    }
+
+    #searchJobDescription {
+        text-align: left;
+        /* Ensures the text is always aligned left */
+        padding-left: 5px;
+        /* Optional: Adds a little space from the left edge */
+    }
 
 
-.custm-sm-input-width{
-  width: 200px !important;
-}
+    .custm-sm-input-width {
+        width: 200px !important;
+    }
 
-  /* skill search bar */
-  /*the container must be positioned relative:*/
-  .autocomplete {
-  position: relative;
-  display: inline-block;
-}
+    /* skill search bar */
+    /*the container must be positioned relative:*/
+    .autocomplete {
+        position: relative;
+        display: inline-block;
+    }
 
-input[type=submit] {
-  background-color: DodgerBlue;
-  color: #fff;
-  cursor: pointer;
-}
+    input[type=submit] {
+        background-color: DodgerBlue;
+        color: #fff;
+        cursor: pointer;
+    }
 
-.autocomplete-items {
-  position: absolute;
-  border: 1px solid #d4d4d4;
-  z-index: 99;
-  /*position the autocomplete items to be the same width as the container:*/
-  top: 110%;
-  left: 12px;
-  right: 0;
-  height: 120px;
-  overflow-y: scroll;
-  width: 200px;
-  border-radius: 0.5rem;
-}
+    .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        z-index: 99;
+        /*position the autocomplete items to be the same width as the container:*/
+        top: 110%;
+        left: 12px;
+        right: 0;
+        height: 120px;
+        overflow-y: scroll;
+        width: 200px;
+        border-radius: 0.5rem;
+    }
 
-.autocomplete-items div {
-  padding: 10px;
-  cursor: pointer;
-  background-color: #fff; 
-  border-bottom: 1px solid #d4d4d4; 
-}
+    .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+        border-bottom: 1px solid #d4d4d4;
+    }
 
-/*when hovering an item:*/
-.autocomplete-items div:hover {
-  background-color: #e9e9e9; 
-}
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+        background-color: #e9e9e9;
+    }
 
-/*when navigating through the items using the arrow keys:*/
-.autocomplete-active {
-  background-color: DodgerBlue !important; 
-  color: #ffffff; 
-}
-.custm-sm-input-width{
-  width: 200px !important;
-}
-.skillIteamContainer{
-  display: flex; 
-  align-items: center;
-  justify-content: center;
-  width: max-content;
-  padding: 0.4rem 0.7rem;
-  border: lightgrey solid 0.5px;
-  border-radius: 0.5rem;
-  margin: 0.5rem;
-  box-shadow: 0 0.125rem 0.25rem 0 rgba(133, 146, 163, 0.4);
-  cursor: pointer;
-}
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+    }
 
-.skillsListContainer{
-  display: flex;
-  justify-content: start;
-  align-items: start;
-  flex-wrap: wrap;
-  width: 100%; 
-  height: auto;
-  border: 0.5px lightgray solid; 
-  border-radius: 0.5rem;
-}
-.customremovecls{
-  border: 0.5px solid lightgray;
-  border-radius: 0.2rem;
-  padding: 2px 5px;
-}
+    .custm-sm-input-width {
+        width: 200px !important;
+    }
+
+    .skillIteamContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: max-content;
+        padding: 0.4rem 0.7rem;
+        border: lightgrey solid 0.5px;
+        border-radius: 0.5rem;
+        margin: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem 0 rgba(133, 146, 163, 0.4);
+        cursor: pointer;
+    }
+
+    .skillsListContainer {
+        display: flex;
+        justify-content: start;
+        align-items: start;
+        flex-wrap: wrap;
+        width: 100%;
+        height: auto;
+        border: 0.5px lightgray solid;
+        border-radius: 0.5rem;
+    }
+
+    .customremovecls {
+        border: 0.5px solid lightgray;
+        border-radius: 0.2rem;
+        padding: 2px 5px;
+    }
 </style>
 
 <script>
-  var JdId = "{{ jd_details.id }}"
+    var JdId = "{{ jd_details.id }}"
 </script>
 <script src="{% static 'js/tech_list.js' %}"></script>
 <script src="{% static 'js/update_job_description.js' %}"></script>
