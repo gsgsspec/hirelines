@@ -217,3 +217,8 @@ alter table jobdesc add column recruiterids varchar(100) NULL;
 
 ALTER TABLE jobdesc ADD COLUMN approval_status VARCHAR(1) NULL;
 ALTER TABLE jobdesc ADD COLUMN comments VARCHAR(100) NULL;
+
+=================
+
+ALTER TABLE jobdesc ADD COLUMN secondaryskills VARCHAR(2048) NULL;
+INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('Sources', 'Sources', 'sources', 'HR-Admin', 'fas fa-location-arrow', '12');

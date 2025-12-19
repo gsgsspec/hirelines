@@ -1,5 +1,6 @@
 var technologiesList = languages
 var jdSelectedSkillsList = []
+var jdSelectedSecondarySkillsList = [];
 
 addEventListener("DOMContentLoaded", function(){
     getJDData()
@@ -44,6 +45,9 @@ function setDataInInputs(data){
     document.getElementById('JdanySpecialNotes').value = data['data']['skillnotes']
     var checkjdstatus = data['data']['status']
     var skillsList = data['data']['skillset']
+    var secondarySkillsList = data['data']['secondaryskills']
+    console.log("secondarySkillsList",secondarySkillsList);
+    
     
     if(skillsList){
         // var JDSkillsList = skillsList.split(',')
@@ -51,33 +55,19 @@ function setDataInInputs(data){
         jdSkillsSetOnBoard(skillsList)
         document.getElementById('jdSkillsContainer').hidden = false
     }
+    
+    if(secondarySkillsList){
+        // var JDSkillsList = skillsList.split(',')
+        
+        jdSecondarySkillSetOnBoard(secondarySkillsList)
+        document.getElementById('jdSecondarySkillsContainer').hidden = false
+    }
 
     if(checkjdstatus != 'I'){
         document.getElementById('jdStatus').checked = true
     }
 
 }
-
-
-// function jdSkillsSetOnBoard(skillList){
-
-//     // Clean the string to make it valid JSON (replace single quotes with double quotes)
-//     const validJsonStr = skillList.replace(/'/g, '"');
-
-//     // Convert the string into a JavaScript array
-//     const array = JSON.parse(validJsonStr);
-
-//     console.log('array :: ',array);
-
-//     for(var jdskill = 0; jdskill < array.length; jdskill++){
-//         // selected jd skill 
-
-//         console.log('key :: ',Object.keys(array[jdskill])[0],array[jdskill]);
-
-//         selectedSkill(Object.keys(array[jdskill])[0])
-//     }
-// }
-
 
 
 function jdSkillsSetOnBoard(skillList) {
@@ -91,85 +81,16 @@ function jdSkillsSetOnBoard(skillList) {
 
 }
 
+function jdSecondarySkillSetOnBoard(skillList) {
 
+    var newData = eval(skillList)
 
+    for (var jdskill = 0; jdskill < newData.length; jdskill++) {
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     const searchInput = document.getElementById('searchNewSkill');
-//     const suggestionsBox = document.getElementById('suggestionsBox');
+        selectedSecondarySkill(Object.keys(newData[jdskill])[0]);
+    }
 
-//     // Function to show suggestions based on the search input
-//     function showSuggestions() {
-//         const query = searchInput.value.trim().toLowerCase();
-
-//         // Display prompt message if less than 3 characters are entered
-//         if (query.length < 1) {
-//             suggestionsBox.style.display = "none";
-//             return;
-//         }
-
-//         // Filter the technologies list based on the query
-//         const skillsList = technologiesList.filter(skill =>
-//             skill.toLowerCase().includes(query) // Match skill names with query
-//         );
-
-//         // Clear previous suggestions
-//         suggestionsBox.innerHTML = '';
-
-//         // Show suggestions or "No job descriptions found" if none match
-//         if (skillsList.length > 0) {
-//             let suggestionsHTML = '';
-
-//             // Loop through the filtered descriptions and build the HTML string
-//             for (let i = 0; i < skillsList.length; i++) {
-//                 const skill = skillsList[i];
-
-//                 suggestionsHTML += `
-//                     <div class="suggestion-item p-2 search_item" 
-//                          style="cursor: pointer;" 
-//                          onclick="selectedSkill('${skill}')">
-//                         ${skill}
-//                     </div>
-//                 `;
-//             }
-
-//             // Insert the suggestions into the suggestions box
-//             suggestionsBox.innerHTML = suggestionsHTML;
-//         } else {
-//             suggestionsBox.innerHTML = `<div class="p-2 text-muted">Skill Not Found</div>`;
-//         }
-
-//         // Display the suggestions box
-//         suggestionsBox.style.display = "block";
-//     }
-
-//     // Trigger suggestions on input and focus
-//     searchInput.addEventListener('input', showSuggestions);
-//     searchInput.addEventListener('focus', showSuggestions);
-
-//     // Hide suggestions on outside click
-//     document.addEventListener('click', function(e) {
-//         if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-//             suggestionsBox.style.display = "none";
-//         }
-//     });
-
-//     // Add click event to select a suggestion
-//     suggestionsBox.addEventListener('click', function(e) {
-//         if (e.target.classList.contains('suggestion-item')) {
-//             searchInput.value = e.target.textContent.trim();
-//             searchInput.blur();
-//             suggestionsBox.style.display = "none";
-//             document.getElementById('searchNewSkill').value = '';
-//             document.getElementById('searchNewSkill').focus()
-//         }
-//     });
-
-//     // hide and unhide the empty skills container
-//     emptySkillsContainer()
-
-// });
-
+}
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -262,72 +183,6 @@ function emptySkillsContainer(){
 }
 
 
-// function selectedSkill(skillIteam) {
-//     if (skillIteam) {
-//         // Remove skill from technologies list
-//         let index = technologiesList.indexOf(skillIteam.trim());
-//         // if index is -1 thay means item was not in the list
-//         if (index !== -1) {
-//             technologiesList.splice(index, 1); // Remove the skill from technologies list
-
-//             // Create the skill container div
-//             var skillContainer = document.createElement('div');
-//             skillContainer.className = 'skillIteamContainer';
-//             skillContainer.id = skillIteam.trim().replace('.', '_');
-//             skillContainer.innerHTML = `
-//                 <div class="skillTitle">${skillIteam}</div>
-//                 <div id="removeSkill">
-//                     &nbsp;&nbsp;&nbsp; 
-//                     <i class="fas fa-times customremovecls" onclick="removeSkill('${skillContainer.id}')"></i>
-//                 </div>`;
-
-//             jdSelectedSkillsList.push(skillIteam);
-
-//             // Append the new skill container to the main container
-//             document.getElementById('skillsListMainContainer').appendChild(skillContainer);
-//         } else {
-//             console.log('Cannot find the skill index value', index, skillIteam);
-//         }
-//     }
-
-//     // Show or hide the empty skills container
-//     emptySkillsContainer();
-// }
-
-// function selectedSkill(skillIteam) {
-//     if (skillIteam) {
-//         // Trim and check if the skill exists in the technologiesList dictionary
-//         let skillKey = skillIteam.trim();
-        
-//         if (technologiesList.hasOwnProperty(skillKey)) {
-//             // Remove the skill from the technologiesList dictionary
-//             delete technologiesList[skillKey]; // Remove skill from dictionary
-
-//             // Create the skill container div
-//             var skillContainer = document.createElement('div');
-//             skillContainer.className = 'skillIteamContainer';
-//             skillContainer.id = skillKey.replace('.', '_');
-//             skillContainer.innerHTML = `
-//                 <div class="skillTitle">${skillKey}</div>
-//                 <div id="removeSkill">
-//                     &nbsp;&nbsp;&nbsp; 
-//                     <i class="fas fa-times customremovecls" onclick="removeSkill('${skillContainer.id}')"></i>
-//                 </div>`;
-
-//             jdSelectedSkillsList.push(skillKey); // Add to selected skills list
-
-//             // Append the new skill container to the main container
-//             document.getElementById('skillsListMainContainer').appendChild(skillContainer);
-//         } else {
-//             console.log('Skill not found in the dictionary', skillKey);
-//         }
-//     }
-
-//     // Show or hide the empty skills container
-//     emptySkillsContainer();
-// }
-
-
 function selectedSkill(skillIteam) {
     // Create a new skill item container div
     var skillContainer = document.createElement('div');
@@ -353,47 +208,9 @@ function selectedSkill(skillIteam) {
 
     delete technologiesList[skillIteam];
 
-    // Remove the skill from the languages object (equivalent to removing from the technologiesList)
-    // if (technologiesList.hasOwnProperty(skillIteam)) {
-    //     delete technologiesList[skillIteam]; // Remove selected skill from languages object
-    // }
-
     // hide and unhide the empty skills container
     emptySkillsContainer();
 }
-
-
-
-// function removeSkill(skillId) {
-//     // Find the element to remove
-//     var rmElement = document.getElementById(skillId);
-
-//     if (rmElement) {
-//         // Get the skill title
-//         var skillTitle = rmElement.querySelector('.skillTitle').innerText;
-
-//         // Remove the element from the DOM
-//         rmElement.remove();
-
-//         // Remove the skill from the selected skills list
-//         var rmJdSkill = jdSelectedSkillsList.indexOf(skillTitle);
-//         // if index is -1 thay means item was not in the list
-//         if (rmJdSkill !== -1) {
-//             // Remove the skill from the selected JD skills
-//             jdSelectedSkillsList.splice(rmJdSkill, 1);
-
-//             // Add the skill back to the technologies list
-//             technologiesList.push(skillTitle);
-//         }
-//     } else {
-//         console.error('Element with id not found:', skillId);
-//     }
-
-//     // Show or hide the empty skills container
-//     emptySkillsContainer();
-
-//     console.log('jdSelectedSkillsList :: ',jdSelectedSkillsList)
-// }
 
 
 function removeSkill(skillId) {
@@ -469,6 +286,7 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
         noPositions : document.getElementById('jdNoPositions').value,
         workLocation   : document.getElementById('jdWorkLocation').value,
         skills         : jdSelectedSkillsList,
+        secondarySkills: jdSelectedSecondarySkillsList,
         anySpecialNote : document.getElementById('JdanySpecialNotes').value,
         jobDescriptionStatus : jdStatus,
     };
@@ -532,20 +350,6 @@ function updateJDStatus(statusCode, successMsg) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 $(document).on("click", "#assign-recruiters", function () {
 
     let selectedIds = [];
@@ -582,3 +386,115 @@ $(document).on("click", "#assign-recruiters", function () {
         console.error('Failed to send data to backend:', error);
     }
 });
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const searchInput = document.getElementById('searchSecondarySkill');
+    const suggestionsBox = document.getElementById('secondarySuggestionsBox');
+
+    function showSecondarySuggestions() {
+        const query = searchInput.value.trim().toLowerCase();
+        if (!query) {
+            suggestionsBox.style.display = "none";
+            return;
+        }
+
+        const skillsList = Object.keys(technologiesList).filter(skill =>
+            skill.toLowerCase().includes(query)
+        );
+
+        suggestionsBox.innerHTML = "";
+
+        suggestionsBox.innerHTML = skillsList.length
+            ? skillsList.map(skill => `
+                <div class="suggestion-item p-2 search_item"
+                     style="cursor:pointer"
+                     onclick="selectedSecondarySkill('${skill}')">
+                    ${skill}
+                </div>`).join("")
+            : `<div class="p-2 text-muted">Skill Not Found</div>`;
+
+        suggestionsBox.style.display = "block";
+    }
+
+    searchInput.addEventListener('input', showSecondarySuggestions);
+    searchInput.addEventListener('focus', showSecondarySuggestions);
+
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+            suggestionsBox.style.display = "none";
+        }
+    });
+
+    // Add click event to select a suggestion
+    suggestionsBox.addEventListener('click', function(e) {
+        if (e.target.classList.contains('suggestion-item')) {
+            searchInput.value = e.target.textContent.trim();
+            searchInput.blur();
+            suggestionsBox.style.display = "none";
+            document.getElementById('searchSecondarySkill').value = '';
+            document.getElementById('searchSecondarySkill').focus()
+        }
+    });
+
+    emptySecondarySkillsContainer()
+});
+
+
+function selectedSecondarySkill(skillIteam) {
+
+    var skillContainer = document.createElement('div');
+    skillContainer.className = 'skillIteamContainer';
+    skillContainer.id = "secondary_" + skillIteam.replace('.', '_');
+
+    skillContainer.innerHTML = `
+        <div class="skillTitle">${skillIteam}</div>
+        <div>
+            &nbsp;&nbsp;&nbsp; 
+            <i class="fas fa-times customremovecls"
+               onclick="removeSecondarySkill('${skillContainer.id}')"></i>
+        </div>`;
+
+    jdSelectedSecondarySkillsList.push({ [skillIteam]: languages[skillIteam] });
+
+    document.getElementById('secondarySkillsListMainContainer')
+            .appendChild(skillContainer);
+
+    delete technologiesList[skillIteam]; // ⛔ prevents duplicate
+
+    emptySecondarySkillsContainer()
+}
+
+
+function removeSecondarySkill(rmSkillId) {
+
+    var rmElement = document.getElementById(rmSkillId);
+    if (!rmElement) return;
+
+    var skillTitle = rmElement.querySelector('.skillTitle').innerText;
+    rmElement.remove();
+
+    technologiesList[skillTitle] = languages[skillTitle];
+
+    jdSelectedSecondarySkillsList =
+        jdSelectedSecondarySkillsList.filter(x => !x[skillTitle]);
+
+    emptySecondarySkillsContainer()
+}
+
+
+function emptySecondarySkillsContainer(){
+    
+    var skillscontainer = document.getElementById('secondarySkillsListMainContainer')
+    
+    if(skillscontainer.childNodes.length == 0){
+        document.getElementById('jdSecondarySkillsContainer').hidden = true
+    }
+    else{
+        document.getElementById('jdSecondarySkillsContainer').hidden = false
+    }
+}

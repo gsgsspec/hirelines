@@ -75,6 +75,7 @@ class JobDesc(models.Model):
     location = models.CharField(max_length=512, null=True)
     budget = models.DecimalField(max_digits=13, decimal_places=2, null=True)
     skillset = models.CharField(max_length=512, null=True)
+    secondaryskills = models.CharField(max_length=2048, null=True)
     skillnotes = models.CharField(max_length=512, null=True)
     interviewers = models.CharField(max_length=100,null=True)
     expjoindate = models.DateField(max_length=11,null=True)

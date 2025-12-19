@@ -405,6 +405,7 @@ def updateJdDataService(addjdData):
                 "location": "" if jdData.location is None else jdData.location,
                 "budget": "" if jdData.budget is None else jdData.budget,
                 "skillset": "" if jdData.skillset is None else jdData.skillset.strip(),
+                "secondaryskills": "" if jdData.secondaryskills is None else jdData.secondaryskills.strip(),
                 "skillnotes": "" if jdData.skillnotes is None else jdData.skillnotes,
                 "expjoindate": "" if jdData.expjoindate is None else jdData.expjoindate,
                 "positions": "" if jdData.positions is None else jdData.positions,
@@ -2585,7 +2586,7 @@ def addNewUserService(company_id, user_data):
                 save_user.save()
 
                 if userRole == "Recruiter":
-                    code = f"REC{save_user.id:02}"
+                    code = f"RC{save_user.id:03}"
 
                     source = Source(
                         code=code,
@@ -2619,7 +2620,7 @@ def addNewUserService(company_id, user_data):
 
                 if userFind.role == "Recruiter":
 
-                    code = f"REC{userFind.id:02}"
+                    code = f"RC{userFind.id:03}"
 
                     source = Source.objects.filter(
                         code=code, companyid=userFind.companyid

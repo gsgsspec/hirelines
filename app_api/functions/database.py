@@ -528,6 +528,7 @@ def saveAddJD(dataObjs,compyId,hrEmail):
                 positions   = dataObjs['noPositions'] if dataObjs['noPositions'] else None,
                 createdby   = hrDeatils.id if hrDeatils.id else None,
                 skillset    = dataObjs['skills'], 
+                secondaryskills    = dataObjs['secondarySkills'], 
                 skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None, 
                 companyid   = compyId if compyId else None,
                 status      = 'D',
@@ -558,6 +559,7 @@ def saveUpdateJd(dataObjs, compyId, hrEmail):
                 jobDesc.budget      = dataObjs['budget'] if dataObjs['budget'] else None
                 jobDesc.positions   = dataObjs['noPositions'] if dataObjs['noPositions'] else None
                 jobDesc.skillset    = dataObjs['skills']
+                jobDesc.secondaryskills    = dataObjs['secondarySkills']
                 jobDesc.skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None
                 jobDesc.companyid   = compyId if compyId else None
                 jobDesc.createdby   = hrDetails.id if hrDetails.id else None
@@ -810,7 +812,6 @@ def updateSourcesDataDB(dataObjs, company_id):
             if company_source:
                 company_source.label = source['label']
                 company_source.save()
-
 
     except Exception as e:
         raise
