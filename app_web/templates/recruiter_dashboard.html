@@ -1,0 +1,358 @@
+{% load static %}
+
+<style>
+    /* ===== TOP CARD COLORS ===== */
+
+    /* PRIMARY */
+    .card-border-shadow-primary {
+        border-bottom: 2px solid rgba(105, 108, 255, .35);
+    }
+
+    .card-border-shadow-primary:hover {
+        border-bottom-color: #696cff;
+    }
+
+    /* WARNING */
+    .card-border-shadow-warning {
+        border-bottom: 2px solid rgba(255, 171, 0, .35);
+    }
+
+    .card-border-shadow-warning:hover {
+        border-bottom-color: #ffab00;
+    }
+
+    /* DANGER */
+    .card-border-shadow-danger {
+        border-bottom: 2px solid rgba(255, 62, 29, .35);
+    }
+
+    .card-border-shadow-danger:hover {
+        border-bottom-color: #ff3e1d;
+    }
+
+    /* INFO */
+    .card-border-shadow-info {
+        border-bottom: 2px solid rgba(3, 195, 236, .35);
+    }
+
+    .card-border-shadow-info:hover {
+        border-bottom-color: #03c3ec;
+    }
+
+    /* ===== BOTTOM CARD COLORS (UNIQUE – NO DUPLICATES) ===== */
+
+    /* MAROON – Rejected by Client */
+    .card-border-shadow-maroon {
+        border-bottom: 2px solid rgba(128, 0, 64, .35);
+    }
+
+    .card-border-shadow-maroon:hover {
+        border-bottom-color: #800040;
+    }
+
+    /* EMERALD – Selected by Client */
+    .card-border-shadow-emerald {
+        border-bottom: 2px solid rgba(0, 168, 120, .35);
+    }
+
+    .card-border-shadow-emerald:hover {
+        border-bottom-color: #00a878;
+    }
+
+    /* SLATE PURPLE – Waiting Feedback */
+    .card-border-shadow-slate {
+        border-bottom: 2px solid rgba(88, 86, 214, .35);
+    }
+
+    .card-border-shadow-slate:hover {
+        border-bottom-color: #5856d6;
+    }
+
+    /* ===== COMMON STYLES ===== */
+
+    .card-body {
+        padding: 20px 22px;
+    }
+
+    .avatar {
+        width: 46px;
+        height: 46px;
+    }
+
+    .avatar-initial {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+    }
+
+    .icon-lg {
+        font-size: 1.45rem;
+    }
+
+    .card h4 {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #384551;
+    }
+
+    .card p.mb-2 {
+        font-size: 14px;
+        color: #6f6b7d;
+        margin-bottom: 6px;
+    }
+
+    .text-heading {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .text-body-secondary {
+        font-size: 14px;
+        color: #a1a1aa;
+    }
+
+    .credits-container {
+        display: none;
+    }
+    .form-label {
+    white-space: nowrap;
+}
+
+</style>
+
+<div class="content-wrapper">
+    <!-- ===== FILTERS ROW ===== -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row align-items-center">
+
+        <!-- LEFT : Recruiter Filter -->
+        <div class="col-md-6 col-sm-12">
+            <div class="d-flex align-items-center">
+                <label class="form-label fw-semibold mb-0 me-2">
+                    Recruiter
+                </label>
+                <select class="form-select" id="recruiterFilter" style="max-width: 220px;">
+                    <option value="">All Recruiters</option>
+                    {% for recruiter in recruiters %}
+                    <option value="{{ recruiter.id }}">
+                        {{ recruiter.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- RIGHT : Month Filter -->
+        <div class="col-md-6 col-sm-12 d-flex justify-content-md-end mt-3 mt-md-0">
+            <div class="d-flex align-items-center">
+                <label class="form-label fw-semibold mb-0 me-2">
+                    Month
+                </label>
+                <input type="month"
+                       class="form-control"
+                       id="monthFilter"
+                       style="max-width: 200px;">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+    <!-- ===== TOP ROW ===== -->
+<div class="container-xxl flex-grow-1 py-2 px-3">
+        <div class="row g-6">
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-border-shadow-primary h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar me-4">
+                                <span class="avatar-initial rounded bg-label-primary">
+                                    <i class="icon-base bx bx-paper-plane icon-lg"></i>
+                                </span>
+                            </div>
+                            <h4 class="mb-0">42</h4>
+                        </div>
+                        <p class="mb-2">Submitted</p>
+                        <p class="mb-0">
+                            <span class="text-heading fw-medium me-2">+18.2%</span>
+                            <span class="text-body-secondary">than last week</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-border-shadow-warning h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar me-4">
+                                <span class="avatar-initial rounded bg-label-warning">
+                                    <i class="icon-base bx bx-user-check icon-lg"></i>
+                                </span>
+                            </div>
+                            <h4 class="mb-0">8</h4>
+                        </div>
+                        <p class="mb-2">Profiled</p>
+                        <p class="mb-0">
+                            <span class="text-heading fw-medium me-2">-8.7%</span>
+                            <span class="text-body-secondary">than last week</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-border-shadow-danger h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar me-4">
+                                <span class="avatar-initial rounded bg-label-danger">
+                                    <i class="icon-base bx bx-x-circle icon-lg"></i>
+                                </span>
+                            </div>
+                            <h4 class="mb-0">27</h4>
+                        </div>
+                        <p class="mb-2">Rejected</p>
+                        <p class="mb-0">
+                            <span class="text-heading fw-medium me-2">+4.3%</span>
+                            <span class="text-body-secondary">than last week</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-border-shadow-info h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar me-4">
+                                <span class="avatar-initial rounded bg-label-info">
+                                    <i class="icon-base bx bx-briefcase-alt icon-lg"></i>
+                                </span>
+                            </div>
+                            <h4 class="mb-0">13</h4>
+                        </div>
+                        <p class="mb-2">Sent Client</p>
+                        <p class="mb-0">
+                            <span class="text-heading fw-medium me-2">-2.5%</span>
+                            <span class="text-body-secondary">than last week</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== BOTTOM ROW (UNIQUE COLORS) ===== -->
+<div class="container-xxl flex-grow-1 py-2 px-3">
+        
+        <div class="row g-6">
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-border-shadow-maroon h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar me-4">
+                                <span class="avatar-initial rounded"
+                                    style="background:rgba(128,0,64,.15);color:#800040;">
+                                    <i class="icon-base bx bx-x-circle icon-lg"></i>
+                                </span>
+                            </div>
+                            <h4 class="mb-0">42</h4>
+                        </div>
+                        <p class="mb-2">Rejected by Client</p>
+                        <p class="mb-0">
+                            <span class="text-heading fw-medium me-2">+18.2%</span>
+                            <span class="text-body-secondary">than last week</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-border-shadow-emerald h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar me-4">
+                                <span class="avatar-initial rounded"
+                                    style="background:rgba(0,168,120,.15);color:#00a878;">
+                                    <i class="icon-base bx bx-badge-check icon-lg"></i>
+                                </span>
+                            </div>
+                            <h4 class="mb-0">8</h4>
+                        </div>
+                        <p class="mb-2">Selected by Client</p>
+                        <p class="mb-0">
+                            <span class="text-heading fw-medium me-2">-8.7%</span>
+                            <span class="text-body-secondary">than last week</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-border-shadow-slate h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar me-4">
+                                <span class="avatar-initial rounded"
+                                    style="background:rgba(88,86,214,.15);color:#5856d6;">
+                                    <i class="icon-base bx bx-time-five icon-lg"></i>
+                                </span>
+                            </div>
+                            <h4 class="mb-0">27</h4>
+                        </div>
+                        <p class="mb-2">Waiting Feedback</p>
+                        <p class="mb-0">
+                            <span class="text-heading fw-medium me-2">+4.3%</span>
+                            <span class="text-body-secondary">than last week</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const monthInput = document.getElementById("monthFilter");
+
+    // ✅ Set current month by default (YYYY-MM)
+    const today = new Date();
+    const currentMonth =
+        today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0");
+
+    monthInput.value = currentMonth;
+
+    // ✅ Optional: Log formatted value (Dec - 2025)
+    formatMonth(currentMonth);
+
+    monthInput.addEventListener("change", function () {
+        formatMonth(this.value);
+    });
+
+    function formatMonth(value) {
+        if (!value) return;
+
+        const date = new Date(value + "-01");
+        const formatted = date.toLocaleDateString("en-US", {
+            month: "short",
+            year: "numeric"
+        });
+
+        console.log("Selected Month:", formatted); // Dec 2025
+    }
+});
+</script>

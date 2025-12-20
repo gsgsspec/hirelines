@@ -16,6 +16,10 @@ import requests
 from app_api.functions.email_resume import fetch_gmail_attachments
 from  app_api.functions.enc_dec import decrypt_code
 
+
+from datetime import datetime
+
+
 domains = getConfig()['DOMAIN']
 acert_domain = domains['acert']
 
@@ -1167,3 +1171,46 @@ def scheduleInterviewPage(request, cid):
         print(f"Error processing interview page for candidate {cid}: {e}")
         # Optionally render a safe error page instead of raising
         raise # Reraise the exception for development debugging
+
+
+
+
+
+def recruiterdashboardPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        company_id = getCompanyId(request.user)
+        
+        dashboard_data = getDashboardData(company_id)
+
+        now = datetime.now()
+
+        current_month_value = now.strftime('%Y-%m')        # 2025-12 (for input)
+        current_month_label = now.strftime('%B, %Y')       
+
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+
+        if menuItemObjList:
+            return render(request, "portal_index.html", {"template_name": "recruiter_dashboard.html", 'menuItemList': menuItemList,  "current_month_value": current_month_value,
+"current_month_label": current_month_label,
+ })
+    
+        else:
+            return redirect('../')
+
+    except Exception as e:
+        raise
+

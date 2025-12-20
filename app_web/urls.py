@@ -51,4 +51,6 @@ urlpatterns = [
     path('work-calender', views.workCalenderPage),
 
     path("candidate-schedule-interview/<str:cid>/",views.scheduleInterviewPage),
+    path("recruiter-dashboard",views.recruiterdashboardPage),
+
 ]

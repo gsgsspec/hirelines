@@ -19,7 +19,8 @@ var menuItemsUrls = {
     'resume-inbox': ['/resume-inbox'],
     'profiles': ['profiles','/add-profile'],
     'logout': ['/'],
-    'work-calender':['/work-calender']
+    'work-calender':['/work-calender'],
+    'recruiter-dashboard':['recruiter-dashboard']
 };
 
 var menuItems = document.querySelectorAll('.menu-item');
