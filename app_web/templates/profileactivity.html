@@ -104,7 +104,9 @@
                          <div class="tabsContainer"style="flex-direction: row-reverse;">
                         
                         <!-- <button class="btn btn-primary" id="sendWelcome"  onclick="tabSwitch(this.id)"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button> -->
+                         {% if email_exist == "N" %}
                          <button class="btn btn-primary" id="sendWelcome" onclick="sendWelcomeMail()"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button>
+                         {% endif %}
                         <button class="btn btn-primary" id="addActivity"  onclick="tabSwitch(this.id)"><i class="fas fa-user-plus"></i> Add activity</button>
                         </div>
                     <!-- </div> -->
@@ -112,54 +114,50 @@
                 <div class="table-responsive text-nowrap">
                     <table class="table table-bordered" id="activity_details_table">
 
-
                         <tbody>
                             {% for act in activity_details %}
-
                             <tr>
-                                <td style="width: 15%;padding-left: 0px;">{{ act.datentime }}</td>
-                                
-                               
-                               <td>
-                                     {% if act.activity_text == "Unknown Activity" %}
-                                        {{ act.activityname }}
-                                        {% if act.activityremarks %} remarks- {{ act.activityremarks }}{% endif %}
-                                        {% if act.activitystatus %} status- {{ act.activitystatus }}{% endif %}
-                                    {% else %}
-                                        {{ act.activity_text }}
-                                        
+                                <td style="width: 15%; padding-left: 0px;">
+                                    {{ act.datentime }}
+                                </td>
+                        
+                                <td>
+                                    {{ act.activity_text|default:act.activityname }}
+                                    {% if act.activityremarks %} remarks
+                                    — {{ act.activityremarks }}
                                     {% endif %}
-                                </td>   
-
-                                <td>{{ act.activityusername }}  </td>
-                                
-                               
+                                </td>
+                        
+                                <td>
+                                    {{ act.activityusername }}
+                                </td>
                             </tr>
-                            
                             {% endfor %}
-
-  
                         </tbody>
+
                     </table>
                     <div class="add-activity display-none">  
                   
                         <form id="add-activity-details" class="mt-3">
                             {% csrf_token %}
 
+                           
                             <div class="mb-3">
                                 <label class="form-label">Activity Name</label>
-                                <input type="text" name="activityname" class="form-control" required>
+                                <select name="activityname" class="form-select" required>
+                                    <option value="">Select Activity</option>
+                                    {% for name in activity_names %}
+                                    <option value="{{ name }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+
 
                             <div class="mb-3">
                                 <label class="form-label">Remarks</label>
                                 <textarea rows="3" class="form-control" name="remarks" ></textarea>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Status </label>
-                                <input type="text" maxlength="20" name="status" class="form-control" >
-                            </div>
 
                             <button id="save-activity" type="submit" class="btn btn-primary">Save Activity</button>
                             
@@ -217,15 +215,14 @@ $("#add-activity-details").submit(function (e) {
 
     const pid = getPidFromUrl();  // You already have this function
 
-    let activityname = $("input[name='activityname']").val();
+    let activityname = $("select[name='activityname']").val();
     let remarks = $("textarea[name='remarks']").val();
-    let status = $("input[name='status']").val();
+   
 
     // Prepare inner object
     let dataObj = {
         "activityname": activityname,
         "remarks": remarks,
-        "status": status,
         "profile_id": pid
     };
 
@@ -280,13 +277,7 @@ function sendWelcomeMail() {
                     timer: 1500,
                     showConfirmButton: false
                 });
-                let btn = document.getElementById("sendWelcome");
-                btn.disabled = true;
-                btn.style.background = "#ccc";
-                btn.style.cursor = "not-allowed";
-
-               
-                checkWelcomeStatus()
+                
                 window.location.reload()
             } else {
                 Swal.fire({
@@ -304,38 +295,4 @@ function sendWelcomeMail() {
             });
         });
 }
-</script>
-<script>
-function checkWelcomeStatus() {
-    const pid = getPidFromUrl();
-
-    $.post(CONFIG['portal'] + "/api/check-welcome-mail-status", {
-        profile_id: pid,
-        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
-    })
-    .done(function(res) {
-        let btn = document.getElementById("sendWelcome");
-
-        if (res.statusCode === 0 && res.email_sent) {
-         
-            btn.disabled = true;
-            btn.style.background = "#ccc";
-            btn.style.cursor = "not-allowed";
-        } else {
-           
-            btn.disabled = false;
-            btn.style.background = "";
-            btn.style.cursor = "pointer";
-        }
-    })
-    .fail(function() {
-        console.error("Error checking welcome mail status");
-    });
-}
-
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    checkWelcomeStatus();
-});
 </script>

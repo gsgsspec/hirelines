@@ -222,3 +222,26 @@ ALTER TABLE jobdesc ADD COLUMN comments VARCHAR(100) NULL;
 
 ALTER TABLE jobdesc ADD COLUMN secondaryskills VARCHAR(2048) NULL;
 INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('Sources', 'Sources', 'sources', 'HR-Admin', 'fas fa-location-arrow', '12');
+
+
+
+
+
+
+==============MANIKANTA==============================================
+
+INSERT INTO lookupmaster
+(lookupid,lookupmasterid,lookupname,lookupparam1,lookupparam2,status,comments)
+VALUES
+(1,0,'Activitycodes','Activitycodes',NULL,'A',NULL);
+
+INSERT INTO lookupmaster
+(lookupid,lookupmasterid,lookupname,lookupparam1,lookupparam2,status,comments)
+VALUES
+(1,1,'Rejected','RJ',NULL,'A',NULL),
+(1,2,'Selected','SL',NULL,'A',NULL),
+(1,3,'Submitted To Client','CL',NULL,'A',NULL),
+(1,4,'Waiting Client Feedback','CF',NULL,'A',NULL),
+(1,5,'Client-Rejected','CR',NULL,'A',NULL),
+(1,6,'Client-Selected','CS',NULL,'A',NULL),
+(1,7,'Client-Interview','CI',NULL,'A',NULL);

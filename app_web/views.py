@@ -4,8 +4,8 @@ from django.db.models import Q
 from app_api.functions import constants
 from app_api.functions.enc_dec import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
-from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills
-from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
+from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills,Lookupmaster, ProfileActivity
+from app_api.functions.services import ProfileScoringEngine, getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
     getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
@@ -1029,10 +1029,23 @@ def profileactivityviewPage(request,pid):
 
 
         activity_details=getProfileactivityDetailsService(pid)
+        activity_names = Lookupmaster.objects.filter(lookupid=1,status='A').exclude(lookupmasterid=0).values_list('lookupname', flat=True)
 
+        exists = ProfileActivity.objects.filter(
+            profileid=pid,
+            activitycode="E1"
+        ).exists()
+
+        if exists:
+            email_exist="Y"
+        else:
+            email_exist="N"
+
+        print("email_exist",email_exist)
+        
 
         menuItemList = get_functions_service(user_role)
-        return render(request, "portal_index.html", {"template_name": 'profileactivity.html','menuItemList': menuItemList,"activity_details":activity_details})
+        return render(request, "portal_index.html", {"template_name": 'profileactivity.html','menuItemList': menuItemList,"activity_details":activity_details,"activity_names":activity_names,"email_exist":email_exist})
 
    
     except Exception as e:

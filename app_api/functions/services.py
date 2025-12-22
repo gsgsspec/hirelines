@@ -70,6 +70,7 @@ from app_api.models import (
     ProfileCertificates,
     ProfileAddress,
     ResumeFile,
+    Lookupmaster
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -3776,79 +3777,88 @@ def getProfileDetailsService(pid):
     except Exception as e:
         raise
 
-
 def getProfileactivityDetailsService(pid):
     try:
-        # Fetch all activity rows for this profile
+        
         activity_list = (
-            ProfileActivity.objects.filter(profileid=pid).values().order_by("sequence")
+            ProfileActivity.objects
+            .filter(profileid=pid)
+            .values()
+            .order_by("-sequence")
         )
 
         final_list = []
 
-        # Activity mapping
-        activity_map = {
-            "PC": "Profile Created",
-            "PS": "Profile Screened",
-            "P1": "Profile Screening - Promoted",
-            "CT": "Profile Coding Test",
-            "P2": "Profile Coding Test - Promoted",
+       
+        lookup_map = {
+            l["lookupparam1"]: l["lookupname"]
+            for l in Lookupmaster.objects.filter(
+                lookupid=1,     
+                status='A'
+            ).values("lookupparam1", "lookupname")
         }
-        user_ids = set(
-            row.get("acvityuserid") for row in activity_list if row.get("acvityuserid")
-        )
+
+        user_ids = {
+            row.get("acvityuserid")
+            for row in activity_list
+            if row.get("acvityuserid")
+        }
 
         user_map = {
             u["id"]: u["name"]
-            for u in User.objects.filter(id__in=user_ids).values("id", "name")
+            for u in User.objects.filter(id__in=user_ids)
+            .values("id", "name")
         }
 
-        # Fetch profile details ONCE
+      
         job_title = (
-            Profile.objects.filter(id=pid)
+            Profile.objects
+            .filter(id=pid)
             .values("title", "firstname", "lastname")
             .first()
         )
 
         for row in activity_list:
 
-            # Format datetime safely
             dt = row.get("datentime")
-            if dt and hasattr(dt, "strftime"):
-                formatted_dt = dt.strftime("%d-%b-%Y %I:%M %p")
-            else:
-                formatted_dt = ""
+            formatted_dt = (
+                dt.strftime("%d-%b-%Y %I:%M %p")
+                if dt and hasattr(dt, "strftime")
+                else ""
+            )
 
+            code = row.get("activitycode")
             userid = row.get("acvityuserid")
 
-            final_list.append(
-                {
-                    "id": row.get("id"),
-                    "profileid": row.get("profileid"),
-                    "sequence": row.get("sequence"),
-                    "datentime": formatted_dt,
-                    "activitycode": row.get("activitycode"),
-                    "activity_text": activity_map.get(
-                        row.get("activitycode"), "Unknown Activity"
-                    ),
-                    "activityuserid": row.get("acvityuserid"),
-                    "activityusername": user_map.get(userid, ""),
-                    "activityremarks": row.get("activityremarks"),
-                    "activitystatus": row.get("activitystatus"),
-                    "activityname": row.get("activityname"),
-                    # Adding job title details
-                    "jobtitle": job_title["title"] if job_title else "",
-                    "firstname": job_title["firstname"] if job_title else "",
-                    "lastname": job_title["lastname"] if job_title else "",
-                }
-            )
+            final_list.append({
+                "id": row.get("id"),
+                "profileid": row.get("profileid"),
+                "sequence": row.get("sequence"),
+                "datentime": formatted_dt,
+                "activitycode": code,
+
+                
+                "activity_text": lookup_map.get(code, row.get("activityname")),
+
+                "activityuserid": userid,
+                "activityusername": user_map.get(userid, ""),
+                "activityremarks": row.get("activityremarks"),
+                "activitystatus": row.get("activitystatus"),
+                "activityname": row.get("activityname"),
+
+                "jobtitle": job_title["title"] if job_title else "",
+                "firstname": job_title["firstname"] if job_title else "",
+                "lastname": job_title["lastname"] if job_title else "",
+            })
+
         return final_list
 
     except Exception as e:
+        print("getProfileactivityDetailsService error:", e)
         raise
 
 
-#         raise
+
 
 
 def getResumeData(user_data, filters=None):

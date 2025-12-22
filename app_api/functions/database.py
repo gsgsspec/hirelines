@@ -10,7 +10,7 @@ from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
-    ResumeFile, WorkCal,ProfileAddress
+    ResumeFile, WorkCal,ProfileAddress,Lookupmaster
 
 
 # from .doc2pdf import convert_word_binary_to_pdf
@@ -1148,18 +1148,38 @@ def updateProfileSkillsDB(dataObjs):
 def updateProfileActivityDB(dataObjs,userid):
     try:
         profile_id = dataObjs.get("profile_id")
+        
         activityname = dataObjs.get("activityname")
+       
         remarks = dataObjs.get("remarks")
-        status = dataObjs.get("status")
+       
+       
+        lookup = Lookupmaster.objects.filter(lookupname=activityname,status='A').first()
+      
 
-        # Create new ProfileActivity record
+        if not lookup:
+            raise Exception("Invalid activity name")
+
+        activity_code = lookup.lookupparam1   
+      
+
+    
+        last_seq = ProfileActivity.objects.filter(profileid=profile_id).aggregate( max_seq=Max('sequence'))['max_seq']
+     
+        next_seq = (last_seq or 0) + 1
+        
+
+
+       
         ProfileActivity.objects.create(
-            profileid = profile_id,
-            datentime = datetime.now(),
-            acvityuserid = userid,
-            activityname = activityname,
-            activityremarks = remarks,
-            activitystatus = status
+            profileid=profile_id,
+            sequence=next_seq,
+            datentime=datetime.now(),
+            acvityuserid=userid,
+            activityname=activityname,
+            activitycode=activity_code,
+            activityremarks=remarks,
+
         )
 
         return True

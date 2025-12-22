@@ -2345,9 +2345,9 @@ def sendwelcomemail(request):
             profileid=profile_id,
             datentime=datetime.now(),
             sequence=next_sequence,
-            activitycode="WE",                     
+            activitycode="E1",                     
             acvityuserid=acvityuserid,                      
-            activityname="Welcome Email Sent",
+            activityname="Thank you note",
           
         )
                 
@@ -2376,7 +2376,7 @@ def check_welcome_mail_status(request):
 
         exists = ProfileActivity.objects.filter(
             profileid=profile_id,
-            activitycode="WE"
+            activitycode="E1"
         ).exists()
 
         response["email_sent"] = exists
