@@ -539,29 +539,39 @@ $(document).on("submit", "#Person-detais", function (e) {
         }
     ).done(function (res) {
 
-            Swal.fire({
-                title: "Saved Successfully!",
-                icon: "success",
-                timer: 1500,
-                showConfirmButton: "OK"
-            });
-            let sendMail = document.getElementById("sendWelcomeMail")?.checked;
+        Swal.fire({
+            title: "Saved Successfully!",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: "OK"
+        });
+        const checkbox = document.getElementById("sendWelcomeMail");
+        const sendMail = checkbox?.checked;
 
-            if (sendMail) {
-                
+        if (sendMail) {
+            $.post(CONFIG['portal'] + "/api/send-welcome-mail", {
+                profile_id: profileId,
+                csrfmiddlewaretoken: CSRF_TOKEN
+            })
+                .done(function () {
 
-                $.post(CONFIG['portal'] + "/api/send-welcome-mail", {
-                    profile_id: profileId,
-                    csrfmiddlewaretoken: CSRF_TOKEN
-                })
-                    .done(function (mailRes) {
-                        console.log("Welcome Mail Sent:", mailRes);
-                    })
-                    .fail(function (mailErr) {
-                        console.error("Mail Failed:", mailErr);
+                    checkbox.checked = false;
+                    checkbox.disabled = true;
+                    checkbox.closest(".form-check")?.remove();
+
+                    Swal.fire({
+                        title: "Welcome Email Sent!",
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: "OK",
+                        confirmButtonColor: "#274699"
                     });
-            }
-        })
+                })
+                .fail(function () {
+                    Swal.fire("Mail Failed", "Unable to send welcome email", "error");
+                });
+        }
+    })
         .fail(function (err) {
 
             Swal.fire({

@@ -684,7 +684,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (res.statusCode === 0 && res.email_sent) {
             
             document.getElementById("sendWelcomeMail")
-                ?.closest(".form-group")
+                ?.closest(".form-check")
                 ?.remove();
         }
 
