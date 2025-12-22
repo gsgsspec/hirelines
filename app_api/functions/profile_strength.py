@@ -57,7 +57,7 @@ RULES = {
             "points": 6,
         },
         "set_2": {
-            "items": ["P"],
+            "items": ["P","M"],
             "points": 10,
         },
         "max_points": 10,
