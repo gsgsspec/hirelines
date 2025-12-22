@@ -523,8 +523,14 @@ class Profile(models.Model):
     dateofbirth = models.DateTimeField(null=True, blank=True)
     fathername = models.CharField(max_length=100, null=True, blank=True)
     nativeof = models.CharField(max_length=100, null=True, blank=True)
-    status = models.CharField(max_length=1, null=True, blank=True) #  D - Draft, R - Rejected, O - Offered, E - Employee
     strength = models.IntegerField(null=True)
+    educationscore = models.IntegerField(null=True)
+    experiencescore = models.IntegerField(null=True)
+    projectsscore = models.IntegerField(null=True)
+    skillsscore = models.IntegerField(null=True)
+    certificatesscore = models.IntegerField(null=True)
+    awardsscore = models.IntegerField(null=True)
+    status = models.CharField(max_length=1, null=True, blank=True) #  D - Draft, R - Rejected, O - Offered, E - Employee
 
     class Meta:
         db_table = 'profile'

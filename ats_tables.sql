@@ -128,3 +128,12 @@ INSERT INTO `role` (`Name`, `status`) VALUES ('Recruiter', 'A');
 INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('Resume Inbox', 'Resume Inbox', 'resume-inbox', 'HR-Admin, Recruiter', 'fas fa-envelope', '3');
 INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('Profile', 'Profiles', 'profiles', 'HR-Admin, Recruiter', 'fas fa-users', '5');
 INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('Work Calender', 'Work Calender', 'work-calender', 'Interviewer', 'fas fa-calendar-day', '12');
+
+
+ALTER TABLE profile
+ADD COLUMN educationscore INT NULL DEFAULT NULL,
+ADD COLUMN experiencescore  INT NULL DEFAULT NULL,
+ADD COLUMN projectsscore  INT NULL DEFAULT NULL,
+ADD COLUMN skillsscore  INT NULL DEFAULT NULL,
+ADD COLUMN certificatesscore  INT NULL DEFAULT NULL,
+ADD COLUMN awardsscore  INT NULL DEFAULT NULL;

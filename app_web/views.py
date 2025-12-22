@@ -5,7 +5,7 @@ from app_api.functions import constants
 from app_api.functions.enc_dec import encrypt_code
 from app_api.functions.masterdata import user_not_active,auth_user, get_current_path, getCompanyId
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills
-from app_api.functions.services import ProfileScoringEngine, getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
+from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
     getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
@@ -1103,7 +1103,6 @@ def addProfilePage(request):
        
 
 def view_resumePage(request,pid):
-    
     try:
         user_mail = request.user
         user_data = auth_user(user_mail)
@@ -1117,11 +1116,8 @@ def view_resumePage(request,pid):
 
         profile_details=getProfileDetailsService(pid)
         
-        engine = ProfileScoringEngine()
-        profile_strength = engine.score_profile(pid)
-        print("profile_strength:\n",profile_strength)
         return render(request, "portal_index.html", {"template_name": 'view_resume.html','menuItemList': menuItemList,'profile_details':profile_details,"username": username,'comany_name':comany_name,
-                                                     "profile_strength":profile_strength})
+                                                     "profile_strength":""})
       
     except Exception as e:
         raise  

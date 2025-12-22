@@ -1002,7 +1002,7 @@ def updateProfileDetailsDB(dataObjs):
 
 def updateProfileEducationDB(dataObjs):
     try:
-
+        from app_api.functions.profile_strength import CalculateProfileScoring
         profile_id = dataObjs["profile_id"]
         profile_education = dataObjs["data"]
 
@@ -1019,7 +1019,9 @@ def updateProfileEducationDB(dataObjs):
                 yearto = education["yearto"],
                 grade = education["grade"]
             )
-
+            
+        updateProfileScoreDB(profile_id)
+        
     except Exception as e:
         raise
 
@@ -1042,7 +1044,8 @@ def updateProfileExperienceDB(dataObjs):
                 yearfrom = experience["yearfrom"],
                 yearto = experience["yearto"],
             )
-
+        
+        updateProfileScoreDB(profile_id)
 
     except Exception as e:
         raise
@@ -1068,6 +1071,8 @@ def updateProfileProjectsDB(dataObjs):
                 yearsfrom = project["yearfrom"],
                 yearsto = project["yearto"],
             )
+        
+        updateProfileScoreDB(profile_id)
 
     except Exception as e:
         raise
@@ -1089,6 +1094,8 @@ def updateProfileAwardsDB(dataObjs):
                 awardname = award["awardname"],
                 year = award["year"]
             )
+        
+        updateProfileScoreDB(profile_id)
 
     except Exception as e:
         raise
@@ -1110,6 +1117,8 @@ def updateProfileCertificatesDB(dataObjs):
                 certname = certificate["cert_name"],
                 year = certificate["year"]
             )
+        
+        updateProfileScoreDB(profile_id)
 
     except Exception as e:
         raise
@@ -1129,7 +1138,8 @@ def updateProfileSkillsDB(dataObjs):
             profileid=profile_id,
             primaryskills=skills_str
         )
-
+        
+        updateProfileScoreDB(profile_id)
 
     except Exception as e:
         raise
@@ -1207,9 +1217,6 @@ def saveWorkCalDB(dataObjs):
     except Exception as e:
         print("saveWorkCalDB ERROR:", str(e))
         raise
-
-
-
 
 
 def scheduleInterviewLinkDB(user_id, dataObjs):
@@ -1355,12 +1362,6 @@ def createProfileActivityDB(dataObjs):
         raise
 
 
-
-
-
-
-
-
 def scheduleCandidateInterviewDB(dataObjs):
     try:
        
@@ -1456,3 +1457,28 @@ def jdRecruiterAssignDB(dataObjs):
         
     except Exception as e:
         raise
+
+
+
+
+
+def updateProfileScoreDB(profile_id):
+    try:
+        from app_api.functions.profile_strength import CalculateProfileScoring
+        
+        profileScore = CalculateProfileScoring()
+        profile_strength = profileScore.score_profile(profile_id)
+        
+        profile = Profile.objects.get(id=profile_id)
+        profile.strength = profile_strength["percentage"]
+        profile.educationscore = profile_strength["breakdown"]["education"]["percentage"]
+        profile.experiencescore = profile_strength["breakdown"]["experience"]["percentage"]
+        profile.projectsscore = profile_strength["breakdown"]["projects"]["percentage"]
+        profile.skillsscore = profile_strength["breakdown"]["skills"]["percentage"]
+        profile.certificatesscore = profile_strength["breakdown"]["certificates"]["percentage"]
+        profile.awardsscore = profile_strength["breakdown"]["awards"]["percentage"]
+        profile.save()
+        
+    except Exception as e:
+        raise
+
