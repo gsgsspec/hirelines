@@ -249,3 +249,16 @@ VALUES
 
 ALTER TABLE 'resume'
 ADD COLUMN docparserid INT NULL;
+
+
+===================Mounika=============
+
+CREATE TABLE profileanalysis (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    companyid INT NULL,
+    month INT  NULL,
+    year INT NULL,
+    userid INT NULL,
+    activitycode VARCHAR(3) NULL,
+    profilescount INT NULL
+);
