@@ -453,7 +453,10 @@ $(document).on("click", ".save-table-btn", function () {
     let tableData = getTableData(tableSelector);
 
     // If validation failed, stop here (getTableData already showed Swal)
-    if (!tableData || tableData.length === 0) {
+    // if (!tableData || tableData.length === 0) {
+    //     return;
+    // }
+       if (!tableData) {
         return;
     }
 
