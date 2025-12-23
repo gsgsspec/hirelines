@@ -3760,12 +3760,17 @@ def getProfileDetailsService(pid):
         )
 
         profile_det["address"] = address_list
+        print("address_list",address_list)
 
         branding = (
             Branding.objects.filter(companyid=profile.get("companyid"))
             .values("logourl")
             .first()
         )
+        resume = Resume.objects.filter(id=profile.get("resumeid")).values("docparserid").first()
+
+        profile_det["docparserid"] = resume["docparserid"] if resume else None
+        
 
         if branding and branding.get("logourl"):
             profile_det["logo"] = branding.get("logourl")
@@ -4516,3 +4521,50 @@ def getRecruitersData(jdid,companyid):
 
     except Exception as e:
         raise
+def send_resume_to_docparser(resumefile_id):
+    """
+    Send ResumeFile to doc parser API and return docparser_id if successful
+    """
+    try:
+        resume_file = ResumeFile.objects.get(id=resumefile_id)
+    except ResumeFile.DoesNotExist:
+        print(f"ResumeFile {resumefile_id} not found")
+        return None
+    base_url = getConfig()['DOMAIN']['docparser']  # e.g. http://localhost:8002
+    url = f"{base_url}/api/add-document-to-queue"
+
+    # Detect file type
+    def detect_file_type(file_bytes: bytes):
+        if file_bytes.startswith(b"%PDF"):
+            return "pdf", "application/pdf"
+        if file_bytes.startswith(b"\xD0\xCF\x11\xE0"):
+            return "doc", "application/msword"
+        if file_bytes.startswith(b"PK\x03\x04"):
+            return "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        return "unknown", "application/octet-stream"
+
+    file_ext, mime_type = detect_file_type(resume_file.filecontent)
+
+    files = {
+        "file": (resume_file.filename, resume_file.filecontent, mime_type)
+    }
+
+    data = {
+        "filename": resume_file.filename,
+        "filetype": file_ext,
+        "company": "GSSPEC",
+        "application": "Hirelines",
+        "documenttype": "Resume"
+    }
+
+    try:
+        response = requests.post(url, files=files, data=data, timeout=10)
+        response.raise_for_status()
+        resp_json = response.json()
+        print(f"Doc parser API response: {resp_json}")
+
+        # Assuming your API returns docparser_id in `data.document_id`
+        return resp_json.get("data", {}).get("docparser_id")
+    except Exception as e:
+        print(f"⚠️ Failed to call doc parser API for ResumeFile {resumefile_id}: {e}")
+        return None

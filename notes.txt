@@ -245,3 +245,7 @@ VALUES
 (1,5,'Client-Rejected','CR',NULL,'A',NULL),
 (1,6,'Client-Selected','CS',NULL,'A',NULL),
 (1,7,'Client-Interview','CI',NULL,'A',NULL);
+=================Sathwik================
+
+ALTER TABLE 'resume'
+ADD COLUMN docparserid INT NULL;

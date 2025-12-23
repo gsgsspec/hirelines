@@ -11,7 +11,7 @@ from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
     ResumeFile, WorkCal,ProfileAddress,Lookupmaster
-
+from django.db import transaction
 
 # from .doc2pdf import convert_word_binary_to_pdf
 
@@ -1502,3 +1502,124 @@ def updateProfileScoreDB(profile_id):
     except Exception as e:
         raise
 
+
+@transaction.atomic
+def updateFullProfileDB(data):
+
+    def to_int(val):
+        try:
+            if val in ("", None):
+                return None
+            return int(val)
+        except:
+            return None
+
+    def safe_str(val):
+        return val if val not in ("", None) else None
+
+    profile_id = data.get("profileid")
+    if not profile_id:
+        raise Exception("profileid missing")
+
+    profile = Profile.objects.get(id=profile_id)
+
+    profile_block = data.get("profile", {})
+    personal = profile_block.get("personal", {})
+
+    # -------- PROFILE (PERSONAL + ADDRESS) --------
+    profile.title = safe_str(personal.get("title"))
+    profile.firstname = safe_str(personal.get("firstname"))
+    profile.middlename = safe_str(personal.get("middlename"))
+    profile.lastname = safe_str(personal.get("lastname"))
+    profile.email = safe_str(personal.get("email"))
+    profile.mobile = safe_str(personal.get("mobile"))
+    profile.linkedin = safe_str(personal.get("linkedin"))
+    profile.facebook = safe_str(personal.get("facebook"))
+    profile.passportnum = safe_str(personal.get("passportnum"))
+    profile.fathername = safe_str(personal.get("fathername"))
+    profile.nativeof = safe_str(personal.get("nativeof"))
+
+    dob = personal.get("dateofbirth")
+    profile.dateofbirth = (
+        datetime.strptime(dob, "%Y-%m-%d").date() if dob else None
+    )
+
+    profile.save()
+
+    address_data = personal.get("address", {})
+    address, _ = ProfileAddress.objects.get_or_create(profileid=profile_id)
+
+    address.addline1 = safe_str(address_data.get("addline1"))
+    address.addline2 = safe_str(address_data.get("addline2"))
+    address.city     = safe_str(address_data.get("city"))
+    address.state    = safe_str(address_data.get("state"))
+    address.country  = safe_str(address_data.get("country"))
+    address.zipcode  = safe_str(address_data.get("zipcode"))
+
+    address.save()
+
+    # -------- EDUCATION --------
+    ProfileEducation.objects.filter(profileid=profile_id).delete()
+    for edu in profile_block.get("education", []):
+        ProfileEducation.objects.create(
+            profileid=profile_id,
+            sequence=to_int(edu.get("sequence")),
+            course=safe_str(edu.get("course")),
+            institute=safe_str(edu.get("institute")),
+            yearfrom=to_int(edu.get("yearfrom")),
+            yearto=to_int(edu.get("yearto")),
+            grade=safe_str(edu.get("grade")),
+        )
+
+    # -------- EXPERIENCE --------
+    ProfileExperience.objects.filter(profileid=profile_id).delete()
+    for exp in profile_block.get("experience", []):
+        ProfileExperience.objects.create(
+            profileid=profile_id,
+            sequence=to_int(exp.get("sequence")),
+            jobtitle=safe_str(exp.get("jobtitle")),
+            company=safe_str(exp.get("company")),
+            yearfrom=to_int(exp.get("yearfrom")),
+            yearto=to_int(exp.get("yearto")),
+        )
+
+    # -------- SKILLS --------
+    skills_data = profile_block.get("skills", {})
+    skills, _ = ProfileSkills.objects.get_or_create(profileid=profile_id)
+    skills.primaryskills = safe_str(skills_data.get("primaryskills"))
+    skills.secondaryskills = safe_str(skills_data.get("secondaryskills"))
+    skills.save()
+
+    # -------- PROJECTS --------
+    ProfileProjects.objects.filter(profileid=profile_id).delete()
+    for proj in profile_block.get("projects", []):
+        ProfileProjects.objects.create(
+            profileid=profile_id,
+            sequence=to_int(proj.get("sequence")),
+            projectname=safe_str(proj.get("projectname")),
+            clientname=safe_str(proj.get("clientname")),
+            roleplayed=safe_str(proj.get("roleplayed")),
+            skillsused=safe_str(proj.get("skillsused")),
+            yearsfrom=to_int(proj.get("yearsfrom")),
+            yearsto=to_int(proj.get("yearsto")),
+        )
+
+    # -------- AWARDS --------
+    ProfileAwards.objects.filter(profileid=profile_id).delete()
+    for a in profile_block.get("awards", []):
+        ProfileAwards.objects.create(
+            profileid=profile_id,
+            sequence=to_int(a.get("sequence")),
+            awardname=safe_str(a.get("awardname")),
+            year=to_int(a.get("year")),
+        )
+
+    # -------- CERTIFICATES --------
+    ProfileCertificates.objects.filter(profileid=profile_id).delete()
+    for c in profile_block.get("certificates", []):
+        ProfileCertificates.objects.create(
+            profileid=profile_id,
+            sequence=to_int(c.get("sequence")),
+            certname=safe_str(c.get("certname")),
+            year=to_int(c.get("year")),
+        )
