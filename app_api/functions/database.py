@@ -1373,9 +1373,10 @@ def createProfileActivityDB(dataObjs):
             datentime = datetime.now(),
             sequence = next_seq,
             activitycode = "PC",
+            activityname = "Profile Created",
             acvityuserid = dataObjs["acvityuserid"]
         )
-
+        
         profile_activity.save()
 
     except Exception as e:
