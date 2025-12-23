@@ -4678,6 +4678,8 @@ def send_resume_to_docparser(resumefile_id):
 #         "comparison_text": comparison_text
 
 #     }
+
+
 from django.db.models import Sum
 
 def getRecritmentDashboardData(
@@ -4740,7 +4742,7 @@ def getRecritmentDashboardData(
     def percent(value, total):
         if total == 0:
             return 0
-        return round((value / total) * 100, 1)
+        return round((value / total) * 100)
 
   
     return {
@@ -4755,10 +4757,10 @@ def getRecritmentDashboardData(
         "submitted_percentage": 100 if submitted else 0,
         "profiled_percentage": percent(profiled, submitted),
         "rejected_percentage": percent(rejected, submitted),
-        "sent_client_percentage": percent(sent_client, submitted),
-        "rejected_client_percentage": percent(rejected_client, submitted),
-        "selected_client_percentage": percent(selected_client, submitted),
-        "waiting_feedback_percentage": percent(waiting_feedback, submitted),
+        "sent_client_percentage": percent(sent_client, profiled),
+        "selected_client_percentage": percent(selected_client, profiled),
+        "rejected_client_percentage": percent(rejected_client, profiled),
+        "waiting_feedback_percentage": percent(waiting_feedback, profiled),
 
         "comparison_text": comparison_text
     }

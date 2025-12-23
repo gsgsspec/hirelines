@@ -402,6 +402,26 @@ $(document).ready(function () {
         $("#rejectedClientCount").text(data.rejected_client);
         $("#selectedClientCount").text(data.selected_client);
         $("#waitingFeedbackCount").text(data.waiting_feedback);
+         $("#submittedCount").closest(".card-body").find(".text-heading")
+        .text(data.submitted_percentage + "%");
+
+        $("#profiledCount").closest(".card-body").find(".text-heading")
+            .text(data.profiled_percentage + "%");
+
+        $("#rejectedCount").closest(".card-body").find(".text-heading")
+            .text(data.rejected_percentage + "%");
+
+        $("#sentClientCount").closest(".card-body").find(".text-heading")
+            .text(data.sent_client_percentage + "%");
+
+        $("#selectedClientCount").closest(".card-body").find(".text-heading")
+            .text(data.selected_client_percentage + "%");
+
+        $("#rejectedClientCount").closest(".card-body").find(".text-heading")
+            .text(data.rejected_client_percentage + "%");
+
+        $("#waitingFeedbackCount").closest(".card-body").find(".text-heading")
+            .text(data.waiting_feedback_percentage + "%");
         $(".comparisonText").text(data.comparison_text);
 
         
