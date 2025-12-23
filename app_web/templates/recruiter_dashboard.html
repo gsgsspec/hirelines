@@ -135,13 +135,18 @@
                     Recruiter
                 </label>
                 <select class="form-select" id="recruiterFilter" style="max-width: 220px;">
-                    <option value="">All Recruiters</option>
+                    {% if show_all_option %}
+                        <option value="">All Recruiters</option>
+                    {% endif %}
+
                     {% for recruiter in recruiters %}
-                    <option value="{{ recruiter.id }}">
-                        {{ recruiter.name }}
-                    </option>
+                        <option value="{{ recruiter.id }}">
+                            {{ recruiter.name }}
+                        </option>
                     {% endfor %}
+
                 </select>
+
             </div>
         </div>
 
@@ -175,12 +180,12 @@
                                     <i class="icon-base bx bx-paper-plane icon-lg"></i>
                                 </span>
                             </div>
-                            <h4 class="mb-0">42</h4>
+                            <h4 class="mb-0"id=submittedCount>{{ submitted }}</h4>
                         </div>
                         <p class="mb-2">Submitted</p>
                         <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">+18.2%</span>
-                            <span class="text-body-secondary">than last week</span>
+                            <span class="text-heading fw-medium me-2">{{submitted_percentage}}%</span>
+                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
                         </p>
                     </div>
                 </div>
@@ -195,12 +200,12 @@
                                     <i class="icon-base bx bx-user-check icon-lg"></i>
                                 </span>
                             </div>
-                            <h4 class="mb-0">8</h4>
+                            <h4 class="mb-0"id=profiledCount>{{ profiled }}</h4>
                         </div>
                         <p class="mb-2">Profiled</p>
                         <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">-8.7%</span>
-                            <span class="text-body-secondary">than last week</span>
+                            <span class="text-heading fw-medium me-2">{{profiled_percentage}}%</span>
+                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
                         </p>
                     </div>
                 </div>
@@ -215,12 +220,12 @@
                                     <i class="icon-base bx bx-x-circle icon-lg"></i>
                                 </span>
                             </div>
-                            <h4 class="mb-0">27</h4>
+                            <h4 class="mb-0"id=rejectedCount>{{ rejected }}</h4>
                         </div>
                         <p class="mb-2">Rejected</p>
                         <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">+4.3%</span>
-                            <span class="text-body-secondary">than last week</span>
+                            <span class="text-heading fw-medium me-2">{{rejected_percentage}}%</span>
+                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
                         </p>
                     </div>
                 </div>
@@ -235,12 +240,12 @@
                                     <i class="icon-base bx bx-briefcase-alt icon-lg"></i>
                                 </span>
                             </div>
-                            <h4 class="mb-0">13</h4>
+                            <h4 class="mb-0"id=sentClientCount>{{ sent_client }}</h4>
                         </div>
                         <p class="mb-2">Sent Client</p>
                         <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">-2.5%</span>
-                            <span class="text-body-secondary">than last week</span>
+                            <span class="text-heading fw-medium me-2">{{sent_client_percentage}}%</span>
+                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
                         </p>
                     </div>
                 </div>
@@ -264,12 +269,12 @@
                                     <i class="icon-base bx bx-x-circle icon-lg"></i>
                                 </span>
                             </div>
-                            <h4 class="mb-0">42</h4>
+                            <h4 class="mb-0"id=rejectedClientCount>{{ rejected_client }}</h4>
                         </div>
                         <p class="mb-2">Rejected by Client</p>
                         <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">+18.2%</span>
-                            <span class="text-body-secondary">than last week</span>
+                            <span class="text-heading fw-medium me-2">{{rejected_client_percentage}}%</span>
+                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
                         </p>
                     </div>
                 </div>
@@ -285,12 +290,12 @@
                                     <i class="icon-base bx bx-badge-check icon-lg"></i>
                                 </span>
                             </div>
-                            <h4 class="mb-0">8</h4>
+                            <h4 class="mb-0"id=selectedClientCount>{{ selected_client }}</h4>
                         </div>
                         <p class="mb-2">Selected by Client</p>
                         <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">-8.7%</span>
-                            <span class="text-body-secondary">than last week</span>
+                            <span class="text-heading fw-medium me-2">{{selected_client_percentage}}%</span>
+                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
                         </p>
                     </div>
                 </div>
@@ -306,12 +311,12 @@
                                     <i class="icon-base bx bx-time-five icon-lg"></i>
                                 </span>
                             </div>
-                            <h4 class="mb-0">27</h4>
+                            <h4 class="mb-0"id=waitingFeedbackCount>{{ waiting_feedback }}</h4>
                         </div>
                         <p class="mb-2">Waiting Feedback</p>
                         <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">+4.3%</span>
-                            <span class="text-body-secondary">than last week</span>
+                            <span class="text-heading fw-medium me-2">{{waiting_feedback_percentage}}%</span>
+                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
                         </p>
                     </div>
                 </div>
@@ -329,14 +334,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const monthInput = document.getElementById("monthFilter");
 
-    // ✅ Set current month by default (YYYY-MM)
+    //  Set current month by default (YYYY-MM)
     const today = new Date();
     const currentMonth =
         today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0");
 
     monthInput.value = currentMonth;
 
-    // ✅ Optional: Log formatted value (Dec - 2025)
+    //  Optional: Log formatted value (Dec - 2025)
     formatMonth(currentMonth);
 
     monthInput.addEventListener("change", function () {
@@ -354,5 +359,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
         console.log("Selected Month:", formatted); // Dec 2025
     }
+});
+</script>
+<script>
+$(document).ready(function () {
+
+    const recruiterFilter = $("#recruiterFilter");
+    const monthFilter = $("#monthFilter");
+
+    function loadDashboardData() {
+
+        let params = {};
+
+        if (recruiterFilter.length && recruiterFilter.val()) {
+            params.recruiter = recruiterFilter.val();
+        }
+
+        if (monthFilter.length && monthFilter.val()) {
+            params.month = monthFilter.val();
+        }
+
+        $.get(
+            CONFIG['portal'] + "/api/recruiter-dashboard-filter",
+            params,   //  filters passed here
+            function (response) {
+                console.log("response",response)
+
+                if (response.statusCode === 0) {
+                    updateCards(response.data);
+                } else {
+                    console.error(response.error);
+                }
+            }
+        );
+    }
+
+    function updateCards(data) {
+        $("#submittedCount").text(data.submitted);
+        $("#profiledCount").text(data.profiled);
+        $("#rejectedCount").text(data.rejected);
+        $("#sentClientCount").text(data.sent_client);
+        $("#rejectedClientCount").text(data.rejected_client);
+        $("#selectedClientCount").text(data.selected_client);
+        $("#waitingFeedbackCount").text(data.waiting_feedback);
+        $(".comparisonText").text(data.comparison_text);
+
+        
+    }
+    
+    recruiterFilter.on("change", loadDashboardData);
+    monthFilter.on("change", loadDashboardData);
+
+    // Initial load
+    loadDashboardData();
 });
 </script>

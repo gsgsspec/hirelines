@@ -638,3 +638,18 @@ class ProfileAddress(models.Model):
 
     class Meta:
         db_table = 'profileaddress'   
+
+
+
+
+class ProfileAnalysis(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True)
+    month = models.IntegerField(null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)
+    userid = models.IntegerField(null=True)
+    activitycode = models.CharField(max_length=3, null=True, blank=True)
+    profilescount = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'profileanalysis'

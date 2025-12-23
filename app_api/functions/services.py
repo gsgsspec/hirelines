@@ -70,7 +70,8 @@ from app_api.models import (
     ProfileCertificates,
     ProfileAddress,
     ResumeFile,
-    Lookupmaster
+    Lookupmaster,
+    ProfileAnalysis
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -4521,6 +4522,7 @@ def getRecruitersData(jdid,companyid):
 
     except Exception as e:
         raise
+    
 def send_resume_to_docparser(resumefile_id):
     """
     Send ResumeFile to doc parser API and return docparser_id if successful
@@ -4568,3 +4570,195 @@ def send_resume_to_docparser(resumefile_id):
     except Exception as e:
         print(f"⚠️ Failed to call doc parser API for ResumeFile {resumefile_id}: {e}")
         return None
+
+
+
+# def getRecritmentDashboardData(
+#     company_id,
+#     user_role=None,
+#     logged_recruiter_id=None,
+#     selected_recruiter=None,
+#     month_value=None
+# ):
+
+
+#     now = datetime.now()
+
+   
+#     if month_value:
+#         year, month = map(int, month_value.split("-"))
+#     else:
+#         year, month = now.year, now.month
+
+#     start_date = datetime(year, month, 1)
+#     if month == 12:
+#         end_date = datetime(year + 1, 1, 1)
+#     else:
+#         end_date = datetime(year, month + 1, 1)
+
+ 
+#     qs = ProfileActivity.objects.none()
+
+ 
+#     profile_ids = Profile.objects.filter(
+#         companyid=company_id
+#     ).values_list("id", flat=True)
+
+
+#     qs = ProfileActivity.objects.filter(
+#         profileid__in=profile_ids,
+#         datentime__gte=start_date,
+#         datentime__lt=end_date
+#     )
+
+#     if user_role == "Recruiter":
+#         qs = qs.filter(acvityuserid=logged_recruiter_id)
+
+#     elif user_role == "HR-Admin":
+#         if selected_recruiter:
+#             qs = qs.filter(acvityuserid=selected_recruiter)
+
+#     activity_counts = qs.values("activitycode").annotate(
+#         total=Count("id")
+#     )
+
+#     activity_map = {
+#         row["activitycode"]: row["total"]
+#         for row in activity_counts
+#     }
+#     if month_value:
+#         sel_year, sel_month = map(int, month_value.split("-"))
+#     else:
+#         sel_year, sel_month = now.year, now.month
+
+#     is_current_month = (
+#         sel_year == now.year and sel_month == now.month
+#     )
+
+#     if is_current_month:
+#         comparison_text = "than current Month"
+#     else:
+#         comparison_text = "than last Month"
+    
+#     submitted = activity_map.get("PC", 0)
+#     profiled = activity_map.get("SL", 0)
+#     rejected = activity_map.get("RJ", 0)
+#     sent_client = activity_map.get("CL", 0)
+#     rejected_client = activity_map.get("RC", 0)
+#     selected_client = activity_map.get("CS", 0)
+#     waiting_feedback = activity_map.get("WF", 0)
+
+
+#     def percent(value, total):
+#         if total == 0:
+#             return 0
+#         return round((value / total) * 100, 1)
+    
+    
+
+ 
+#     return {
+#         # counts
+#         "submitted": submitted,
+#         "profiled": profiled,
+#         "rejected": rejected,
+#         "sent_client": sent_client,
+#         "rejected_client": rejected_client,
+#         "selected_client": selected_client,
+#         "waiting_feedback": waiting_feedback,
+
+#         # percentages (based on submitted)
+#         "submitted_percentage": 100 if submitted else 0,
+#         "profiled_percentage": percent(profiled, submitted),
+#         "rejected_percentage": percent(rejected, submitted),
+#         "sent_client_percentage": percent(sent_client, submitted),
+#         "rejected_client_percentage": percent(rejected_client, submitted),
+#         "selected_client_percentage": percent(selected_client, submitted),
+#         "waiting_feedback_percentage": percent(waiting_feedback, submitted),
+#         "comparison_text": comparison_text
+
+#     }
+from django.db.models import Sum
+
+def getRecritmentDashboardData(
+    company_id,
+    user_role=None,
+    logged_recruiter_id=None,
+    selected_recruiter=None,
+    month_value=None
+):
+
+    now = datetime.now()
+
+    if month_value:
+        year, month = map(int, month_value.split("-"))
+    else:
+        year, month = now.year, now.month
+
+  
+    qs = ProfileAnalysis.objects.filter(
+        companyid=company_id,
+        year=year,
+        month=month
+    )
+
+ 
+    if user_role == "Recruiter":
+        qs = qs.filter(userid=logged_recruiter_id)
+
+    elif user_role == "HR-Admin" and selected_recruiter:
+        qs = qs.filter(userid=selected_recruiter)
+
+  
+    activity_counts = qs.values("activitycode").annotate(
+        total=Sum("profilescount")
+    )
+
+    activity_map = {
+        row["activitycode"]: row["total"] or 0
+        for row in activity_counts
+    }
+
+
+    is_current_month = (
+        year == now.year and month == now.month
+    )
+
+    comparison_text = (
+        "than current month" if is_current_month else "than last month"
+    )
+
+    submitted = activity_map.get("PC", 0)
+    profiled = activity_map.get("SL", 0)
+    rejected = activity_map.get("RJ", 0)
+    sent_client = activity_map.get("CL", 0)
+    rejected_client = activity_map.get("RC", 0)
+    selected_client = activity_map.get("CS", 0)
+    waiting_feedback = activity_map.get("WF", 0)
+
+   
+    def percent(value, total):
+        if total == 0:
+            return 0
+        return round((value / total) * 100, 1)
+
+  
+    return {
+        "submitted": submitted,
+        "profiled": profiled,
+        "rejected": rejected,
+        "sent_client": sent_client,
+        "rejected_client": rejected_client,
+        "selected_client": selected_client,
+        "waiting_feedback": waiting_feedback,
+
+        "submitted_percentage": 100 if submitted else 0,
+        "profiled_percentage": percent(profiled, submitted),
+        "rejected_percentage": percent(rejected, submitted),
+        "sent_client_percentage": percent(sent_client, submitted),
+        "rejected_client_percentage": percent(rejected_client, submitted),
+        "selected_client_percentage": percent(selected_client, submitted),
+        "waiting_feedback_percentage": percent(waiting_feedback, submitted),
+
+        "comparison_text": comparison_text
+    }

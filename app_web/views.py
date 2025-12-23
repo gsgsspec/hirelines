@@ -7,7 +7,7 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills,Lookupmaster, ProfileActivity
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -1195,27 +1195,55 @@ def recruiterdashboardPage(request):
         user_data = auth_user(user_mail)
 
         user_role = user_data.role
+        logged_recruiter_id = user_data.id      # current recruiter id
+
 
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
 
         company_id = getCompanyId(request.user)
-        
-        dashboard_data = getDashboardData(company_id)
-
         now = datetime.now()
 
-        current_month_value = now.strftime('%Y-%m')        # 2025-12 (for input)
-        current_month_label = now.strftime('%B, %Y')       
+        current_month_value = now.strftime('%Y-%m')       
+        current_month_label = now.strftime('%B, %Y')  
+        
+        selected_recruiter = request.GET.get("recruiter")
+        month_value = request.GET.get("month")
+
+     
+        if user_role == "Recruiter":
+            recruiters = User.objects.filter(
+                id=logged_recruiter_id,
+                role="Recruiter",
+                companyid=company_id
+            ).values("id", "name")
+            show_all_option = False
+        else:
+            recruiters = User.objects.filter(
+                role="Recruiter",
+                companyid=company_id
+            ).values("id", "name")
+            show_all_option = True
+
+
+        recruitment_dashboard_data = getRecritmentDashboardData(
+            company_id=company_id,
+            user_role=user_role,
+            logged_recruiter_id=logged_recruiter_id,
+            selected_recruiter=selected_recruiter,
+            month_value=month_value
+        )
+            
 
 
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
 
         if menuItemObjList:
-            return render(request, "portal_index.html", {"template_name": "recruiter_dashboard.html", 'menuItemList': menuItemList,  "current_month_value": current_month_value,
-"current_month_label": current_month_label,
- })
+            return render(request, "portal_index.html", {"template_name": "recruiter_dashboard.html", 'menuItemList': menuItemList,  "current_month_value": current_month_value,"current_month_label": current_month_label,"recruiters": recruiters,
+            "show_all_option": show_all_option,**recruitment_dashboard_data
+
+        })
     
         else:
             return redirect('../')
