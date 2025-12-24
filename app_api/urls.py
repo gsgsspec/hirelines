@@ -93,6 +93,10 @@ urlpatterns = [
     path('get-mail-resumes',views.getMailResumes),
     path('download-branded-profile',views.downloadBrandedProfile),
     path('jd-recruiter-assign',views.jdRecruiterAssign),
-    path('recruiter-dashboard-filter',views.recruiter_dashboard_filter)
+    path('recruiter-dashboard-filter',views.recruiter_dashboard_filter),
 
+
+    path('add-workspace',views.addWorkspace),
+    path('jd-profile-data',views.jdProfileData),
+    path('shortlist-profile',views.shortlistProfile)
 ]

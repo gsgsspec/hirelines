@@ -58,6 +58,7 @@ class Candidate(models.Model):
     status = models.CharField(max_length=1, null=True)  # P - Pending , S - Selected, R - Rejected 
     deleteflag = models.CharField(max_length=1, null=True) # Y - Marked as deleted
     source = models.CharField(max_length=5,null=True)
+    profileid = models.IntegerField(null=True)
 
     class Meta:
             db_table = 'candidate'
@@ -653,3 +654,28 @@ class ProfileAnalysis(models.Model):
 
     class Meta:
         db_table = 'profileanalysis'
+
+
+class Workspace(models.Model):
+    id = models.AutoField(primary_key=True)
+    clientid = models.IntegerField(null=True, blank=True)
+    project = models.CharField(max_length=100, null=True, blank=True)
+    startdate = models.DateTimeField(null=True, blank=True)
+    notes = models.CharField(max_length=100, null=True, blank=True)
+    createdby = models.IntegerField(null=True, blank=True)
+    createdat = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=1, null=True)
+
+    class Meta:
+        db_table = 'workspace'
+
+
+class Client(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    companyid = models.IntegerField(null=True, blank=True)
+    createdat = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=1, null=True)
+
+    class Meta:
+        db_table = 'client'

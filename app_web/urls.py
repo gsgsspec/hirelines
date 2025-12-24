@@ -38,7 +38,7 @@ urlpatterns = [
     path('sources',views.sourcesPage),
     path("company-data",views.companyPage),
     path("upload-candidates",views.uploadCandidatesPage),
-    path("resume-inbox",views.resumeInboxPage),
+    path("resume-inbox",active_user_required(views.resumeInboxPage)),
     path("update-profile-data/<int:pid>",views.updateProfileDetailsPage),
 
     # Company data page
@@ -53,4 +53,6 @@ urlpatterns = [
     path("candidate-schedule-interview/<str:cid>/",views.scheduleInterviewPage),
     path("recruiter-dashboard",views.recruiterdashboardPage),
 
+    path("workspace",active_user_required(views.workspacePage)),
+    path("workspace/<int:wid>",active_user_required(views.workspaceDetailsPage)),
 ]

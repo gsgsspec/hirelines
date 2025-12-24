@@ -20,7 +20,8 @@ var menuItemsUrls = {
     'profiles': ['profiles','/add-profile'],
     'logout': ['/'],
     'work-calender':['/work-calender'],
-    'recruiter-dashboard':['recruiter-dashboard']
+    'recruiter-dashboard':['recruiter-dashboard'],
+    'workspace':['/workspace'],
 };
 
 var menuItems = document.querySelectorAll('.menu-item');

@@ -10,7 +10,7 @@ from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
-    ResumeFile, WorkCal,ProfileAddress,Lookupmaster
+    ResumeFile, WorkCal,ProfileAddress,Lookupmaster,Workspace
 from django.db import transaction
 
 # from .doc2pdf import convert_word_binary_to_pdf
@@ -1480,9 +1480,6 @@ def jdRecruiterAssignDB(dataObjs):
         raise
 
 
-
-
-
 def updateProfileScoreDB(profile_id):
     try:
         from app_api.functions.profile_strength import CalculateProfileScoring
@@ -1624,3 +1621,22 @@ def updateFullProfileDB(data):
             certname=safe_str(c.get("certname")),
             year=to_int(c.get("year")),
         )
+def addWorkspaceDB(dataObjs,user_data):
+    try:
+
+        print("dataObjs",dataObjs)
+
+        workspace = Workspace(
+            clientid = dataObjs["client"],
+            project = dataObjs["project"],
+            startdate = dataObjs["startdate"],
+            notes = dataObjs["notes"],
+            createdby = user_data.id,
+            createdat = datetime.now(),
+            status = "A"
+        )
+
+        workspace.save()
+        
+    except Exception as e:
+        raise

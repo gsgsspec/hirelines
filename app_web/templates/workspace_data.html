@@ -1,0 +1,43 @@
+{% load static %}
+<h3 class="p-clr mb-4">{{ workspace_data.client }} - {{ workspace_data.project }}</h3>
+
+<div class="row mb-12 g-6">
+    {% for jd_data in workspace_data.jds_data %}
+    <div class="col-md-6 col-lg-4 mb-3">
+        <div class="card wrk-jd-card h-100" data-jdid="{{ jd_data.jdid }}">
+            <div class="card-body">
+                <h5 class="card-title p-clr">{{jd_data.title}}</h5>
+                <p class="card-text">Experience : {{jd_data.expmin}} - {{ jd_data.expmax }} years</p>
+                <p class="card-text">Positions : {{jd_data.positions}}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    <div id="jd-details-container" class="mt-4"></div>
+
+</div>
+
+<script src="{% static 'js/workspace_data.js' %}"></script>
+
+<style>
+    .credits-container {
+        display: none;
+    }
+    .nav-align-top .nav-tabs .nav-link.active {
+        border-bottom: 3px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+    .wrk-jd-card.active {
+        border: 1px solid var(--primary-color);
+        box-shadow: 0 10px 20px rgba(227, 240, 252, 0.9);
+    }
+    .wrk-jd-card {
+        cursor: pointer;
+    }
+
+    .high{color: green;}
+    .medium{color: var(--secondary-color);}
+    .low{ color: red; }
+
+</style>

@@ -71,7 +71,9 @@ from app_api.models import (
     ProfileAddress,
     ResumeFile,
     Lookupmaster,
-    ProfileAnalysis
+    ProfileAnalysis,
+    Workspace,
+    Client
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -86,6 +88,7 @@ from .constants import const_candidate_status, const_paper_types
 from .excel_mapping import validate_excel_with_json
 from hirelines import settings
 from .database import addCandidateDB
+from .jd_profile_matching import calculateJDProfileMatching
 
 
 def addCompanyDataService(dataObjs):
@@ -2587,7 +2590,7 @@ def addNewUserService(company_id, user_data):
                 )
                 save_user.save()
 
-                if userRole == "Recruiter":
+                if save_user.role == "Recruiter":
                     code = f"RC{save_user.id:03}"
 
                     source = Source(
@@ -4764,3 +4767,186 @@ def getRecritmentDashboardData(
 
         "comparison_text": comparison_text
     }
+
+
+def getWorkspaces(user_data):
+    try:
+
+        workspaces_data = []
+
+        workspaces = Workspace.objects.filter(createdby=user_data.id).order_by("-createdat")
+
+        if workspaces:
+
+            for workspace in workspaces:
+
+                client = Client.objects.get(id=workspace.clientid)
+
+                workspaces_data.append({
+                    "id": workspace.id,
+                    "client": client.name,
+                    "project": workspace.project,
+                    "notes": workspace.notes if workspace.notes else "",
+                    "startdate": workspace.startdate.strftime("%d-%B-%Y") if workspace.startdate else "",
+                    "status": workspace.status
+                })
+        
+        return workspaces_data
+
+    except Exception as e:
+        raise
+
+
+def getCompanyClients(user_data):
+    try:
+
+        clients = []
+
+        company_clients = Client.objects.filter(companyid=user_data.companyid,status="A")
+
+        if company_clients:
+            for client in company_clients:
+                clients.append({
+                    "id":client.id,
+                    "name": client.name
+                })
+
+        return clients
+
+    except Exception as e:
+        raise
+
+
+def getWorkspaceData(user_data,wid):
+    try:
+
+        assigned_jds = []
+
+        workspace = Workspace.objects.get(id=wid)
+        client = Client.objects.get(id=workspace.clientid)
+
+        rec_jds = JobDesc.objects.filter(recruiterids__regex=rf'(^|,){user_data.id}(,|$)',status="P").order_by("-createdon")
+
+        for recjd in rec_jds:
+            assigned_jds.append({
+                "jdid":recjd.id,
+                "title":recjd.title,
+                "expmin":recjd.expmin,
+                "expmax":recjd.expmax,
+                "department":recjd.department,
+                "positions":recjd.positions,
+            })
+
+        workspace_data = {
+            "wid": workspace.id,
+            "client": client.name,
+            "project": workspace.project,
+            "jds_data": assigned_jds
+        }
+
+        return workspace_data
+    
+    except Exception as e:
+        raise
+
+
+def getJdProfileData(dataObjs,user_data):
+    try:
+        job_desc = JobDesc.objects.get(id=dataObjs["jdid"])
+
+        shortlisted_profiles = []
+        matched_profiles = []
+
+        profiles = Profile.objects.filter(companyid=user_data.companyid).exclude(status__in=["R","O","E"])
+
+        jd_profile_data = calculateJDProfileMatching(job_desc.id,profiles)
+
+        match_map = {
+            item["profile_id"]: item
+            for item in jd_profile_data
+        }
+
+        user_source = Source.objects.filter(companyid=user_data.companyid,userid=user_data.id).last()
+        
+        for profile in profiles:
+
+            match_info = match_map.get(profile.id, {})
+
+            exp_strength = int(round(match_info.get("exp_strength", 0)))
+            skill_strength = int(round(match_info.get("skill_strength", 0)))
+            overall_strength = int(round((skill_strength * 0.6) + (exp_strength * 0.4)))
+
+            candidate = Candidate.objects.filter(profileid=profile.id,jobid=dataObjs["jdid"]).last()
+            if candidate:
+                c_status = const_candidate_status.get(candidate.status, "")
+                if candidate.source == user_source.code:
+                    shortlisted_profiles.append({
+                        "id":profile.id,
+                        "firstname":profile.firstname,
+                        "middlename":profile.middlename,
+                        "lastname":profile.lastname,
+                        "email":profile.email,
+                        "exp_strength": exp_strength,
+                        "skill_strength": skill_strength,
+                        "overall_strength": overall_strength,
+                        "candidate_status":c_status
+                    })
+
+            else:
+                matched_profiles.append({
+                    "id":profile.id,
+                    "firstname":profile.firstname,
+                    "middlename":profile.middlename,
+                    "lastname":profile.lastname,
+                    "email":profile.email,
+                    "exp_strength": exp_strength,
+                    "skill_strength": skill_strength,
+                    "overall_strength": overall_strength,
+                })
+
+        matched_profiles.sort(key=lambda x: x["overall_strength"],reverse=True)
+
+        return {
+            "jdid":job_desc.id,
+            "title":job_desc.title,
+            "expmin":job_desc.expmin,
+            "expmax":job_desc.expmax,
+            "shortlisted_profiles":shortlisted_profiles,
+            "matched_profiles":matched_profiles,
+        }
+
+    except Exception as e:
+        raise
+
+
+def shortlistProfileService(dataObjs,user_data):
+    try:
+        workflow_data = Workflow.objects.filter(jobid=dataObjs["jdid"],order=1).last()
+
+        if workflow_data:
+            candidate_obj = {}
+            profile = Profile.objects.get(id=dataObjs["profile_id"])
+
+            candidate_obj['firstname'] = profile.firstname if profile.firstname else ""
+            candidate_obj['lastname'] = profile.lastname if profile.lastname else ""
+            candidate_obj['email'] = profile.email
+            candidate_obj['mobile'] = profile.mobile if profile.mobile else ""
+            candidate_obj['jd'] = dataObjs["jdid"]
+            candidate_obj['begin-from'] = workflow_data.paperid
+
+            source = Source.objects.filter(userid=user_data.id,companyid=user_data.companyid).last()
+            
+            if source:
+                candidate_obj["source-code"] = source.code
+
+            candidate = addCandidateDB(candidate_obj,user_data.companyid,None,user_data.id)
+
+            if 'candidateid' in candidate:
+                new_candidate = Candidate.objects.get(id=candidate["candidateid"])
+                new_candidate.profileid = profile.id
+                new_candidate.save()
+
+            return candidate
+
+    except Exception as e:
+        raise

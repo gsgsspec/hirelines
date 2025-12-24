@@ -133,6 +133,7 @@ def fetch_gmail_attachments():
                     resume_file.save()
 
     except Exception as e:
+        print(str(e))
         print("Saving resume failed:", e)
 
 

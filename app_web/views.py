@@ -7,7 +7,7 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills,Lookupmaster, ProfileActivity
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -1053,8 +1053,6 @@ def profileactivityviewPage(request,pid):
     
 
 def resumeInboxPage(request):
-    if not request.user.is_active and not request.user.is_staff:
-        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
     try:
         user_mail = request.user
@@ -1137,18 +1135,12 @@ def view_resumePage(request,pid):
 
 
 
-
-
 def workCalenderPage(request):
     try:
         user_mail = request.user
-        print("user_mail",user_mail)
         user_data = auth_user(user_mail)
-        print("user_data",user_data)
         user_id = user_data.id
-        print("user_id",user_id)
         company_id = user_data.companyid
-        print("company_id",company_id)
 
         user_role = user_data.role
 
@@ -1159,6 +1151,8 @@ def workCalenderPage(request):
 
     except Exception as e:
         raise
+
+
 def scheduleInterviewPage(request, cid):
     try:
         
@@ -1180,8 +1174,6 @@ def scheduleInterviewPage(request, cid):
         print(f"Error processing interview page for candidate {cid}: {e}")
         # Optionally render a safe error page instead of raising
         raise # Reraise the exception for development debugging
-
-
 
 
 
@@ -1251,3 +1243,48 @@ def recruiterdashboardPage(request):
     except Exception as e:
         raise
 
+
+
+def workspacePage(request):
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+        
+
+        workspaces = getWorkspaces(user_data)
+        clients_data = getCompanyClients(user_data)
+        
+        if menuItemObjList:
+            return render(request, "portal_index.html", {"template_name": "workspace.html", 'menuItemList': menuItemList, 'workspaces':workspaces,"user_name":user_data.name, "clients_data":clients_data })
+        else:
+            return redirect('../')
+
+    except Exception as e:
+        raise
+
+
+def workspaceDetailsPage(request,wid):
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        workspace_data =  getWorkspaceData(user_data,wid)
+
+        return render(request, "portal_index.html", {"template_name": "workspace_data.html", 'menuItemList': menuItemList,"workspace_data":workspace_data })
+
+    except Exception as e:
+        raise

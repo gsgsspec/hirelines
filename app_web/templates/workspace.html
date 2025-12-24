@@ -1,0 +1,143 @@
+{% load static %}
+<h3 class="p-clr mb-4">Hello {{user_name}}</h3>
+
+<div class="container-center">
+    <div class="w-100">
+        <div class="card mb-4">
+            <div class="card-title-table">
+                <h4 class="card-header">Workspace</h4>
+            </div>
+            <div class="row mb-12 g-6" style="padding: 20px;">
+                {% for workspace in workspaces %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card wrk-card h-100" onclick="window.location.href='/workspace/{{workspace.id}}'">
+                        <div class="card-body">
+                            <h5 class="card-title p-clr">{{workspace.client}}</h5>
+                            <p class="card-text">{{workspace.project}}</p>
+                            <p class="card-text">Start Date : {{workspace.startdate}}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            
+                <div class="col-md-6 col-lg-4 mb-3" style="min-height: 150px;">
+                    <div class="card h-100" data-bs-toggle="modal" data-bs-target="#addWorkspaceModal">
+                        <div class="card-body">
+                            <div class="add-wkcard">
+                                <i class="fas fa-plus"></i>
+                                <label style="font-size: 18px;cursor: pointer;" class="mt-2">Create new workspace</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-bottom-right" id="addWorkspaceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header wk-modal-header">
+                <h5 class="modal-title p-clr" id="modalCenterTitle">New Workspace</h5>
+            </div>
+
+            <form id="workspace-add-form">
+                <div class="modal-body" style="padding-top: 1rem;">
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">Client <span style="color: red;">*</span></label>
+                            <select class="form-select" id="client">
+                                <option selected disabled>Select client</option>
+                                {% for client in clients_data %}
+                                <option value="{{ client.id }}">{{ client.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">Project <span style="color: red;">*</span></label>
+                            <input type="text" id="project" class="form-control" placeholder="Project" maxlength="100" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">Start Date <span style="color: red;">*</span></label>
+                            <input class="form-control" type="date" id="startdate" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" rows="3" id="notes"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" onclick="handleCreateWorkspace()">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/workspace.js' %}"></script>
+
+<style>
+    .credits-container {
+        display: none;
+    }
+
+    .add-wkcard {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 40px;
+        flex-direction: column;
+        cursor: pointer;
+        color: #566a7f;
+    }
+
+    .add-wkcard:hover {
+        color: var(--primary-color);
+    }
+
+    .modal-bottom-right .modal-dialog {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        margin: 0;
+        max-width: 520px;
+        /* control width */
+        width: 100%;
+    }
+
+    .modal-bottom-right .modal-content {
+        border-radius: 12px;
+    }
+
+    .wk-modal-header {
+        background: var(--light-primary-color);
+        padding: 1rem;
+    }
+
+    .wrk-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid var(--light-primary-color);
+    }
+
+    .wrk-card:hover {
+        box-shadow: 0 10px 20px rgba(227, 240, 252, 0.9);
+        border: 1px solid var(--primary-color);
+    }
+
+    .card-text {
+        color: #646e78;
+    }
+
+</style>
