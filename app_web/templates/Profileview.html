@@ -147,10 +147,12 @@
                     </div>
 
                     <div style="display:flex;gap:12px;">
+                         {% if profile_details.docparserid %}
                         <button class="btn btn-primary"
                             onclick="confirmPrefill('{{profile_details.id}}','{{profile_details.docparserid}}')" type="button">
-                            Autofill Details
+                            Autofill Details 
                         </button>
+                        {% endif %}
                         <button class="btn btn-primary"
                             onclick="window.location.href='/viewresume/{{profile_details.id}}'" type="button">
                             View Resume
