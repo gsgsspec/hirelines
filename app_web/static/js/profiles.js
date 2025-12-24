@@ -2,6 +2,8 @@ $(document).ready(function () {
     $.noConflict();
     $('#profiles-table').DataTable({
         "order": [],
+        pageLength: 50,
+        scrollY: '600px',
         "ordering": false,
         language: { search: "", searchPlaceholder: "Search..." },
         pagingType: 'simple_numbers'
@@ -10,6 +12,28 @@ $(document).ready(function () {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    
+    const fromInput = document.getElementById("filter_apl");
+
+    const today = new Date();
+
+    // 1st day of current month (LOCAL time)
+    const firstCurrentMonth = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        1
+    );
+
+    // Format YYYY-MM-DD (NO timezone issue)
+    const formatDateLocal = (date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    };
+
+    fromInput.value = formatDateLocal(firstCurrentMonth);
+
     const loader = document.getElementById('candidates-loader');
     window.addEventListener('load', () => {
         loader.style.display = 'none';
@@ -158,7 +182,7 @@ function filter_profiles() {
                         + '<td>' + p["lastname"] + '</td>'
                         + '<td>' + p["experience"] + '</td>'
                         + '<td>' + p["source"] + '</td>'
-                        + '<td>' + skillsText + '</td>'
+                        // + '<td>' + skillsText + '</td>' 
                         + '<td>' + p["status"] + '</td>'
                         + '</tr>'
                     );
