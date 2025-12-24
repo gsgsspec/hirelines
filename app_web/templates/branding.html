@@ -30,8 +30,8 @@
         user-select: none;
       
     }
-
  
+
 </style>
 
 
@@ -156,7 +156,7 @@
     document.addEventListener("DOMContentLoaded", function () {
 
         let cssContent = `{{ companyBranding.content|safe }}`;
-    
+
 
         const container = document.getElementById("colorSettings");
         container.innerHTML = "";
@@ -178,7 +178,7 @@
             }
         }
 
-        
+
         colorVariables.forEach(v => {
 
             if (!isValidCSSColor(v.value)) return;
@@ -209,33 +209,8 @@
 
             container.appendChild(box);
         });
-       
-    
-        if (fontVariable) {
-            const box = document.createElement("div");
-            box.className = "col-12";
 
-            box.innerHTML = `
-            <div class="d-flex align-items-center gap-3 py-2">
 
-                <div style="width:200px;">
-                    Font Family
-                </div>
-
-                <input type="text"
-                    class="form-control font-input"
-                    data-var="${fontVariable.name}"
-                    value='${fontVariable.value}'
-                    style="width:235px; height:35px;">
-            </div>
-        `;
-
-            container.appendChild(box);
-        }
-        
-        
-
-     
         container.addEventListener("input", function (e) {
             if (e.target.classList.contains("color-input")) {
                 let variable = e.target.dataset.var;
@@ -262,7 +237,7 @@
 
     });
 
-   
+
     function convertToLabel(variableName) {
         switch (variableName) {
             case "--brand-primary-color": return "Primary Color";
@@ -318,3 +293,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <script src="{% static 'js/branding.js' %}"></script>
+ 

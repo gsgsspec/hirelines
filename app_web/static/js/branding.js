@@ -135,10 +135,15 @@ function loadDefaultTemplate() {
         const data = res.data;
 
       
+     
         function safeReplace(body, placeholder, value) {
-            if (!value) value = "";
+            
+            if (value === undefined || value === null || value === "") {
+                return body;
+            }
             return body.split(placeholder).join(value);
         }
+
 
       
         const logo = data.branding?.logourl || "";
@@ -237,12 +242,6 @@ function enableLiveColorPreview() {
             if (codeBox) codeBox.value = this.value;
         });
     });
-    const fontBox = document.querySelector(".font-input");
-    if (fontBox) {
-        fontBox.addEventListener("input", function () {
-            preview.style.setProperty("--font-family", this.value.trim());
-            preview.style.fontFamily = this.value.trim();
-        });
-    }
+    
 }
 
