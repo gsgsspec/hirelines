@@ -81,6 +81,7 @@ ul.custom-list li {
     font-size: 14.5px;
     margin-bottom: 7px;
     line-height: 20px;
+    padding-left: 10px;
 }
 .custom-list {
     list-style-type: none !important;
@@ -124,28 +125,34 @@ ul.custom-list li {
 
 <table style="width: 100%; font-size: 14.5px; border-collapse: collapse; margin-left: 5px;">
     <tr>
-        <td style="width: 140px; padding: 4px 0;color: #555;"><strong>Title</strong></td>
-        <td>: {{ profile_details.title }}</td>
+        <td style="width: 100px; padding: 4px 0;color: #555;"><strong>Title</strong></td>
+        <td>:&ensp; {{ profile_details.title }}</td>
     </tr>
 
     <tr>
         <td style="padding: 4px 0;color: #555;"><strong>First Name</strong></td>
-        <td>: {{ profile_details.firstname }}</td>
+        <td>:&ensp; {{ profile_details.firstname }}</td>
     </tr>
+    {% if profile_details.middlename %}
+    <tr>
+        <td style="padding: 4px 0;color: #555;"> <strong> Middle Name </strong></td>
+        <td>:&ensp;{{ profile_details.middlename }}</td>
+    </tr>
+    {% endif %}
 
     <tr>
         <td style="padding: 4px 0;color: #555;"><strong>Last Name</strong></td>
-        <td>: {{ profile_details.lastname }}</td>
+        <td>:&ensp; {{ profile_details.lastname }}</td>
     </tr>
 
     <tr>
         <td style="padding: 4px 0;color: #555;"><strong>Email</strong></td>
-        <td>: {{ profile_details.email }}</td>
+        <td>:&ensp; {{ profile_details.email }}</td>
     </tr>
 
     <tr>
         <td style="padding: 4px 0;color: #555;"><strong>Mobile</strong></td>
-        <td>: {{ profile_details.mobile }}</td>
+        <td>:&ensp; {{ profile_details.mobile }}</td>
     </tr>
 </table>
 
@@ -179,11 +186,9 @@ ul.custom-list li {
         <div class="section-title">Skills</div>
         <ul class="custom-list">
             <li>
-                {{ profile_details.skills.primaryskills }}
-                {% if profile_details.skills.secondaryskills %}
-                    , {{ profile_details.skills.secondaryskills }}
-                {% endif %}
+                {{ profile_details.skills_display }}
             </li>
+
         </ul>
 
         <!-- PROJECTS -->

@@ -3727,6 +3727,25 @@ def getProfileDetailsService(pid):
             skills if skills else {"primaryskills": "", "secondaryskills": ""}
         )
 
+    
+        primary = profile_det["skills"].get("primaryskills", "")
+        secondary = profile_det["skills"].get("secondaryskills", "")
+
+        skills_list = []
+
+        if primary:
+            skills_list.extend(
+                [s.strip() for s in primary.split(",") if s.strip()]
+            )
+
+        if secondary:
+            skills_list.extend(
+                [s.strip() for s in secondary.split(",") if s.strip()]
+            )
+
+        profile_det["skills_display"] = ", ".join(skills_list)
+
+
         projects_list = (
             ProfileProjects.objects.filter(profileid=pid)
             .values(
@@ -3764,7 +3783,6 @@ def getProfileDetailsService(pid):
         )
 
         profile_det["address"] = address_list
-        print("address_list",address_list)
 
         branding = (
             Branding.objects.filter(companyid=profile.get("companyid"))
@@ -4764,7 +4782,6 @@ def getRecritmentDashboardData(
         "selected_client_percentage": percent(selected_client, profiled),
         "rejected_client_percentage": percent(rejected_client, profiled),
         "waiting_feedback_percentage": percent(waiting_feedback, profiled),
-
         "comparison_text": comparison_text
     }
 
