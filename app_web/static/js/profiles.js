@@ -3,7 +3,7 @@ $(document).ready(function () {
     $('#profiles-table').DataTable({
         "order": [],
         pageLength: 50,
-        scrollY: '600px',
+        // scrollY: '600px',
         "ordering": false,
         language: { search: "", searchPlaceholder: "Search..." },
         pagingType: 'simple_numbers'

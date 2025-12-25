@@ -47,6 +47,25 @@
 tbody tr:hover {
     cursor: pointer;
 }
+.filter-icon-col {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.filter-icon-col i.fa-filter {
+    font-size: 26px;             
+    color: #274699;               
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.filters-row .filter-wrapper,
+.filters-row .filter-actions {
+    display: none;
+}
+
+
 </style>
 
 
@@ -63,6 +82,14 @@ tbody tr:hover {
 
     <!-- FILTERS -->
     <div class="table-responsive text-nowrap table-cls" style="padding:20px;">
+        <div class="filters-row">
+
+        <!-- FILTER ICON -->
+        <div class="filter-icon-col">
+            <i class="fas fa-filter"  data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Filters"></i>
+        </div>
 
         <div class="filter-wrapper">
 
@@ -132,7 +159,7 @@ tbody tr:hover {
             <button class="btn btn-primary" id="applyFilters">Apply</button>
         </div>
 
-
+        </div>
         <!-- TABLE -->
         <table class="table table-hover" id="profiles-table">
             <thead>
@@ -168,3 +195,22 @@ tbody tr:hover {
 </div>
 
 <script src="{% static 'js/profiles.js' %}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const filterIcon = document.querySelector(".filter-icon-col i.fa-filter");
+    const filterWrapper = document.querySelector(".filter-wrapper");
+    const filterActions = document.querySelector(".filter-actions");
+
+    filterIcon.addEventListener("click", function () {
+        const isHidden = filterWrapper.style.display === "none" || filterWrapper.style.display === "";
+
+        if (isHidden) {
+            filterWrapper.style.display = "grid";
+            filterActions.style.display = "block";
+        } else {
+            filterWrapper.style.display = "none";
+            filterActions.style.display = "none";
+        }
+    });
+});
+</script>
