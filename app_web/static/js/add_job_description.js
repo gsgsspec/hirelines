@@ -196,7 +196,7 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
                     var newjdid = res.data['newJdId']
                     document.getElementById('validater').hidden = false;
                     setInterval(3000)
-                    window.location.href = '/job-description-set-up/'+newjdid;
+                    window.location.href = '/job-descriptions';
                 }
             });
         } catch (error) {
