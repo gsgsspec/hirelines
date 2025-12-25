@@ -299,20 +299,28 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
         var screeningTabsContainer = screeningTabs(testId);
         testCardHeaderElement.innerHTML += screeningTabsContainer;
     }
-    // 1️⃣ Keep your existing header buttons same
+    //  Keep your existing header buttons same
     if (paperType === 'S') {
         testCardHeaderElement.innerHTML += `
         <div class="mt-3">
-            <button class="btn btn-outline-primary" onclick="previewQuestions(${testId}, 'S')">
+            <button class="btn btn-outline-primary"
+                    onclick="previewQuestions(${testId}, 'S')"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    title="If any changes are made, please save and preview">
                 <i class="fas fa-eye"></i> Preview 
             </button>
-        </div>
+         </div>
     `;
     }
     if (paperType === 'E') {
         testCardHeaderElement.innerHTML += `
         <div class="mt-3">
-            <button class="btn btn-outline-primary" onclick="previewQuestions(${testId}, 'E')">
+            <button class="btn btn-outline-primary"
+                    onclick="previewQuestions(${testId}, 'E')"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    title="If any changes are made, please save and preview">
                 <i class="fas fa-eye"></i> Preview 
             </button>
         </div>
@@ -321,7 +329,11 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
     if (paperType === 'I') {
         testCardHeaderElement.innerHTML += `
         <div class="mt-3">
-            <button class="btn btn-outline-primary" onclick="previewQuestions(${testId}, 'I')">
+            <button class="btn btn-outline-primary"
+                    onclick="previewQuestions(${testId}, 'I')"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    title="If any changes are made, please save and preview">
                 <i class="fas fa-eye"></i> Preview 
             </button>
         </div>
@@ -333,7 +345,7 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
 
     // Append the workflow container to the main container
     mainContainer.appendChild(workFlowContainer);
-
+    initTooltips();
     if (paperType == 'S') {
         var dynamicQuestionsContainerToHide = document.getElementById(`dynamicQuestionsContainer_${testId}`)
         // hide the dynamic questions count
@@ -4312,4 +4324,12 @@ function previewQuestions(testId, paperType) {
 // Close modal
 function close_paper_preview() {
     document.getElementById("overlay").style.display = "none";
+}
+
+
+function initTooltips() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(el => {
+        new bootstrap.Tooltip(el);
+    });
 }
