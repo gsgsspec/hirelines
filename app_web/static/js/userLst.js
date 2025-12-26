@@ -1,6 +1,8 @@
 $(document).ready(function() {
     $.noConflict();
     $('#candidates-table').DataTable({
+       "pageLength": 25,      // Forces 50 rows
+      "lengthMenu": [10, 25, 50],
         "order": [],
         "ordering": false,
         language: { search: "",searchPlaceholder: "Search..." } ,

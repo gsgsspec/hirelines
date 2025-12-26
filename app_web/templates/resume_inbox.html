@@ -79,9 +79,11 @@
     $(document).ready(function() {
         $.noConflict();
         $('#resume-table').DataTable({
+            "pageLength": 50,      // Forces 50 rows
+            "lengthMenu": [10, 25, 50 , 100],
             "order": [],
             "ordering": true,
-            "lengthChange": false,
+            // "lengthChange": false,
             language: { search: "",searchPlaceholder: "Search..." } ,
             pagingType: 'simple_numbers'
         });
