@@ -7,7 +7,7 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills,Lookupmaster, ProfileActivity
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -411,16 +411,19 @@ def brandingPage(request):
         user_email = user_data.email
         user_companyid = user_data.companyid
         menuItemList = get_functions_service(user_role)
+        company_id = user_data.companyid
 
-        
+    
         companyBranding = Branding.objects.filter(companyid=user_companyid ).first()
+        
+        email_template_data = get_default_email_template_service(company_id)
          
         if not companyBranding:
             companyBranding = Branding.objects.filter(companyid=0).first()
 
     
         return render(request, "portal_index.html", {"template_name": 'branding.html','menuItemList': menuItemList,
-                                                     "companyBranding":companyBranding})
+                                                     "companyBranding":companyBranding,"email_template_data":email_template_data})
 
     except Exception as e:
         raise

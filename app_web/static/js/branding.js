@@ -113,109 +113,76 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function loadDefaultTemplate() {
 
-    fetch(CONFIG['portal'] + "/api/get-default-email-template", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": CSRF_TOKEN
-        },
-        body: JSON.stringify({})
-    })
-    .then(res => res.json())
-    .then(res => {
-        console.log(res.data);
+document.addEventListener("DOMContentLoaded", () => {
 
-        if (res.statusCode !== 0 || !res.data) {
-            console.log("No template found");
-            return;
-        }
+    const script = document.getElementById("email-template-data");
+    if (!script) return;
 
-        const data = res.data;
+    let data;
+    try {
+        data = JSON.parse(script.textContent);
+    } catch (e) {
+        console.error("Invalid email template JSON", e);
+        return;
+    }
 
-      
-     
-        function safeReplace(body, placeholder, value) {
-            
-            if (value === undefined || value === null || value === "") {
-                return body;
-            }
-            return body.split(placeholder).join(value);
-        }
+    let body = data.email_body || "";
+
+    function safeReplace(html, placeholder, value) {
+        if (!value) return html;
+        return html.split(placeholder).join(value);
+    }
+
+ 
+    body = safeReplace(body, "[clr_primary]", "var(--brand-primary-color)");
+    body = safeReplace(body, "[heading]", data.template_heading);
+    body = safeReplace(body, "[company_name]", data.company_name);
+    body = safeReplace(body, "[company_website]", data.company_website);
+    body = safeReplace(body, "[recruitment_email_address]", data.company_email);
+
+    
+    let footerHTML = "";
+    const socials = data.branding?.social_links || {};
+
+    for (let key in socials) {
+        footerHTML += `
+            <a href="${socials[key]}" target="_blank"
+               style="margin:0 8px; text-decoration:none; font-size:14px;">
+                ${key}
+            </a>
+        `;
+    }
+
+    body = safeReplace(body, "[footer_div]", footerHTML);
 
 
-      
-        const logo = data.branding?.logourl || "";
-
-      
-        let primaryColor = "";
-        if (data.branding?.content) {
-            const match = data.branding.content.match(/--brand-primary-color:\s*([^;]+);/);
-            if (match) primaryColor = match[1].trim();
-        }
-
-      
-        let body = (data.email_body || "");
-
-       
-        body = safeReplace(body, "[clr_primary]", "var(--brand-primary-color)");
-        body = safeReplace(body, "[heading]", data.template_heading);
-
-        body = safeReplace(body, "[company_name]", data.company_name);
-        body = safeReplace(body, "[company_website]", data.company_website);
-        body = safeReplace(body, "[recruitment_email_address]", data.company_email);
-
-       
-        let footerHTML = "";
-        const socials = data.branding?.social_links || {};
-
-        for (let key in socials) {
-            footerHTML += `
-                <a href="${socials[key]}" target="_blank"
-                   style="margin:0 8px; text-decoration:none; font-size:14px;">
-                    ${key}
-                </a>
-            `;
-        }
-
-        body = safeReplace(body, "[footer_div]", footerHTML);
-
-  
-        body = body.replace(
-            /<img[^>]*\[logo\][^>]*>/i,
-            `<div style="text-align:center;">
+    const logo = data.branding?.logourl || "";
+    body = body.replace(
+        /<img[^>]*\[logo\][^>]*>/i,
+        `<div style="text-align:center;">
                 <img id="previewLogo" src="${logo}" style="width:150px;height:auto;" alt="Company Logo">
             </div>`
-        );
-       
-        const previewEl = document.getElementById("preview_body");
-        if (previewEl) {
-            previewEl.innerHTML = body;
-            previewEl.querySelectorAll("img").forEach(img => {
-                if (img.src.includes("social_links_logos")) {
-                    img.classList.add("preview-social-icon");
-                }
+    );
+
+   
+    const previewEl = document.getElementById("preview_body");
+    if (!previewEl) return;
+
+    previewEl.innerHTML = body;
+
+    
+    const iconToggle = document.getElementById("toggle_social_icons");
+    if (iconToggle) {
+        iconToggle.addEventListener("change", function () {
+            previewEl.querySelectorAll("a").forEach(a => {
+                a.style.display = this.checked ? "inline-block" : "none";
             });
+        });
+    }
 
-            
-            const iconToggle = document.getElementById("toggle_social_icons");
-            if (iconToggle) {
-                iconToggle.addEventListener("change", function () {
-                    document.querySelectorAll(".preview-social-icon").forEach(icon => {
-                        icon.style.display = this.checked ? "inline-block" : "none";
-                    });
-                });
-            }
-
-            enableLiveColorPreview(); 
-        }
-
-    })
-    .catch(err => console.error("Fetch error:", err));
-}
-
-window.onload = loadDefaultTemplate;
+    enableLiveColorPreview();
+});
 
 
 function enableLiveColorPreview() {

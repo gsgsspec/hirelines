@@ -39,12 +39,15 @@
     <div class="col-12">
         <div class="card mb-4">
 
-            <div class="card-header">
-                <h5 class="p-clr">Your Company Branding</h5>
-                <span style="color: #333;">Brand your email communication with candidates,
+          
+                <div class="card-title-table">
+                    <h4 class="card-header">Your Company Branding</h4>
+                    <div class="p-3 text-align-right d-flex align-items-center justify-content-center"></div>
+                </div>
+                <span style="color: #333;  padding-left: 24px;" class="pt-1">Brand your email communication with candidates,
                     also screening and coding test
                     user interface for candidates.</span>
-            </div>
+         
 
 
             <div class="card-body branding-wrapper">
@@ -93,7 +96,7 @@
 
                 </div>
 
-               
+                {{ email_template_data|json_script:"email-template-data" }}
                 <div class="branding-preview" id="previewPanel" style="display:block;">
 
                  
