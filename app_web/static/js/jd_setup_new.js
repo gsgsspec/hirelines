@@ -3367,10 +3367,6 @@ function addQuestionsToList(Qid, elementId, test_Id) {
 
 }
 
-// function caller(dt){
-//     console.log('calleererererere');
-//     console.log('::',dt);
-// }
 
 function savePaper(BtnElement) {
     return new Promise((resolve, reject) => {
@@ -4108,6 +4104,14 @@ function addNewBasicScreeningQuestion(test_id,questionData){
 
     ol.insertAdjacentHTML("beforeend", newQuestionElement);
 
+    const checkboxId = `questionId-${test_id}_${questionData["question_id"]}`;
+    const checkbox = document.getElementById(checkboxId);
+
+    if (checkbox) {
+        checkbox.checked = true;
+        addQuestionsToList(questionData["question_id"], checkboxId, test_id);
+    }
+
     if (!allTestsQuestions[test_id]) {
         allTestsQuestions[test_id] = {}; // Initialize the test_id key if it doesn't exist
     }
@@ -4125,6 +4129,24 @@ function addNewBasicScreeningQuestion(test_id,questionData){
 function addKnowledgeBasedQuestion(test_id,questionData,paperType){
 
     let testQuestionsContainer = document.getElementById(`SubTopicQuestionsContainer_${questionData['question_subtopic']}_test_${test_id}`)
+
+    if (!testQuestionsContainer) {
+        testQuestionsContainer = document.createElement('div');
+        testQuestionsContainer.id =
+            `SubTopicQuestionsContainer_${questionData['question_subtopic']}_test_${test_id}`;
+        testQuestionsContainer.hidden = false;
+
+        const parent = document.getElementById(
+            `SkillSubTopicContainer_${questionData['question_topic']}_Skill_${questionData['question_subject']}_Test_${test_id}`
+        );
+
+        if (parent) {
+            parent.appendChild(testQuestionsContainer);
+        } else {
+            console.error('Subtopic parent container not found');
+            return;
+        }
+    }
 
     let questionComplexity = questionData['question_complexity']
 
@@ -4223,6 +4245,22 @@ function addKnowledgeBasedQuestion(test_id,questionData,paperType){
     }else {
         console.log("Error: Complexity container creation failed.");
     }
+
+    setTimeout(() => {
+
+        const staticCheckboxId = `questionId_${questionData['question_id']}_${test_id}_S`;
+        const staticCheckbox = document.getElementById(staticCheckboxId);
+
+        if (staticCheckbox && !staticCheckbox.checked) {
+            staticCheckbox.checked = true;
+            addQuestionsToList(
+                questionData['question_id'],
+                staticCheckboxId,
+                test_id
+            );
+        }
+
+    }, 0);
 }
 
 

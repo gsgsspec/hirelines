@@ -1707,6 +1707,7 @@ def getCandidateInterviewData(scd_id):
             "interview_data": None,
             "screening_data": None,
             "coding_data": None,
+            "profile_data": None,
             # "profiling_video_url":None
         }
 
@@ -1786,6 +1787,10 @@ def getCandidateInterviewData(scd_id):
             "schd_id": call_details.id,
         }
 
+        if candidate.profileid:
+            profile_details = getProfileDetailsService(candidate.profileid)
+            resp["profile_data"] = profile_details
+        
         resp["job_desc_data"] = job_desc_data
         resp["candidate_data"] = candidate_data
 

@@ -24,17 +24,38 @@ var menuItemsUrls = {
     'workspace':['/workspace'],
 };
 
-var menuItems = document.querySelectorAll('.menu-item');
+// var menuItems = document.querySelectorAll('.menu-item');
 
-menuItems.forEach(function (item) {
-    var link = item.querySelector('a');
-    var href = link.getAttribute('href');
+// menuItems.forEach(function (item) {
+//     var link = item.querySelector('a');
+//     var href = link.getAttribute('href');
 
-    Object.entries(menuItemsUrls).forEach(([menuItem, urls]) => {
-        if (urls.some(url => currentUrl.includes(url)) && href.includes(menuItem)) {
-            item.classList.add('active');
-        }
+//     Object.entries(menuItemsUrls).forEach(([menuItem, urls]) => {
+//         if (urls.some(url => currentUrl.includes(url)) && href.includes(menuItem)) {
+//             item.classList.add('active');
+//         }
+//     });
+// });
+
+const currentPath = window.location.pathname;
+
+document.querySelectorAll('.menu-item').forEach(item => {
+    const link = item.querySelector('a');
+    if (!link) return;
+
+    const menuKey = link.getAttribute('href').replace(/^\//, '');
+    const urls = menuItemsUrls[menuKey] || [];
+
+    const isActive = urls.some(url => {
+        const segment = url.replace(/^\//, '');
+        const regex = new RegExp(`(^|/)${segment}($|/)`);
+        return regex.test(currentPath);
     });
+
+    if (isActive) {
+        item.classList.add('active');
+    }
+
 });
 
 

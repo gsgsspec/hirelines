@@ -13,7 +13,7 @@ from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candida
     ResumeFile, WorkCal,ProfileAddress,Lookupmaster,Workspace
 from django.db import transaction
 
-# from .doc2pdf import convert_word_binary_to_pdf
+from .doc2pdf import convert_word_binary_to_pdf
 
 def addCompanyDataDB(dataObjs):
     try:
@@ -1486,7 +1486,6 @@ def updateProfileScoreDB(profile_id):
         
         profileScore = CalculateProfileScoring()
         profile_strength = profileScore.score_profile(profile_id)
-        
         profile = Profile.objects.get(id=profile_id)
         profile.strength = profile_strength["percentage"]
         profile.educationscore = profile_strength["breakdown"]["education"]["percentage"]
@@ -1621,6 +1620,8 @@ def updateFullProfileDB(data):
             certname=safe_str(c.get("certname")),
             year=to_int(c.get("year")),
         )
+
+
 def addWorkspaceDB(dataObjs,user_data):
     try:
 

@@ -229,6 +229,7 @@ function syncClickHandler() {
                 attachResumeRowClick();
                 document.getElementById("resumePreview").style.display = "none";
                 document.querySelector('.table-ctn').classList.remove('half-width');
+                $(".sources-item").removeClass("selected");
 
             });
     

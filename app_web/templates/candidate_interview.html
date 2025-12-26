@@ -64,6 +64,12 @@
                         <div class="grid-item cursor-pointer sec_selected" name="ins" id="ins_sec" onclick="show_ins();" style="align-items: center;">
                             <h5 style="font-size: 17px; font-weight: 800;">Job Description</h5>
                         </div>
+                        {% if profile_data %}
+                        <div class="grid-item cursor-pointer" name="secs" id="profile_sec"
+                            onclick="showProfileInfo();" style="align-items: center;">
+                            <h5 style="font-size: 17px; font-weight: 800;">Profile</h5>
+                        </div>
+                        {% endif %}
                         <div class="grid-item cursor-pointer" name="secs" id="verif_sec"
                             onclick="showCandidateInfo();" style="align-items: center;">
                             <h5 style="font-size: 17px; font-weight: 800;">Candidate Info</h5>
@@ -159,6 +165,182 @@
 
                       </table>
                       
+                    </div>
+                  </div>
+                  
+                  <div class="profile_sec" style="overflow: auto; position: relative; padding:1%;height: 65%;" hidden>
+                    <div class="qol">
+                      <h5 style="font-weight: 800;color: var(--primary-color);">Personal Details</h5>
+                      <table style="width:100%;">
+                        <tr>
+                          <th>
+                            <h6>Title</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:73% !important;">
+                            <h6>{{profile_data.title}}</h6>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <h6>Name</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:73% !important;">
+                            <h6>{{profile_data.firstname}} {{profile_data.lastname}}</h6>
+                          </th>
+                        </tr>
+                  
+                        <tr>
+                          <th>
+                            <h6>Mobile Number</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:73% !important;">
+                            <h6>{{profile_data.mobile}}</h6>
+                          </th>
+                        </tr>
+                        <tr>
+                          <th>
+                            <h6>Email</h6>
+                          </th>
+                          <th>
+                            <h6>:</h6>
+                          </th>
+                          <th style="width:73% !important;">
+                            <h6>{{profile_data.email}}</h6>
+                          </th>
+                        </tr>
+                      </table>
+
+                      <h5 style="font-weight: 800;color: var(--primary-color);">Education</h5>
+                      <table style="width:100%;">
+                        {% if profile_data.education %}
+                          {% for education in profile_data.education %}
+                            <tr>
+                              <th>
+                                <h6>&#8226; &nbsp;
+                                  {{ education.course }} from {{ education.institute }}
+                                  {{ education.yearfrom }} - {{ education.yearto }}
+                                  — Grade - {{ education.grade }}
+                                </h6>
+                              </th>
+                            </tr>
+                          {% endfor %}
+                        {% else %}
+                        <tr>
+                          <th>
+                            <h6>No Education Data
+                            </h6>
+                          </th>
+                        </tr>
+                        {% endif %}
+                      </table>
+
+                      <h5 style="font-weight: 800;color: var(--primary-color);">Experience</h5>
+                      <table style="width:100%;">
+                        {% if profile_data.experience  %}
+                          {% for experience in profile_data.experience %}
+                            <tr>
+                              <th>
+                                <h6>&#8226; &nbsp;
+                                  {{ experience.jobtitle }} at {{ experience.company }}
+                                  {{ experience.yearfrom }} - {{ experience.yearto }}
+                                </h6>
+                              </th>
+                            </tr>
+                          {% endfor %}
+                        {% else %}
+                        <tr>
+                          <th>
+                            <h6>No Experience
+                            </h6>
+                          </th>
+                        </tr>
+                        {% endif %}
+                      </table>
+
+                      <h5 style="font-weight: 800;color: var(--primary-color);">Projects</h5>
+                      <table style="width:100%;">
+                        {% if profile_data.projects %}
+                          {% for project in profile_data.projects %}
+                            <tr>
+                              <th>
+                                <h6>&#8226; &nbsp;
+                                  {{ project.projectname }}
+                                  — {{ project.clientname }}
+                                  — {{ project.roleplayed }}
+                                  — Skills: {{ project.skillsused }}
+                                  — ({{ project.yearsfrom }} to {{ project.yearsto }})
+                                </h6>
+                              </th>
+                            </tr>
+                          {% endfor %}
+                        {% else %}
+                        <tr>
+                          <th>
+                            <h6>No Projects
+                            </h6>
+                          </th>
+                        </tr>
+                        {% endif %}
+                      </table>
+
+                      <h5 style="font-weight: 800;color: var(--primary-color);">Certificates</h5>
+                      <table style="width:100%;">
+                        {% if  profile_data.certificates %}
+                          {% for certificate in profile_data.certificates %}
+                            <tr>
+                              <th>
+                                <h6>&#8226; &nbsp;
+                                  {{ certificate.certname }}
+                                  — {{ certificate.year }}
+                                </h6>
+                              </th>
+                            </tr>
+                          {% endfor %}
+                        {% else %}
+                        <tr>
+                          <th>
+                            <h6>No Certificates
+                            </h6>
+                          </th>
+                        </tr>
+                        {% endif %}
+                      </table>
+
+
+                      <h5 style="font-weight: 800;color: var(--primary-color);">Awards</h5>
+                      <table style="width:100%;">
+                        {% if profile_data.awards %}
+                          {% for award in profile_data.awards %}
+                            <tr>
+                              <th>
+                                <h6>&#8226; &nbsp;
+                                  {{ award.awardname }}
+                                  — {{ award.year }}
+                                </h6>
+                              </th>
+                            </tr>
+                          {% endfor %}
+                        {% else %}
+                        <tr>
+                          <th>
+                            <h6>No Awards
+                            </h6>
+                          </th>
+                        </tr>
+                        {% endif %}
+                      </table>
+
+
+
                     </div>
                   </div>
 

@@ -561,9 +561,10 @@ def candidateInterview(request,sch_id):
         interv_sect_ques = interview_data['interview_data']
         screening_data = interview_data['screening_data']
         coding_data = interview_data['coding_data']
+        profile_data = interview_data['profile_data']
 
         return render(request, "portal_index.html", {"template_name": 'candidate_interview.html','jd_data':jd_data,'cdn_data':cdn_data,
-            'sections_questions_lst' : interv_sect_ques["sections_questions_lst"],'interview_sections' : interv_sect_ques['sections_lst'],
+            'sections_questions_lst' : interv_sect_ques["sections_questions_lst"],'interview_sections' : interv_sect_ques['sections_lst'],'profile_data':profile_data,
             'candidate_data':candidate_data,'screening_data':screening_data,'coding_data':coding_data })
 
     except Exception as e:
@@ -1283,6 +1284,7 @@ def workspaceDetailsPage(request,wid):
         menuItemList = get_functions_service(user_role)
 
         workspace_data =  getWorkspaceData(user_data,wid)
+        print("workspace_data",workspace_data)
 
         return render(request, "portal_index.html", {"template_name": "workspace_data.html", 'menuItemList': menuItemList,"workspace_data":workspace_data })
 
