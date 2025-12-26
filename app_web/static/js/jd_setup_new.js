@@ -302,7 +302,8 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
     //  Keep your existing header buttons same
     if (paperType === 'S') {
         testCardHeaderElement.innerHTML += `
-        <div class="mt-3">
+        
+        <div class="mt-3 mb-2 d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-primary"
                     onclick="previewQuestions(${testId}, 'S')"
                     data-bs-toggle="tooltip"
@@ -310,12 +311,19 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
                     title="If any changes are made, please save and preview">
                 <i class="fas fa-eye"></i> Preview 
             </button>
-         </div>
+
+            <input type="text"
+                class="form-control jd-search-input"
+                placeholder="Search questions..."
+                data-testid="${testId}"
+                onkeyup="searchJDQuestions(this)"
+                style="max-width:300px;">
+        </div>
     `;
     }
     if (paperType === 'E') {
         testCardHeaderElement.innerHTML += `
-        <div class="mt-3">
+        <div class="mt-3 mb-2 d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-primary"
                     onclick="previewQuestions(${testId}, 'E')"
                     data-bs-toggle="tooltip"
@@ -323,12 +331,18 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
                     title="If any changes are made, please save and preview">
                 <i class="fas fa-eye"></i> Preview 
             </button>
-        </div>
+            <input type="text"
+                class="form-control jd-search-input"
+                placeholder="Search questions..."
+                data-testid="${testId}"
+                onkeyup="searchJDQuestions(this)"
+                style="max-width:300px;">
+        </dd-flex>
     `;
     }
     if (paperType === 'I') {
         testCardHeaderElement.innerHTML += `
-        <div class="mt-3">
+        <div class="mt-3 mb-2 d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-primary"
                     onclick="previewQuestions(${testId}, 'I')"
                     data-bs-toggle="tooltip"
@@ -336,10 +350,16 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
                     title="If any changes are made, please save and preview">
                 <i class="fas fa-eye"></i> Preview 
             </button>
+            <input type="text"
+                class="form-control jd-search-input"
+                placeholder="Search questions..."
+                data-testid="${testId}"
+                onkeyup="searchJDQuestions(this)"
+                style="max-width:300px;">
         </div>
     `;
     }
-
+   
     // Append the header element to the workflow container
     workFlowContainer.appendChild(testCardHeaderElement);
 
@@ -1944,6 +1964,16 @@ function activeScreeningTab(element){
                 // clickOnFirstSkill(TestCardId)
             }
 
+        }
+        //  Clear search when switching tabs
+        const testId = element.id.split('_').pop();
+        const searchInput = document.querySelector(
+            `.jd-search-input[data-testid="${testId}"]`
+        );
+
+        if (searchInput) {
+            searchInput.value = "";
+            searchJDQuestions(searchInput);
         }
 
     }
@@ -4331,5 +4361,42 @@ function initTooltips() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach(el => {
         new bootstrap.Tooltip(el);
+    });
+}
+
+function searchJDQuestions(input) {
+
+    const keyword = input.value.toLowerCase().trim();
+    const testId = input.dataset.testid;
+
+    // Check Screening tabs (only exists for Screening test)
+    const screeningTab = document.getElementById(`screeningTab_1_${testId}`);
+
+    //  JD Screening – Basic
+    if (screeningTab && screeningTab.classList.contains("active-screeningTab")) {
+        const container = document.getElementById(`basicScreeningContainer_${testId}`);
+        filterQuestions(container, keyword);
+        return;
+    }
+
+    //  JD Knowledge / Coding / Interview
+    const container = document.getElementById(
+        `skillsAndTopicsAndSubtopicsContainer_${testId}`
+    );
+    filterQuestions(container, keyword);
+}
+function filterQuestions(container, keyword) {
+
+    if (!container) return;
+
+    const questions = container.querySelectorAll("li[id^='question_id_']");
+
+    questions.forEach(li => {
+        const text = li.innerText.toLowerCase();
+        const questionBlock = li.closest(".customQuestionContainer");
+
+        if (!questionBlock) return;
+
+        questionBlock.style.display = text.includes(keyword) ? "" : "none";
     });
 }
