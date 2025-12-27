@@ -3999,6 +3999,7 @@ def getProfileData(pid, user_data):
             "fathername": profile.fathername or "",
             "nativeof": profile.nativeof or "",
             "status": profile.status,
+            "strength":profile.strength or "",
             "dateofbirth": (
                 profile.dateofbirth.strftime("%Y-%m-%d") if profile.dateofbirth else ""
             ),
@@ -4007,7 +4008,7 @@ def getProfileData(pid, user_data):
             "city": profile_address.city if profile_address else "",
             "state": profile_address.state if profile_address else "",
             "country": profile_address.country if profile_address else "",
-            "zipcode": profile_address.zipcode if profile_address else "",
+            "zipcode": profile_address.zipcode if profile_address else ""
         }
 
         # Education
@@ -4753,7 +4754,7 @@ def getRecritmentDashboardData(
     )
 
     comparison_text = (
-        "than current month" if is_current_month else "than last month"
+        "current month" if is_current_month else "last month"
     )
 
     submitted = activity_map.get("PC", 0)
