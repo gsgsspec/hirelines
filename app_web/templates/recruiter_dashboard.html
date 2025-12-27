@@ -89,12 +89,12 @@
     }
 
     .icon-lg {
-        font-size: 1.45rem;
+        font-size: 2rem;
     }
 
     .card h4 {
-        font-size: 1.5rem;
-        font-weight: 500;
+        font-size: 2.2rem;
+        font-weight: 400;
         color: #384551;
     }
 
@@ -177,12 +177,12 @@
                         <div class="d-flex align-items-center mb-2">
                             <div class="avatar me-4">
                                 <span class="avatar-initial rounded bg-label-primary">
-                                    <i class="icon-base bx bx-paper-plane icon-lg"></i>
+                                    <i class="bx bx-file icon-lg"></i>
                                 </span>
                             </div>
                             <h4 class="mb-0"id=submittedCount>{{ submitted }}</h4>
                         </div>
-                        <p class="mb-2">Submitted</p>
+                        <p class="mb-2">Profiles Received</p>
                         <p class="mb-0">
                             <span class="text-heading fw-medium me-2">{{submitted_percentage}}%</span>
                             <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
@@ -202,7 +202,7 @@
                             </div>
                             <h4 class="mb-0"id=profiledCount>{{ profiled }}</h4>
                         </div>
-                        <p class="mb-2">Profiled</p>
+                        <p class="mb-2">Reviewed and Profiled</p>
                         <p class="mb-0">
                             <span class="text-heading fw-medium me-2">{{profiled_percentage}}%</span>
                             <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
@@ -222,7 +222,7 @@
                             </div>
                             <h4 class="mb-0"id=rejectedCount>{{ rejected }}</h4>
                         </div>
-                        <p class="mb-2">Rejected</p>
+                        <p class="mb-2">Reviewed and Rejected</p>
                         <p class="mb-0">
                             <span class="text-heading fw-medium me-2">{{rejected_percentage}}%</span>
                             <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
@@ -242,7 +242,7 @@
                             </div>
                             <h4 class="mb-0"id=sentClientCount>{{ sent_client }}</h4>
                         </div>
-                        <p class="mb-2">Sent Client</p>
+                        <p class="mb-2">Profiles Submitted to Client</p>
                         <p class="mb-0">
                             <span class="text-heading fw-medium me-2">{{sent_client_percentage}}%</span>
                             <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
@@ -271,7 +271,7 @@
                             </div>
                             <h4 class="mb-0"id=rejectedClientCount>{{ rejected_client }}</h4>
                         </div>
-                        <p class="mb-2">Rejected by Client</p>
+                        <p class="mb-2">Profiles Rejected by Client</p>
                         <p class="mb-0">
                             <span class="text-heading fw-medium me-2">{{rejected_client_percentage}}%</span>
                             <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
@@ -292,7 +292,7 @@
                             </div>
                             <h4 class="mb-0"id=selectedClientCount>{{ selected_client }}</h4>
                         </div>
-                        <p class="mb-2">Selected by Client</p>
+                        <p class="mb-2">Profiles Selected by Client</p>
                         <p class="mb-0">
                             <span class="text-heading fw-medium me-2">{{selected_client_percentage}}%</span>
                             <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
@@ -313,7 +313,7 @@
                             </div>
                             <h4 class="mb-0"id=waitingFeedbackCount>{{ waiting_feedback }}</h4>
                         </div>
-                        <p class="mb-2">Waiting Feedback</p>
+                        <p class="mb-2">Waiting for Feedback</p>
                         <p class="mb-0">
                             <span class="text-heading fw-medium me-2">{{waiting_feedback_percentage}}%</span>
                             <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
@@ -321,7 +321,7 @@
                     </div>
                 </div>
             </div>
-
+            
         </div>
     </div>
 
@@ -430,7 +430,6 @@ $(document).ready(function () {
     recruiterFilter.on("change", loadDashboardData);
     monthFilter.on("change", loadDashboardData);
 
-    // Initial load
     loadDashboardData();
 });
 </script>

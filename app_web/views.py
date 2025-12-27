@@ -18,6 +18,8 @@ from  app_api.functions.enc_dec import decrypt_code
 
 
 from datetime import datetime
+from django.db.models.functions import Lower
+
 
 
 domains = getConfig()['DOMAIN']
@@ -1212,13 +1214,13 @@ def recruiterdashboardPage(request):
                 id=logged_recruiter_id,
                 role="Recruiter",
                 companyid=company_id
-            ).values("id", "name")
+            ).order_by(Lower("name")).values("id", "name")
             show_all_option = False
         else:
             recruiters = User.objects.filter(
                 role="Recruiter",
                 companyid=company_id
-            ).values("id", "name")
+            ).order_by(Lower("name")).values("id", "name")
             show_all_option = True
 
 
