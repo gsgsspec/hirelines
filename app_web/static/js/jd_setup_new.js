@@ -337,7 +337,7 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
                 data-testid="${testId}"
                 onkeyup="searchJDQuestions(this)"
                 style="max-width:300px;">
-        </dd-flex>
+        </div>
     `;
     }
     if (paperType === 'I') {
@@ -365,7 +365,7 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
 
     // Append the workflow container to the main container
     mainContainer.appendChild(workFlowContainer);
-    initTooltips();
+    
     if (paperType == 'S') {
         var dynamicQuestionsContainerToHide = document.getElementById(`dynamicQuestionsContainer_${testId}`)
         // hide the dynamic questions count
@@ -376,7 +376,7 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
             console.log(" can't hide the dynamic questions container ");
         }
     }
-
+    
     if(paperType == 'S' || paperType == 'I'){
 
         var createQuestionContainer = createNewQuestionContainer(testId, paperType);
@@ -387,6 +387,7 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
     if (instructionsContainer) {
         instructionsContainer.hidden = true;
     }
+    initTooltips(); 
 
 }
 
