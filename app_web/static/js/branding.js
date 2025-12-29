@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (logoInput.files.length > 0) {
                 formData.append("logo", logoInput.files[0]);
             }
--
+
             $.ajax({
                 type: "POST",
                 enctype: "multipart/form-data",
@@ -142,20 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     body = safeReplace(body, "[recruitment_email_address]", data.company_email);
 
     
-    let footerHTML = "";
-    const socials = data.branding?.social_links || {};
-
-    for (let key in socials) {
-        footerHTML += `
-            <a href="${socials[key]}" target="_blank"
-               style="margin:0 8px; text-decoration:none; font-size:14px;">
-                ${key}
-            </a>
-        `;
-    }
-
-    body = safeReplace(body, "[footer_div]", footerHTML);
-
+    
 
     const logo = data.branding?.logourl || "";
     body = body.replace(
@@ -170,15 +157,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!previewEl) return;
 
     previewEl.innerHTML = body;
+    
+    applySocialIconToggle();
+    
+
 
     
+   
     const iconToggle = document.getElementById("toggle_social_icons");
     if (iconToggle) {
-        iconToggle.addEventListener("change", function () {
-            previewEl.querySelectorAll("a").forEach(a => {
-                a.style.display = this.checked ? "inline-block" : "none";
-            });
-        });
+        iconToggle.addEventListener("change", applySocialIconToggle);
     }
 
     enableLiveColorPreview();
@@ -211,4 +199,19 @@ function enableLiveColorPreview() {
     });
     
 }
+
+
+function applySocialIconToggle() {
+    const iconToggle = document.getElementById("toggle_social_icons");
+    const previewEl = document.getElementById("preview_body");
+    if (!iconToggle || !previewEl) return;
+
+    const socialLinks = previewEl.querySelectorAll("#previewSocialIcons a");
+    if (!socialLinks.length) return;
+
+    socialLinks.forEach(link => {
+        link.style.display = iconToggle.checked ? "inline-block" : "none";
+    });
+}
+
 

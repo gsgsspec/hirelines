@@ -5033,7 +5033,12 @@ def get_default_email_template_service(company_id):
                     footer_icon.format(url=url, icon=icon_url, platform=platform)
                 )
 
-        footer_div_html = "".join(footer_div_list)
+        # footer_div_html = "".join(footer_div_list)
+        footer_div_html = f"""
+        <div id="previewSocialIcons">
+            {''.join(footer_div_list)}
+        </div>
+        """
 
         email_body = email_temp.email_body.replace("[footer_div]", footer_div_html)
         return {

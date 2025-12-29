@@ -7,7 +7,7 @@
     }
 
     .branding-left {
-        width: 50%;
+        width: 38%;
     }
 
     #toggle_social_icons {
@@ -17,20 +17,32 @@
     }
 
     .branding-preview {
-        width: 50%;
+        width: 62%;
 
         padding-left: 20px;
     }
 
-    #emailPreviewBox {
+    /* #emailPreviewBox {
         pointer-events: none;
       
         cursor: not-allowed !important;
         
         user-select: none;
       
+    } */
+
+    #emailPreviewBox {
+        user-select: none;
     }
- 
+
+    #emailPreviewBox a {
+        pointer-events: none; /* disable clicks only */
+    }
+
+    .hide-social-icons {
+        display: none !important;
+    }
+    
 
 </style>
 
@@ -57,11 +69,22 @@
 
                     <form id="brand_form">
 
-                        <div class="form-group row">
+                        <!-- <div class="form-group row">
                             <label class="col-xl-3 col-form-label">Company Logo</label>
                             <div class="col-xl-7 drop-zone mt-2">
-                                <label class="upload-label cursor-pointer" for="logo">
-                                    Upload Logo <br />
+                                <label class="upload-label cursor-pointer" for="logo"><br />
+                                    <i class="fa fa-2x fa-image mt-5" id="image_icon"></i>
+                                    <input type="file" id="logo" onchange="loadFile(event)" style="display:none"
+                                        accept="image/*" />
+                                    <br>
+                                    <p id="output"></p>
+                                </label>
+                            </div>
+                        </div> -->
+                         <div class="form-group">
+                            <label>Company Logo</label>
+                            <div class="col-xl-7 drop-zone mt-2">
+                                <label class="upload-label cursor-pointer" for="logo"><br />
                                     <i class="fa fa-2x fa-image mt-5" id="image_icon"></i>
                                     <input type="file" id="logo" onchange="loadFile(event)" style="display:none"
                                         accept="image/*" />

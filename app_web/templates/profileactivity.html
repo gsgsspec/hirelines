@@ -103,7 +103,6 @@
                        
                          <div class="tabsContainer"style="flex-direction: row-reverse;">
                         
-                        <!-- <button class="btn btn-primary" id="sendWelcome"  onclick="tabSwitch(this.id)"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button> -->
                          {% if email_exist == "N" %}
                          <button class="btn btn-primary" id="sendWelcome" onclick="sendWelcomeMail()"><i class="menu-icon tf-icons fas fa-envelope"></i> Send Welcome Message</button>
                          {% endif %}
@@ -111,13 +110,20 @@
                         </div>
                     <!-- </div> -->
                 </div>
-                <div class="table-responsive text-nowrap">
-                    <table class="table table-bordered" id="activity_details_table">
+                <div class="table-responsive text-nowrap table-cls" style="padding:20px">
+                    <table class="table table-hover dataTable no-footer" id="activity_details_table">
+                        <thead>
+                            <tr>
+                                <th> <strong>Date & Time </strong></th>
+                                <th> <strong>Activity Name </strong></th>
+                                <th> <strong>User Name </strong></th>
+                            </tr>
+                        </thead>
 
-                        <tbody>
+                        <tbody class="table-border-bottom-0">
                             {% for act in activity_details %}
                             <tr>
-                                <td style="width: 15%; padding-left: 0px;">
+                                <td>
                                     {{ act.datentime }}
                                 </td>
                         
@@ -169,7 +175,8 @@
             </div>
     </main>
 </div>
-<script>
+<script src="{% static 'js/profileactivity.js' %}"></script>
+<!-- <script>
 
 function getPidFromUrl() {
     const parts = window.location.pathname.split("/");
@@ -295,4 +302,4 @@ function sendWelcomeMail() {
             });
         });
 }
-</script>
+</script> -->
