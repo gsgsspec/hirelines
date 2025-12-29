@@ -99,7 +99,13 @@ ul.custom-list li {
     border-top: 1px solid #ccc;
 }
 </style>
+<div class="credits-container">
 
+  <button class="btn btn-primary" type="button" onclick="downloadResume('{{ profile_details.id }}')" data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Download Resume">
+                             <i class="fas fa-download"></i>
+                        </button></div>
 <div class="resume-container">
 
     <!-- HEADER -->
@@ -110,6 +116,7 @@ ul.custom-list li {
             <h1>{{ profile_details.firstname }} {{ profile_details.lastname }}</h1>
             <h3>{{ profile_details.title }} — Exp: {{ profile_details.final_experience }}</h3>
         </div>
+                
 
         <div class="strength-box"   data-bs-toggle="tooltip"
      data-bs-placement="left"
@@ -232,3 +239,58 @@ ul.custom-list li {
     </div>
 
 </div>
+<script>
+    const pid = "{{ profile_details.id }}";
+</script>
+<script>
+    async function downloadResume(pid) {
+
+    var url = CONFIG['portal'] + "/api/download-branded-profile";
+
+    try {
+        Swal.fire({
+            title: 'Downloading',
+            text: 'Please wait while your profile is being downloaded...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        const formData = new FormData();
+        formData.append("pid", pid);
+        formData.append("csrfmiddlewaretoken", CSRF_TOKEN);
+
+        const response = await fetch(url, {
+            method: "POST",
+            body:formData
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            
+            let filename = "download.pdf";
+
+            const disposition = response.headers.get("Content-Disposition");
+            if (disposition) {
+                filename = disposition.split("filename=")[1]?.replace(/"/g, "") || filename;
+            }
+
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(downloadUrl);
+        } else {
+            console.error('Request failed', response.status);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        Swal.close();
+    }
+}
+</script>
