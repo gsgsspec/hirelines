@@ -117,18 +117,20 @@
     .credits-container {
         display: none;
     }
-    .form-label {
-    white-space: nowrap;
-}
 
+    .form-label {
+        white-space: nowrap;
+    }
 </style>
 
 
-<h4 class="fw-bold py-2"> Recruiter Dashboard</h4>
+<h4 class="p-clr"> Recruiter Dashboard</h4>
 
 
-    <!-- ===== FILTERS ROW ===== -->
+<!-- ===== FILTERS ROW ===== -->
 <div class="container-xxl flex-grow-1 container-p-y">
+
+
     <div class="row align-items-center">
 
         <!-- LEFT : Recruiter Filter -->
@@ -139,13 +141,13 @@
                 </label>
                 <select class="form-select" id="recruiterFilter" style="max-width: 220px;">
                     {% if show_all_option %}
-                        <option value="">All Recruiters</option>
+                    <option value="">All Recruiters</option>
                     {% endif %}
 
                     {% for recruiter in recruiters %}
-                        <option value="{{ recruiter.id }}">
-                            {{ recruiter.name }}
-                        </option>
+                    <option value="{{ recruiter.id }}">
+                        {{ recruiter.name }}
+                    </option>
                     {% endfor %}
 
                 </select>
@@ -159,10 +161,7 @@
                 <label class="form-label fw-semibold mb-0 me-2">
                     Month
                 </label>
-                <input type="month"
-                       class="form-control"
-                       id="monthFilter"
-                       style="max-width: 200px;">
+                <input type="month" class="form-control" id="monthFilter" style="max-width: 200px;">
             </div>
         </div>
 
@@ -170,269 +169,231 @@
 </div>
 
 
-    <!-- ===== TOP ROW ===== -->
+<!-- ===== TOP ROW ===== -->
 <div class="container-xxl flex-grow-1 py-2 px-3">
-        <div class="row g-6">
+    <div class="row g-6">
 
-            <div class="col-lg-3 col-sm-6">
-                <div class="card card-border-shadow-primary h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="avatar me-4">
-                                <span class="avatar-initial rounded bg-label-primary">
-                                    <i class="bx bx-file icon-lg"></i>
-                                </span>
-                            </div>
-                            <h4 class="mb-0"id=submittedCount>{{ submitted }}</h4>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-primary h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-primary">
+                                <i class="bx bx-file icon-lg"></i>
+                            </span>
                         </div>
-                        <p class="mb-2">Profiles Received</p>
-                        <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">{{submitted_percentage}}%</span>
-                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
-                        </p>
+                        <h4 class="mb-0" id=submittedCount>{{ submitted }}</h4>
                     </div>
+                    <p class="mb-2">Profiles Received</p>
+                    <p class="mb-0">
+                        <span class="text-heading fw-medium me-2">{{submitted_percentage}}%</span>
+                        <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
+                    </p>
                 </div>
             </div>
-
-            <div class="col-lg-3 col-sm-6">
-                <div class="card card-border-shadow-warning h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="avatar me-4">
-                                <span class="avatar-initial rounded bg-label-warning">
-                                    <i class="icon-base bx bx-user-check icon-lg"></i>
-                                </span>
-                            </div>
-                            <h4 class="mb-0"id=profiledCount>{{ profiled }}</h4>
-                        </div>
-                        <p class="mb-2">Reviewed and Profiled</p>
-                        <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">{{profiled_percentage}}%</span>
-                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-sm-6">
-                <div class="card card-border-shadow-danger h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="avatar me-4">
-                                <span class="avatar-initial rounded bg-label-danger">
-                                    <i class="icon-base bx bx-x-circle icon-lg"></i>
-                                </span>
-                            </div>
-                            <h4 class="mb-0"id=rejectedCount>{{ rejected }}</h4>
-                        </div>
-                        <p class="mb-2">Reviewed and Rejected</p>
-                        <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">{{rejected_percentage}}%</span>
-                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-sm-6">
-                <div class="card card-border-shadow-info h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="avatar me-4">
-                                <span class="avatar-initial rounded bg-label-info">
-                                    <i class="icon-base bx bx-briefcase-alt icon-lg"></i>
-                                </span>
-                            </div>
-                            <h4 class="mb-0"id=sentClientCount>{{ sent_client }}</h4>
-                        </div>
-                        <p class="mb-2">Profiles Submitted to Client</p>
-                        <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">{{sent_client_percentage}}%</span>
-                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
         </div>
-    </div>
 
-    <!-- ===== BOTTOM ROW (UNIQUE COLORS) ===== -->
-<div class="container-xxl flex-grow-1 py-2 px-3">
-        
-        <div class="row g-6">
-
-            <div class="col-lg-3 col-sm-6">
-                <div class="card card-border-shadow-maroon h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="avatar me-4">
-                                <span class="avatar-initial rounded"
-                                    style="background:rgba(128,0,64,.15);color:#800040;">
-                                    <i class="icon-base bx bx-x-circle icon-lg"></i>
-                                </span>
-                            </div>
-                            <h4 class="mb-0"id=rejectedClientCount>{{ rejected_client }}</h4>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-warning h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-warning">
+                                <i class="icon-base bx bx-user-check icon-lg"></i>
+                            </span>
                         </div>
-                        <p class="mb-2">Profiles Rejected by Client</p>
-                        <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">{{rejected_client_percentage}}%</span>
-                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
-                        </p>
+                        <h4 class="mb-0" id=profiledCount>{{ profiled }}</h4>
                     </div>
+                    <p class="mb-2">Reviewed and Profiled</p>
+                    <p class="mb-0">
+                        <span class="text-heading fw-medium me-2">{{profiled_percentage}}%</span>
+                        <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
+                    </p>
                 </div>
             </div>
-
-            <div class="col-lg-3 col-sm-6">
-                <div class="card card-border-shadow-emerald h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="avatar me-4">
-                                <span class="avatar-initial rounded"
-                                    style="background:rgba(0,168,120,.15);color:#00a878;">
-                                    <i class="icon-base bx bx-badge-check icon-lg"></i>
-                                </span>
-                            </div>
-                            <h4 class="mb-0"id=selectedClientCount>{{ selected_client }}</h4>
-                        </div>
-                        <p class="mb-2">Profiles Selected by Client</p>
-                        <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">{{selected_client_percentage}}%</span>
-                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-sm-6">
-                <div class="card card-border-shadow-slate h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="avatar me-4">
-                                <span class="avatar-initial rounded"
-                                    style="background:rgba(88,86,214,.15);color:#5856d6;">
-                                    <i class="icon-base bx bx-time-five icon-lg"></i>
-                                </span>
-                            </div>
-                            <h4 class="mb-0"id=waitingFeedbackCount>{{ waiting_feedback }}</h4>
-                        </div>
-                        <p class="mb-2">Waiting for Feedback</p>
-                        <p class="mb-0">
-                            <span class="text-heading fw-medium me-2">{{waiting_feedback_percentage}}%</span>
-                            <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
         </div>
-    </div>
 
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-danger h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-danger">
+                                <i class="icon-base bx bx-x-circle icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0" id=rejectedCount>{{ rejected }}</h4>
+                    </div>
+                    <p class="mb-2">Reviewed and Rejected</p>
+                    <p class="mb-0">
+                        <span class="text-heading fw-medium me-2">{{rejected_percentage}}%</span>
+                        <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-info h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-info">
+                                <i class="icon-base bx bx-briefcase-alt icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0" id=sentClientCount>{{ sent_client }}</h4>
+                    </div>
+                    <p class="mb-2">Profiles Submitted to Client</p>
+                    <p class="mb-0">
+                        <span class="text-heading fw-medium me-2">{{sent_client_percentage}}%</span>
+                        <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
+<!-- ===== BOTTOM ROW (UNIQUE COLORS) ===== -->
+<div class="container-xxl flex-grow-1 py-2 px-3">
 
+    <div class="row g-6">
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-maroon h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded" style="background:rgba(128,0,64,.15);color:#800040;">
+                                <i class="icon-base bx bx-x-circle icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0" id=rejectedClientCount>{{ rejected_client }}</h4>
+                    </div>
+                    <p class="mb-2">Profiles Rejected by Client</p>
+                    <p class="mb-0">
+                        <span class="text-heading fw-medium me-2">{{rejected_client_percentage}}%</span>
+                        <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-    const monthInput = document.getElementById("monthFilter");
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-emerald h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded" style="background:rgba(0,168,120,.15);color:#00a878;">
+                                <i class="icon-base bx bx-badge-check icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0" id=selectedClientCount>{{ selected_client }}</h4>
+                    </div>
+                    <p class="mb-2">Profiles Selected by Client</p>
+                    <p class="mb-0">
+                        <span class="text-heading fw-medium me-2">{{selected_client_percentage}}%</span>
+                        <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-    //  Set current month by default (YYYY-MM)
-    const today = new Date();
-    const currentMonth =
-        today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0");
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-slate h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded" style="background:rgba(88,86,214,.15);color:#5856d6;">
+                                <i class="icon-base bx bx-time-five icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0" id=waitingFeedbackCount>{{ waiting_feedback }}</h4>
+                    </div>
+                    <p class="mb-2">Waiting for Feedback</p>
+                    <p class="mb-0">
+                        <span class="text-heading fw-medium me-2">{{waiting_feedback_percentage}}%</span>
+                        <span class="text-body-secondary comparisonText">{{comparison_text}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-    monthInput.value = currentMonth;
-
-    //  Optional: Log formatted value (Dec - 2025)
-    formatMonth(currentMonth);
-
-    monthInput.addEventListener("change", function () {
-        formatMonth(this.value);
-    });
-
-    function formatMonth(value) {
-        if (!value) return;
-
-        const date = new Date(value + "-01");
-        const formatted = date.toLocaleDateString("en-US", {
-            month: "short",
-            year: "numeric"
-        });
-
-        console.log("Selected Month:", formatted); // Dec 2025
-    }
-});
-</script>
-<script>
-$(document).ready(function () {
-
-    const recruiterFilter = $("#recruiterFilter");
-    const monthFilter = $("#monthFilter");
-
-    function loadDashboardData() {
-
-        let params = {};
-
-        if (recruiterFilter.length && recruiterFilter.val()) {
-            params.recruiter = recruiterFilter.val();
-        }
-
-        if (monthFilter.length && monthFilter.val()) {
-            params.month = monthFilter.val();
-        }
-
-        $.get(
-            CONFIG['portal'] + "/api/recruiter-dashboard-filter",
-            params,   //  filters passed here
-            function (response) {
-                console.log("response",response)
-
-                if (response.statusCode === 0) {
-                    updateCards(response.data);
-                } else {
-                    console.error(response.error);
-                }
-            }
-        );
-    }
-
-    function updateCards(data) {
-        $("#submittedCount").text(data.submitted);
-        $("#profiledCount").text(data.profiled);
-        $("#rejectedCount").text(data.rejected);
-        $("#sentClientCount").text(data.sent_client);
-        $("#rejectedClientCount").text(data.rejected_client);
-        $("#selectedClientCount").text(data.selected_client);
-        $("#waitingFeedbackCount").text(data.waiting_feedback);
-         $("#submittedCount").closest(".card-body").find(".text-heading")
-        .text(data.submitted_percentage + "%");
-
-        $("#profiledCount").closest(".card-body").find(".text-heading")
-            .text(data.profiled_percentage + "%");
-
-        $("#rejectedCount").closest(".card-body").find(".text-heading")
-            .text(data.rejected_percentage + "%");
-
-        $("#sentClientCount").closest(".card-body").find(".text-heading")
-            .text(data.sent_client_percentage + "%");
-
-        $("#selectedClientCount").closest(".card-body").find(".text-heading")
-            .text(data.selected_client_percentage + "%");
-
-        $("#rejectedClientCount").closest(".card-body").find(".text-heading")
-            .text(data.rejected_client_percentage + "%");
-
-        $("#waitingFeedbackCount").closest(".card-body").find(".text-heading")
-            .text(data.waiting_feedback_percentage + "%");
-        $(".comparisonText").text(data.comparison_text);
-
-        
-    }
+    </div>
     
-    recruiterFilter.on("change", loadDashboardData);
-    monthFilter.on("change", loadDashboardData);
+</div>
+<div class="container-xxl flex-grow-1 py-2 px-3">
 
-    loadDashboardData();
-});
-</script>
+<div class="card mb-3">
+    <div class="card-title-table">
+        <h3 class="card-header"><iconify-icon icon="fe:line-chart" width="30" height="30"
+                style="vertical-align: text-top;"></iconify-icon>&nbsp;chart</h3>
+    </div>
+    <div class="line-chat-section" style="height: 400px;">
+        <canvas id="linechart"></canvas>
+    </div>
+</div>
+</div>
+</div>
+
+<style>
+    :root {
+        --screening-color: #8763ee;
+        --coding-color: #00d462;
+        --interview-color: #1f68f3;
+    }
+
+    .screening-clr {
+        color: var(--screening-color);
+    }
+
+    .screening-bgclr {
+        background-color: #efebfd;
+    }
+
+    .coding-clr {
+        color: var(--coding-color);
+    }
+
+    .coding-bgclr {
+        background-color: #defaeb;
+    }
+
+    .interview-clr {
+        color: var(--interview-color);
+    }
+
+    .interview-bgclr {
+        background-color: #e2ebfd;
+    }
+
+    .line-chat-section {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+    }
+
+    .source-fs {
+        font-size: 1.3rem;
+    }
+
+    .source-heading {
+        border-radius: 8px 8px 0px 0px;
+        text-align: center;
+        padding: 5px;
+    }
+
+    .source-div .card-body {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .duration-content {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+</style>
+<script src="{% static 'js/recruiter_dashboard.js' %}"></script>

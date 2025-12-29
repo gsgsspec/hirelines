@@ -646,6 +646,7 @@ class ProfileAddress(models.Model):
 class ProfileAnalysis(models.Model):
     id = models.AutoField(primary_key=True)
     companyid = models.IntegerField(null=True)
+    day = models.IntegerField(null=True, blank=True)
     month = models.IntegerField(null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
     userid = models.IntegerField(null=True)

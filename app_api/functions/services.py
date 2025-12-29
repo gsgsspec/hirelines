@@ -4780,7 +4780,6 @@ def getRecritmentDashboardData(
         "rejected_client": rejected_client,
         "selected_client": selected_client,
         "waiting_feedback": waiting_feedback,
-
         "submitted_percentage": 100 if submitted else 0,
         "profiled_percentage": percent(profiled, submitted),
         "rejected_percentage": percent(rejected, submitted),
@@ -5067,3 +5066,111 @@ def get_default_email_template_service(company_id):
     
         print("Email template service error:", e)
         return None
+
+
+
+from calendar import monthrange
+
+def dashBoardDataService(
+    company_id,
+    user_role=None,
+    logged_recruiter_id=None,
+    selected_recruiter=None,
+    month_value=None
+):
+    print("user_role",user_role)
+    try:
+        now = datetime.now()
+
+        if month_value:
+            year, month = map(int, month_value.split("-"))
+        else:
+            year, month = now.year, now.month
+
+        if year == now.year and month == now.month:
+            end_date = now.date()
+        else:
+            # previous month → use last day of selected month
+            last_day = monthrange(year, month)[1]
+            end_date = date(year, month, last_day)
+
+        start_date = end_date - timedelta(days=14)
+
+        date_range = [
+            start_date + timedelta(days=i)
+            for i in range(15)
+        ]
+
+        qs = ProfileAnalysis.objects.filter(
+            companyid=company_id,
+            year=year,
+            month=month,
+            day__gte=start_date.day,
+            day__lte=end_date.day
+        )
+
+        if user_role == "Recruiter":
+            qs = qs.filter(userid=logged_recruiter_id)
+
+        elif user_role == "HR-Admin" and selected_recruiter:
+            qs = qs.filter(userid=selected_recruiter)
+
+        qs = qs.values("day", "activitycode").annotate(
+            total=Sum("profilescount")
+        )
+
+        date_map = {
+            date.strftime("%Y-%m-%d"): {
+                "submitted": 0,
+                "profiled": 0,
+                "rejected": 0,
+                "sent_client": 0,
+                "rejected_client": 0,
+                "selected_client": 0,
+                "waiting_feedback": 0,
+            }
+            for date in date_range
+        }
+
+        activity_map = {
+            "PC": "submitted",
+            "SL": "profiled",
+            "RJ": "rejected",
+            "CL": "sent_client",
+            "RC": "rejected_client",
+            "CS": "selected_client",
+            "WF": "waiting_feedback",
+        }
+
+        for row in qs:
+            date_key = f"{year}-{month:02d}-{row['day']:02d}"
+
+            if date_key in date_map:
+                field = activity_map.get(row["activitycode"])
+                if field:
+                    date_map[date_key][field] += row["total"] or 0
+
+        line_graph = {
+            "dates": [d.strftime("%d-%m-%Y") for d in date_range],
+            "submitted": [],
+            "profiled": [],
+            "rejected": [],
+            "sent_client": [],
+            "rejected_client": [],
+            "selected_client": [],
+            "waiting_feedback": [],
+        }
+
+        for d in date_range:
+            key = d.strftime("%Y-%m-%d")
+            for k in line_graph:
+                if k != "dates":
+                    line_graph[k].append(date_map[key][k])
+
+        return {
+            "line_graph_data": line_graph
+        }
+
+    except Exception as e:
+        print("Dashboard graph error:", str(e))
+        raise

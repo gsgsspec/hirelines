@@ -24,7 +24,7 @@ from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
-        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService
+        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
@@ -2665,4 +2665,36 @@ def shortlistProfile(request):
         response["data"] = "Error in shortlisting the Profile"
         response["error"] = str(e)
 
+    return JsonResponse(response)
+
+
+@api_view(['GET'])
+def dashBoardView(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "GET":
+            company_id = getCompanyId(request.user)
+            user_data = auth_user(request.user)
+            user_role = user_data.role
+            logged_recruiter_id = user_data.id
+            selected_recruiter = request.GET.get("recruiter")
+            month_value = request.GET.get("month")
+            print("month_value",month_value)
+
+            dashboard_data = dashBoardDataService(company_id=company_id,
+            user_role=user_role,
+            logged_recruiter_id=logged_recruiter_id,
+            selected_recruiter=selected_recruiter,month_value=month_value)
+            response['data'] = dashboard_data
+            response['statusCode'] = 0
+
+
+    except Exception as e:
+        response['data'] = 'Error in getDashBoardDataService view'
+        response['error'] = str(e)
+        # logging.error("Error in getDashBoardDataService view : ", str(e))
     return JsonResponse(response)

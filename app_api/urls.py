@@ -98,5 +98,7 @@ urlpatterns = [
 
     path('add-workspace',views.addWorkspace),
     path('jd-profile-data',views.jdProfileData),
-    path('shortlist-profile',views.shortlistProfile)
+    path('shortlist-profile',views.shortlistProfile),
+    path('dashboard', views.dashBoardView),
+
 ]
