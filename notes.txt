@@ -288,3 +288,9 @@ CREATE TABLE workspace (
   createdat DATETIME NULL,
   status VARCHAR(1) NULL
 );
+
+
+==============================Mounika
+
+ALTER TABLE 'profileanalysis'
+ADD COLUMN day INT NULL;
