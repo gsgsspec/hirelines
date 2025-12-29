@@ -111,7 +111,9 @@ ul.custom-list li {
             <h3>{{ profile_details.title }} — Exp: {{ profile_details.final_experience }}</h3>
         </div>
 
-        <div class="strength-box">
+        <div class="strength-box"   data-bs-toggle="tooltip"
+     data-bs-placement="left"
+     title="Profile Strength">>
             {{profile_details.strength}}%
         </div>
     </div>
@@ -125,33 +127,33 @@ ul.custom-list li {
 
 <table style="width: 100%; font-size: 14.5px; border-collapse: collapse; margin-left: 5px;">
     <tr>
-        <td style="width: 100px; padding: 4px 0;color: #555;"><strong>Title</strong></td>
+        <td style="width: 100px; padding: 4px 0;color: #555;">Title</td>
         <td>:&ensp; {{ profile_details.title }}</td>
     </tr>
 
     <tr>
-        <td style="padding: 4px 0;color: #555;"><strong>First Name</strong></td>
+        <td style="padding: 4px 0;color: #555;">First Name</td>
         <td>:&ensp; {{ profile_details.firstname }}</td>
     </tr>
     {% if profile_details.middlename %}
     <tr>
-        <td style="padding: 4px 0;color: #555;"> <strong> Middle Name </strong></td>
+        <td style="padding: 4px 0;color: #555;">  Middle Name </td>
         <td>:&ensp;{{ profile_details.middlename }}</td>
     </tr>
     {% endif %}
 
     <tr>
-        <td style="padding: 4px 0;color: #555;"><strong>Last Name</strong></td>
+        <td style="padding: 4px 0;color: #555;">Last Name</td>
         <td>:&ensp; {{ profile_details.lastname }}</td>
     </tr>
 
     <tr>
-        <td style="padding: 4px 0;color: #555;"><strong>Email</strong></td>
+        <td style="padding: 4px 0;color: #555;">Email</td>
         <td>:&ensp; {{ profile_details.email }}</td>
     </tr>
 
     <tr>
-        <td style="padding: 4px 0;color: #555;"><strong>Mobile</strong></td>
+        <td style="padding: 4px 0;color: #555;">Mobile</td>
         <td>:&ensp; {{ profile_details.mobile }}</td>
     </tr>
 </table>
