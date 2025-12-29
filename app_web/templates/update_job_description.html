@@ -204,9 +204,9 @@
                                             Update
                                         </button>
 
-                                        <button type="button" class="btn btn-success"
+                                        <button type="button" class="btn btn-primary"
                                             onclick="updateJDStatus('F','JD Sent for Approval')">
-                                            Send for approval
+                                            Send for Approval
                                         </button>
 
                                         {% endif %}
@@ -224,7 +224,7 @@
                                             <button type="submit" id="submitJd" class="btn btn-primary">Update</button>
 
                                             {% if jd_details.approval_status != "O" %}
-                                            <button type="button" class="btn btn-success"
+                                            <button type="button" class="btn btn-primary"
                                                 onclick="updateJDStatus('O', 'JD Approved')">
                                                 Approve
                                             </button>
@@ -233,7 +233,7 @@
                                                 onclick="updateJDStatus('R', 'JD Rejected')">
                                                 Send for Rivise
                                             </button> -->
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reviseModal">
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviseModal">
                                                 Send for Revise
                                             </button>
                                             {% endif %}
