@@ -22,7 +22,7 @@ INSERT INTO `rolespermissions` (`function`,`sub_function`,`function_category`,`f
 INSERT INTO `rolespermissions` (`function`,`sub_function`,`function_category`,`function_link`,`enable`,`function_icon`,`orderby`) VALUES ('Reports',NULL,'Reports','reports','HR-Admin, HR-Executive','fas fa-file',13);
 INSERT INTO `rolespermissions` (`function`,`sub_function`,`function_category`,`function_link`,`enable`,`function_icon`,`orderby`) VALUES ('Company',NULL,'Company','company-data','HR-Admin','fas fa-building',14);
 INSERT INTO `rolespermissions` (`function`,`sub_function`,`function_category`,`function_link`,`enable`,`function_icon`,`orderby`) VALUES ('Sources',NULL,'Sources','sources','HR-Admin','fas fa-location-arrow',15);
-INSERT INTO `rolespermissions` (`function`,`sub_function`,`function_category`,`function_link`,`enable`,`function_icon`,`orderby`) VALUES ('Work Space',NULL,'Work Space','workspace','Recruiter','fas fa-chalkboard-teacher',16);
+INSERT INTO `rolespermissions` (`function`,`sub_function`,`function_category`,`function_link`,`enable`,`function_icon`,`orderby`) VALUES ('Workspace',NULL,'Workspace','workspace','Recruiter','fas fa-chalkboard-teacher',16);
 INSERT INTO `rolespermissions` (`function`,`sub_function`,`function_category`,`function_link`,`enable`,`function_icon`,`orderby`) VALUES ('Work Calender',NULL,'Work Calender','work-calender','Interviewer','fas fa-calendar-day',17);
 
 
