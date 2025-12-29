@@ -4119,7 +4119,7 @@ textarea.form-control-lg {
   content: var(--bs-breadcrumb-divider, "/") /* rtl: var(--bs-breadcrumb-divider, "\\") */;
 }
 .breadcrumb-item.active {
-  color: #697a8d;
+  color: var(--primary-color)
 }
 
 .pagination {

@@ -1012,8 +1012,7 @@ def profileviewPage(request,pid):
         menuItemList = get_functions_service(user_role)
 
         profile_details=getProfileDetailsService(pid)
-       
-
+        
         return render(request, "portal_index.html", {"template_name": 'profileview.html','menuItemList': menuItemList,'profile_details':profile_details})
 
       
@@ -1035,6 +1034,9 @@ def profileactivityviewPage(request,pid):
 
 
         activity_details=getProfileactivityDetailsService(pid)
+        
+        profileid = activity_details[0].get("profileid")
+        
         activity_names = Lookupmaster.objects.filter(lookupid=1,status='A').exclude(lookupmasterid=0).values_list('lookupname', flat=True)
 
         exists = ProfileActivity.objects.filter(
@@ -1051,7 +1053,7 @@ def profileactivityviewPage(request,pid):
         
 
         menuItemList = get_functions_service(user_role)
-        return render(request, "portal_index.html", {"template_name": 'profileactivity.html','menuItemList': menuItemList,"activity_details":activity_details,"activity_names":activity_names,"email_exist":email_exist})
+        return render(request, "portal_index.html", {"template_name": 'profileactivity.html','menuItemList': menuItemList,"activity_details":activity_details,"activity_names":activity_names,"email_exist":email_exist,'profileid':profileid})
 
    
     except Exception as e:

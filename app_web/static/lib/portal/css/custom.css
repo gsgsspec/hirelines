@@ -500,3 +500,8 @@ table.dataTable thead th, table.dataTable thead td {
   background: var(--light-primary-color);
   color: var(--primary-color);
 }
+
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: none !important;
+}
