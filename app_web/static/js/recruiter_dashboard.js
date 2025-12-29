@@ -138,6 +138,22 @@ function loadLineGraph() {
         if (res.statusCode !== 0) return;
 
         const graphData = res.data.line_graph_data;
+        const hasData = Object.keys(graphData)
+            .filter(k => k !== "dates")
+            .some(k => graphData[k].some(v => v > 0));
+
+        if (!hasData) {
+            $("#linechart").hide();
+            $("#noGraphData").show();
+
+            if (lineChartInstance) {
+                lineChartInstance.destroy();
+                lineChartInstance = null;
+            }
+            return;
+        }
+        $("#noGraphData").hide();
+        $("#linechart").show();
 
         const chartData = {
             labels: graphData.dates,
