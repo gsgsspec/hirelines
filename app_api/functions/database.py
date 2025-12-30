@@ -864,12 +864,13 @@ def addResumeProfileDB(dataObjs,user_data):
         resume.status = "A"
         resume.save()
 
-        activity_data = {
-            "profileid":profile.id,
-            "acvityuserid": user_data.id,
-        }
+        # activity_data = {
+        #     "profileid":profile.id,
+        #     "acvityuserid": user_data.id,
+        # }
         
-        createProfileActivityDB(activity_data)
+        # createProfileActivityDB(activity_data)
+        addProfileActivityDB(profile.id,"PC","Profile Created",user_data.id)
 
         return {"profile_id":profile.id}
 
@@ -953,7 +954,8 @@ def addProfileDB(dataObjs,fileObjs, user_data):
             "acvityuserid": user_data.id,
         }
         
-        createProfileActivityDB(activity_data)
+        # createProfileActivityDB(activity_data)
+        addProfileActivityDB(profile.id,"PC","Profile Created",user_data.id)
 
     except Exception as e:
         raise
@@ -1312,47 +1314,51 @@ def scheduleInterviewLinkDB(user_id, dataObjs):
 
 
 
-def scheduleCandidateInterviewLinkDB(enc_candidate_id):
+def scheduleCandidateInterviewLinkDB(enc_candidate_id,user_data):
     try:
-                candidate_id = decrypt_code(enc_candidate_id)
-                candidate_details=Candidate.objects.get(id=candidate_id)
-                # CallSchedule.objects.filter(candidateid=candidate_id).update(status='W')
-                
-                acert_domain = getConfig()['DOMAIN']['acert']
-                hirelines_domain = getConfig()['DOMAIN']['hirelines']
-                # Adding candidate at acert via api
-                endpoint = '/api/hirelines-send-candidate-schedule-link'
+        candidate_id = decrypt_code(enc_candidate_id)
+        candidate_details=Candidate.objects.get(id=candidate_id)
+        # CallSchedule.objects.filter(candidateid=candidate_id).update(status='W')
+        
+        acert_domain = getConfig()['DOMAIN']['acert']
+        hirelines_domain = getConfig()['DOMAIN']['hirelines']
+        # Adding candidate at acert via api
+        endpoint = '/api/hirelines-send-candidate-schedule-link'
 
-                schedule_link_endpoint = f'/candidate-schedule-interview/{enc_candidate_id}/'
-                schedule_link_url = urljoin(hirelines_domain, schedule_link_endpoint)
+        schedule_link_endpoint = f'/candidate-schedule-interview/{enc_candidate_id}/'
+        schedule_link_url = urljoin(hirelines_domain, schedule_link_endpoint)
 
-                url = urljoin(acert_domain, endpoint)
-                print("url",url)
+        url = urljoin(acert_domain, endpoint)
+        print("url",url)
 
-                candidate_data = {
-                    'firstname' : candidate_details.firstname,
-                    'lastname' : candidate_details.lastname,
-                    'email': candidate_details.email,
-                    'mobile': candidate_details.mobile,
-                    'company_id': candidate_details.companyid,
-                    'reference_id': candidate_details.candidateid,
-                    'job_id': candidate_details.jobid,
-                    'candidate_id': candidate_details.id,
-                    'url': schedule_link_url
-                }
+        candidate_data = {
+            'firstname' : candidate_details.firstname,
+            'lastname' : candidate_details.lastname,
+            'email': candidate_details.email,
+            'mobile': candidate_details.mobile,
+            'company_id': candidate_details.companyid,
+            'reference_id': candidate_details.candidateid,
+            'job_id': candidate_details.jobid,
+            'candidate_id': candidate_details.id,
+            'url': schedule_link_url
+        }
 
-                response = requests.post(url, json=candidate_data, verify=False, timeout=10)
-                response.raise_for_status()
-                response_json = response.json()
-                if response_json.get('statusCode') == 0:
-                        CallSchedule.objects.filter(candidateid=candidate_id).update(status='W')
-                        return True
+        response = requests.post(url, json=candidate_data, verify=False, timeout=10)
+        response.raise_for_status()
+        response_json = response.json()
 
-                else:
-                        raise Exception(response_json.get('error', 'Email sending failed'))
+        if response_json.get('statusCode') == 0:
+            CallSchedule.objects.filter(candidateid=candidate_id).update(status='W')
+
+            if candidate_details.profileid:
+                addProfileActivityDB(candidate_details.profileid,"IS","Interview Scheduling Sent",user_data.id)
+            return True
+
+        else:
+            raise Exception(response_json.get('error', 'Email sending failed'))
 
     except Exception as e:
-                    raise
+        raise
     
 
 
@@ -1454,6 +1460,9 @@ def scheduleCandidateInterviewDB(dataObjs):
                 url = urljoin(acert_domain, endpoint)
 
                 send_interview_data = requests.post(url, json=interview_data)
+
+                if candidate.profileid:
+                    addProfileActivityDB(candidate.profileid,"SCH","Interview Scheduled")
 
                 return "Slot Booked"
             else: 
@@ -1625,8 +1634,6 @@ def updateFullProfileDB(data):
 def addWorkspaceDB(dataObjs,user_data):
     try:
 
-        print("dataObjs",dataObjs)
-
         workspace = Workspace(
             clientid = dataObjs["client"],
             project = dataObjs["project"],
@@ -1639,5 +1646,31 @@ def addWorkspaceDB(dataObjs,user_data):
 
         workspace.save()
         
+    except Exception as e:
+        raise
+
+
+def addProfileActivityDB(profileid,activity_code,activityname,userid=None):
+    try:
+        last_seq = (
+            ProfileActivity.objects
+            .filter(profileid=profileid)
+            .aggregate(max_seq=Max("sequence"))
+            .get("max_seq")
+        )
+
+        next_seq = (last_seq or 0) + 1
+
+        profile_activity = ProfileActivity(
+            profileid = profileid,
+            datentime = datetime.now(),
+            sequence = next_seq,
+            activitycode = activity_code,
+            activityname = activityname,
+            acvityuserid = userid
+        )
+
+        profile_activity.save()
+
     except Exception as e:
         raise

@@ -416,7 +416,7 @@ def brandingPage(request):
         company_id = user_data.companyid
 
     
-        companyBranding = Branding.objects.filter(companyid=user_companyid ).first()
+        companyBranding = Branding.objects.filter(companyid=user_companyid).first()
         
         email_template_data = get_default_email_template_service(company_id)
          

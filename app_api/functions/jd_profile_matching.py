@@ -30,7 +30,8 @@ def calculateJDProfileMatching(jobid, profiles):
                 "profile_id": profile.id,
                 "total_experience": profile_exp,
                 "exp_strength": exp_strength,
-                "skill_strength": skill_strength,
+                "skill_strength": skill_strength["strength"],
+                "matched_skills": skill_strength["matched_skills"],
             })
 
         return results
@@ -38,7 +39,6 @@ def calculateJDProfileMatching(jobid, profiles):
     except Exception as e:
         print(str(e))
         raise
-
 
 
 def calculate_total_experience(profile_id):
@@ -68,7 +68,10 @@ def calculate_experience_strength(profile_exp, jd_min):
 
 def calculate_skill_strength(jd_skillset, profile_id):
     if not jd_skillset:
-        return 100
+        return {
+            "strength": 100,
+            "matched_skills": []
+        }
 
     # ---- Fetch profile skills ----
     profile_skill_obj = (
@@ -92,7 +95,10 @@ def calculate_skill_strength(jd_skillset, profile_id):
             jd_skills.add(word)
 
     if not jd_skills:
-        return 0
+        return {
+            "strength": 0,
+            "matched_skills": []
+        }
 
     # ---- Profile skills ----
     profile_skills = set()
@@ -104,8 +110,11 @@ def calculate_skill_strength(jd_skillset, profile_id):
     matched = jd_skills & profile_skills
     strength = (len(matched) / len(jd_skills)) * 100
 
-    print("jd_skills", jd_skills)
-    print("profile_skills", profile_skills)
-    print("matched", matched)
+    # print("jd_skills", jd_skills)
+    # print("profile_skills", profile_skills)
+    # print("matched", matched)
 
-    return round(strength, 2)
+    return {
+        "strength": round(strength, 2),
+        "matched_skills": sorted(matched)
+    }

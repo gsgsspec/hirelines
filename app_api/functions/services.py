@@ -81,6 +81,7 @@ from app_api.functions.database import (
     saveUpdateJd,
     deleteTestInJdDB,
     saveInterviewersJD,
+    addProfileActivityDB
 )
 from app_api.functions.mailing import sendEmail
 from django.forms.models import model_to_dict
@@ -1925,6 +1926,9 @@ def interviewCompletionService(dataObjs, user_id):
 
         send_interview_data = requests.post(url, json=interview_data)
 
+        if candidate.profileid:
+            addProfileActivityDB(candidate.profileid,"IC","Interview Completed",user_id)
+
     except Exception as e:
         raise
 
@@ -2474,7 +2478,7 @@ def jdPublishService(dataObjs, companyId):
         raise
 
 
-def notifyCandidateService(dataObjs):
+def notifyCandidateService(dataObjs,user):
     try:
 
         notify = dataObjs.get("notify")
@@ -2523,6 +2527,11 @@ def notifyCandidateService(dataObjs):
 
         candidate.status = notify
         candidate.save()
+
+        if candidate.profileid:
+            if notify == "O":
+                addProfileActivityDB(candidate.profileid,"OL","Offer letter Sent",user.id)
+
 
     except Exception as e:
         print(str(e))
@@ -2930,12 +2939,19 @@ def updateCandidateWorkflowService(dataObjs):
                                         companyid=candidate.companyid,
                                     )
                                     call_schedule.save()
+                                
+                                if candidate.profileid:
+                                    if c_registration.papertype == "S":
+                                        addProfileActivityDB(candidate.profileid,"SC","Screening Sent")
+                                    elif c_registration.papertype == "E":
+                                        addProfileActivityDB(candidate.profileid,"CT","Coding Test Sent")
 
                                 if registration.papertype == "S":
                                     candidate.status = "S"
                                     registration.status = "P"
                                     candidate.save()
                                     registration.save()
+
                                 elif registration.papertype == "E":
                                     candidate.status = "E"
                                     registration.status = "P"
@@ -3317,7 +3333,7 @@ def format_duration(minutes):
 def getCompanySourcesData(company_id):
     try:
 
-        sources = Source.objects.filter(companyid=company_id)
+        sources = Source.objects.filter(companyid=company_id).order_by('label')
 
         if sources:
 
@@ -4897,6 +4913,7 @@ def getJdProfileData(dataObjs,user_data):
             exp_strength = int(round(match_info.get("exp_strength", 0)))
             skill_strength = int(round(match_info.get("skill_strength", 0)))
             overall_strength = int(round((skill_strength * 0.6) + (exp_strength * 0.4)))
+            matched_skills = ",".join(s.capitalize() for s in match_info.get("matched_skills", []))
 
             candidate = Candidate.objects.filter(profileid=profile.id,jobid=dataObjs["jdid"]).last()
             if candidate:
@@ -4909,7 +4926,9 @@ def getJdProfileData(dataObjs,user_data):
                         "lastname":profile.lastname,
                         "email":profile.email,
                         "exp_strength": exp_strength,
+                        "total_experience": int(match_info.get("total_experience", 0)),
                         "skill_strength": skill_strength,
+                        "matched_skills":matched_skills,
                         "overall_strength": overall_strength,
                         "candidate_status":c_status
                     })
@@ -4922,17 +4941,37 @@ def getJdProfileData(dataObjs,user_data):
                     "lastname":profile.lastname,
                     "email":profile.email,
                     "exp_strength": exp_strength,
+                    "total_experience": int(match_info.get("total_experience", 0)),
                     "skill_strength": skill_strength,
+                    "matched_skills":matched_skills,
                     "overall_strength": overall_strength,
                 })
 
         matched_profiles.sort(key=lambda x: x["overall_strength"],reverse=True)
+
+        primary_skills = ""
+
+        if job_desc.skillset:
+            skillesSet = ast.literal_eval(job_desc.skillset)
+
+            skillCount = 0
+            for skill in skillesSet:
+                value = next(
+                    iter(skill.values())
+                )  # Get the first value dynamically
+                skillCount += 1
+
+                if len(skillesSet) == skillCount:
+                    primary_skills += value
+                else:
+                    primary_skills += value + ", "
 
         return {
             "jdid":job_desc.id,
             "title":job_desc.title,
             "expmin":job_desc.expmin,
             "expmax":job_desc.expmax,
+            "jd_skills_primary":primary_skills,
             "shortlisted_profiles":shortlisted_profiles,
             "matched_profiles":matched_profiles,
         }
@@ -4967,6 +5006,11 @@ def shortlistProfileService(dataObjs,user_data):
                 new_candidate = Candidate.objects.get(id=candidate["candidateid"])
                 new_candidate.profileid = profile.id
                 new_candidate.save()
+
+                if candidate["papertype"] == "S":
+                    addProfileActivityDB(profile.id,"SC","Screening Sent")
+                elif candidate["papertype"] == "E":
+                    addProfileActivityDB(profile.id,"CT","Coding Test Sent")
 
             return candidate
 

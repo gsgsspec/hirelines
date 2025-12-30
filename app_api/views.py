@@ -30,7 +30,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB
+    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB
 from app_api.functions.constants import hirelines_registration_script
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -938,7 +938,7 @@ def notifyCandidate(request):
         if request.method == "POST":
             user = auth_user(request.user)
             dataObjs = json.loads(request.POST.get('data'))
-            notifyCandidateService(dataObjs)
+            notifyCandidateService(dataObjs,user)
             response['data'] = "Candidate Notified Successfully"
             response['statusCode'] = 0
 
@@ -1221,6 +1221,12 @@ def updateHirelinesData(request):
                     )
                     
                     call_schedule.save()
+
+                if candidate.profileid:
+                    if dataObjs["paper_type"] == "S":
+                        addProfileActivityDB(candidate.profileid,"SC","Screening Sent")
+                    elif dataObjs["paper_type"] == "E":
+                        addProfileActivityDB(candidate.profileid,"CT","Coding Test Sent")
 
                 response['data'] = "Registered successfully"
                 response['statusCode'] = 0
@@ -2226,30 +2232,11 @@ def sendwelcomemail(request):
         response["statusCode"] = 0
         response["data"] = {"email": to_email}
 
-        
-        last_activity = ProfileActivity.objects.filter(profileid=profile_id).order_by('-sequence').first()
-
-        if last_activity:
-            next_sequence = (last_activity.sequence or 0) + 1
-        else:
-            next_sequence = 1
-
         user=request.user
-   
 
         acvityuserid = User.objects.get(email=user).id
-       
-        ProfileActivity.objects.create(
-            profileid=profile_id,
-            datentime=datetime.now(),
-            sequence=next_sequence,
-            activitycode="E1",                     
-            acvityuserid=acvityuserid,                      
-            activityname="Thank you note",
-          
-        )
-                
-               
+        
+        addProfileActivityDB(profile_id,"E1","Thank you note",acvityuserid)
      
 
     except Exception as e:
@@ -2487,7 +2474,8 @@ def scheduleCandidateInterviewLink(request):
             dataObjs = json.loads(request.POST.get('data'))
             candidate_id = dataObjs["candidate_id"]
             enc_candidate_id = encrypt_code(candidate_id)
-            c_data = scheduleCandidateInterviewLinkDB(enc_candidate_id)
+            user_data = auth_user(request.user)
+            c_data = scheduleCandidateInterviewLinkDB(enc_candidate_id,user_data)
             response['data'] = c_data
             response['statusCode'] = 0
         else:
