@@ -1088,6 +1088,7 @@ def updateProfileDetailsPage(request, pid):
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
     try:
+        profileid = pid 
 
         user_mail = request.user
         user_data = auth_user(user_mail)
@@ -1097,8 +1098,9 @@ def updateProfileDetailsPage(request, pid):
         menuItemList = get_functions_service(user_role)
 
         profile_data = getProfileData(pid, user_data)
+    
         
-        return render(request, "portal_index.html", {"template_name": 'update_profile.html','menuItemList':menuItemList,"profile_data":profile_data})
+        return render(request, "portal_index.html", {"template_name": 'update_profile.html','menuItemList':menuItemList,"profile_data":profile_data,"profileid": profileid})
     
     except Exception as e:
         raise

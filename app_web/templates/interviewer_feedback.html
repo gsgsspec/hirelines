@@ -1,9 +1,21 @@
 {% load static %}
-<div class="mb-2">
+<!-- <div class="mb-2">
     <a href="/feedbacks" style="color: black;">
         <i class="fas fa-angle-double-left" style="color: #000000;"></i>&nbsp;<u>Back</u> 
     </a>
-</div>
+</div> -->
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb breadcrumb-custom-icon">
+    <li class="breadcrumb-item">
+      <a href="/feedbacks">Interviewed Candidates</a>
+      <i class="breadcrumb-icon icon-base bx bx-chevron-right align-middle"></i>
+    </li>
+    <li class="breadcrumb-item active">
+      Interviewer feedback
+    </li>
+  </ol>
+</nav>
 <div class="card">
     <div class="card-title-table">
         <h4 class="card-header">{{ feedback_data.name }}</h4>
