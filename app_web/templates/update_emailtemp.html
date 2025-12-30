@@ -1,26 +1,10 @@
 {% load static %}
-
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb breadcrumb-custom-icon">
-    <li class="breadcrumb-item">
-      <a href="/email-templates">Email Templates</a>
-      <i class="breadcrumb-icon icon-base bx bx-chevron-right align-middle"></i>
-    </li>
-    <li class="breadcrumb-item active">
-      Update Email Template
-    </li>
-  </ol>
-</nav>
 <!-- <h4 class="fw-bold py-2 mt-2">Email Templates</h4> -->
 <div class="container-center">
     <div class="col-9">
         <div class="card mb-4">
-            <!-- <div class="card-header d-flex align-items-center justify-content-between" style="align-self:center;">
+            <div class="card-header d-flex align-items-center justify-content-between" style="align-self:center;">
                 <h5 class="mb-0">Update Email Template</h5>
-            </div> -->
-            <div class="card-title-table">
-                <h4 class="card-header">Update Email Template</h4>
-                <div class="p-3 text-align-right d-flex align-items-center justify-content-center"></div>
             </div>
             <div class="card-body">
                 <form id="update_email_template_form">
@@ -124,14 +108,14 @@
                         </div>
                     </div>
 
-                    <!-- <div class="row mb-3">
+                    <div class="row mb-3" hidden>
                         <label class="col-sm-3 col-form-label">Attachment Name</label>
                         <div class="col-sm-8">
                             <div class="input-group input-group-merge">
                                 <input class="form-control" type="text" id="email_attachment_name" name="{{emailTemps.email_attachment}}" value="{{emailTemps.email_attachment_name}}" >
                             </div>
                         </div>
-                    </div> -->
+                    </div>
 
                     <div class="row justify-content-end">
                         <div class="text-end">
@@ -156,9 +140,7 @@
     background-color: #f8f9fa;
     cursor: pointer;
 }
-
-
-</style>
+    </style>
 <script src="{% static 'js/update_emailtemp.js' %}"></script>
 
 <script>
