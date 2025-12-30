@@ -36,6 +36,7 @@ from app_api.functions.email_resume import fetch_gmail_attachments
 
 from app_api.functions.enc_dec import encrypt_code
 # Create your views here.
+from .functions.doc2pdf import convert_word_binary_to_pdf
 
 @csrf_exempt
 @api_view(['POST'])
@@ -2104,24 +2105,61 @@ def candidateProfile(request):
 
             dataObjs = request.POST.dict()
             fileObj = request.FILES.get("attachment")
+            
 
             jd_id = decrypt_code(dataObjs["encjdid"])
             company_id = JobDesc.objects.get(id=jd_id).companyid
           
             if fileObj:
+                
+                file_binary = fileObj.read()
+
+                ext = os.path.splitext(fileObj.name)[1].lower()
+
+                if ext in [".doc", ".docx"]:
+                    
+                    try:
+                        pdf_binary = convert_word_binary_to_pdf(file_binary)
+                    except:
+                        pdf_binary = file_binary
+
+                elif ext == ".pdf":
+                    pdf_binary = file_binary
+
+                else:
+                    raise Exception("Unsupported file format")
+                
                 filename = fileObj.name
-                file_data = fileObj.read()
+                file_data = pdf_binary
             else:
                 filename = None
                 file_data = None
 
             # Example: Get source ID
-            source = Source.objects.filter(code=dataObjs['source-code']).last()
-            sourceid = source.id
+            # source = Source.objects.filter(code=dataObjs['source-code']).last()
+            # sourceid = source.id
+            source_code = ""
+
+            if "source-code" in dataObjs:
+                
+                source = Source.objects.filter(companyid=company_id,code=dataObjs['source-code']).last()
+                
+                if source:
+                    source_code = source.id
+
+                else:
+                    new_source = Source(
+                        companyid=company_id,
+                        code = dataObjs['source-code'],
+                        label = dataObjs['source-code']
+                    )
+                    new_source.save()
+
+                    source_code = new_source.id
 
             # Save resume header
             new_resume = Resume(
-                sourceid = sourceid,
+                sourceid = source_code,
                 filename = filename,
                 mailid = None,                
                 companyid = company_id,
