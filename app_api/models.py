@@ -251,7 +251,7 @@ class Vacation(models.Model):
 class WorkCal(models.Model):
     id = models.AutoField(primary_key=True)
     userid = models.IntegerField(null=True)
-    startday = models.CharField(max_length=3, null=True)
+    startday = models.CharField(max_length=10, null=True)
     starttime = models.TimeField(max_length=20, null=True)
     hours = models.CharField(max_length=4,null=True)
     weekoff1 = models.CharField(max_length=10, null=True)
