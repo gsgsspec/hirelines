@@ -1125,6 +1125,7 @@ def addProfilePage(request):
 
 def view_resumePage(request,pid):
     try:
+        profileid = pid
         user_mail = request.user
         user_data = auth_user(user_mail)
 
@@ -1136,9 +1137,10 @@ def view_resumePage(request,pid):
         menuItemList = get_functions_service(user_role)
 
         profile_details=getProfileDetailsService(pid)
+
         
         return render(request, "portal_index.html", {"template_name": 'view_resume.html','menuItemList': menuItemList,'profile_details':profile_details,"username": username,'comany_name':comany_name,
-                                                     "profile_strength":""})
+                                                     "profile_strength":"",'profileid':profileid})
       
     except Exception as e:
         raise  
