@@ -2547,6 +2547,7 @@ def auto_fill_profile(request):
         response['data'] = "Error in updating full profile"
         response['error'] = str(e)
         raise
+    return JsonResponse(response)
 
 
 @api_view(['GET'])
