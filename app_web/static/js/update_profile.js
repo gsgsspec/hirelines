@@ -481,6 +481,8 @@ $(document).on("click", ".save-table-btn", function () {
                 timer: 1500,
                 showConfirmButton: "OK"
             });
+            fetchLatestProfileStrength();
+
         })
         .fail(function (err) {
 
@@ -548,6 +550,8 @@ $(document).on("submit", "#Person-detais", function (e) {
             timer: 1500,
             showConfirmButton: "OK"
         });
+        fetchLatestProfileStrength();
+
         const checkbox = document.getElementById("sendWelcomeMail");
         const sendMail = checkbox?.checked;
 
@@ -700,12 +704,15 @@ $(document).ready(function () {
             csrfmiddlewaretoken: CSRF_TOKEN
         }).done( function (res) {
             
-             Swal.fire({
+            Swal.fire({
             icon: "success",
             title: "Saved!",
             text: "Your skills have been saved successfully.",
             timer: 1500,
             showConfirmButton: false
+            });
+            fetchLatestProfileStrength(); 
+
         }).fail(function (xhr) {
         Swal.fire({
             icon: "error",
@@ -717,7 +724,7 @@ $(document).ready(function () {
         });
     });
 
-});
+// });
 
 
 function enableSortableForAllTables() {
@@ -794,4 +801,25 @@ function enforceInputConstraints(element) {
             }
         }, 0); 
     }
+}
+
+
+
+function updateProfileStrength(strength) {
+    const value = document.getElementById("profileStrengthValue");
+    if (!value || strength === undefined || strength === null) return;
+
+    value.innerText = strength + "%";
+}
+
+function fetchLatestProfileStrength() {
+    if (!profileId) return;
+
+    $.get(CONFIG['portal'] + "/api/get-profile-strength", {
+        profile_id: profileId
+    }).done(function (res) {
+        if (res.statusCode === 0 && res.data !== undefined) {
+            updateProfileStrength(res.data); 
+        }
+    });
 }

@@ -1,4 +1,59 @@
 {% load static %}
+<style>
+.strength-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 4px solid #4caf50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4caf50;
+    font-size: 18px;
+    font-weight: 700;
+
+    position: relative;
+    cursor: default;
+}
+
+.strength-box::before {
+    content: "Profile Strength";
+    position: absolute;
+    right: 110%;           
+    top: 50%;
+    transform: translateY(-50%);
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.strength-box::after {
+    content: "";
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent transparent #333;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.strength-box:hover::before,
+.strength-box:hover::after {
+    opacity: 1;
+}
+</style>
+
 
 <link rel="stylesheet" href="{% static 'lib/portal/css/profile_view.css' %}" />
 
@@ -14,6 +69,12 @@
 <div class="card">
     <div class="card-title-table">
         <h4 class="card-header">Profile</h4>
+       <div class="strength-box" id="profileStrengthBox">
+    <span id="profileStrengthValue">
+        {{ profile_data.personal.strength }}%
+    </span>
+</div>
+
 
     </div>
     <div class="card-body">

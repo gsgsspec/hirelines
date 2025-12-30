@@ -2699,3 +2699,28 @@ def dashBoardView(request):
         response['error'] = str(e)
         # logging.error("Error in getDashBoardDataService view : ", str(e))
     return JsonResponse(response)
+
+
+
+
+
+@api_view(['GET'])
+def get_profile_strength(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        profile_id = request.GET.get("profile_id")
+
+        profile = Profile.objects.filter(id=profile_id).values("strength").first()
+
+        response['data'] = profile["strength"] if profile else 0
+        response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = None
+        response['error'] = str(e)
+
+    return JsonResponse(response)

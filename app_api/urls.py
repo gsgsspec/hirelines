@@ -100,5 +100,7 @@ urlpatterns = [
     path('jd-profile-data',views.jdProfileData),
     path('shortlist-profile',views.shortlistProfile),
     path('dashboard', views.dashBoardView),
+    path('get-profile-strength', views.get_profile_strength),
+
 
 ]
