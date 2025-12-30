@@ -194,6 +194,7 @@ function filter_profiles() {
             $('#profiles-table').DataTable({
                 "order": [],
                 "ordering": false,
+                pageLength: 50,
                 language: { search: "", searchPlaceholder: "Search..." },
                 pagingType: 'simple_numbers'
             });
