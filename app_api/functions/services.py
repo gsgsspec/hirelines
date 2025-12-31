@@ -5017,20 +5017,81 @@ def shortlistProfileService(dataObjs,user_data):
     except Exception as e:
         raise
 
+
 def get_default_email_template_service(company_id):
     try:
-       
-       
+     
         company = Company.objects.get(id=company_id)
-
-        branding = Branding.objects.filter(companyid=company_id).first()
-        email_temp = Email_template.objects.filter(company_id=company_id).first()
+        company_name = company.name
+        company_website = company.website
+        company_email = company.email
 
        
+    
+        branding = Branding.objects.filter(companyid=company_id).first()
+        if not branding:
+            branding = Branding.objects.filter(companyid=0).first()
+            brandinglogo=Branding.logourl
+            print("brandinglogo",branding)
+     
 
-        if  not email_temp:
 
-         
+   
+      
+    
+        branding_logo=branding.logourl
+        print("branding_logo",branding_logo)
+
+        
+        social_links = {}
+        if branding and branding.sociallinks:
+            items = branding.sociallinks.split(",")
+
+            for item in items:
+                if ":" in item:
+                    platform, url = item.split(":", 1)
+                    platform = platform.strip().lower()
+                    url = url.strip()
+
+                    if url and url != "#":
+                        social_links[platform] = url
+
+        
+        all_platforms = ["linkedin", "facebook", "youtube", "twitter"]
+
+        if social_links:
+            platforms_to_show = social_links.keys()   
+        else:
+            platforms_to_show = all_platforms          
+
+        
+        media_path = f"{getConfig()['DOMAIN']['acert']}/static/lib/img/social_links_logos/"
+
+        footer_icon = """
+            <a style="text-decoration:none; margin:0 5px;" href="{url}" target="_blank">
+                <img style="width:34px; padding:3px;" src="{icon}" alt="{platform}" />
+            </a>
+        """
+
+        footer_div_html = f"""
+        <div id="previewSocialIcons">
+            {''.join(
+                footer_icon.format(
+                    url=social_links.get(platform, "#"),
+                    icon=f"{media_path}{platform}.png",
+                    platform=platform
+                )
+                for platform in platforms_to_show
+            )}
+        </div>
+        """
+
+       
+        email_temp = Email_template.objects.filter(company_id=company_id).first()
+        
+
+        
+        if not email_temp:
             acert_url = f"{getConfig()['DOMAIN']['acert']}/api/get-default-email"
             res = requests.post(acert_url, timeout=10)
             data = res.json()
@@ -5038,76 +5099,50 @@ def get_default_email_template_service(company_id):
             if data.get("statusCode") != 0:
                 return None
 
-            return data["data"]
+            raw_email_body = data["data"]["email_body"]
+            
+            email_body = raw_email_body.replace("[footer_div]", footer_div_html)
+            
 
+            return {
+                **data["data"],
+                "email_body": email_body,
+                "branding": {
+                    "content": branding.content if branding else "",
+                    "logourl": str(branding.logourl) if branding and branding.logourl else "",
+                    "social_links": social_links,
+                },
+                "company_name": company_name,
+                "company_website": company_website,
+                "company_email": company_email,
+            }
 
-           
-
-        company = Company.objects.get(id=company_id)
-    
-        company_name = company.name
-        company_website = company.website
-        company_email = company.email
-
-        social_links = {}
-        social_pattern = re.compile(r'(Linkedin|Facebook|Youtube|Twitter)\s*:\s*([^,]+)', re.IGNORECASE)
-
-        for platform, url in social_pattern.findall(branding.sociallinks or ""):
-            social_links[platform.capitalize()] = url.strip()
-
-       
-        media_path = f"{getConfig()['DOMAIN']['acert']}/static/lib/img/social_links_logos/"
-        print("media_path",media_path)
-
-        footer_icon = """
-             <a style="text-decoration:none; margin:0 5px;" href="{url}" target="_blank">
-                <img style="width:34px; padding:3px;" src="{icon}" alt="{platform}" />
-            </a>
-        """
-
-        footer_div_list = []
-
-        for platform in ["Linkedin", "Facebook", "Youtube", "Twitter"]:
-             url = social_links.get(platform)
-             if url:
-                icon_url = f"{media_path}{platform}.png"
-                print("icon_url",icon_url)
-                footer_div_list.append(
-                    footer_icon.format(url=url, icon=icon_url, platform=platform)
-                )
-
-        # footer_div_html = "".join(footer_div_list)
-        footer_div_html = f"""
-        <div id="previewSocialIcons">
-            {''.join(footer_div_list)}
-        </div>
-        """
-
+        
         email_body = email_temp.email_body.replace("[footer_div]", footer_div_html)
+
         return {
             "id": email_temp.id,
             "template_name": email_temp.template_name,
             "paper_type": email_temp.paper_type,
             "email_subject": email_temp.email_subject,
-            "email_body": email_body,   
+            "email_body": email_body,
             "template_heading": email_temp.template_heading,
             "sender_email": email_temp.sender_email,
             "sender_label": email_temp.sender_label,
             "email_attachment": email_temp.email_attachment or "",
             "email_attachment_name": email_temp.email_attachment_name or "",
-
             "branding": {
-                "content": branding.content or "",
-                "logourl": str(branding.logourl) if branding.logourl else "",
-                "social_links": social_links
+                "content": branding.content if branding else "",
+                "logourl": str(branding.logourl) if branding and branding.logourl else "",
+                "social_links": social_links,
             },
 
             "company_name": company_name,
             "company_website": company_website,
-            "company_email": company_email
+            "company_email": company_email,
         }
+
     except Exception as e:
-    
         print("Email template service error:", e)
         return None
 
