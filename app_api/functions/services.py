@@ -905,7 +905,7 @@ def jdDetails(jdId, companyId):
             # Manually create the dictionary with conditions for None values
 
             interviewes_lst = User.objects.filter(
-                status="A", companyid=companyId
+                status="A", companyid=companyId, role__in=["Interviewer", "HR-Admin", "HR-Executive"]
             ).values("id", "name")
             workFlowDetails = Workflow.objects.filter(
                 jobid=jdId, teststatus="A"
