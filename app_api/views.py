@@ -30,7 +30,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB
+    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB, updateWorkspaceDB
 from app_api.functions.constants import hirelines_registration_script
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -2748,5 +2748,31 @@ def get_profile_strength(request):
     except Exception as e:
         response['data'] = None
         response['error'] = str(e)
+
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateWorkspace(request):
+
+    response = {
+        "data": None,
+        "error": None,
+        "statusCode": 1
+    }
+
+    try:
+        if request.method == "POST":
+
+            dataObjs = json.loads(request.POST.get("data"))
+
+            updateWorkspaceDB(dataObjs)
+
+            response["data"] = "success"
+            response["statusCode"] = 0
+
+    except Exception as e:
+        response["data"] = "Error in updating workspace"
+        response["error"] = str(e)
 
     return JsonResponse(response)

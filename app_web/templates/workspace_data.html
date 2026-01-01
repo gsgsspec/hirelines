@@ -1,4 +1,15 @@
 {% load static %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb breadcrumb-custom-icon">
+    <li class="breadcrumb-item">
+      <a href="/workspace">Workspace</a>
+      <i class="breadcrumb-icon icon-base bx bx-chevron-right align-middle"></i>
+    </li>
+    <li class="breadcrumb-item active">
+      Workspace data
+    </li>
+  </ol>
+</nav>
 <h3 class="p-clr mb-4">{{ workspace_data.client }} - {{ workspace_data.project }}</h3>
 
 <div class="row mb-12 g-6">

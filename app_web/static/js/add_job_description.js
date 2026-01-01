@@ -148,6 +148,11 @@ function removeSkill(rmSkill) {
     // Remove empty dictionaries from jdSelectedSkillsList
     jdSelectedSkillsList = jdSelectedSkillsList.filter(skillItem => Object.keys(skillItem).length > 0);
 
+    jdSelectedSkillsList = jdSelectedSkillsList.filter(
+        skillItem => !skillItem.hasOwnProperty(skillTitle)
+    );
+
+
     // Hide and unhide the empty skills container
     emptySkillsContainer();
 }

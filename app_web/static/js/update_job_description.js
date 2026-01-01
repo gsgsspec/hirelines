@@ -200,6 +200,8 @@ function selectedSkill(skillIteam) {
 
     // creating dictionary to put in list
     var addNewSkill = {[skillIteam] : languages[skillIteam]}
+    console.log("addNewSkill",addNewSkill);
+    
     
     // Add to selected skills list
     jdSelectedSkillsList.push(addNewSkill);
@@ -228,19 +230,25 @@ function removeSkill(skillId) {
         technologiesList[skillTitle] = languages[skillTitle];
 
         // Iterate over the jdSelectedSkillsList removing from the selected skillslist
-        for (let skillCount = 0; skillCount < jdSelectedSkillsList.length; skillCount++) {
-            const skillItem = jdSelectedSkillsList[skillCount];
+        // for (let skillCount = 0; skillCount < jdSelectedSkillsList.length; skillCount++) {
+        //     const skillItem = jdSelectedSkillsList[skillCount];
             
-            // Check if skillTitle exists in skillItem
-            if (skillItem && skillItem.hasOwnProperty(skillTitle)) {
-                delete skillItem[skillTitle];
-            }
-        }
+        //     // Check if skillTitle exists in skillItem
+        //     if (skillItem && skillItem.hasOwnProperty(skillTitle)) {
+        //         delete skillItem[skillTitle];
+        //     }
+        // }
+
+        jdSelectedSkillsList = jdSelectedSkillsList.filter(
+            skillItem => !skillItem.hasOwnProperty(skillTitle)
+        );
+
+        // Safety net (optional but good)
+        jdSelectedSkillsList = jdSelectedSkillsList.filter(
+            item => Object.keys(item).length > 0
+        );
 
     }
-
-    // Remove empty dictionaries from jdSelectedSkillsList
-    jdSelectedSkillsList = jdSelectedSkillsList.filter(skillItem => Object.keys(skillItem).length > 0);
 
     // Show or hide the empty skills container
     emptySkillsContainer();
@@ -274,6 +282,7 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
         jdStatus = 'I'
     }
 
+
     // Gather data from the form
     const jdValues = {
         JdID         : JdId,
@@ -285,8 +294,8 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
         budget      : document.getElementById('jdBudget').value,
         noPositions : document.getElementById('jdNoPositions').value,
         workLocation   : document.getElementById('jdWorkLocation').value,
-        skills         : jdSelectedSkillsList,
-        secondarySkills: jdSelectedSecondarySkillsList,
+        skills         : cleanSkills(jdSelectedSkillsList),
+        secondarySkills: cleanSkills(jdSelectedSecondarySkillsList),
         anySpecialNote : document.getElementById('JdanySpecialNotes').value,
         jobDescriptionStatus : jdStatus,
     };
@@ -388,9 +397,6 @@ $(document).on("click", "#assign-recruiters", function () {
 });
 
 
-
-
-
 document.addEventListener('DOMContentLoaded', function() {
 
     const searchInput = document.getElementById('searchSecondarySkill');
@@ -480,8 +486,7 @@ function removeSecondarySkill(rmSkillId) {
 
     technologiesList[skillTitle] = languages[skillTitle];
 
-    jdSelectedSecondarySkillsList =
-        jdSelectedSecondarySkillsList.filter(x => !x[skillTitle]);
+    jdSelectedSecondarySkillsList = jdSelectedSecondarySkillsList.filter(item => !item.hasOwnProperty(skillTitle));
 
     emptySecondarySkillsContainer()
 }
@@ -498,3 +503,10 @@ function emptySecondarySkillsContainer(){
         document.getElementById('jdSecondarySkillsContainer').hidden = false
     }
 }
+
+const cleanSkills = (arr = []) =>
+    arr.filter(obj =>
+        obj &&
+        Object.keys(obj).length > 0 &&
+        Object.values(obj).every(v => v !== undefined && v !== "")
+    );

@@ -1674,3 +1674,19 @@ def addProfileActivityDB(profileid,activity_code,activityname,userid=None):
 
     except Exception as e:
         raise
+
+
+def updateWorkspaceDB(dataObjs):
+    try:
+
+        workspace = Workspace.objects.get(id=dataObjs["workspaceid"])
+
+        workspace.clientid = dataObjs["client"]
+        workspace.project = dataObjs["project"]
+        workspace.startdate = dataObjs["startdate"]
+        workspace.notes = dataObjs["notes"]
+
+        workspace.save()
+        
+    except Exception as e:
+        raise

@@ -1274,6 +1274,8 @@ def workspacePage(request):
 
         workspaces = getWorkspaces(user_data)
         clients_data = getCompanyClients(user_data)
+        print("workspaces",workspaces)
+        print("clients_data",clients_data)
         
         if menuItemObjList:
             return render(request, "portal_index.html", {"template_name": "workspace.html", 'menuItemList': menuItemList, 'workspaces':workspaces,"user_name":user_data.name, "clients_data":clients_data })

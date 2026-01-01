@@ -931,11 +931,7 @@ def jdDetails(jdId, companyId):
                     jd_interviewers = ast.literal_eval(jdData.interviewers)
                     for selectedInterviewer in jd_interviewers:
                         if selectedInterviewer:
-                            userData = list(
-                                User.objects.filter(id=selectedInterviewer).values(
-                                    "id", "name"
-                                )
-                            )
+                            userData = list(User.objects.filter(id=selectedInterviewer).values("id", "name"))
                             if userData:
                                 if selectedInterviewer:
                                     selectedInterviewerLst.append(
@@ -4822,10 +4818,12 @@ def getWorkspaces(user_data):
 
                 workspaces_data.append({
                     "id": workspace.id,
+                    "clientid": client.id,
                     "client": client.name,
                     "project": workspace.project,
                     "notes": workspace.notes if workspace.notes else "",
                     "startdate": workspace.startdate.strftime("%d-%B-%Y") if workspace.startdate else "",
+                    "startdate_db": workspace.startdate if workspace.startdate else None,
                     "status": workspace.status
                 })
         
@@ -4925,6 +4923,7 @@ def getJdProfileData(dataObjs,user_data):
                         "middlename":profile.middlename,
                         "lastname":profile.lastname,
                         "email":profile.email,
+                        "profile_strength": profile.strength if profile.strength else 0,
                         "exp_strength": exp_strength,
                         "total_experience": int(match_info.get("total_experience", 0)),
                         "skill_strength": skill_strength,
@@ -4940,6 +4939,7 @@ def getJdProfileData(dataObjs,user_data):
                     "middlename":profile.middlename,
                     "lastname":profile.lastname,
                     "email":profile.email,
+                    "profile_strength": profile.strength if profile.strength else 0,
                     "exp_strength": exp_strength,
                     "total_experience": int(match_info.get("total_experience", 0)),
                     "skill_strength": skill_strength,

@@ -142,6 +142,7 @@ function renderMatchedTable(list,jdid) {
             <tr>
                 <td>${fullname}</td>
                 <td>${p.email}</td>
+                <td>${p.profile_strength}%</td>
                 <td class="${strength_class}">${p.overall_strength}%</td>
                 <td>${p.total_experience} Yrs -  ${p.exp_strength}%</td>
                 <td>${p.skill_strength}% <i class='bx bx-info-circle' data-bs-toggle="tooltip" data-bs-offset="0,6" data-bs-placement="top" data-bs-html="true" style="color: var(--primary-color);cursor: pointer;"
@@ -160,7 +161,8 @@ function renderMatchedTable(list,jdid) {
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Strength</th>
+                    <th>Profile Strength</th>
+                    <th>Matching Score</th>
                     <th>Experience</th>
                     <th>Skill</th>
                     <th></th>
