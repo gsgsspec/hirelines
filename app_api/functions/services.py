@@ -5181,12 +5181,20 @@ def dashBoardDataService(
         ]
 
         qs = ProfileAnalysis.objects.filter(
-            companyid=company_id,
-            year=year,
-            month=month,
-            day__gte=start_date.day,
-            day__lte=end_date.day
+            companyid=company_id
+        ).filter(
+            Q(
+                year=start_date.year,
+                month=start_date.month,
+                day__gte=start_date.day
+            ) |
+            Q(
+                year=end_date.year,
+                month=end_date.month,
+                day__lte=end_date.day
+            )
         )
+
 
         if user_role == "Recruiter":
             qs = qs.filter(userid=logged_recruiter_id)
