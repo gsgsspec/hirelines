@@ -5157,7 +5157,6 @@ def dashBoardDataService(
     selected_recruiter=None,
     month_value=None
 ):
-    print("user_role",user_role)
     try:
         now = datetime.now()
 
@@ -5166,10 +5165,10 @@ def dashBoardDataService(
         else:
             year, month = now.year, now.month
 
+    
         if year == now.year and month == now.month:
             end_date = now.date()
         else:
-            # previous month → use last day of selected month
             last_day = monthrange(year, month)[1]
             end_date = date(year, month, last_day)
 
@@ -5180,21 +5179,33 @@ def dashBoardDataService(
             for i in range(15)
         ]
 
-        qs = ProfileAnalysis.objects.filter(
-            companyid=company_id
-        ).filter(
-            Q(
+  
+        qs = ProfileAnalysis.objects.filter(companyid=company_id)
+
+   
+        if start_date.year == end_date.year and start_date.month == end_date.month:
+            # Same month
+            qs = qs.filter(
                 year=start_date.year,
                 month=start_date.month,
-                day__gte=start_date.day
-            ) |
-            Q(
-                year=end_date.year,
-                month=end_date.month,
+                day__gte=start_date.day,
                 day__lte=end_date.day
             )
-        )
-
+        else:
+            # Cross month (Dec → Jan)
+            qs = qs.filter(
+                Q(
+                    year=start_date.year,
+                    month=start_date.month,
+                    day__gte=start_date.day
+                )
+                |
+                Q(
+                    year=end_date.year,
+                    month=end_date.month,
+                    day__lte=end_date.day
+                )
+            )
 
         if user_role == "Recruiter":
             qs = qs.filter(userid=logged_recruiter_id)
@@ -5202,12 +5213,14 @@ def dashBoardDataService(
         elif user_role == "HR-Admin" and selected_recruiter:
             qs = qs.filter(userid=selected_recruiter)
 
-        qs = qs.values("day", "activitycode").annotate(
+       
+        qs = qs.values("year", "month", "day", "activitycode").annotate(
             total=Sum("profilescount")
         )
 
+    
         date_map = {
-            date.strftime("%Y-%m-%d"): {
+            d.strftime("%Y-%m-%d"): {
                 "submitted": 0,
                 "profiled": 0,
                 "rejected": 0,
@@ -5216,7 +5229,7 @@ def dashBoardDataService(
                 "selected_client": 0,
                 "waiting_feedback": 0,
             }
-            for date in date_range
+            for d in date_range
         }
 
         activity_map = {
@@ -5230,13 +5243,14 @@ def dashBoardDataService(
         }
 
         for row in qs:
-            date_key = f"{year}-{month:02d}-{row['day']:02d}"
+            date_key = f"{row['year']}-{row['month']:02d}-{row['day']:02d}"
 
             if date_key in date_map:
                 field = activity_map.get(row["activitycode"])
                 if field:
                     date_map[date_key][field] += row["total"] or 0
 
+       
         line_graph = {
             "dates": [d.strftime("%d-%m-%Y") for d in date_range],
             "submitted": [],
@@ -5259,5 +5273,4 @@ def dashBoardDataService(
         }
 
     except Exception as e:
-        print("Dashboard graph error:", str(e))
         raise
