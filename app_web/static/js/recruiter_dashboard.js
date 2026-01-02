@@ -167,7 +167,7 @@ function loadLineGraph() {
                     tension: 0
                 },
                 {
-                    label: 'Reviewed & Profiled',
+                    label: 'Profiled',
                     data: graphData.profiled,
                     borderColor: '#ffab00',
                     backgroundColor: 'rgba(255,171,0,0.15)',
@@ -175,7 +175,7 @@ function loadLineGraph() {
                     tension: 0
                 },
                 {
-                    label: 'Reviewed & Rejected',
+                    label: 'Rejected',
                     data: graphData.rejected,
                     borderColor: '#ff3e1d',
                     backgroundColor: 'rgba(255,62,29,0.15)',
