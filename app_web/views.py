@@ -7,7 +7,7 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills,Lookupmaster, ProfileActivity
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -318,11 +318,13 @@ def Addjobdescription(request):
 
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
+        companyId = getCompanyId(user_mail)
+        hiring_managers = getHiringManagersData(companyId)
 
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
         
-        return render(request, "portal_index.html", {"template_name": 'add_job_description.html', 'menuItemList': menuItemList})
+        return render(request, "portal_index.html", {"template_name": 'add_job_description.html', 'menuItemList': menuItemList ,'hiring_managers':hiring_managers})
     except Exception as e:
         raise
 
@@ -344,11 +346,13 @@ def update_jobdescription(request,update_jd_id):
 
         jd_details = jdDetails(update_jd_id, compyId)
         recruiters_data = getRecruitersData(update_jd_id, compyId)
-
+        hiring_managers,user_id = getHiringManagersData(compyId,user_mail)
+        is_hiring_manager = False
+        if jd_details and jd_details.get('hiringmanager'):
+            is_hiring_manager = str(jd_details.get('hiringmanager')) == str(user_id)
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
-        
-        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details,'user_role':user_role,'recruiters_data':recruiters_data})
+        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details,'user_role':user_role,'recruiters_data':recruiters_data,'hiring_managers':hiring_managers,'is_hiring_manager':is_hiring_manager})
     except Exception as e:
         raise
 

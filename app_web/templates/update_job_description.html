@@ -134,6 +134,20 @@
                                         <div class="skillsListContainer" id="secondarySkillsListMainContainer"></div>
                                     </div>
                                 </div>
+                                 <div class="row mb-3 container-center">
+                                    <label class="col-sm-2 col-form-label" for="Hiring-Manager">Hiring Manager</label>
+                                    <div class="col-sm-9">
+                                    <select class="form-select" id="Hiring-Manager" name="hiringmanagerid">
+                                        <option value="">-- Select Manager --</option>
+                                        {% for hiring_manager in hiring_managers %}
+                                            <option value="{{ hiring_manager.id }}" 
+                                                {% if hiring_manager.id|slugify == jd_details.hiringmanager|slugify %} selected {% endif %}>
+                                                {{ hiring_manager.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                </div>
 
                                 <div class="row mb-3 container-center">
                                     <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Special Notes
@@ -233,8 +247,7 @@
                                         <div id="rmActionButtons" style="display: flex; gap: 15px;">
 
                                             <button type="submit" id="submitJd" class="btn btn-primary">Update</button>
-
-                                            {% if jd_details.approval_status != "O" %}
+                                            {% if jd_details.approval_status != "O" and is_hiring_manager %}
                                             <button type="button" class="btn btn-primary"
                                                 onclick="updateJDStatus('O', 'JD Approved')">
                                                 Approve

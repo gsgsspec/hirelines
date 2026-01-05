@@ -513,6 +513,7 @@ def saveInterviewersJD(dataObjs):
 def saveAddJD(dataObjs,compyId,hrEmail):
     try:
         # skillsArry = str(dataObjs['skills']).replace('[', '').replace(']', '').replace("'", '').replace('"', '')
+        hiringmanager= dataObjs['hiringmanager']
         hrDeatils = User.objects.filter(email=hrEmail).last()
         if hrDeatils is not None:
             saveJd = JobDesc(
@@ -532,6 +533,7 @@ def saveAddJD(dataObjs,compyId,hrEmail):
                 skillnotes  = dataObjs['anySpecialNote'] if dataObjs['anySpecialNote'] else None, 
                 companyid   = compyId if compyId else None,
                 status      = 'D',
+                hiringmanagerid= hiringmanager if hiringmanager else None,
                 createdon = datetime.now()
             )
             saveJd.save()
@@ -564,6 +566,7 @@ def saveUpdateJd(dataObjs, compyId, hrEmail):
                 jobDesc.companyid   = compyId if compyId else None
                 jobDesc.createdby   = hrDetails.id if hrDetails.id else None
                 jobDesc.status      = dataObjs['jobDescriptionStatus']
+                jobDesc.hiringmanagerid= dataObjs['hiringmanager'] if dataObjs['hiringmanager'] else None
                 # Save the updated JobDesc
                 jobDesc.save()
     except Exception as e:

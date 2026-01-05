@@ -30,7 +30,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB, updateWorkspaceDB
+    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB
 from app_api.functions.constants import hirelines_registration_script
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -1784,7 +1784,7 @@ def filter_profiles_api(request):
 @api_view(['GET'])
 def getResumeFile(request,rid):
 
-    resume_file = ResumeFile.objects.get(id=rid)
+    resume_file = ResumeFile.objects.get(resumeid=rid)
 
     file_base64 = base64.b64encode(resume_file.filecontent).decode("utf-8")
 

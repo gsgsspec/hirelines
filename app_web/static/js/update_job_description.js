@@ -66,6 +66,20 @@ function setDataInInputs(data){
     if(checkjdstatus != 'I'){
         document.getElementById('jdStatus').checked = true
     }
+   
+    const hmElement = document.getElementById('Hiring-Manager');
+
+    const hmValue = data['data']['hiring-manager'] || data['data']['hiringmanagerid'];
+
+    console.log("Attempting to select Manager ID:", hmValue);
+
+    if (hmValue && hmValue !== "None") {
+        
+        hmElement.value = String(hmValue);
+        
+       
+        hmElement.dispatchEvent(new Event('change'));
+    }
 
 }
 
@@ -298,6 +312,7 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
         secondarySkills: cleanSkills(jdSelectedSecondarySkillsList),
         anySpecialNote : document.getElementById('JdanySpecialNotes').value,
         jobDescriptionStatus : jdStatus,
+        hiringmanager: document.getElementById('Hiring-Manager').value,
     };
     
     // Prepare data to be sent to the backend

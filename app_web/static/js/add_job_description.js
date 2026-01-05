@@ -187,7 +187,8 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
             workLocation: document.getElementById('jdWorkLocation').value,
             skills: jdSelectedSkillsList,
             secondarySkills: jdSelectedSecondarySkillsList,
-            anySpecialNote: document.getElementById('JdanySpecialNotes').value
+            anySpecialNote: document.getElementById('JdanySpecialNotes').value,
+            hiringmanager: document.getElementById('Hiring-Manager').value,
         };
 
         // Prepare data to be sent to the backend

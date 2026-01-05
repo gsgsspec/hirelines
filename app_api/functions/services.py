@@ -416,6 +416,7 @@ def updateJdDataService(addjdData):
                 "expjoindate": "" if jdData.expjoindate is None else jdData.expjoindate,
                 "positions": "" if jdData.positions is None else jdData.positions,
                 "status": "" if jdData.status is None else jdData.status,
+                "hiringmanager": "" if jdData.hiringmanagerid is None else jdData.hiringmanagerid
             }
             return jdDataDict
 
@@ -968,6 +969,7 @@ def jdDetails(jdId, companyId):
                 "selectedInterviewerLst": selectedInterviewerLst,
                 "skillsList": modifiedSkillList,
                 "workFlowDetails": workFlowList,
+                "hiringmanager": "" if jdData.hiringmanagerid is None else jdData.hiringmanagerid,
             }
             return jdDataDict
         return None  # Return None if no data is found
@@ -4133,7 +4135,7 @@ def getProfileData(pid, user_data):
 
         if profile.resumeid:
 
-            resume_file = ResumeFile.objects.get(id=profile.resumeid)
+            resume_file = ResumeFile.objects.get(resumeid=profile.resumeid)
             file_base64 = base64.b64encode(resume_file.filecontent).decode("utf-8")
 
         profile_data["personal"] = personal_details
@@ -5272,5 +5274,14 @@ def dashBoardDataService(
             "line_graph_data": line_graph
         }
 
+    except Exception as e:
+        raise
+def getHiringManagersData(companyid,user_mail):
+    
+    try:
+        hiring_managers = User.objects.filter(companyid=companyid,role="Hiring-Manager",status="A")
+        user_obj = User.objects.filter(companyid=companyid, email=user_mail).first()
+        current_user_id = user_obj.id if user_obj else 0
+        return hiring_managers,current_user_id
     except Exception as e:
         raise

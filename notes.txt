@@ -294,3 +294,7 @@ CREATE TABLE workspace (
 
 ALTER TABLE 'profileanalysis'
 ADD COLUMN day INT NULL;
+
+==============================Sathwik
+ALTER TABLE hirelinea_stg_demo3.jobdesc
+ADD COLUMN hiringmanagerid INTEGER NULL;
