@@ -146,6 +146,22 @@
   </ol>
 </nav>
 
+<div class="credits-container" style="padding-right: 100px;gap: 12px;">
+    {% if profile_details.docparserid %}
+    <button class="btn btn-primary" onclick="confirmPrefill('{{profile_details.id}}','{{profile_details.docparserid}}')"
+        type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Autofill Details">
+        <i class="fas fa-paste"></i>
+    </button>
+    {% endif %}
+    <button class="btn btn-primary" onclick="window.location.href='/viewresume/{{profile_details.id}}'" type="button"
+        data-bs-toggle="tooltip" data-bs-placement="top" title="View Resume">
+        <i class="fas fa-file-alt"></i>
+    </button>
+    <button class="btn btn-primary" type="button" onclick="downloadResume('{{ profile_details.id }}')"
+        data-bs-toggle="tooltip" data-bs-placement="top" title="Download Resume">
+        <i class="fas fa-download"></i>
+    </button>
+</div>
 <div class="container">
 
     <main class="content">
@@ -154,7 +170,6 @@
             <div class="card-title-table">
                 <h4 class="card-header">Profile {{profile_details.title}} {{profile_details.firstname}} {{profile_details.lastname}}<h4>
             </div>
-
             <div class="card-body">
 
                 <div class="tabsContainer">
@@ -166,25 +181,22 @@
 
                     </div>
 
-                    <div style="display:flex;gap:12px;">
-                         {% if profile_details.docparserid %}
-                        <button class="btn btn-primary"
-                            onclick="confirmPrefill('{{profile_details.id}}','{{profile_details.docparserid}}')" type="button"  data-bs-toggle="tooltip"
-        data-bs-placement="top"
-        title="Autofill Details">
-<i class="fas fa-paste"></i>
+                    <!-- <div style="display:flex;gap:12px;">
+                        {% if profile_details.docparserid %}
+                        <button class="btn btn-primary" onclick="confirmPrefill('{{profile_details.id}}','{{profile_details.docparserid}}')"
+                            type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Autofill Details">
+                            <i class="fas fa-paste"></i>
                         </button>
                         {% endif %}
-                        <button class="btn btn-primary"
-                            onclick="window.location.href='/viewresume/{{profile_details.id}}'" type="button"data-bs-toggle="tooltip"data-bs-placement="top"title="View Resume">
+                        <button class="btn btn-primary" onclick="window.location.href='/viewresume/{{profile_details.id}}'" type="button"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="View Resume">
                             <i class="fas fa-file-alt"></i>
                         </button>
-                        <button class="btn btn-primary" type="button" onclick="downloadResume('{{ profile_details.id }}')" data-bs-toggle="tooltip"
-        data-bs-placement="top"
-        title="Download Resume">
-                             <i class="fas fa-download"></i>
+                        <button class="btn btn-primary" type="button" onclick="downloadResume('{{ profile_details.id }}')"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Download Resume">
+                            <i class="fas fa-download"></i>
                         </button>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="section-wrapper">
 

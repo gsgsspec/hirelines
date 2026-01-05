@@ -20,11 +20,12 @@ body {
 .resume-container {
     width: 850px;
     background: #fff;
-    margin: 20px auto;
+    margin: 32px auto;
     border: 1px solid #dcdcdc;
     border-radius: 6px;
     box-shadow: 0 0 10px #e0e0e0;
     overflow: hidden;
+    padding: 20px;
 }
 
 .header {
@@ -110,7 +111,7 @@ ul.custom-list li {
     border-top: 1px solid #ccc;
 }
 </style>
-<div class="credits-container">
+<div class="credits-container" style="padding-right: 178px;">
 
   <button class="btn btn-primary" type="button" onclick="downloadResume('{{ profile_details.id }}')" data-bs-toggle="tooltip"
         data-bs-placement="top"
