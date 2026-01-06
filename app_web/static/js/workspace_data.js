@@ -234,7 +234,10 @@ $(document).on("click", ".shortlist-btn", function () {
                 icon: 'success',
                 title: 'Profile shortlisted',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 1500,
+                didClose: () => {
+                location.reload();
+            }
             })
 
             // Optional UX
