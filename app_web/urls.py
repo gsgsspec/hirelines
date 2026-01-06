@@ -55,4 +55,6 @@ urlpatterns = [
 
     path("workspace",active_user_required(views.workspacePage)),
     path("workspace/<int:wid>",active_user_required(views.workspaceDetailsPage)),
+    path('clients-list',views.clientLst),
+
 ]

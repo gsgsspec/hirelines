@@ -1,0 +1,112 @@
+{% load static  %}
+
+  <div class="col-lg-4 col-md-6">
+    <div class="mt-3">
+      <!-- Modal -->
+      <div class="modal fade" id="AddNewUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <strong style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                <h5 class="modal-title p-clr" id="UserCreateAndEditModal">New Client</h5> 
+                &nbsp;&nbsp; 
+              </strong>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="close_add_user_modal"
+              ></button>
+            </div>
+            <div class="modal-body pt-2 pb-2">
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="nameWithTitle" class="form-label">Name &nbsp;&nbsp; <span hidden id="NewUserNameValidation" class="validationNewUser">User name is required</span></label>
+                  <input
+                    type="text"
+                    id="newUserName"
+                    class="form-control"
+                    placeholder="Name"
+                  />
+                </div>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                Cancel
+              </button>
+              <button type="button" class="btn btn-primary" onclick="addNewUser()" id="saveUser_" data-updateorcreate="none">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Clients</h4>
+        <h4 class="header-btn">
+            <button class="btn btn-primary" type="button" onclick="openNewUserModal()"><i class="fas fa-user-plus"></i>&ensp; 
+                New Client
+            </button>
+        </h4>
+    </div>
+    <div class="table-responsive text-nowrap table-cls">
+        <table class="table table-hover" id="candidates-table">
+            <thead>
+                <tr>
+                    <th> <strong> Date </strong></th>
+                    <th> <strong> Name </strong></th>
+                    <th> <strong> Status </strong></th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0" id="userListTabelList">
+              {% for user in usersDataLst %}
+                <tr>
+                    <td id="userDateField_{{ user.id }}"
+                        data-createdat="{{ user.createdat }}"
+                        onclick="openEditUserModal('{{ user.id }}')">
+                        {{ user.createdat }}
+                    </td>
+
+                    <td id="userNameField_{{ user.id }}"
+                        data-username="{{ user.name }}"
+                        onclick="openEditUserModal('{{ user.id }}')">
+                        {{ user.name }}
+                    </td>
+                    
+                    <td id="userStatus_{{user.id}}" data-userstatus="{{ user.status }}">
+
+                          {% if user.status == 'A' %}
+                            <div class="form-check form-switch mb-2">
+                              <input class="form-check-input" type="checkbox" id="useractiveorinactive_{{user.id}}" checked="" onclick="changeUserStatus(this.id)" title="Active">
+                            </div>
+                          {% else %}
+                            <div class="form-check form-switch mb-2">
+                              <input class="form-check-input" type="checkbox" id="useractiveorinactive_{{user.id}}" onclick="changeUserStatus(this.id)" title="Inactive">
+                            </div>
+                          {% endif %}
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<style>
+    tbody tr:hover {
+        cursor: pointer;
+    }
+    .validationNewUser{
+      color: red;
+    }
+</style>
+<script src="{% static 'js/clientLst.js' %}"></script>

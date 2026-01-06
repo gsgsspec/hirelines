@@ -7,7 +7,7 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills,Lookupmaster, ProfileActivity
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -1053,7 +1053,6 @@ def profileactivityviewPage(request,pid):
         else:
             email_exist="N"
 
-        print("email_exist",email_exist)
         
 
         menuItemList = get_functions_service(user_role)
@@ -1305,5 +1304,35 @@ def workspaceDetailsPage(request,wid):
 
         return render(request, "portal_index.html", {"template_name": "workspace_data.html", 'menuItemList': menuItemList,"workspace_data":workspace_data })
 
+    except Exception as e:
+        raise
+
+
+
+
+
+def clientLst(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+        companyId = getCompanyId(user_mail)
+        user_role = user_data.role
+        menuItemList = get_functions_service(user_role)
+        clientData = companyClientLst(companyId)
+        print("clientData",clientData)
+                
+        for client in clientData['usrs']:
+            if client['createdat']:
+                client['createdat'] = client['createdat'].strftime("%d-%b-%Y %I:%M %p")
+            else:
+                client['createdat'] = "-"
+
+
+        return render(request, "portal_index.html", {"template_name": 'clientLst.html','menuItemList':menuItemList
+                                                     , 'usersDataLst':clientData['usrs']})
+    
     except Exception as e:
         raise

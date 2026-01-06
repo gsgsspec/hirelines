@@ -5285,3 +5285,84 @@ def getHiringManagersData(companyid,user_mail):
         return hiring_managers,current_user_id
     except Exception as e:
         raise
+    
+    
+    
+    
+    
+def companyClientLst(companyID):
+    try:
+        clientDataLst = []
+        clientLst = Client.objects.filter(companyid=companyID).order_by("-id")
+        for user in clientLst:
+            userData = model_to_dict(user)
+            clientDataLst.append(userData)
+
+        return {"usrs": clientDataLst}
+    except Exception as e:
+        raise
+    
+    
+    
+
+
+def addNewClientService(company_id, user_data):
+    try:
+        event = user_data.get("event")
+        client_name = user_data.get("userName")
+
+        # ---------------- CREATE CLIENT ----------------
+        if event == "create":
+
+            client = Client(
+                name=client_name,
+                companyid=company_id,
+                createdat=datetime.now(),
+                status="A"
+            )
+            client.save()
+
+            return {
+                "event": "created",
+                "clientid": client.id
+            }
+
+        # ---------------- UPDATE CLIENT ----------------
+        if event == "update":
+
+            client_id = user_data.get("clientId")
+            print("client_id",client_id)
+            client = Client.objects.filter(
+                id=client_id,
+                companyid=company_id
+            ).last()
+
+            if not client:
+                return {"error": "Client not found"}
+
+            client.name = client_name
+            client.save()
+
+            return {
+                "event": "updated",
+                "clientid": client.id,
+                "name": client.name
+            }
+
+    except Exception as e:
+        raise e
+
+
+
+
+
+def changeClientstatusService(company_id, user_data):
+    try:
+        userid = user_data["userid"]
+        userdata = Client.objects.filter(id=userid).last()
+        if userdata:
+            userdata.status = user_data["status"]
+            userdata.save()
+
+    except Exception as e:
+        raise

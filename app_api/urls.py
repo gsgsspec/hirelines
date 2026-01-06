@@ -102,6 +102,9 @@ urlpatterns = [
     path('shortlist-profile',views.shortlistProfile),
     path('dashboard', views.dashBoardView),
     path('get-profile-strength', views.get_profile_strength),
+    path('add-new-client',views.addNewClients),
+    path('change-client-status',views.changeClientStatus),
+
 
 
 ]
