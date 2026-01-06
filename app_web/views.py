@@ -1039,7 +1039,10 @@ def profileactivityviewPage(request,pid):
 
         activity_details=getProfileactivityDetailsService(pid)
         
-        profileid = activity_details[0].get("profileid")
+        if activity_details:
+            profileid = activity_details[0].get("profileid")
+        else:
+            profileid = pid   
         
         activity_names = Lookupmaster.objects.filter(lookupid=1,status='A').exclude(lookupmasterid=0).values_list('lookupname', flat=True)
 

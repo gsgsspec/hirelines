@@ -3692,9 +3692,12 @@ def getProfileDetailsService(pid):
 
         profile_det = {
             "id": profile.get("id"),
-            "firstname": profile.get("firstname", ""),
+            # "firstname": profile.get("firstname", ""),
             "middlename": profile.get("middlename", ""),
-            "lastname": profile.get("lastname", ""),
+            # "lastname": profile.get("lastname", ""),
+            "firstname": (profile.get("firstname", "").capitalize()if profile.get("firstname")else ""),
+            
+            "lastname": (profile.get("lastname", "").capitalize()if profile.get("lastname")else ""),
             "title": profile.get("title", ""),
             "email": profile.get("email", ""),
             "mobile": profile.get("mobile", ""),
@@ -3893,8 +3896,10 @@ def getProfileactivityDetailsService(pid):
                 "activityname": row.get("activityname"),
 
                 "jobtitle": job_title["title"] if job_title else "",
-                "firstname": job_title["firstname"] if job_title else "",
-                "lastname": job_title["lastname"] if job_title else "",
+                # "firstname": job_title["firstname"] if job_title else "",
+                # "lastname": job_title["lastname"] if job_title else "",
+                "firstname": (job_title["firstname"].capitalize()if job_title and job_title.get("firstname") else ""),
+                "lastname": (job_title["lastname"].capitalize()if job_title and job_title.get("lastname")else ""),
             })
 
         return final_list

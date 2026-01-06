@@ -201,17 +201,17 @@ function enableLiveColorPreview() {
 }
 
 
-function applySocialIconToggle() {
-    const iconToggle = document.getElementById("toggle_social_icons");
-    const previewEl = document.getElementById("preview_body");
-    if (!iconToggle || !previewEl) return;
+// function applySocialIconToggle() {
+//     const iconToggle = document.getElementById("toggle_social_icons");
+//     const previewEl = document.getElementById("preview_body");
+//     if (!iconToggle || !previewEl) return;
 
-    const socialLinks = previewEl.querySelectorAll("#previewSocialIcons a");
-    if (!socialLinks.length) return;
+//     const socialLinks = previewEl.querySelectorAll("#previewSocialIcons a");
+//     if (!socialLinks.length) return;
 
-    socialLinks.forEach(link => {
-        link.style.display = iconToggle.checked ? "inline-block" : "none";
-    });
-}
+//     socialLinks.forEach(link => {
+//         link.style.display = iconToggle.checked ? "inline-block" : "none";
+//     });
+// }
 
 
