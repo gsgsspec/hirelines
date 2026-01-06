@@ -1017,7 +1017,7 @@ def profileviewPage(request,pid):
 
         profile_details=getProfileDetailsService(pid)
         
-        return render(request, "portal_index.html", {"template_name": 'profileview.html','menuItemList': menuItemList,'profile_details':profile_details})
+        return render(request, "portal_index.html", {"template_name": 'profile_view.html','menuItemList': menuItemList,'profile_details':profile_details})
 
       
     except Exception as e:
