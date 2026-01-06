@@ -132,8 +132,9 @@
                         <thead>
                             <tr>
                                 <th> <strong>Date & Time </strong></th>
-                                <th> <strong>Activity </strong></th>
+                                <!-- <th> <strong>Activity </strong></th> -->
                                 <th> <strong>User </strong></th>
+                                <th> <strong>Activity </strong></th>
                             </tr>
                         </thead>
 
@@ -143,7 +144,9 @@
                                 <td>
                                     {{ act.datentime }}
                                 </td>
-                        
+                                 <td>
+                                    {{ act.activityusername }}
+                                </td>
                                 <td>
                                     {{ act.activity_text|default:act.activityname }}
                                     {% if act.activityremarks %} remarks
@@ -151,9 +154,9 @@
                                     {% endif %}
                                 </td>
                         
-                                <td>
+                                <!-- <td>
                                     {{ act.activityusername }}
-                                </td>
+                                </td> -->
                             </tr>
                             {% endfor %}
                         </tbody>
