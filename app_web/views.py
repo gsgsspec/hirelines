@@ -319,7 +319,7 @@ def Addjobdescription(request):
         menuItemList = get_functions_service(user_role)
         currentPath = get_current_path(request.path)
         companyId = getCompanyId(user_mail)
-        hiring_managers = getHiringManagersData(companyId)
+        hiring_managers,current_user_id = getHiringManagersData(companyId,user_mail) 
 
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
