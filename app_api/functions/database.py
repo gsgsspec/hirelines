@@ -1348,7 +1348,8 @@ def scheduleCandidateInterviewLinkDB(enc_candidate_id,user_data):
             'candidate_id': candidate_details.id,
             'url': schedule_link_url
         }
-
+        if candidate_details.profileid:
+                addProfileActivityDB(candidate_details.profileid,"IS","Interview Scheduling Sent",user_data.id)
         response = requests.post(url, json=candidate_data, verify=False, timeout=10)
         response.raise_for_status()
         response_json = response.json()
@@ -1356,8 +1357,8 @@ def scheduleCandidateInterviewLinkDB(enc_candidate_id,user_data):
         if response_json.get('statusCode') == 0:
             CallSchedule.objects.filter(candidateid=candidate_id).update(status='W')
 
-            if candidate_details.profileid:
-                addProfileActivityDB(candidate_details.profileid,"IS","Interview Scheduling Sent",user_data.id)
+            # if candidate_details.profileid:
+            #     addProfileActivityDB(candidate_details.profileid,"IS","Interview Scheduling Sent",user_data.id)
             return True
 
         else:

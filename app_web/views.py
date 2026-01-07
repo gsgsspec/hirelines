@@ -952,26 +952,13 @@ def profilesPage(request):
             else:
                 p["formatted_date"] = ""
 
-            # exp = ProfileExperience.objects.filter(profileid=p["id"]).values("yearfrom", "yearto").first()
-
-            # if exp:
-            #     year_from = int(exp["yearfrom"]) if exp["yearfrom"] else ''
-            #     year_to = int(exp["yearto"])  if exp["yearto"] else ''
-
-            #     if year_from and year_to :
-            #          total_exp = year_to - year_from  
-            #     else:
-            #         total_exp = 0
-            # else:
-            #     p["final_experience"] = "0 Years"
             experience_list = (
             ProfileExperience.objects.filter(profileid=p["id"])
             .values("jobtitle", "company", "yearfrom", "yearto")
             .order_by("sequence")
         )
-            total_exp = 0
+            total_exp = 0 
             for exp in experience_list:
-                print("exp",exp)
                 try:
                     yf = int(exp.get("yearfrom", 0))
                     yt = int(exp.get("yearto", 0))
