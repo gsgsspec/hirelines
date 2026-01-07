@@ -73,8 +73,8 @@ RULES = {
         "min_required": 3,
         "deduction": {"per_short_project": 1, "min_score": 0},
     },
-    "certificates": {"points_per_item": 1, "max_points": 5},
-    "awards": {"points_per_item": 1, "max_points": 5},
+    # "certificates": {"points_per_item": 1, "max_points": 5},
+    # "awards": {"points_per_item": 1, "max_points": 5},
     "skills": {
         "tier_1": {
             "skills": [
@@ -354,19 +354,93 @@ class CalculateProfileScoring:
 
         return max(min_score, score)
 
+    # def score_certificates(self, profile):
+    #     return self.calculate_capped_item_score(
+    #         profile.get("certificates", []),
+    #         self.rules["certificates"]["points_per_item"],
+    #         self.rules["certificates"]["max_points"],
+    #     )
     def score_certificates(self, profile):
-        return self.calculate_capped_item_score(
-            profile.get("certificates", []),
-            self.rules["certificates"]["points_per_item"],
-            self.rules["certificates"]["max_points"],
-        )
+        certificates = profile.get("certificates", [])
+        print("certificates",certificates)
+        experience = profile.get("experience", [])
+        print("experience",experience)
 
+       
+
+        cert_count = len(certificates)
+        print("cert_count",cert_count)
+        exp_years = self.calculate_experience_years(experience)
+        print("exp_years",exp_years)
+
+        if not isinstance(certificates, list) or len(certificates) == 0:
+            return 0
+
+       
+        if exp_years <= 2:
+            expected = 1
+        elif exp_years <= 4:
+            expected = 2
+        elif exp_years <= 6:
+            expected = 3
+        elif exp_years <= 8:
+            expected = 4
+        else:
+            expected = 5
+
+        
+        if cert_count >= expected:
+            return 5
+
+        
+        missing = expected - cert_count
+        score = 5 - missing
+
+        return max(0, score)
+    
     def score_awards(self, profile):
-        return self.calculate_capped_item_score(
-            profile.get("awards", []),
-            self.rules["awards"]["points_per_item"],
-            self.rules["awards"]["max_points"],
-        )
+        awards = profile.get("awards", [])
+        print("awards",awards)
+        experience = profile.get("experience", [])
+        print("experience",experience)
+
+        award_count = len(awards)
+        print("award_count",award_count)
+        exp_years = self.calculate_experience_years(experience)
+        print("exp_years",exp_years)
+
+        
+        if award_count == 0:
+            return 0
+
+       
+        if exp_years <= 2:
+            expected = 1
+        elif exp_years <= 4:
+            expected = 2
+        elif exp_years <= 6:
+            expected = 3
+        elif exp_years <= 8:
+            expected = 4
+        else:
+            expected = 5
+
+        
+        if award_count >= expected:
+            return 5
+
+        
+        score = 5 - (expected - award_count)
+
+        return max(0, score)
+
+
+    # def score_awards(self, profile):
+    #     return self.calculate_capped_item_score(
+    #         profile.get("awards", []),
+    #         self.rules["awards"]["points_per_item"],
+    #         self.rules["awards"]["max_points"],
+    #     )
 
     def score_skills(self, profile):
         primary = profile.get("skills", {}).get("primaryskills") or ""
@@ -407,7 +481,7 @@ class CalculateProfileScoring:
             "awards": self.score_awards(profile),
             "skills": self.score_skills(profile),
         }
-
+        print("raw_scores",raw_scores)
         breakdown = {}
         total_score = 0
 
@@ -428,8 +502,8 @@ class CalculateProfileScoring:
             total_score += score
 
         overall_pct = int(total_score) if isinstance(total_score, float) and total_score.is_integer() else total_score
-
-
+        print("overall_pct",overall_pct)
+ 
         # total_score = sum(breakdown.values())
 
         # percentage = (
