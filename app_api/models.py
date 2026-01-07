@@ -601,6 +601,7 @@ class ProfileActivity(models.Model):
     activityname= models.CharField(null=True, blank=True, max_length=100)
     activityremarks = models.CharField(null=True, blank=True, max_length=200)
     activitystatus= models.CharField(null=True, blank=True, max_length=100)
+    companyid= models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = 'profileactivity'

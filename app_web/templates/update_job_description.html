@@ -229,7 +229,7 @@
                                             Update
                                         </button>
 
-                                        <button type="button" class="btn btn-primary"
+                                        <button type="button" class="btn btn-primary" disabled id="submitBtn"
                                             onclick="updateJDStatus('F','JD Sent for Approval')">
                                             Send for Approval
                                         </button>
@@ -248,7 +248,7 @@
 
                                             <button type="submit" id="submitJd" class="btn btn-primary">Update</button>
                                             {% if jd_details.approval_status != "O" and is_hiring_manager %}
-                                            <button type="button" class="btn btn-primary"
+                                            <button type="button" class="btn btn-primary " disabled id="submitBtn"
                                                 onclick="updateJDStatus('O', 'JD Approved')">
                                                 Approve
                                             </button>

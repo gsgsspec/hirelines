@@ -1175,7 +1175,9 @@ def updateProfileActivityDB(dataObjs,userid):
         
 
 
-       
+        companyid=None
+        if profile_id:
+            companyid= Profile.objects.get(id=profile_id).companyid
         ProfileActivity.objects.create(
             profileid=profile_id,
             sequence=next_seq,
@@ -1184,6 +1186,7 @@ def updateProfileActivityDB(dataObjs,userid):
             activityname=activityname,
             activitycode=activity_code,
             activityremarks=remarks,
+            companyid=companyid
 
         )
 
@@ -1376,14 +1379,17 @@ def createProfileActivityDB(dataObjs):
         )
 
         next_seq = (last_seq or 0) + 1
-
+        companyid=None
+        if dataObjs["profileid"]:
+            companyid= Profile.objects.get(id=dataObjs["profileid"]).companyid
         profile_activity = ProfileActivity(
             profileid = dataObjs["profileid"],
             datentime = datetime.now(),
             sequence = next_seq,
             activitycode = "PC",
             activityname = "Profile Created",
-            acvityuserid = dataObjs["acvityuserid"]
+            acvityuserid = dataObjs["acvityuserid"],
+            companyid= companyid
         )
         
         profile_activity.save()
@@ -1663,14 +1669,17 @@ def addProfileActivityDB(profileid,activity_code,activityname,userid=None):
         )
 
         next_seq = (last_seq or 0) + 1
-
+        companyid=None
+        if profileid:
+            companyid= Profile.objects.get(id=profileid).companyid
         profile_activity = ProfileActivity(
             profileid = profileid,
             datentime = datetime.now(),
             sequence = next_seq,
             activitycode = activity_code,
             activityname = activityname,
-            acvityuserid = userid
+            acvityuserid = userid,
+            companyid=companyid,
         )
 
         profile_activity.save()

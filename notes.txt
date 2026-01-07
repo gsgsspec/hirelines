@@ -303,3 +303,6 @@ ADD COLUMN hiringmanagerid INTEGER NULL;
 ============manikanta =======
 ALTER TABLE profileactivity
 MODIFY activitycode VARCHAR(3);
+ALTER TABLE jobdesc
+ADD COLUMN hiringmanagerid INTEGER NULL;
+ALTER TABLE profileactivity ADD COLUMN companyid INT NULL

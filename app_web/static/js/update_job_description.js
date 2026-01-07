@@ -525,3 +525,25 @@ const cleanSkills = (arr = []) =>
         Object.keys(obj).length > 0 &&
         Object.values(obj).every(v => v !== undefined && v !== "")
     );
+    
+// document.getElementById('Hiring-Manager').addEventListener('change', function() {
+//     const submitBtn = document.getElementById('submitBtn');
+//     // Enable button if a value is selected, otherwise disable it
+//     submitBtn.disabled = (this.value === "");
+// });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const hiringManagerSelect = document.getElementById('Hiring-Manager');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // 1. Define the validation logic
+    function toggleButton() {
+        submitBtn.disabled = (hiringManagerSelect.value === "");
+    }
+
+    // 2. Run it immediately on page load
+    toggleButton();
+
+    // 3. Run it whenever the dropdown changes
+    hiringManagerSelect.addEventListener('change', toggleButton);
+});
