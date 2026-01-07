@@ -284,7 +284,19 @@ def scheduleInterviewDB(user_id, dataObjs):
                 url = urljoin(acert_domain, endpoint)
 
                 send_interview_data = requests.post(url, json=interview_data)
+                if candidate.profileid:
+                    # 1. Check if an 'Interview Scheduled' record already exists for this profile
+                    interview_exists = ProfileActivity.objects.filter(
+                        profileid=candidate.profileid, 
+                        activitycode="IS"
+                    ).exists()
 
+                    if interview_exists:
+                        # 2. If it exists, record it as "Re-Scheduled"
+                        addProfileActivityDB(candidate.profileid, "RS", "Interview Re-Scheduled", user.id)
+                    else:
+                        # 3. If it does NOT exist, record it as "Interview Scheduled"
+                        addProfileActivityDB(candidate.profileid, "IS", "Interview Scheduled", user.id)
                 return "Slot Booked"
             else: 
                 return "Please select another slot"
