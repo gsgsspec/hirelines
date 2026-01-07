@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     previewEl.innerHTML = body;
     
-    applySocialIconToggle();
+    // applySocialIconToggle();
     
 
 

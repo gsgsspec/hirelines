@@ -298,3 +298,8 @@ ADD COLUMN day INT NULL;
 ==============================Sathwik
 ALTER TABLE hirelinea_stg_demo3.jobdesc
 ADD COLUMN hiringmanagerid INTEGER NULL;
+
+
+============manikanta =======
+ALTER TABLE profileactivity
+MODIFY activitycode VARCHAR(3);

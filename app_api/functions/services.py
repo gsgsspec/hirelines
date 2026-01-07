@@ -5039,7 +5039,7 @@ def get_default_email_template_service(company_id):
         if not branding:
             branding = Branding.objects.filter(companyid=0).first()
             brandinglogo=Branding.logourl
-            print("brandinglogo",branding)
+           
      
 
 
@@ -5047,7 +5047,7 @@ def get_default_email_template_service(company_id):
       
     
         branding_logo=branding.logourl
-        print("branding_logo",branding_logo)
+        
 
         
         social_links = {}
@@ -5057,14 +5057,14 @@ def get_default_email_template_service(company_id):
             for item in items:
                 if ":" in item:
                     platform, url = item.split(":", 1)
-                    platform = platform.strip().lower()
+                    platform = platform.strip()
                     url = url.strip()
 
                     if url and url != "#":
                         social_links[platform] = url
 
         
-        all_platforms = ["linkedin", "facebook", "youtube", "twitter"]
+        all_platforms = ["Linkedin", "Facebook", "Youtube", "Twitter", "Instagram"]
 
         if social_links:
             platforms_to_show = social_links.keys()   
