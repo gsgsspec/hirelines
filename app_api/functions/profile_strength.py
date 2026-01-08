@@ -211,10 +211,14 @@ class CalculateProfileScoring:
             end = job.get("yearto") or self.current_year
             if start and end:
                 years += max(0, end - start)
+        print("years",years)
         return years
 
     def apply_deduction(self, base_score, item_count, rule):
+        print("item_count",item_count)
         deduction = item_count * rule.get("per_item", 0)
+        print("deduction",deduction)
+
         return max(rule.get("min_score", 0), base_score - deduction)
 
     def calculate_capped_item_score(self, items, points_per_item, max_points):
@@ -311,8 +315,10 @@ class CalculateProfileScoring:
 
         score = base_points
 
-        if total_years < min_required:
-            score -= min_required - total_years
+        # if total_years < min_required:
+        #     score -= min_required - total_years
+        # print("company_years",company_years)
+        # print("score",score)
 
         for yrs in company_years:
             if yrs < min_required:
@@ -514,6 +520,6 @@ class CalculateProfileScoring:
 
         return {
             "total_score": total_score,
-            "percentage": overall_pct,
+            "percentage": round(overall_pct),
             "breakdown": breakdown,
         }
