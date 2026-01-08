@@ -362,16 +362,16 @@ class CalculateProfileScoring:
     #     )
     def score_certificates(self, profile):
         certificates = profile.get("certificates", [])
-        print("certificates",certificates)
+       
         experience = profile.get("experience", [])
-        print("experience",experience)
+        
 
        
 
         cert_count = len(certificates)
-        print("cert_count",cert_count)
+        
         exp_years = self.calculate_experience_years(experience)
-        print("exp_years",exp_years)
+        
 
         if not isinstance(certificates, list) or len(certificates) == 0:
             return 0
@@ -400,14 +400,14 @@ class CalculateProfileScoring:
     
     def score_awards(self, profile):
         awards = profile.get("awards", [])
-        print("awards",awards)
+        
         experience = profile.get("experience", [])
-        print("experience",experience)
+        
 
         award_count = len(awards)
-        print("award_count",award_count)
+        
         exp_years = self.calculate_experience_years(experience)
-        print("exp_years",exp_years)
+        
 
         
         if award_count == 0:
@@ -481,7 +481,7 @@ class CalculateProfileScoring:
             "awards": self.score_awards(profile),
             "skills": self.score_skills(profile),
         }
-        print("raw_scores",raw_scores)
+        
         breakdown = {}
         total_score = 0
 
@@ -502,7 +502,7 @@ class CalculateProfileScoring:
             total_score += score
 
         overall_pct = int(total_score) if isinstance(total_score, float) and total_score.is_integer() else total_score
-        print("overall_pct",overall_pct)
+        
  
         # total_score = sum(breakdown.values())
 
