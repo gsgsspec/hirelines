@@ -4825,8 +4825,6 @@ def getWorkspaces(user_data):
 
                 client = Client.objects.get(id=workspace.clientid)
 
-                print("type",type(workspace.jd_ids))
-
                 workspaces_data.append({
                     "id": workspace.id,
                     "clientid": client.id,
@@ -4873,7 +4871,7 @@ def getWorkspaceData(user_data,wid):
         workspace = Workspace.objects.get(id=wid)
         client = Client.objects.get(id=workspace.clientid)
 
-        jd_ids = [int(jd_id) for jd_id in workspace.jd_ids]
+        jd_ids = [int(jd_id) for jd_id in workspace.jd_ids] if workspace.jd_ids else []
 
         rec_jds = JobDesc.objects.filter(id__in=jd_ids,status="A").order_by("-createdon")
         # print("workspace",jd_ids)
