@@ -1,0 +1,74 @@
+{
+  "profile": {
+    "personal": {
+      "title": "Mr.",
+      "firstname": "John",
+      "middlename": "Quincy",
+      "lastname": "Doe",
+      "email": "john.doe@example.com",
+      "mobile": "+1234567890",
+      "linkedin": "linkedin.com/in/johndoe",
+      "facebook": "facebook.com/johndoe",
+      "passportnum": "A1234567",
+      "fathername": "Robert Doe",
+      "nativeof": "New York",
+      "dateofbirth": "1990-01-01",
+      "address": {
+        "addline1": "123 Main St",
+        "addline2": "Apt 4B",
+        "city": "New York",
+        "state": "NY",
+        "country": "USA",
+        "zipcode": "10001"
+      }
+    },
+    "education": [
+      {
+        "sequence": 1,
+        "course": "B.S. Computer Science",
+        "institute": "State University",
+        "yearfrom": 2010,
+        "yearto": 2014,
+        "grade": "3.8 GPA"
+      }
+    ],
+    "experience": [
+      {
+        "sequence": 1,
+        "jobtitle": "Software Engineer",
+        "company": "Tech Corp",
+        "yearfrom": 2015,
+        "yearto": 2020
+      }
+    ],
+    "skills": {
+      "primaryskills": "Python, Django",
+      "secondaryskills": "JavaScript, Docker"
+    },
+    "projects": [
+      {
+        "sequence": 1,
+        "projectname": "E-commerce Platform",
+        "clientname": "Retail Giant",
+        "roleplayed": "Lead Developer",
+        "skillsused": "Django, Postgres",
+        "yearsfrom": 2021,
+        "yearsto": 2022
+      }
+    ],
+    "awards": [
+      {
+        "sequence": 1,
+        "awardname": "Employee of the Year",
+        "year": 2022
+      }
+    ],
+    "certificates": [
+      {
+        "sequence": 1,
+        "certname": "AWS Solutions Architect",
+        "year": 2023
+      }
+    ]
+  }
+}
