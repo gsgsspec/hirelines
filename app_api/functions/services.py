@@ -4873,8 +4873,12 @@ def getWorkspaceData(user_data,wid):
         workspace = Workspace.objects.get(id=wid)
         client = Client.objects.get(id=workspace.clientid)
 
-        rec_jds = JobDesc.objects.filter(recruiterids__regex=rf'(^|,){user_data.id}(,|$)',status="A").order_by("-createdon")
+        jd_ids = [int(jd_id) for jd_id in workspace.jd_ids]
 
+        rec_jds = JobDesc.objects.filter(id__in=jd_ids,status="A").order_by("-createdon")
+        # print("workspace",jd_ids)
+        # print("workspace",type(jd_ids))
+        # print("rec_jds",rec_jds)
         for recjd in rec_jds:
             assigned_jds.append({
                 "jdid":recjd.id,
