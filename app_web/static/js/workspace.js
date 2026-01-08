@@ -2,11 +2,19 @@ function handleCreateWorkspace(){
     $('#workspace-add-form').unbind('submit').bind('submit', function (event) {
         event.preventDefault();
 
+        let selectedJds = [];
+
+        $(".jd-checkbox:checked").each(function () {
+            selectedJds.push($(this).val());
+        });
+
         dataObjs = {
             'client':  $('#client').val(),
             'project':  $('#project').val(),
             'startdate':  $('#startdate').val(),
-            'notes':  $('#notes').val()
+            'notes':  $('#notes').val(),
+            'jd_ids': selectedJds,
+            
         }
 
         var final_data = {
@@ -33,12 +41,37 @@ function handleCreateWorkspace(){
 }
 
 
-function openEditWorkspace(id, clientId, project, startdate, notes) {
+function openEditWorkspace(id, clientId, project, startdate, notes, jd_ids) {
     document.getElementById("edit_workspace_id").value = id;
     document.getElementById("edit_client").value = clientId;
     document.getElementById("edit_project").value = project;
     document.getElementById("edit_startdate").value = startdate;
     document.getElementById("edit_notes").value = notes || "";
+
+    $(".jd-checkbox").prop("checked", false);
+
+    if (typeof jd_ids === "string") {
+        jd_ids = jd_ids
+            .replace(/'/g, '"')   // ' → "
+            .replace("None", "[]"); // handle None safely
+
+        try {
+            jd_ids = JSON.parse(jd_ids);
+        } catch (e) {
+            jd_ids = [];
+        }
+    }
+    console.log("jd_ids",jd_ids);
+    console.log("jd_ids",typeof(jd_ids));
+    
+    // ✅ Check already selected JDs
+    if (jd_ids && Array.isArray(jd_ids)) {
+        jd_ids.forEach(function (jdId) {
+            console.log("jdId",jdId);
+            
+            $(".jd-checkbox[value='" + jdId + "']").prop("checked", true);
+        });
+    }
 
     new bootstrap.Modal(document.getElementById("editWorkspaceModal")).show();
 }
@@ -46,12 +79,23 @@ function openEditWorkspace(id, clientId, project, startdate, notes) {
 function handleUpdateWorkspace() {
     event.preventDefault();
 
+    let selectedJds = [];
+
+    $(".jd-checkbox:checked").each(function () {
+        selectedJds.push($(this).val());
+    });
+
+
+    console.log("selectedJds",selectedJds);
+
     const dataObjs = {
         workspaceid: document.getElementById("edit_workspace_id").value,
         client: document.getElementById("edit_client").value,
         project: document.getElementById("edit_project").value,
         startdate: document.getElementById("edit_startdate").value,
-        notes: document.getElementById("edit_notes").value
+        notes: document.getElementById("edit_notes").value,
+        jd_ids: selectedJds
+
     };
 
     var final_data = {

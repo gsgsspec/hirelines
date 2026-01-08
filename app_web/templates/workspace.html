@@ -22,7 +22,8 @@
                                         '{{ workspace.clientid }}',
                                         '{{ workspace.project }}',
                                         `{{ workspace.startdate_db|date:'Y-m-d' }}`,
-                                        `{{ workspace.notes|default:'' }}`
+                                        `{{ workspace.notes|default:'' }}`,
+                                        `{{ workspace.jd_ids|safe }}`
                                     )">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -72,16 +73,37 @@
                             <input type="text" id="project" class="form-control" placeholder="Project" maxlength="100" required>
                         </div>
                     </div>
+                   
                     <div class="row">
                         <div class="col mb-3">
                             <label class="form-label">Start Date <span style="color: red;">*</span></label>
                             <input class="form-control" type="date" id="startdate" required>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col mb-3">
+                            <label class="form-label">Select Job Descriptions<span style="color: red;">*</span></label>
+                            <div  style="max-height: 150px;overflow: auto;">
+                                {% if assign_jds %}
+                                    {% for jd in assign_jds %}
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input jd-checkbox" type="checkbox"
+                                                value="{{ jd.id }}" id="jd_{{ jd.id }}">
+                                            <label class="form-label" for="jd_{{ jd.id }}"> {{ jd.title }} </label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <label class="form-label">No Job Descriptions assigned to you</label>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" rows="3" id="notes"></textarea>
+                            <textarea class="form-control" rows="1" id="notes"></textarea>
                         </div>
                     </div>
                 </div>
@@ -105,7 +127,7 @@
             <form id="workspace-edit-form">
                 <input type="hidden" id="edit_workspace_id">
 
-                <div class="modal-body" style="padding-top: 1rem;">
+                <div class="modal-body" style="padding-top: 1rem;padding-bottom: 0px;">
                     <div class="row">
                         <div class="col mb-3">
                             <label class="form-label">Client <span style="color: red;">*</span></label>
@@ -133,8 +155,27 @@
 
                     <div class="row">
                         <div class="col mb-3">
+                            <label class="form-label">Select Job Descriptions<span style="color: red;">*</span></label>
+                            <div  style="max-height: 150px;overflow: auto;">
+                                {% if assign_jds %}
+                                    {% for jd in assign_jds %}
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input jd-checkbox" type="checkbox"
+                                                value="{{ jd.id }}" id="jd_{{ jd.id }}">
+                                            <label class="form-label" for="jd_{{ jd.id }}"> {{ jd.title }} </label>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <label class="form-label">No Job Descriptions assigned to you</label>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" rows="3" id="edit_notes"></textarea>
+                            <textarea class="form-control" rows="1" id="edit_notes"></textarea>
                         </div>
                     </div>
                 </div>

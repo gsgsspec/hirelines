@@ -668,6 +668,7 @@ class Workspace(models.Model):
     createdby = models.IntegerField(null=True, blank=True)
     createdat = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=1, null=True)
+    jd_ids = models.JSONField(null=True)
 
     class Meta:
         db_table = 'workspace'

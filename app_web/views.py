@@ -1281,11 +1281,12 @@ def workspacePage(request):
 
         workspaces = getWorkspaces(user_data)
         clients_data = getCompanyClients(user_data)
-        print("workspaces",workspaces)
-        print("clients_data",clients_data)
+        # print("workspaces",workspaces)
+        # print("clients_data",clients_data)
+        # print("assign_jds",workspaces[1])
         
         if menuItemObjList:
-            return render(request, "portal_index.html", {"template_name": "workspace.html", 'menuItemList': menuItemList, 'workspaces':workspaces,"user_name":user_data.name, "clients_data":clients_data })
+            return render(request, "portal_index.html", {"template_name": "workspace.html", 'menuItemList': menuItemList, 'workspaces':workspaces[0],"assign_jds":workspaces[1],"user_name":user_data.name, "clients_data":clients_data })
         else:
             return redirect('../')
 

@@ -4817,11 +4817,15 @@ def getWorkspaces(user_data):
 
         workspaces = Workspace.objects.filter(createdby=user_data.id).order_by("-createdat")
 
+        rec_jds = list(JobDesc.objects.filter(recruiterids__regex=rf'(^|,){user_data.id}(,|$)',status="A").order_by("-createdon").values("id","title"))
+
         if workspaces:
 
             for workspace in workspaces:
 
                 client = Client.objects.get(id=workspace.clientid)
+
+                print("type",type(workspace.jd_ids))
 
                 workspaces_data.append({
                     "id": workspace.id,
@@ -4831,10 +4835,11 @@ def getWorkspaces(user_data):
                     "notes": workspace.notes if workspace.notes else "",
                     "startdate": workspace.startdate.strftime("%d-%B-%Y") if workspace.startdate else "",
                     "startdate_db": workspace.startdate if workspace.startdate else None,
+                    "jd_ids":workspace.jd_ids if workspace.jd_ids else None,
                     "status": workspace.status
                 })
         
-        return workspaces_data
+        return workspaces_data, rec_jds
 
     except Exception as e:
         raise

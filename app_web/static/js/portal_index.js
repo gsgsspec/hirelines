@@ -44,11 +44,8 @@ document.querySelectorAll('.menu-item').forEach(item => {
     if (!link) return;
 
     const menuKey = link.getAttribute('href').replace(/^\//, '');
-    console.log("menuKey",menuKey);
     
     const urls = menuItemsUrls[menuKey] || [];
-    console.log("urls",urls);
-    
 
     const isActive = urls.some(url => {
         const segment = url.replace(/^\//, '');

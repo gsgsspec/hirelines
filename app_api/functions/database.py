@@ -1661,6 +1661,7 @@ def addWorkspaceDB(dataObjs,user_data):
             project = dataObjs["project"],
             startdate = dataObjs["startdate"],
             notes = dataObjs["notes"],
+            jd_ids = dataObjs["jd_ids"],
             createdby = user_data.id,
             createdat = datetime.now(),
             status = "A"
@@ -1710,6 +1711,7 @@ def updateWorkspaceDB(dataObjs):
         workspace.project = dataObjs["project"]
         workspace.startdate = dataObjs["startdate"]
         workspace.notes = dataObjs["notes"]
+        workspace.jd_ids = dataObjs["jd_ids"]
 
         workspace.save()
         
