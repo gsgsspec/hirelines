@@ -1550,7 +1550,7 @@ def updateFullProfileDB(data):
         raise Exception("profileid missing")
 
     profile = Profile.objects.get(id=profile_id)
-
+    updateProfileScoreDB(profile_id)
     profile_block = data.get("profile", {})
     personal = profile_block.get("personal", {})
 
