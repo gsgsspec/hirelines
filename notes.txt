@@ -296,15 +296,17 @@ ALTER TABLE 'profileanalysis'
 ADD COLUMN day INT NULL;
 
 ==============================Sathwik
-ALTER TABLE hirelinea_stg_demo3.jobdesc
+ALTER TABLE jobdesc
 ADD COLUMN hiringmanagerid INTEGER NULL;
 
 
 ============manikanta =======
 ALTER TABLE profileactivity
 MODIFY activitycode VARCHAR(3);
+
 ALTER TABLE jobdesc
 ADD COLUMN hiringmanagerid INTEGER NULL;
+
 ALTER TABLE profileactivity ADD COLUMN companyid INT NULL
 
 ============srikanth =======
@@ -317,3 +319,6 @@ ALTER TABLE Profile
 ADD COLUMN profilecode VARCHAR(20) DEFAULT NULL;
 ALTER TABLE profile
 MODIFY COLUMN mobile VARCHAR(50) NULL;
+============Mounika =======
+ALTER TABLE jobdesc
+ADD COLUMN jobcode VARCHAR(20) UNIQUE;

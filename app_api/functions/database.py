@@ -526,6 +526,27 @@ def saveAddJD(dataObjs,compyId,hrEmail):
     try:
         # skillsArry = str(dataObjs['skills']).replace('[', '').replace(']', '').replace("'", '').replace('"', '')
         hiringmanager= dataObjs['hiringmanager']
+        curr_date = datetime.now()
+        year = curr_date.strftime("%y")   # 26
+        month = curr_date.strftime("%m")  # 01
+
+        refid_obj, refid_flag = ReferenceId.objects.get_or_create(
+            type="J",
+            prefix1=year,
+            prefix2=month
+        )
+
+        if refid_flag:
+            lastid = 1
+        else:
+            lastid = (refid_obj.lastid or 0) + 1
+
+        refid_obj.lastid = lastid
+        refid_obj.save()
+
+        job_seq = '{:04}'.format(refid_obj.lastid)
+        jobcode = f"JC{refid_obj.prefix1}{refid_obj.prefix2}{job_seq}"
+
         hrDeatils = User.objects.filter(email=hrEmail).last()
         if hrDeatils is not None:
             saveJd = JobDesc(
@@ -546,7 +567,9 @@ def saveAddJD(dataObjs,compyId,hrEmail):
                 companyid   = compyId if compyId else None,
                 status      = 'D',
                 hiringmanagerid= hiringmanager if hiringmanager else None,
-                createdon = datetime.now()
+                createdon = datetime.now(),
+                jobcode = jobcode,
+
             )
             saveJd.save()
 

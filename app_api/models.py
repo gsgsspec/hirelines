@@ -66,6 +66,7 @@ class Candidate(models.Model):
 
 class JobDesc(models.Model):
     id = models.AutoField(primary_key=True)
+    jobcode = models.CharField(max_length=20,null=True)
     jdlibraryid = models.IntegerField(null=True)
     title = models.CharField(max_length=350, null=True)
     role = models.CharField(max_length=100,null=True)
