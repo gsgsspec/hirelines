@@ -5378,3 +5378,24 @@ def changeClientstatusService(company_id, user_data):
 
     except Exception as e:
         raise
+
+
+def getDocParsedData(dataObjs):
+    try:
+
+        base_url = getConfig()['DOMAIN']['docparser']
+        url = f"{base_url}/api/request-prefill"
+
+        data ={
+            "doc_parser_id": dataObjs["doc_parser_id"]
+        }
+
+        response = requests.post(url, data=data)
+        response.raise_for_status()
+        resp_json = response.json()
+
+        return resp_json
+
+        print("data",dataObjs)
+    except Exception as e:
+        raise

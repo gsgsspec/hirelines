@@ -1784,3 +1784,11 @@ def generate_profile_code(profile_id):
     profile_code = f"{base_code}{checksum}"
 
     return profile_code
+def updateProfileCompletion(profile_id):
+    try:
+
+        
+
+        print("profile_id",profile_id)
+    except Exception as e:
+        raise
