@@ -1231,7 +1231,7 @@ def recruiterdashboardPage(request):
             show_all_option = False
         else:
             recruiters = User.objects.filter(
-                role="Recruiter",
+                role__in=["Recruiter", "HR-Admin"],
                 companyid=company_id
             ).order_by(Lower("name")).values("id", "name")
             show_all_option = True
