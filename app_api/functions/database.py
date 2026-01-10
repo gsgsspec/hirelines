@@ -1747,27 +1747,40 @@ def updateWorkspaceDB(dataObjs):
     except Exception as e:
         raise
 
-def generate_profile_code(profile_id: int) -> str:
-    """
-    Generate a profile code in the format:
-    PC + YY + MM + 4-digit profile_id + checksum
-    Checksum = remainder of (sum of all digits YY+MM+profile_id) divided by 9
-    """
-    # Current date
-    now = datetime.now()
-    yy = now.strftime("%y")  # last 2 digits of year
-    mm = now.strftime("%m")  # 2-digit month
 
-    # Profile ID padded to 4 digits
-    profile_str = f"{profile_id:04d}"
 
-    # Sum all digits
-    digits = yy + mm + profile_str
-    total = sum(int(d) for d in digits)
+def generate_profile_code(profile_id):
+   
+    today = datetime.now()
+    yy = today.strftime("%y")      # last 2 digits of year
+    mm = today.strftime("%m")      # 2-digit month
 
-    # Checksum = remainder when divided by 9
-    checksum = total % 9
+    prefix_type = "P"  # type for profile codes
 
-    # Build profile code
-    profile_code = f"PC{yy}{mm}{profile_str}{checksum}"
+    
+    with transaction.atomic():
+        ref = ReferenceId.objects.filter(type=prefix_type, prefix1=yy, prefix2=mm).first()
+
+        if not ref:
+            
+            ref = ReferenceId(type=prefix_type, prefix1=yy, prefix2=mm, lastid=1)
+            serial = 1
+        else:
+            # Increment lastid
+            ref.lastid += 1
+            serial = ref.lastid
+
+        ref.save()
+
+    serial_str = str(serial).zfill(4)
+
+    
+    base_code = f"PC{yy}{mm}{serial_str}"
+
+   
+    digits_sum = sum(int(c) for c in base_code if c.isdigit())
+    checksum = digits_sum % 9
+
+    profile_code = f"{base_code}{checksum}"
+
     return profile_code
