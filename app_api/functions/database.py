@@ -878,13 +878,16 @@ def addResumeProfileDB(dataObjs,user_data):
 
         resume.status = "A"
         resume.save()
-
+        
         # activity_data = {
         #     "profileid":profile.id,
         #     "acvityuserid": user_data.id,
         # }
         
         # createProfileActivityDB(activity_data)
+        profile_code= generate_profile_code(profile.id)
+        profile.profilecode = profile_code
+        profile.save()
         addProfileActivityDB(profile.id,"PC","Profile Created",user_data.id)
 
         return {"profile_id":profile.id}
@@ -971,7 +974,10 @@ def addProfileDB(dataObjs,fileObjs, user_data):
         
         # createProfileActivityDB(activity_data)
         addProfileActivityDB(profile.id,"PC","Profile Created",user_data.id)
-
+        
+        profile_code = generate_profile_code(profile.id)
+        profile.profilecode = profile_code
+        profile.save()
     except Exception as e:
         raise
 
@@ -1717,3 +1723,28 @@ def updateWorkspaceDB(dataObjs):
         
     except Exception as e:
         raise
+
+def generate_profile_code(profile_id: int) -> str:
+    """
+    Generate a profile code in the format:
+    PC + YY + MM + 4-digit profile_id + checksum
+    Checksum = remainder of (sum of all digits YY+MM+profile_id) divided by 9
+    """
+    # Current date
+    now = datetime.now()
+    yy = now.strftime("%y")  # last 2 digits of year
+    mm = now.strftime("%m")  # 2-digit month
+
+    # Profile ID padded to 4 digits
+    profile_str = f"{profile_id:04d}"
+
+    # Sum all digits
+    digits = yy + mm + profile_str
+    total = sum(int(d) for d in digits)
+
+    # Checksum = remainder when divided by 9
+    checksum = total % 9
+
+    # Build profile code
+    profile_code = f"PC{yy}{mm}{profile_str}{checksum}"
+    return profile_code

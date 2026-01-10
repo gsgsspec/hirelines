@@ -519,7 +519,7 @@ class Profile(models.Model):
     middlename = models.CharField(max_length=40, null=True, blank=True)
     lastname = models.CharField(max_length=100, null=   True, blank=True)
     email = models.CharField(max_length=100, null=True, blank=True)
-    mobile = models.CharField(max_length=15, null=True, blank=True)
+    mobile = models.CharField(max_length=50, null=True, blank=True)
     linkedin = models.CharField(max_length=100, null=True, blank=True)
     facebook = models.CharField(max_length=100, null=True, blank=True)
     passportnum = models.CharField(max_length=40, null=True, blank=True)
@@ -534,6 +534,7 @@ class Profile(models.Model):
     certificatesscore = models.IntegerField(null=True)
     awardsscore = models.IntegerField(null=True)
     status = models.CharField(max_length=1, null=True, blank=True) #  D - Draft, R - Rejected, O - Offered, E - Employee
+    profilecode=models.CharField(null=True,blank=True,max_length=20)
 
     class Meta:
         db_table = 'profile'

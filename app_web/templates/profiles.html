@@ -190,6 +190,7 @@ tbody tr:hover {
             <thead>
                 <tr>
                     <th><strong>Date</strong></th>
+                    <th><strong>Profile Code</strong></th>
                     <th><strong>Title</strong></th>
                     <th><strong>First Name</strong></th>
                     <th><strong>Last Name</strong></th>
@@ -204,6 +205,7 @@ tbody tr:hover {
                 {% for p in profile_details %}
                 <tr onclick="window.location.href='/profileview/{{p.id}}'">
                     <td>{{ p.formatted_date }}</td>
+                    <td>{{ p.profilecode }}</td>
                     <td>{{ p.title }}</td>
                     <td>{{ p.firstname }}</td>
                     <td>{{ p.lastname }}</td>

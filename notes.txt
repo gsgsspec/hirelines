@@ -312,3 +312,8 @@ ALTER TABLE profileactivity ADD COLUMN companyid INT NULL
 ALTER TABLE workspace
 ADD COLUMN jd_ids JSON DEFAULT NULL;
 
+==============================Sathwik
+ALTER TABLE Profile
+ADD COLUMN profilecode VARCHAR(20) DEFAULT NULL;
+ALTER TABLE profile
+MODIFY COLUMN mobile VARCHAR(50) NULL;
