@@ -545,7 +545,10 @@ def saveAddJD(dataObjs,compyId,hrEmail):
         refid_obj.save()
 
         job_seq = '{:04}'.format(refid_obj.lastid)
-        jobcode = f"JC{refid_obj.prefix1}{refid_obj.prefix2}{job_seq}"
+        base_code  = f"JC{refid_obj.prefix1}{refid_obj.prefix2}{job_seq}"
+        digits_sum = sum(int(ch) for ch in base_code if ch.isdigit())
+        checksum = (digits_sum // 9) or 9
+        jobcode = f"{base_code}{checksum}"
 
         hrDeatils = User.objects.filter(email=hrEmail).last()
         if hrDeatils is not None:
@@ -1779,7 +1782,9 @@ def generate_profile_code(profile_id):
 
    
     digits_sum = sum(int(c) for c in base_code if c.isdigit())
-    checksum = digits_sum % 9
+    # checksum = digits_sum % 9
+    quotient = digits_sum // 9
+    checksum = quotient if quotient != 0 else 9
 
     profile_code = f"{base_code}{checksum}"
 
