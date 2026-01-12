@@ -21,6 +21,14 @@ const_candidate_status = {
     "I": 'Interviewed',
 }
 
+const_profile_status ={
+
+    "D": "Draft",
+    "R": "Ready",
+    "I": "Process",
+    "E": "Rejected"
+}
+
 
 const_paper_types = {
     "S": 'Screening Test',

@@ -19,6 +19,7 @@ from  app_api.functions.enc_dec import decrypt_code
 
 from datetime import datetime
 from django.db.models.functions import Lower
+from app_api.functions.constants import const_profile_status
 
 
 
@@ -939,13 +940,8 @@ def profilesPage(request):
             p["source_code"] = src.label if src else ""
 
             # Status
-            status_map = {
-                "D": "Draft",
-                "R": "Rejected",
-                "O": "Offered",
-                "E": "Employee"
-            }
-            p["status_text"] = status_map.get(p["status"], "NA")
+            const_profile_status
+            p["status_text"] = const_profile_status.get(p["status"], "NA")
 
             if p.get("dateofcreation"):
                 p["formatted_date"] = p["dateofcreation"].strftime("%d-%b-%Y %I:%M %p")
@@ -1105,9 +1101,10 @@ def updateProfileDetailsPage(request, pid):
         menuItemList = get_functions_service(user_role)
 
         profile_data = getProfileData(pid, user_data)
+        profile_details=getProfileDetailsService(pid)
     
         
-        return render(request, "portal_index.html", {"template_name": 'update_profile.html','menuItemList':menuItemList,"profile_data":profile_data,"profileid": profileid})
+        return render(request, "portal_index.html", {"template_name": 'update_profile.html','menuItemList':menuItemList,"profile_data":profile_data,"profileid": profileid, "profile_details":profile_details})
     
     except Exception as e:
         raise

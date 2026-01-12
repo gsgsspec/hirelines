@@ -1029,7 +1029,7 @@ def updateProfileDetailsDB(dataObjs):
         profile.nativeof = dataObjs["native_of"]
 
         profile_address.addline1 = dataObjs["AddressLine1"]
-        profile_address.addline2 = dataObjs["AddressLine2"]
+        profile_address.addline2 = dataObjs["AddressLine2"] 
         profile_address.city = dataObjs["city"]
         profile_address.state = dataObjs["state"]
         profile_address.country = dataObjs["country"]
@@ -1582,7 +1582,7 @@ def updateFullProfileDB(data):
         raise Exception("profileid missing")
 
     profile = Profile.objects.get(id=profile_id)
-    updateProfileScoreDB(profile_id)
+
     profile_block = data.get("profile", {})
     personal = profile_block.get("personal", {})
 
@@ -1683,6 +1683,7 @@ def updateFullProfileDB(data):
             certname=safe_str(c.get("certname")),
             year=to_int(c.get("year")),
         )
+        updateProfileScoreDB(profile_id)
 
 
 def addWorkspaceDB(dataObjs,user_data):
@@ -1789,10 +1790,59 @@ def generate_profile_code(profile_id):
     profile_code = f"{base_code}{checksum}"
 
     return profile_code
+
+
+
 def updateProfileCompletion(profile_id):
     try:
 
+        profile = Profile.objects.filter(id=profile_id).first()
         
+        if not profile:
+            print(f"Profile {profile_id} not found.")
+            return
+
+        # 2. Only perform calculations if status is 'D' (Draft)
+        if profile.status != 'D':
+            print(f"Profile {profile_id} is already in status: {profile.status}")
+            return
+
+        completion_percentage = 0
+
+        # 3. Check for entries in related tables
+        # Experience (20%)
+        if ProfileExperience.objects.filter(profileid=profile_id).exists():
+            completion_percentage += 20
+        
+        # Skills (20%)
+        if ProfileSkills.objects.filter(profileid=profile_id).exists():
+            completion_percentage += 20
+            
+        # Education (20%)
+        if ProfileEducation.objects.filter(profileid=profile_id).exists():
+            completion_percentage += 20
+            
+        # Certificates (10%)
+        if ProfileCertificates.objects.filter(profileid=profile_id).exists():
+            completion_percentage += 10
+            
+        # Awards (10%)
+        if ProfileAwards.objects.filter(profileid=profile_id).exists():
+            completion_percentage += 10
+            
+        # Projects (20%)
+        if ProfileProjects.objects.filter(profileid=profile_id).exists():
+            completion_percentage += 20
+
+        print(f"Calculated Completion: {completion_percentage}%")
+
+        # 4. Update status if total percentage is more than 60
+        if completion_percentage > 60:
+            profile.status = 'R'  # Change Draft to Ready
+            profile.save()
+            print(f"Profile {profile_id} status updated to Ready.")
+        else:
+            print(f"Profile {profile_id} remains in Draft (Percentage: {completion_percentage}%)")
 
         print("profile_id",profile_id)
     except Exception as e:

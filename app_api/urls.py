@@ -105,8 +105,6 @@ urlpatterns = [
     path('add-new-client',views.addNewClients),
     path('change-client-status',views.changeClientStatus),
 
-    path('get-doc-parsing',views.getDocParsing)
-
 
 
 ]
