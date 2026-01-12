@@ -1180,12 +1180,15 @@ def scheduleInterviewPage(request, cid):
         
         # 1. Fetch the raw list of slots from the backend function
         slots_available_list, job_title, company_name,status = getSlotsAvailable(deccrypt_cid)
-        
+
+        call_scheduling_constraints = getConfig()["CALL_SCHEDULING_CONSTRAINTS"]
+
+        BLOCK_HOURS = int(call_scheduling_constraints["block_hours"])
         
         # 2. Correct way to pass context: {string_key: python_variable_value}
         # The key 'slots_available' will be used in your HTML template ({{ slots_available|safe }})
         return render(request, "candidate_interview_schedule.html", {
-            'slots_available': slots_available_list,'company_name': company_name , 'job_title': job_title , 'status': status
+            'slots_available': slots_available_list,'company_name': company_name , 'job_title': job_title , 'status': status , 'block_hours':BLOCK_HOURS
         })
 
     except Exception as e:

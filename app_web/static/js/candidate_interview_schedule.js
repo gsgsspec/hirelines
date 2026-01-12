@@ -56,6 +56,72 @@
             };
 
             // --- 1. THE FIXED DATE PARSER (Storing the whole raw slot object for full context) ---
+            // function processApiSlots(slots) {
+            //     const groupedSlots = {};
+            //     const monthNames = ["January", "February", "March", "April", "May", "June",
+            //         "July", "August", "September", "October", "November", "December"
+            //     ];
+            //     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+            //     const now = new Date();
+            //     // Set "Today" to midnight to ensure accurate comparison
+            //     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            //     const limitDate = new Date(today);
+            //     limitDate.setDate(today.getDate() + 3);
+
+            //     slots.forEach(slot => {
+            //         // Manually parse ISO string to avoid Browser Timezone shifts
+            //         let [rawDate, rawTime] = slot.start_time.split('T'); 
+
+            //         const slotDateObj = new Date(rawDate + 'T00:00:00');
+
+            //         // --- NEW LOGIC: Filter the dates ---
+            //         // If slot is in the past OR slot is beyond 3 days, skip it
+            //         if (slotDateObj < today || slotDateObj >= limitDate) {
+            //             return; 
+            //         }
+                    
+            //         let timePart = rawTime.substring(0, 5); // "19:00"
+            //         let [hour, minute] = timePart.split(':');
+                    
+            //         const dateKey = rawDate; // YYYY-MM-DD
+
+            //         // Create a date object JUST for getting the Day Name (Mon, Tue)
+            //         const dateObj = new Date(rawDate + 'T00:00:00'); 
+            //         const fullDate = `${dayNames[dateObj.getDay()]}, ${monthNames[dateObj.getMonth()]} ${dateObj.getDate()}`;
+
+            //         // Format Time (19:00 -> 07:00 PM)
+            //         let hourInt = parseInt(hour);
+            //         const ampm = hourInt >= 12 ? 'PM' : 'AM';
+            //         hourInt = hourInt % 12;
+            //         hourInt = hourInt ? hourInt : 12; 
+            //         const timeString = `${hourInt}:${minute} ${ampm}`;
+
+            //         if (!groupedSlots[dateKey]) {
+            //             groupedSlots[dateKey] = {
+            //                 fullDate: fullDate,
+            //                 slots: [],
+            //                 rawSlots: {} 
+            //             };
+            //         }
+                    
+            //         groupedSlots[dateKey].slots.push(timeString);
+                    
+            //         // Store the entire raw slot object for easy access later
+            //         groupedSlots[dateKey].rawSlots[timeString] = slot; 
+            //     });
+
+            //     // Sort time slots
+            //     for (const dateKey in groupedSlots) {
+            //         groupedSlots[dateKey].slots.sort((a, b) => {
+            //             return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+            //         });
+            //     }
+
+            //     return groupedSlots;
+            // }
+
             function processApiSlots(slots) {
                 const groupedSlots = {};
                 const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -64,51 +130,61 @@
                 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
                 const now = new Date();
-                // Set "Today" to midnight to ensure accurate comparison
+                
+                // 1. Current timestamp for literal comparison
+                const blockHrs = blockHours;
+                
+                // 2. Define "Today" at midnight for date-range filtering
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
                 const limitDate = new Date(today);
                 limitDate.setDate(today.getDate() + 3);
 
                 slots.forEach(slot => {
-                    // Manually parse ISO string to avoid Browser Timezone shifts
-                    let [rawDate, rawTime] = slot.start_time.split('T'); 
+                    // Parse the literal strings from the API
+                    // '2026-01-12T13:00:00+00:00' -> rawDate="2026-01-12", rawTime="13:00"
+                    let [rawDate, rawTimePart] = slot.start_time.split('T'); 
+                    let rawTime = rawTimePart.substring(0, 5); 
+                    
+                    // Construct a date object using local components so comparison is apples-to-apples
+                    const [y, m, d] = rawDate.split('-').map(Number);
+                    const [hh, mm] = rawTime.split(':').map(Number);
+                    
+                    // This date represents the slot as if it were in your local time
+                    const slotDateObj = new Date(y, m - 1, d, hh, mm);
+                    const slotDayOnly = new Date(y, m - 1, d);
 
-                    const slotDateObj = new Date(rawDate + 'T00:00:00');
-
-                    // --- NEW LOGIC: Filter the dates ---
-                    // If slot is in the past OR slot is beyond 3 days, skip it
-                    if (slotDateObj < today || slotDateObj >= limitDate) {
+                    // --- FILTER 1: Date Range (Next 3 days) ---
+                    if (slotDayOnly < today || slotDayOnly >= limitDate) {
                         return; 
                     }
-                    
-                    let timePart = rawTime.substring(0, 5); // "19:00"
-                    let [hour, minute] = timePart.split(':');
-                    
-                    const dateKey = rawDate; // YYYY-MM-DD
 
-                    // Create a date object JUST for getting the Day Name (Mon, Tue)
-                    const dateObj = new Date(rawDate + 'T00:00:00'); 
-                    const fullDate = `${dayNames[dateObj.getDay()]}, ${monthNames[dateObj.getMonth()]} ${dateObj.getDate()}`;
+                    // --- FILTER 2: Block Hours (The 2-hour buffer) ---
+                    // Calculate the difference in milliseconds
+                    const diffInMs = slotDateObj - now;
+                    const diffInHours = diffInMs / (1000 * 60 * 60);
 
-                    // Format Time (19:00 -> 07:00 PM)
-                    let hourInt = parseInt(hour);
+                    if (diffInHours < blockHrs) {
+                        console.log(`Skipping ${rawTime}: Only ${diffInHours.toFixed(2)} hours away.`);
+                        return; 
+                    }
+
+                    // --- DATA GROUPING ---
+                    const dateKey = rawDate;
+                    let hourInt = hh;
                     const ampm = hourInt >= 12 ? 'PM' : 'AM';
-                    hourInt = hourInt % 12;
-                    hourInt = hourInt ? hourInt : 12; 
-                    const timeString = `${hourInt}:${minute} ${ampm}`;
+                    hourInt = hourInt % 12 || 12; 
+                    const timeString = `${String(hourInt).padStart(2, '0')}:${String(mm).padStart(2, '0')} ${ampm}`;
 
                     if (!groupedSlots[dateKey]) {
+                        const dateObj = new Date(y, m - 1, d);
                         groupedSlots[dateKey] = {
-                            fullDate: fullDate,
+                            fullDate: `${dayNames[dateObj.getDay()]}, ${monthNames[dateObj.getMonth()]} ${dateObj.getDate()}`,
                             slots: [],
                             rawSlots: {} 
                         };
                     }
                     
                     groupedSlots[dateKey].slots.push(timeString);
-                    
-                    // Store the entire raw slot object for easy access later
                     groupedSlots[dateKey].rawSlots[timeString] = slot; 
                 });
 
@@ -121,7 +197,6 @@
 
                 return groupedSlots;
             }
-
             const formatDate = (date, format) => {
                 if (format === 'key') { // YYYY-MM-DD
                     const y = date.getFullYear();

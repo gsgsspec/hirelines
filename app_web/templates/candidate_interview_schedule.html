@@ -154,6 +154,7 @@
     <script> 
         const CSRF_TOKEN = "{{ csrf_token }}"; 
         const slots_available_api = {{ slots_available|safe }}; 
+        const blockHours = Number("{{ block_hours|default:0 }}");
     </script>
     <script src="{% static 'js/candidate_interview_schedule.js' %}"></script>
 </body>
