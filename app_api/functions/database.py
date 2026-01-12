@@ -1683,7 +1683,7 @@ def updateFullProfileDB(data):
             certname=safe_str(c.get("certname")),
             year=to_int(c.get("year")),
         )
-        updateProfileScoreDB(profile_id)
+    updateProfileScoreDB(profile_id)
 
 
 def addWorkspaceDB(dataObjs,user_data):
