@@ -1202,26 +1202,22 @@ def updateProfileActivityDB(dataObjs,userid):
        
         remarks = dataObjs.get("remarks")
        
-       
         lookup = Lookupmaster.objects.filter(lookupname=activityname,status='A').first()
-      
 
         if not lookup:
             raise Exception("Invalid activity name")
 
         activity_code = lookup.lookupparam1   
-      
-
     
         last_seq = ProfileActivity.objects.filter(profileid=profile_id).aggregate( max_seq=Max('sequence'))['max_seq']
      
         next_seq = (last_seq or 0) + 1
-        
-
 
         companyid=None
+
         if profile_id:
             companyid= Profile.objects.get(id=profile_id).companyid
+
         ProfileActivity.objects.create(
             profileid=profile_id,
             sequence=next_seq,
@@ -1231,8 +1227,16 @@ def updateProfileActivityDB(dataObjs,userid):
             activitycode=activity_code,
             activityremarks=remarks,
             companyid=companyid
-
         )
+
+        if activity_code in ["RJ", "CR"]:
+            profile = Profile.objects.get(id=profile_id)
+            profile.status = "E"
+            profile.save()
+        elif activity_code in ["SL", "CS"]:
+            profile = Profile.objects.get(id=profile_id)
+            profile.status = "H"
+            profile.save()
 
         return True
 

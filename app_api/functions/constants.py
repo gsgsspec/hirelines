@@ -22,10 +22,10 @@ const_candidate_status = {
 }
 
 const_profile_status ={
-
     "D": "Draft",
     "R": "Ready",
     "I": "Process",
+    "H": "Hired",
     "E": "Rejected"
 }
 

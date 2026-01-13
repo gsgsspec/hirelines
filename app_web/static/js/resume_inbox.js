@@ -1,3 +1,5 @@
+let selectedSources = new Set();
+
 attachResumeRowClick();
 
 function base64ToBlob(base64) {
@@ -124,7 +126,6 @@ document.getElementById("add-profile-btn").addEventListener("click", function ()
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    let selectedSources = new Set();
 
     const items = document.querySelectorAll(".sources-item");
     
@@ -141,26 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 this.classList.add("selected");
             }
 
-            // Convert Set to Array
-            const selectedArray = Array.from(selectedSources);
-
-            dataObj = {
-                "source_ids": selectedArray
-            }
-
-            var final_data = {
-                'data': JSON.stringify(dataObj),
-                csrfmiddlewaretoken: CSRF_TOKEN,
-            }
-
-            $.post(CONFIG['portal'] + "/api/get-filter-resume", final_data, function (res) {
-                updateResumeTable(res.data);
-                attachResumeRowClick();
-                document.getElementById("resumePreview").style.display = "none";
-                document.querySelector('.table-ctn').classList.remove('half-width');
- 
-                
-            })
+            reloadResumesWithCurrentFilters();
             
         });
     });
@@ -217,25 +199,27 @@ function syncClickHandler() {
 
         if(response.statusCode === 0){
 
-            let dataObj = { source_ids: [] };
-    
-            let final_data = {
-                data: JSON.stringify(dataObj),
-                csrfmiddlewaretoken: CSRF_TOKEN
-            };
-    
-            $.post(CONFIG['portal'] + "/api/get-filter-resume", final_data, function (res) {
-                updateResumeTable(res.data);
-                attachResumeRowClick();
-                document.getElementById("resumePreview").style.display = "none";
-                document.querySelector('.table-ctn').classList.remove('half-width');
-                $(".sources-item").removeClass("selected");
+            reloadResumesWithCurrentFilters();
 
-            });
+            // let dataObj = { source_ids: [] };
+    
+            // let final_data = {
+            //     data: JSON.stringify(dataObj),
+            //     csrfmiddlewaretoken: CSRF_TOKEN
+            // };
+    
+            // $.post(CONFIG['portal'] + "/api/get-filter-resume", final_data, function (res) {
+            //     updateResumeTable(res.data);
+            //     attachResumeRowClick();
+            //     document.getElementById("resumePreview").style.display = "none";
+            //     document.querySelector('.table-ctn').classList.remove('half-width');
+            //     $(".sources-item").removeClass("selected");
+
+            // });
     
             btn.html(`<i class="fas fa-check"></i> &nbsp; Synced Successfully`);
     
-            btn.prop("disabled", false);
+            btn.prop("disabled", true);
         } else {
 
             Swal.fire({
@@ -269,3 +253,49 @@ function syncClickHandler() {
 }
 
 $("#sync-btn").one("click", syncClickHandler);
+
+
+function reloadResumesWithCurrentFilters() {
+    const selectedArray = Array.from(selectedSources);
+
+    let dataObj = {
+        source_ids: selectedArray
+    };
+
+    let final_data = {
+        data: JSON.stringify(dataObj),
+        csrfmiddlewaretoken: CSRF_TOKEN
+    };
+
+    $.post(CONFIG['portal'] + "/api/get-filter-resume", final_data, function (res) {
+        updateResumeTable(res.data);
+        attachResumeRowClick();
+
+        // Reset preview UI
+        document.getElementById("resumePreview").style.display = "none";
+        document.querySelector('.table-ctn').classList.remove('half-width');
+
+        // Restore selected filter UI
+        document.querySelectorAll(".sources-item").forEach(item => {
+            if (selectedSources.has(item.dataset.sourceid)) {
+                item.classList.add("selected");
+            }
+        });
+    });
+}
+
+document.getElementById("close-resume-preview-btn").addEventListener("click", function () {
+
+    // Hide preview
+    document.getElementById("resumePreview").style.display = "none";
+    document.querySelector('.table-ctn').classList.remove('half-width');
+
+    // Remove active row highlight
+    document.querySelectorAll(".resume-row").forEach(row => {
+        row.classList.remove("active-row");
+    });
+
+    // Clear iframe src (optional but recommended)
+    document.getElementById("resumeIframe").src = "";
+});
+

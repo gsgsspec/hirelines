@@ -315,10 +315,13 @@ ALTER TABLE workspace
 ADD COLUMN jd_ids JSON DEFAULT NULL;
 
 ==============================Sathwik
-ALTER TABLE Profile
+ALTER TABLE profile
 ADD COLUMN profilecode VARCHAR(20) DEFAULT NULL;
 ALTER TABLE profile
 MODIFY COLUMN mobile VARCHAR(50) NULL;
 ============Mounika =======
 ALTER TABLE jobdesc
 ADD COLUMN jobcode VARCHAR(20) UNIQUE;
+ALTER TABLE profile
+ADD COLUMN  completion int DEFAULT NULL;
+

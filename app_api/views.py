@@ -31,7 +31,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
     updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB,updateWorkspaceDB,updateProfileCompletion
-from app_api.functions.constants import hirelines_registration_script
+from app_api.functions.constants import hirelines_registration_script, const_profile_status
 from app_api.functions.email_resume import fetch_gmail_attachments
 
 from app_api.functions.enc_dec import encrypt_code
@@ -1768,12 +1768,13 @@ def filter_profiles_api(request):
         final_output.append({
             "id":profile.id,
             "date": profile.dateofcreation.strftime("%d-%b-%Y %I:%M %p"),
+            "code": profile.profilecode if profile.profilecode else "",
             "title": profile.title,
             "firstname": profile.firstname,
             "lastname": profile.lastname,
             "experience": f"{years} Years",
             "source": source_value,
-            "status": status_map.get(profile.status, profile.status),
+            "status": const_profile_status.get(profile.status, profile.status),
             "primaryskills_name": primary_sk,
             "secondaryskills_name": secondary_sk,
         })
@@ -2689,7 +2690,6 @@ def shortlistProfile(request):
             user_data = auth_user(request.user)
 
             shortlist = shortlistProfileService(dataObjs,user_data)
-            print("shortlist",shortlist)
             response["data"] = shortlist
             response["statusCode"] = 0
 

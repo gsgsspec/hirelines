@@ -2527,9 +2527,16 @@ def notifyCandidateService(dataObjs,user):
         candidate.save()
 
         if candidate.profileid:
+
+            profile = Profile.objects.get(id=candidate.profileid)
+
             if notify == "O":
                 addProfileActivityDB(candidate.profileid,"OL","Offer letter Sent",user.id)
+                profile.status = "H"
+            elif notify == "R":
+                profile.status = "E"
 
+            profile.save()
 
     except Exception as e:
         print(str(e))
@@ -3944,7 +3951,7 @@ def getResumeData(user_data, filters=None):
                         "name": resume.filename or "",
                         "source": source.label or "",
                         "date": (
-                            resume.datentime.strftime("%d-%b-%Y")
+                            resume.datentime.strftime("%d-%b-%Y %I:%M %p")
                             if resume.datentime
                             else ""
                         ),
@@ -4907,7 +4914,8 @@ def getJdProfileData(dataObjs,user_data):
         shortlisted_profiles = []
         matched_profiles = []
 
-        profiles = Profile.objects.filter(companyid=user_data.companyid).exclude(status__in=["R","O","E"])
+        profiles = Profile.objects.filter(companyid=user_data.companyid).exclude(status__in=["D"])
+        # profiles = Profile.objects.filter(companyid=user_data.companyid).exclude(status__in=["R","O","E"])
 
         jd_profile_data = calculateJDProfileMatching(job_desc.id,profiles)
 
@@ -5025,6 +5033,9 @@ def shortlistProfileService(dataObjs,user_data):
                     addProfileActivityDB(profile.id,"SC","Screening Sent")
                 elif candidate["papertype"] == "E":
                     addProfileActivityDB(profile.id,"CT","Coding Test Sent")
+
+            profile.status = "I"
+            profile.save()
 
             return candidate
 
