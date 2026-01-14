@@ -1162,7 +1162,9 @@ a:hover {
 	.navbar.top-nav-collapse {
 		padding-top: 0.5rem;
 		padding-bottom: 0.5rem;
-		background-color: #fff2dc;
+		/* background-color: #fff2dc; */
+		background-color: #fff;
+		box-shadow: 0 6px 10px rgba(39, 70, 153, 0.1);
 	}
 
 	.offcanvas-collapse {

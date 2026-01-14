@@ -1,7 +1,7 @@
 {% load static %}
 
 <section class="hero" id="home">
-    <div  class="fade-in-home">
+    <div class="fade-in-home">
         <h1>Streamlining Your Recruitment Process with AI</h1>
         <p>Fast, Accurate, and Efficient Hiring for Software Development Companies</p>
         <button href="#header" class="btn-outline-lg page-scroll get-start-btn hero-btn">Get Started Today</button>
@@ -15,7 +15,8 @@
                     </div>
                     <form id="registerForm" class="needs-validation" novalidate>
                         <div class="mb-4 form-floating">
-                            <input type="email" class="form-control" id="reg-bemail" placeholder="name@example.com" required>
+                            <input type="email" class="form-control" id="reg-bemail" placeholder="name@example.com"
+                                required>
                             <label for="reg-bemail">Business Email</label>
                             <div class="invalid-feedback">
                                 Please enter email address.
@@ -64,7 +65,8 @@
                             <span style="color:red">Something went wrong, Please try again after sometime...</span>
                         </div>
                         <div class="error-existing mb-2" style="display: none;">
-                            <span style="color:red">Company already registered, Please contact your company HR/Administrator..</span>
+                            <span style="color:red">Company already registered, Please contact your company
+                                HR/Administrator..</span>
                         </div>
                         <button type="submit" id="register" class="btn-solid-lg">Sign up</button>
                     </form>
@@ -75,9 +77,203 @@
                     <span>Check your email for access details</span>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
 </section>
+
+
+<!-- Features -->
+<div id="features" class="cards-1" style="padding-top: 5rem;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="h2-heading">Application Tracking System (ATS)</h2>
+            </div> <!-- end of col -->
+        </div> <!-- end of row -->
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/process.png' %}" class="h-100" alt="Parsing">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Multi Technology Parsing</h4>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/strength-edit.png' %}" class="h-100" alt="Strength Icon">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Profile Strength Calculator</h4>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/job-edit.png' %}" class="h-100" alt="Match Icon">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Auto Profile Match to JD</h4>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/job-search.png' %}" alt="Posting Icon" class="h-100">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">One click Job board Posting</h4>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/account-activity.png' %}" alt="Activity Icon" class="h-100">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Profile Activity Tracking</h4>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/verified-edit.png' %}" class="h-100" alt="Branded Icon">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Branded Profiles for Submission</h4>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/rec-dashboard-edit.png' %}" class="h-100" alt="Recruiter Dashboard">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Recruiter Dashboard</h4>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/workspace.png' %}" alt="Workspace Icon" class="h-100">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Workspace for Recruiter</h4>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/dashboard-overall-edit.png' %}" alt="Overall Dashboard Icon" class="h-100">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Overall Recruiter Dashboards</h4>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/data-collection-edit.png' %}" class="h-100" alt="Source Analysis Icon">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Profile Source wise Analysis</h4>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon-2" style="background: none;">
+                        <img src="{% static 'lib/homePage/images/ats/online-interview-2.png' %}" alt="Interview Icon" class="h-100">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Oneclick Digital Interviews</h4>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="h2-heading">Hirelines.io is packaged with awesome features</h2>
+            </div> <!-- end of col -->
+        </div> <!-- end of row -->
+        <div class="row">
+            <div class="col-lg-12">
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon">
+                        <!-- <span class="fas fa-headphones-alt"></span> -->
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Screening Test</h4>
+                        <p>Quickly filter applicants with targeted assessments that evaluate essential skills and
+                            qualifications</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon green">
+                        <!-- <span class="far fa-clipboard"></span> -->
+                        <i class="fas fa-code"></i>
+                        <!-- <span>
+                            <iconify-icon class="fas fa" icon="material-symbols:code-blocks-outline"></iconify-icon>
+                        </span> -->
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Coding Test</h4>
+                        <p> Measure programming expertise through real-world coding scenarios to ensure technical
+                            competence.</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon blue">
+                        <!-- <span class="far fa-comments"></span> -->
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Online Interview</h4>
+                        <p>Conduct interactive online interviews that provide a complete view of each candidate’s
+                            expertise, communication, and cultural fit</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon" style="background-color:  #fff4e6;">
+                        <i class="fas fa-chart-line" style="color: #f97316;"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Dashboards</h4>
+                        <p>Gain actionable insights into your hiring process with real-time tracking and performance
+                            analytics</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+
+                <!-- Card -->
+                <div class="card">
+                    <div class="card-icon" style="background-color:  #e0f7f9;">
+                        <i class="fas fa-palette" style="color:  #0d9488;"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Branding</h4>
+                        <p>Deliver a seamless and professional candidate experience with personalized, brand-consistent
+                            email outreach</p>
+                    </div>
+                </div>
+                <!-- end of card -->
+
+            </div> <!-- end of col -->
+        </div> <!-- end of row -->
+    </div> <!-- end of container -->
+</div> <!-- end of cards-1 -->
+<!-- end of services -->
 
 
 <!-- Benefits -->
@@ -90,7 +286,7 @@
         </div> <!-- end of row -->
         <div class="row">
             <div class="col-lg-12">
-                
+
                 <!-- Card -->
                 <div class="card">
                     <div class="card-icon-2" style="background: none;">
@@ -105,7 +301,8 @@
                 <!-- Card -->
                 <div class="card">
                     <div class="card-icon-2" style="background: none;">
-                        <img src="{% static 'lib/homePage/images/benefits/126-communication.png' %}" alt="Time Saver Icon">
+                        <img src="{% static 'lib/homePage/images/benefits/126-communication.png' %}"
+                            alt="Time Saver Icon">
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">25X Communication</h3>
@@ -116,7 +313,8 @@
                 <!-- Card -->
                 <div class="card">
                     <div class="card-icon-2" style="background: none;">
-                        <img src="{% static 'lib/homePage/images/benefits/126-optimization.png' %}" alt="Time Saver Icon">
+                        <img src="{% static 'lib/homePage/images/benefits/126-optimization.png' %}"
+                            alt="Time Saver Icon">
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">50X Lead Time Optimization</h3>
@@ -146,98 +344,13 @@
                     </div>
                 </div>
                 <!-- end of card -->
-               
+
 
             </div> <!-- end of col -->
         </div> <!-- end of row -->
     </div> <!-- end of container -->
 </div> <!-- end of cards-1 -->
 <!-- end of services -->
-
-
-<!-- Features -->
-<div id="features" class="cards-1">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <h2 class="h2-heading">Hirelines.io is packaged with awesome features</h2>
-            </div> <!-- end of col -->
-        </div> <!-- end of row -->
-        <div class="row">
-            <div class="col-lg-12">
-                
-                <!-- Card -->
-                <div class="card">
-                    <div class="card-icon">
-                        <!-- <span class="fas fa-headphones-alt"></span> -->
-                        <i class="fas fa-clipboard-check"></i>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Screening Test</h4>
-                        <p>Quickly filter applicants with targeted assessments that evaluate essential skills and qualifications</p>
-                    </div>
-                </div>
-                <!-- end of card -->
-
-                <!-- Card -->
-                <div class="card">
-                    <div class="card-icon green">
-                        <!-- <span class="far fa-clipboard"></span> -->
-                        <i class="fas fa-code"></i>
-                        <!-- <span>
-                            <iconify-icon class="fas fa" icon="material-symbols:code-blocks-outline"></iconify-icon>
-                        </span> -->
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Coding Test</h4>
-                        <p> Measure programming expertise through real-world coding scenarios to ensure technical competence.</p>
-                    </div>
-                </div>
-                <!-- end of card -->
-
-                <!-- Card -->
-                <div class="card">
-                    <div class="card-icon blue">
-                        <!-- <span class="far fa-comments"></span> -->
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Online Interview</h4>
-                        <p>Conduct interactive online interviews that provide a complete view of each candidate’s expertise, communication, and cultural fit</p>
-                    </div>
-                </div>
-                <!-- end of card -->
-
-                <!-- Card -->
-                <div class="card">
-                    <div class="card-icon" style="background-color:  #fff4e6;">
-                        <i class="fas fa-chart-line" style="color: #f97316;"></i>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Dashboards</h4>
-                        <p>Gain actionable insights into your hiring process with real-time tracking and performance analytics</p>
-                    </div>
-                </div>
-                <!-- end of card -->
-
-                <!-- Card -->
-                <div class="card">
-                    <div class="card-icon" style="background-color:  #e0f7f9;">
-                        <i class="fas fa-palette" style="color:  #0d9488;"></i>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Branding</h4>
-                        <p>Deliver a seamless and professional candidate experience with personalized, brand-consistent email outreach</p>
-                    </div>
-                </div>
-                <!-- end of card -->
-
-            </div> <!-- end of col -->
-        </div> <!-- end of row -->
-    </div> <!-- end of container -->
-</div> <!-- end of cards-1 -->
-<!-- end of services -->
-
 
 
 <!-- Pricing -->
@@ -264,7 +377,8 @@
                             <span>Create Your Job Post</span>
                         </div>
                         <ul class="list-unstyled li-space-lg">
-                            <li>Customize your job descriptions with our guided templates to attract the right talent.</li>
+                            <li>Customize your job descriptions with our guided templates to attract the right talent.
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -280,7 +394,8 @@
                             <span>Assess and Screen</span>
                         </div>
                         <ul class="list-unstyled li-space-lg">
-                            <li>Our platform facilitates automated assessments that gauge skills and fit, delivering instant results for your review.</li>
+                            <li>Our platform facilitates automated assessments that gauge skills and fit, delivering
+                                instant results for your review.</li>
                         </ul>
                     </div>
                 </div>
@@ -296,7 +411,8 @@
                             <span>Interview and Hire</span>
                         </div>
                         <ul class="list-unstyled li-space-lg">
-                            <li>Schedule and conduct video interviews seamlessly, ensuring that the best candidates stand out for your development needs.</li>
+                            <li>Schedule and conduct video interviews seamlessly, ensuring that the best candidates
+                                stand out for your development needs.</li>
                         </ul>
                     </div>
                 </div>
@@ -319,13 +435,16 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="image-container" style="text-align: center;">
-                    <img class="img-fluid" src="{% static 'lib/homePage/images/process-no-label.svg' %}" alt="alternative">
+                    <img class="img-fluid" src="{% static 'lib/homePage/images/process-no-label.svg' %}"
+                        alt="alternative">
                 </div> <!-- end of image-container -->
             </div> <!-- end of col -->
             <div class="col-lg-6">
                 <div class="text-container">
                     <!-- <img class="img-fluid" src="{% static 'lib/homePage/images/ai.svg' %}" alt="alternative"> -->
-                    <p>Unlock the power of intelligent automation and data-driven insights to streamline your recruitment process. Our AI-driven tools and comprehensive assessments help you hire the right talent faster and more efficiently.</p>
+                    <p>Unlock the power of intelligent automation and data-driven insights to streamline your
+                        recruitment process. Our AI-driven tools and comprehensive assessments help you hire the right
+                        talent faster and more efficiently.</p>
                     <ul class="list-unstyled li-space-lg" style="font-weight: 600;color: #274699;margin-top: 4rem;">
                         <li class="d-flex">
                             <i class="fas fa-square"></i>
@@ -355,9 +474,10 @@
 </div> <!-- end of basic-2 -->
 <!-- end of details 2 -->
 
-<section class="demo">
+<!-- <section class="demo">
     <h1>Experience the Power of AI in Recruitment</h1>
-    <p>Transform your hiring process with fast, accurate, and efficient AI solutions tailored for software development companies.</p>
+    <p>Transform your hiring process with fast, accurate, and efficient AI solutions tailored for software development
+        companies.</p>
     <a href="/demo" class="btn-outline-lg page-scroll get-start-btn">Request a Demo</a>
 </section>
 
@@ -365,7 +485,8 @@
     <div class="column-1">
         <img class="img-fluid" style="max-width: 200px;" src="{% static 'lib/homePage/images/credits.webp' %}">
         <h2>1,000 Free Credits with Sign-up</h2>
-        <p>Start your journey with us by getting 1,000 free credits. No commitments, just growth opportunities for your business.</p>
+        <p>Start your journey with us by getting 1,000 free credits. No commitments, just growth opportunities for your
+            business.</p>
     </div>
     <div class="divider"></div>
     <div class="column-2">
@@ -373,30 +494,30 @@
         <div class="right-content">
             <table>
                 <thead>
-                  <tr>
-                    <th>Test Type</th>
-                    <th>Credits</th>
-                  </tr>
+                    <tr>
+                        <th>Test Type</th>
+                        <th>Credits</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td><i class="fas fa-clipboard-check" style="color: #8763ee;"></i> &nbsp; Screening Test</td>
-                    <td>10 credits</td>
-                  </tr>
-                  <tr>
-                    <td><i class="fas fa-code" style="color: #00d462;"></i> &nbsp;Coding Test</td>
-                    <td>30 credits</td>
-                  </tr>
-                  <tr>
-                    <td><i class="fas fa-chalkboard-teacher" style="color: #1f68f3;"></i> &nbsp;Interview</td>
-                    <td>60 credits</td>
-                  </tr>
+                    <tr>
+                        <td><i class="fas fa-clipboard-check" style="color: #8763ee;"></i> &nbsp; Screening Test</td>
+                        <td>10 credits</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-code" style="color: #00d462;"></i> &nbsp;Coding Test</td>
+                        <td>30 credits</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-chalkboard-teacher" style="color: #1f68f3;"></i> &nbsp;Interview</td>
+                        <td>60 credits</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
         <p class="note">* Credit charges may vary based on the company's custom needs.</p>
     </div>
-</div>
+</div> -->
 
 
 <div class="brands-logo">
@@ -409,8 +530,10 @@
             </div> <!-- end of row -->
             <div class="logos-container">
                 <img src="{% static 'lib/homePage/images/brand_logos/gsspec.jpg' %}" alt="gsspec" class="animate" />
-                <img src="{% static 'lib/homePage/images/brand_logos/talentforge.png' %}" alt="TalentForge" class="animate" />
-                <img src="https://alephys.com/wp-content/uploads/al_opt_content/IMAGE/alephys.com//wp-content/uploads/2024/05/Alephys-2-1.png.bv.webp" alt="Apple" class="animate" />
+                <img src="{% static 'lib/homePage/images/brand_logos/talentforge.png' %}" alt="TalentForge"
+                    class="animate" />
+                <img src="https://alephys.com/wp-content/uploads/al_opt_content/IMAGE/alephys.com//wp-content/uploads/2024/05/Alephys-2-1.png.bv.webp"
+                    alt="Apple" class="animate" />
             </div>
         </section>
     </div>
@@ -555,7 +678,8 @@
             <div class="col-lg-12">
                 <div class="footer-col first">
                     <h6>About Website</h6>
-                    <p class="p-small">At <strong>HireLines</strong>, we are passionate about connecting top-tier software developers with dynamic companies. </p>
+                    <p class="p-small">At <strong>HireLines</strong>, we are passionate about connecting top-tier
+                        software developers with dynamic companies. </p>
                 </div> <!-- end of footer-col -->
                 <div class="footer-col second">
                     <h6>Links</h6>
@@ -600,7 +724,7 @@
             </div> <!-- end of col -->
         </div> <!-- end of row -->
     </div> <!-- end of container -->
-</div> <!-- end of footer -->  
+</div> <!-- end of footer -->
 <!-- end of footer -->
 
 
@@ -613,75 +737,74 @@
             </div>
         </div> <!-- enf of row -->
     </div> <!-- end of container -->
-</div> <!-- end of copyright --> 
+</div> <!-- end of copyright -->
 <!-- end of copyright -->
 
 
 <style>
-
     .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 6rem 2rem;
-      height: 100vh;
-      background: url('static/lib/homePage/images/hero.jpg') no-repeat center center/cover;
-      position: relative;
-      color: #fff;
-      overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 6rem 2rem;
+        height: 100vh;
+        background: url('static/lib/homePage/images/hero.jpg') no-repeat center center/cover;
+        position: relative;
+        color: #fff;
+        overflow: hidden;
     }
 
     /* Overlay for better readability */
     .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      /* background: rgba(0, 0, 0, 0.5); */
-      z-index: 1;
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* background: rgba(0, 0, 0, 0.5); */
+        z-index: 1;
     }
 
     .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      z-index: 2;
-      position: relative;
-      text-shadow: 2px 2px 5px rgba(214, 240, 253, 0.7);
-      color: var(--primary-color);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        z-index: 2;
+        position: relative;
+        text-shadow: 2px 2px 5px rgba(214, 240, 253, 0.7);
+        color: var(--primary-color);
     }
 
     .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-      line-height: 1.6;
-      z-index: 2;
-      position: relative;
-      text-shadow: 2px 2px 5px rgba(214, 240, 253, 0.7);
-      color: var(--primary-color);
-      font-weight: 600;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        z-index: 2;
+        position: relative;
+        text-shadow: 2px 2px 5px rgba(214, 240, 253, 0.7);
+        color: var(--primary-color);
+        font-weight: 600;
     }
 
     .btn-outline-lg {
-      transition: background-color 0.3s, color 0.3s;
-      z-index: 2;
-      position: relative;
+        transition: background-color 0.3s, color 0.3s;
+        z-index: 2;
+        position: relative;
     }
 
     .btn-outline-lg:hover {
-      background-color: #fff;
-      color: #000;
+        background-color: #fff;
+        color: #000;
     }
 
     .form-div {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 500px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 500px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .hero-btn {
@@ -692,96 +815,100 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 1.8rem;
-      }
+        .hero h1 {
+            font-size: 1.8rem;
+        }
 
-      .hero p {
-        font-size: 1rem;
-      }
+        .hero p {
+            font-size: 1rem;
+        }
 
-      .btn-outline-lg {
-        font-size: 1rem;
-        /* padding: 0.6rem 1.5rem; */
-      }
+        .btn-outline-lg {
+            font-size: 1rem;
+            /* padding: 0.6rem 1.5rem; */
+        }
 
-      .hero {
-        justify-content: start;
-        background: url('static/lib/homePage/images/hero.jpg') no-repeat 66% center/cover !important;
-        padding: 12rem 2rem !important;
-      }
+        .hero {
+            justify-content: start;
+            background: url('static/lib/homePage/images/hero.jpg') no-repeat 66% center/cover !important;
+            padding: 12rem 2rem !important;
+        }
     }
 </style>
 
 <style>
     .client-logos {
-    text-align: center;
-    padding: 20px;
-}
+        text-align: center;
+        padding: 20px;
+    }
 
-.logos-container {
-  display: flex;
-  flex-wrap: wrap; 
-  justify-content: center; 
-  gap: 20px; 
-}
-
-.logos-container img {
-  flex: 0 1 calc(25% - 20px); 
-  max-width: calc(25% - 20px); 
-  max-height: 100px; 
-  height: auto; 
-  object-fit: contain; 
-  padding: 20px;
-}
-
-@media (max-width: 768px) {
     .logos-container {
-        flex-direction: column;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
     }
 
     .logos-container img {
-        max-width: 100%;
+        flex: 0 1 calc(25% - 20px);
+        max-width: calc(25% - 20px);
+        max-height: 100px;
+        height: auto;
+        object-fit: contain;
+        padding: 20px;
     }
-}
 
-@media (max-width: 480px) {
-  .logos-container img {
-    flex: 0 1 100%; /* 1 logo per row for small screens */
-  }
-}
+    @media (max-width: 768px) {
+        .logos-container {
+            flex-direction: column;
+        }
+
+        .logos-container img {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .logos-container img {
+            flex: 0 1 100%;
+            /* 1 logo per row for small screens */
+        }
+    }
 
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  thead {
-    background-color: #274699;
-    color: white;
-  }
-  th, td {
-    padding: 15px;
-    text-align: left;
-    font-size: 1rem;
-  }
-  tbody tr:nth-child(even) {
-    background-color: #f9fafb;
-  }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
-  .note {
-    font-size: 0.85rem;
-    color: #6b7280;
-    margin-top: 20px;
-  }
+    thead {
+        background-color: #274699;
+        color: white;
+    }
 
-  .right-content {
-    margin-top: 2rem;
-  }
+    th,
+    td {
+        padding: 15px;
+        text-align: left;
+        font-size: 1rem;
+    }
 
+    tbody tr:nth-child(even) {
+        background-color: #f9fafb;
+    }
+
+    .note {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin-top: 20px;
+    }
+
+    .right-content {
+        margin-top: 2rem;
+    }
 </style>
 
 
@@ -807,16 +934,16 @@ table {
 
 <script>
     document.querySelector('.get-start-btn').addEventListener('click', function (e) {
-      e.preventDefault(); // Prevent page scroll
-      const content = document.getElementById('webLandingContent');
-      content.style.display = 'flex'; // Show the form
+        e.preventDefault(); // Prevent page scroll
+        const content = document.getElementById('webLandingContent');
+        content.style.display = 'flex'; // Show the form
     });
-  
+
     // Hide the form when clicking outside of it
     document.getElementById('webLandingContent').addEventListener('click', function (e) {
-      if (e.target === this) {
-        this.style.display = 'none';
-      }
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
     });
 </script>
 
