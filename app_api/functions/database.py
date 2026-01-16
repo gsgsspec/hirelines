@@ -1555,12 +1555,12 @@ def updateProfileScoreDB(profile_id):
         profile_strength = profileScore.score_profile(profile_id)
         profile = Profile.objects.get(id=profile_id)
         profile.strength = profile_strength["percentage"]
-        profile.educationscore = profile_strength["breakdown"]["education"]["percentage"]
-        profile.experiencescore = profile_strength["breakdown"]["experience"]["percentage"]
-        profile.projectsscore = profile_strength["breakdown"]["projects"]["percentage"]
-        profile.skillsscore = profile_strength["breakdown"]["skills"]["percentage"]
-        profile.certificatesscore = profile_strength["breakdown"]["certificates"]["percentage"]
-        profile.awardsscore = profile_strength["breakdown"]["awards"]["percentage"]
+        profile.educationscore = profile_strength["breakdown"]["education"]["score"]
+        profile.experiencescore = profile_strength["breakdown"]["experience"]["score"]
+        profile.projectsscore = profile_strength["breakdown"]["projects"]["score"]
+        profile.skillsscore = profile_strength["breakdown"]["skills"]["score"]
+        profile.certificatesscore = profile_strength["breakdown"]["certificates"]["score"]
+        profile.awardsscore = profile_strength["breakdown"]["awards"]["score"]
         profile.save()
         
     except Exception as e:
