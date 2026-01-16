@@ -1681,7 +1681,6 @@ def filter_profiles_api(request):
     company_id=User.objects.get(email=login_user).companyid 
 
     filtered_profiles = Profile.objects.filter(companyid=company_id)
-    strength_val = getattr(filtered_profiles, 'strength', 0) or 0
 
 
 
@@ -1750,8 +1749,9 @@ def filter_profiles_api(request):
             .values_list("label", flat=True)
             .first() or ""
         )
+        strength_val = getattr(profile, 'strength', 0) or 0
 
-        # --- SKILLS (primary + secondary) ---
+        # --- SKILLS (primary + secondary) ---  
         skills_data = (
             ProfileSkills.objects.filter(profileid=profile.id)
             .values("primaryskills", "secondaryskills")
@@ -1770,9 +1770,9 @@ def filter_profiles_api(request):
             "id":profile.id,
             "date": profile.dateofcreation.strftime("%d-%b-%Y %I:%M %p"),
             "code": profile.profilecode if profile.profilecode else "",
-            "title": profile.title,
-            "firstname": profile.firstname,
-            "lastname": profile.lastname,
+            "title": profile.title if profile.title else "-" ,
+            "firstname": profile.firstname  if profile.firstname else "-",
+            "lastname": profile.lastname if profile.lastname else "-",
             "experience": f"{years} Years",
             "source": source_value,
             "status": const_profile_status.get(profile.status, profile.status),
@@ -2737,26 +2737,51 @@ def dashBoardView(request):
 
 
 
+# @api_view(['GET'])
+# def get_profile_strength(request):
+#     response = {
+#         'data': None,
+#         'error': None,
+#         'statusCode': 1
+#     }
+#     try:
+#         profile_id = request.GET.get("profile_id")
+
+#         profile = Profile.objects.filter(id=profile_id).values("strength").first()
+
+#         response['data'] = profile["strength"] if profile else 0
+#         response['statusCode'] = 0
+
+#     except Exception as e:
+#         response['data'] = None
+#         response['error'] = str(e)
+
+#     return JsonResponse(response)
+
 @api_view(['GET'])
 def get_profile_strength(request):
-    response = {
-        'data': None,
-        'error': None,
-        'statusCode': 1
-    }
     try:
         profile_id = request.GET.get("profile_id")
+        profile = Profile.objects.filter(id=profile_id).first()
 
-        profile = Profile.objects.filter(id=profile_id).values("strength").first()
-
-        response['data'] = profile["strength"] if profile else 0
-        response['statusCode'] = 0
+        if profile:
+            # Create the dictionary of actual scores
+            stats = {
+                "strength": profile.strength or 0,
+                "educationscore": profile.educationscore or 0,
+                "awardsscore": profile.awardsscore or 0,
+                "certificatesscore": profile.certificatesscore or 0,
+                "experiencescore": profile.experiencescore or 0,
+                "projectsscore": profile.projectsscore or 0,
+                "skillsscore": profile.skillsscore or 0,
+            }
+            # Return the dictionary 'stats' as the data key
+            return JsonResponse({"statusCode": 0, "data": stats, "error": None})
+        
+        return JsonResponse({"statusCode": 1, "data": None, "error": "Profile not found"})
 
     except Exception as e:
-        response['data'] = None
-        response['error'] = str(e)
-
-    return JsonResponse(response)
+        return JsonResponse({"statusCode": 1, "data": None, "error": str(e)})
 
 
 @api_view(['POST'])

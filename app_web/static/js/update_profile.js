@@ -805,11 +805,38 @@ function enforceInputConstraints(element) {
 
 
 
-function updateProfileStrength(strength) {
-    const value = document.getElementById("profileStrengthValue");
-    if (!value || strength === undefined || strength === null) return;
+function updateProfileStrength(data) {
+    // Define the elements
+    const box = document.getElementById("profileStrengthBox");
+    const valueSpan = document.getElementById("profileStrengthValue");
+    
+    // Safety check
+    if (!box || !valueSpan || !data) {
+        console.error("Required elements or data missing for strength update");
+        return;
+    }
 
-    value.innerText = strength + "%";
+    // 1. Get the total strength (handles both object and single value cases)
+    const total = data.strength !== undefined ? data.strength : data;
+    
+    // 2. Update the visible text inside the circle
+    valueSpan.innerText = total + "%";
+
+    // 3. If data is an object (contains scores), update the tooltip
+    if (typeof data === 'object') {
+        const tooltipText = 
+            `Education: ${data.educationscore || 0}%` + `\n` +
+            `Awards: ${data.awardsscore || 0}%` + `\n` +
+            `Certificates: ${data.certificatesscore || 0}%` + `\n` +
+            `Experience: ${data.experiencescore || 0}%` + `\n` +
+            `Projects: ${data.projectsscore || 0}%` + `\n` +
+            `Skills: ${data.skillsscore || 0}%`;
+            
+        // Apply the string to the custom data attribute
+        box.setAttribute("data-tip", tooltipText);
+    }
+    
+    console.log("UI Updated with new strength:", total);
 }
 
 function fetchLatestProfileStrength() {
