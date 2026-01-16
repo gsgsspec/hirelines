@@ -207,11 +207,11 @@ tbody tr:hover {
                 {% for p in profile_details %}
                 <tr onclick="window.location.href='/profileview/{{p.id}}'">
                     <td>{{ p.formatted_date }}</td>
-                    <td>{{ p.profilecode }}</td>
+                    <td>{{ p.profilecode|default:"" }}</td>
                     <td>{{ p.profilestrength}}%</td>
-                    <td>{{ p.title }}</td>
-                    <td>{{ p.firstname }}</td>
-                    <td>{{ p.lastname }}</td>
+                    <td>{{ p.title|default:"" }}</td>
+                    <td>{{ p.firstname|default:"" }}</td>
+                    <td>{{ p.lastname|default:"" }}</td>
                     <td>{{ p.final_experience }}</td>
                     <td>{{ p.source_code }}</td>
                     <!-- <td>{{ p.primaryskills_name }}, {{ p.secondaryskills_name }}</td> -->
