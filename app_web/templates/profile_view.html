@@ -177,8 +177,19 @@
 
                 <div class="tabsContainer">
                     <div style="display: flex; gap: 12px; flex-grow: 1;">
-                        <span id="active" class="custm-tab p-clr activeTab shadow"
-                            onclick="tabSwitch(this.id)">Profile</span>
+                        <!-- <span id="active" class="custm-tab p-clr activeTab shadow"
+                            onclick="tabSwitch(this.id)">Profile</span> -->
+                            <span id="active" class="custm-tab p-clr activeTab shadow" onclick="tabSwitch(this.id)" style="display: flex; align-items: center; cursor: pointer;">
+                                Profile
+                                <span id="editIcon" 
+                                    style="margin-left: 8px; font-size: 1rem;" 
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Edit Profile"
+                                    onclick="event.stopPropagation(); window.location.href='/update-profile-data/{{profile_details.id}}'">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                            </span>
 
                         <span id="Inactive" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Activity</span>
 
@@ -209,11 +220,11 @@
                         </div>
 
                         <span>Personal Details</span>
-                        <div style="text-align: right;font-size: 1.3rem;cursor: pointer;" data-bs-toggle="tooltip"
+                        <!-- <div style="text-align: right;font-size: 1.3rem;cursor: pointer;" data-bs-toggle="tooltip"
                             id="editIcon" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title=""
                             data-bs-original-title="<span>Edit Profile</span>">
                             <i class="fas fa-edit p-clr" onclick="window.location.href='/update-profile-data/{{profile_details.id}}'"></i>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="table-responsive text-nowrap" style="padding-left: 25px;">

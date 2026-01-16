@@ -16,7 +16,7 @@
     cursor: default;
 }
 
-.strength-box::before {
+/* .strength-box::before {
     content: "Profile Strength";
     position: absolute;
     right: 110%;           
@@ -33,6 +33,28 @@
     pointer-events: none;
     transition: opacity 0.2s ease;
     z-index: 10;
+} */
+ .strength-box::before {
+    /* Change 'content' to pull from the 'data-tip' attribute */
+    content: attr(data-tip); 
+    position: absolute;
+    right: 110%;           
+    top: 50%;
+    transform: translateY(-50%);
+    background: #333;
+    color: #fff;
+    padding: 8px 12px; /* Increased padding for better look */
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 4px;
+    /* This allows the \a line breaks to work */
+    white-space: pre; 
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+    text-align: left; /* Align scores to the left */
+    line-height: 1.5;
 }
 
 .strength-box::after {
@@ -87,12 +109,20 @@
             <i class="fas fa-paste"></i>
             </button>
         </div>
-       <div class="strength-box" id="profileStrengthBox">
+       <!-- <div class="strength-box" id="profileStrengthBox">
     
     <span id="profileStrengthValue">
         {{ profile_data.personal.strength }}%
     </span>
-    </div>
+    </div> -->
+        <div class="strength-box" id="profileStrengthBox" 
+            data-tip="Education: {{ profile_details.educationscore }}%&#10;Awards: {{ profile_details.awardsscore }}%&#10;Certs: {{ profile_details.certificatesscore }}%&#10;Experience: {{ profile_details.experiencescore }}%&#10;Projects: {{ profile_details.projectsscore }}%&#10;Skills: {{ profile_details.skillsscore }}%">
+            
+            <span id="profileStrengthValue">
+                {{ profile_data.personal.strength }}%
+            </span>
+        </div>
+
 </div>
 
 

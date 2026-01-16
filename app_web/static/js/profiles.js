@@ -178,6 +178,7 @@ function filter_profiles() {
                         tr
                         + '<td>' + p["date"] + '</td>'
                         + '<td>' + p["code"] + '</td>'
+                        + '<td>' + p["profilestrength"] + '</td>'
                         + '<td>' + p["title"] + '</td>'
                         + '<td>' + p["firstname"] + '</td>'
                         + '<td>' + p["lastname"] + '</td>'

@@ -3714,7 +3714,13 @@ def getProfileDetailsService(pid):
             "nativeof": profile.get("nativeof", ""),
             "facebook": profile.get("facebook", ""),
             "passportnum": profile.get("passportnum", ""),
-            "strength": profile.get("strength","")
+            "strength": profile.get("strength",""),
+            "educationscore" : profile.get("educationscore","0"),
+            "awardsscore"   : profile.get("awardsscore","0"),
+            "certificatesscore"  : profile.get("certificatesscore","0"),
+            "experiencescore" : profile.get("experiencescore","0"),
+            "projectsscore" : profile.get("projectsscore","0"),
+            "skillsscore" : profile.get("skillsscore","0"),
         }
 
         education_list = (

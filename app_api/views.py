@@ -1681,6 +1681,7 @@ def filter_profiles_api(request):
     company_id=User.objects.get(email=login_user).companyid 
 
     filtered_profiles = Profile.objects.filter(companyid=company_id)
+    strength_val = getattr(filtered_profiles, 'strength', 0) or 0
 
 
 
@@ -1777,7 +1778,8 @@ def filter_profiles_api(request):
             "status": const_profile_status.get(profile.status, profile.status),
             "primaryskills_name": primary_sk,
             "secondaryskills_name": secondary_sk,
-        })
+            "profilestrength": strength_val
+        })  
 
     return JsonResponse({"statusCode": 0, "data": final_output})
 

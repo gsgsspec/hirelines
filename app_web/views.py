@@ -938,7 +938,9 @@ def profilesPage(request):
             # Source
             src = Source.objects.filter(id=p["sourceid"]).first()
             p["source_code"] = src.label if src else ""
-
+            
+            # p["profilestrength"]= p.get("strength", 0)
+            p["profilestrength"] = p.get("strength") or 0
             # Status
             const_profile_status
             p["status_text"] = const_profile_status.get(p["status"], "NA")
