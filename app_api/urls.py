@@ -104,6 +104,9 @@ urlpatterns = [
     path('get-profile-strength', views.get_profile_strength),
     path('add-new-client',views.addNewClients),
     path('change-client-status',views.changeClientStatus),
+    
+    path("recruiters-performance", views.recruiters_performance),
+
 
 
 

@@ -24,7 +24,7 @@ from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
-        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService
+        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
@@ -2830,3 +2830,45 @@ def changeClientStatus(request):
         response['error'] = str(e)
         raise
     return JsonResponse(response)
+
+
+
+@api_view(['POST'])
+def recruiters_performance(request):
+    try:
+        if request.method == "POST":
+            user = auth_user(request.user)
+
+            data = json.loads(request.POST.get("data", "{}"))
+
+            from_date = data.get("date_from")
+            to_date = data.get("date_to")
+
+            # 2️⃣ Prepare service input
+            dataObjs = {
+                "cid": user.companyid,   # adjust if different
+                "from_date": from_date,
+                "to_date": to_date,
+            }
+            print("dataObjs",dataObjs)
+            result = RecruitersPerformanceService(dataObjs)
+
+            return JsonResponse({
+                "statusCode": 0,
+                "from_date": result["from_date"],
+                "to_date": result["to_date"],
+                "data": result["data"]
+            })
+
+        return JsonResponse({
+            "statusCode": 1,
+            "data": [],
+            "error": "Invalid request method"
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "statusCode": 1,
+            "data": [],
+            "error": str(e)
+        })

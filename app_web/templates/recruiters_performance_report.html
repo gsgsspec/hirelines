@@ -1,0 +1,424 @@
+{% load static %}
+
+<div class="container-center">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-title-table">
+                <h4 class="card-header">
+                    Recruiters Performance Report
+                </h4>
+                <div id="export-buttons-container"></div>
+
+            </div>
+            <form method="get">
+                <div class="row mx-0 pt-2 pb-2 align-items-start">
+
+                    <!-- FROM DATE - LEFT -->
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-2 filter-line" style="padding-left: 14px;">
+                            <label>From</label>
+                            <input type="date" id="filter_from" class="form-control date-input" value="{{from_date}}"
+                                onchange="filter_recruiter_performance()">
+
+                        </div>
+                    </div>
+
+
+                    <!-- TO DATE - RIGHT -->
+                    <div class="col-md-6 d-flex justify-content-end">
+                        <div class="d-flex align-items-center gap-2 filter-line" style="padding-right: 20px;">
+                            <label>To</label>
+                            <input type="date" id="filter_to" class="form-control date-input" value="{{to_date}}"
+                                onchange="filter_recruiter_performance()">
+                        </div>
+                    </div>
+
+
+                </div>
+            </form>
+
+
+            <div class="table-responsive text-nowrap table-cls mb-2">
+
+                <table class="table table-bordered table-hover table-striped" id="recruiter_performance_table"
+                    style="border-top: 1px solid #b8bfc6; border-bottom: 1px solid #b8bfc6;">
+
+                    <thead>
+                        <tr>
+                            <th rowspan="1">Recruiter</th>
+                            <th colspan="3" class="text-center">Internal</th>
+                            <th colspan="5" class="text-center" style="text-align: center !important;">Client</th>
+                        </tr>
+
+                        <tr>
+                            <th>JD</th>
+                            <th>Sourced</th>
+                            <th>Profiled</th>
+                            <th>Screened</th>
+                            <th>Interview</th>
+                            <th>Submitted</th>
+                            <th>Interview</th>
+                            <th>Waiting</th>
+                            <th>Selected</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for recruiter, jd_list in recruiter_report.items %}
+                        {% for jd in jd_list %}
+                        <tr>
+                            <td>
+                                {% if forloop.first %}
+                                <strong>{{ recruiter }}</strong>
+                                {% else %}
+                                &nbsp;&nbsp;&nbsp;{{ jd.jd }}
+                                {% endif %}
+                            </td>
+
+                            <td class="text-end">{{ jd.sourced }}</td>
+                            <td class="text-end">{{ jd.profiled }}</td>
+                            <td class="text-end">{{ jd.screened }}</td>
+                            <td class="text-end">{{ jd.client_interview }}</td>
+                            <td class="text-end">{{ jd.submitted }}</td>
+                            <td class="text-end">{{ jd.client_interview }}</td>
+                            <td class="text-end">{{ jd.waiting }}</td>
+                            <td class="text-end">{{ jd.selected }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+
+
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    
+    /* Vertically align From / To label and date input */
+    .row.align-items-center label {
+        margin-bottom: 0;
+        line-height: 1;
+    }
+
+    .row.align-items-center input[type="date"] {
+        vertical-align: middle;
+    }
+
+    .date-input {
+        width: 160px;
+    }
+
+    .card-header {
+        padding-bottom: 6px;
+    }
+
+    .card-title-table {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        /* vertical center */
+        padding-right: 15px;
+    }
+
+    /* FIX card-header default padding */
+    .card-title-table .card-header {
+        margin-bottom: 0;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    /* Export button vertical alignment */
+    #export-buttons-container {
+        display: flex;
+        align-items: center;
+    }
+
+
+    .dt-buttons button {
+        padding: 5px 15px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        background-color: #274699;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+    }
+
+    .dataTables_filter {
+        margin-bottom: 5px !important;
+    }
+
+    .dataTables_length {
+        margin: 10px !important;
+    }
+
+    /* Custom CSS to move the sorting arrows to the left for columns 2, 3, and 4 */
+    th:nth-child(3),
+    th:nth-child(4),
+    th:nth-child(5) {
+        text-align: left !important;
+    }
+
+    th:nth-child(3) .sorting,
+    th:nth-child(4) .sorting,
+    th:nth-child(5) .sorting {
+        float: left;
+        margin-left: 10px;
+        /* Adjust spacing as needed */
+    }
+
+    th:nth-child(3) .sorting_asc,
+    th:nth-child(4) .sorting_asc,
+    th:nth-child(5) .sorting_asc {
+        margin-left: 10px;
+    }
+
+    th:nth-child(3) .sorting_desc,
+    th:nth-child(4) .sorting_desc,
+    th:nth-child(5) .sorting_desc {
+        margin-left: 10px;
+    }
+</style>
+<script>
+
+   function addExportButton(table) {
+
+    $('#export-buttons-container').empty();
+
+    new $.fn.dataTable.Buttons(table, {
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="fas fa-file-download"></i>&ensp;Download',
+                filename: 'Recruiters Performance Report',
+                title: null,
+                footer: false,
+
+                customize: function (xlsx) {
+
+                    var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                    var sheetData = sheet.getElementsByTagName('sheetData')[0];
+
+                    var rows = sheetData.getElementsByTagName('row');
+                    if (rows.length > 0) {
+                        sheetData.removeChild(rows[0]);
+                    }
+
+                    $('row', sheet).each(function () {
+                        var r = parseInt($(this).attr('r'));
+                        $(this).attr('r', r + 1);
+                    });
+
+                    $('row c', sheet).each(function () {
+                        var ref = $(this).attr('r');
+                        var col = ref.replace(/[0-9]/g, '');
+                        var row = parseInt(ref.replace(/[A-Z]/g, ''));
+                        $(this).attr('r', col + (row + 1));
+                    });
+
+
+                    var header1 =
+                        '<row r="1">' +
+                        '<c t="inlineStr" r="A1"><is><t>Recruiter</t></is></c>' +
+                        '<c t="inlineStr" r="B1"><is><t>Internal</t></is></c>' +
+                        '<c t="inlineStr" r="F1"><is><t>Client</t></is></c>' +
+                        '</row>';
+
+                    var header2 =
+                        '<row r="2">' +
+                        '<c t="inlineStr" r="A2"><is><t>JD</t></is></c>' +
+                        '<c t="inlineStr" r="B2"><is><t>Sourced</t></is></c>' +
+                        '<c t="inlineStr" r="C2"><is><t>Profiled</t></is></c>' +
+                        '<c t="inlineStr" r="D2"><is><t>Screened</t></is></c>' +
+                        '<c t="inlineStr" r="E2"><is><t>Interview</t></is></c>' +
+                        '<c t="inlineStr" r="F2"><is><t>Submitted</t></is></c>' +
+                        '<c t="inlineStr" r="G2"><is><t>Interview</t></is></c>' +
+                        '<c t="inlineStr" r="H2"><is><t>Waiting</t></is></c>' +
+                        '<c t="inlineStr" r="I2"><is><t>Selected</t></is></c>' +
+                        '</row>';
+
+                    sheetData.innerHTML = header1 + header2 + sheetData.innerHTML;
+
+                    var styles = xlsx.xl['styles.xml'];
+                    var $styles = $(styles);
+
+                    // Border
+                    $styles.find('borders').append(
+                        '<border>' +
+                        '<left style="thin"/>' +
+                        '<right style="thin"/>' +
+                        '<top style="thin"/>' +
+                        '<bottom style="thin"/>' +
+                        '</border>'
+                    );
+                    var borderId = $styles.find('borders border').length - 1;
+
+                    // Header fill (blue)
+                    $styles.find('fills').append(
+                        '<fill><patternFill patternType="solid">' +
+                        '<fgColor rgb="4F81BD"/>' +
+                        '<bgColor indexed="64"/>' +
+                        '</patternFill></fill>'
+                    );
+                    var fillId = $styles.find('fills fill').length - 1;
+
+                    // Header font (white + bold)
+                    $styles.find('fonts').append(
+                        '<font><b/><color rgb="FFFFFF"/></font>'
+                    );
+                    var fontId = $styles.find('fonts font').length - 1;
+
+                    // Header style
+                    // Header style (blue + white + center aligned)
+                    $styles.find('cellXfs').append(
+                        '<xf xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"' +
+                        ' fontId="' + fontId +
+                        '" fillId="' + fillId +
+                        '" borderId="' + borderId + '">' +
+                        '<alignment horizontal="center" vertical="center"/>' +
+                        '</xf>'
+                    );
+                    var headerStyle = $styles.find('cellXfs xf').length - 1;
+
+
+                    // Body border-only style
+                    $styles.find('cellXfs').append(
+                        '<xf xfId="0" applyBorder="1" borderId="' + borderId + '"/>'
+                    );
+                    var bodyStyle = $styles.find('cellXfs xf').length - 1;
+
+                    // Header rows only blue
+                    $('row[r="1"] c', sheet).attr('s', headerStyle);
+                    $('row[r="2"] c', sheet).attr('s', headerStyle);
+
+                    // Body rows only borders
+                    $('row[r!="1"][r!="2"] c', sheet).attr('s', bodyStyle);
+
+                    var mergeCells = sheet.getElementsByTagName('mergeCells')[0];
+                    if (!mergeCells) {
+                        mergeCells = sheet.createElement('mergeCells');
+                        sheet.documentElement.appendChild(mergeCells);
+                    }
+
+                    mergeCells.setAttribute('count', '2');
+                    mergeCells.innerHTML =
+                        '<mergeCell ref="B1:E1"/>' +
+                        '<mergeCell ref="F1:I1"/>';
+                }
+            }
+        ]
+    }).container().appendTo('#export-buttons-container');
+}
+
+    jQuery(document).ready(function () {
+
+        $.noConflict();
+
+        // Initialize DataTable
+        var table = $('#recruiter_performance_table').DataTable({
+            order: [],
+            ordering: false,
+            paging: true,
+            pageLength: 10,
+            pagingType: "simple_numbers",
+            language: {
+                search: "",
+                searchPlaceholder: "Search...",
+                zeroRecords: "No records found"
+            }
+        });
+
+        // SHOW EXPORT BUTTON ON PAGE LOAD
+        addExportButton(table);
+    });
+
+
+    function filter_recruiter_performance() {
+
+        let dataObj = {
+            date_from: $("#filter_from").val(),
+            date_to: $("#filter_to").val(),
+        };
+
+        // Date validation
+        if (dataObj.date_from && dataObj.date_to) {
+            if (dataObj.date_from > dataObj.date_to) {
+                alert("Invalid date range");
+                return;
+            }
+        }
+
+        var final_data = {
+            data: JSON.stringify(dataObj),
+            csrfmiddlewaretoken: CSRF_TOKEN,
+        };
+
+        $.post(
+            CONFIG['portal'] + "/api/recruiters-performance",
+            final_data,
+            function (res) {
+
+                if (res.statusCode === 0) {
+
+                    var FILTERED_DATA = res.data;
+
+                    // DESTROY OLD TABLE (THIS REMOVES BUTTONS)
+                    $('#recruiter_performance_table').DataTable().destroy();
+
+                    // Clear rows
+                    $("#recruiter_performance_table tbody").html('');
+
+                    // Build rows
+                    $.each(FILTERED_DATA, function (recruiter, rows) {
+
+                        for (var i = 0; i < rows.length; i++) {
+
+                            var r = rows[i];
+
+                            var recruiterCell =
+                                (i === 0)
+                                    ? "<strong>" + recruiter + "</strong>"
+                                    : "&nbsp;&nbsp;&nbsp;" + r.jd;
+
+                            var tr = "<tr>";
+                            tr += "<td>" + recruiterCell + "</td>";
+                            tr += "<td class='text-end'>" + (r.sourced || 0) + "</td>";
+                            tr += "<td class='text-end'>" + (r.profiled || 0) + "</td>";
+                            tr += "<td class='text-end'>" + (r.screened || 0) + "</td>";
+                            tr += "<td class='text-end'>" + (r.client_interview || 0) + "</td>";
+                            tr += "<td class='text-end'>" + (r.submitted || 0) + "</td>";
+                            tr += "<td class='text-end'>" + (r.client_interview || 0) + "</td>";
+                            tr += "<td class='text-end'>" + (r.waiting || 0) + "</td>";
+                            tr += "<td class='text-end'>" + (r.selected || 0) + "</td>";
+                            tr += "</tr>";
+
+                            $("#recruiter_performance_table tbody").append(tr);
+                        }
+                    });
+
+                    //  RE-INITIALIZE DATATABLE
+                    var table = $('#recruiter_performance_table').DataTable({
+                        order: [],
+                        ordering: false,
+                        paging: true,
+                        pageLength: 10,
+                        pagingType: "simple_numbers",
+                        language: {
+                            search: "",
+                            searchPlaceholder: "Search...",
+                            zeroRecords: "No records found"
+                        }
+                    });
+
+                    // THIS IS THE FIX — RECREATE EXPORT BUTTON
+                    addExportButton(table);
+                }
+            }
+        );
+    }
+
+</script>

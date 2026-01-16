@@ -7,7 +7,7 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills,Lookupmaster, ProfileActivity
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst,RecruitersPerformanceService
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -1340,6 +1340,32 @@ def clientLst(request):
 
         return render(request, "portal_index.html", {"template_name": 'clientLst.html','menuItemList':menuItemList
                                                      , 'usersDataLst':clientData['usrs']})
+    
+    except Exception as e:
+        raise
+    
+
+def recruiters_performance_reportPage(request):
+    if not request.user.is_active and not request.user.is_staff:
+        return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
+    
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        
+        payload={"cid":user_data.companyid}
+        recruiters_performance = RecruitersPerformanceService(payload)
+        print("recruiters_performance",recruiters_performance)
+
+        
+        return render(request, "portal_index.html", {"template_name": 'recruiters_performance_report.html','menuItemList':menuItemList,
+                                                                     "recruiter_report": recruiters_performance["data"], "from_date": recruiters_performance["from_date"], "to_date": recruiters_performance["to_date"],
+                                                                     })
     
     except Exception as e:
         raise

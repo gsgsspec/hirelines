@@ -5416,3 +5416,86 @@ def getDocParsedData(dataObjs):
         print("data",dataObjs)
     except Exception as e:
         raise
+
+
+from django.db.models import Count, Case, When, IntegerField
+def RecruitersPerformanceService(dataObjs):
+    cid = dataObjs["cid"]
+
+    today = date.today()
+
+    # 🔹 Get dates from request (strings from input type="date")
+    from_date_str = dataObjs.get("from_date")
+    to_date_str = dataObjs.get("to_date")
+
+    # 🔹 DEFAULT: current month 1st → today
+    if from_date_str:
+        from_date = datetime.strptime(from_date_str, "%Y-%m-%d").date()
+    else:
+        from_date = today.replace(day=1)
+
+    if to_date_str:
+        to_date = datetime.strptime(to_date_str, "%Y-%m-%d").date()
+    else:
+        to_date = today
+
+    # 🔹 Datetime range for filtering
+    from_dt = datetime.combine(from_date, time.min)
+    to_dt = datetime.combine(to_date, time.max)
+
+    qs = (
+        ProfileActivity.objects
+        .filter(companyid=cid, datentime__range=(from_dt, to_dt))
+        .values("acvityuserid", "profileid")
+        .annotate(
+            sourced=Count(Case(When(activitycode="PC", then=1), output_field=IntegerField())),
+            profiled=Count(Case(When(activitycode="SL", then=1), output_field=IntegerField())),
+            screened=Count(Case(When(activitycode="SC", then=1), output_field=IntegerField())),
+            client_interview=Count(Case(When(activitycode="CL", then=1), output_field=IntegerField())),
+            submitted=Count(Case(When(activitycode="E1", then=1), output_field=IntegerField())),
+            waiting=Count(Case(When(activitycode="WF", then=1), output_field=IntegerField())),
+            selected=Count(Case(When(activitycode="CS", then=1), output_field=IntegerField())),
+        )
+    )
+
+    user_map = {u.id: u.name for u in User.objects.filter(companyid=cid)}
+    jd_map = {j.id: j.title for j in JobDesc.objects.filter(companyid=cid)}
+
+    recruiter_totals = defaultdict(lambda: defaultdict(int))
+    recruiter_jds = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+
+    for r in qs:
+        recruiter = user_map.get(r["acvityuserid"], "HR-Admin")
+        jd = jd_map.get(r["profileid"], "Unknown JD")
+
+        for k in r:
+            if k not in ("acvityuserid", "profileid"):
+                recruiter_totals[recruiter][k] += r[k]
+                recruiter_jds[recruiter][jd][k] += r[k]
+
+    final = {}
+
+    for recruiter in recruiter_totals:
+        rows = []
+
+        # TOTAL ROW
+        rows.append({
+            "jd": "",
+            **recruiter_totals[recruiter]
+        })
+
+        # JD-WISE ROWS
+        for jd, vals in recruiter_jds[recruiter].items():
+            rows.append({
+                "jd": jd,
+                **vals
+            })
+
+        final[recruiter] = rows
+
+    # 🔹 Return raw dates for input type="date"
+    return {
+        "from_date": from_date.strftime("%Y-%m-%d"),
+        "to_date": to_date.strftime("%Y-%m-%d"),
+        "data": final
+    }
