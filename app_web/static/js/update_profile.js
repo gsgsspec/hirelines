@@ -826,11 +826,11 @@ function updateProfileStrength(data) {
     if (typeof data === 'object') {
         const tooltipText = 
             `Education: ${data.educationscore || 0}` + `\n` +
-            `Awards: ${data.awardsscore || 0}` + `\n` +
-            `Certificates: ${data.certificatesscore || 0}` + `\n` +
             `Experience: ${data.experiencescore || 0}` + `\n` +
+            `Skills: ${data.skillsscore || 0}` + `\n` +
             `Projects: ${data.projectsscore || 0}` + `\n` +
-            `Skills: ${data.skillsscore || 0}`;
+            `Certificates: ${data.certificatesscore || 0}` + `\n` +
+            `Awards: ${data.awardsscore || 0}`;
             
         // Apply the string to the custom data attribute
         box.setAttribute("data-tip", tooltipText);
