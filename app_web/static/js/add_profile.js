@@ -3,16 +3,16 @@ document.getElementById("save-data").onclick = function () {
     $('#candidate-data').unbind('submit').bind('submit', function (event) {
         event.preventDefault(); 
 
-        var inputValue = $('#source-code').val();
+        // var inputValue = $('#source-code').val();
 
-        $('#code-error').hide();
-        $('#career-code-error').hide();
+        // $('#code-error').hide();
+        // $('#career-code-error').hide();
 
-        if (inputValue.length !== 5) {
-            event.preventDefault();  
-            $('#code-error').show();
-            return false;
-        }
+        // if (inputValue.length !== 5) {
+        //     event.preventDefault();  
+        //     $('#code-error').show();
+        //     return false;
+        // }
 
         // if (inputValue == "CARER") {
         //     event.preventDefault();
@@ -29,7 +29,7 @@ document.getElementById("save-data").onclick = function () {
             'middlename': $('#middlename').val(),
             'lastname': $('#lastname').val(),
             'email': $('#email').val(),
-            'source-code': $('#source-code').val()
+            'source-code': $('#source-type').val()
         }
 
         var formData = new FormData();
@@ -91,86 +91,86 @@ document.getElementById("save-data").onclick = function () {
 }
 
 
-const existingSources = Array.isArray(sourcesData) ? sourcesData : [];
+// const existingSources = Array.isArray(sourcesData) ? sourcesData : [];
 
-const searchInput = document.getElementById("source-code");
-const suggestionsBox = document.getElementById("existing-sources");
-const selectedSourceLabel = document.getElementById("selected-source");
+// const searchInput = document.getElementById("source-code");
+// const suggestionsBox = document.getElementById("existing-sources");
+// const selectedSourceLabel = document.getElementById("selected-source");
 
-searchInput.addEventListener("input", function () {
+// searchInput.addEventListener("input", function () {
 
-    searchInput.value = searchInput.value.toUpperCase();  // Enforce uppercase
+//     searchInput.value = searchInput.value.toUpperCase();  // Enforce uppercase
 
-    const query = searchInput.value.trim().toLowerCase();
-    suggestionsBox.innerHTML = ""; // Clear suggestions
+//     const query = searchInput.value.trim().toLowerCase();
+//     suggestionsBox.innerHTML = ""; // Clear suggestions
 
-    if (query === "") {
-        selectedSourceLabel.textContent = ""; // Remove label if input is empty
-    }
+//     if (query === "") {
+//         selectedSourceLabel.textContent = ""; // Remove label if input is empty
+//     }
 
-    if (query.length === 5){
-        $('#code-error').hide();
-    }
+//     if (query.length === 5){
+//         $('#code-error').hide();
+//     }
 
-    if (query) {
-        // Match search against the `code` field
-        const matchedSources = existingSources.filter(source =>
-            source.code.toLowerCase().includes(query)
-        );
+//     if (query) {
+//         // Match search against the `code` field
+//         const matchedSources = existingSources.filter(source =>
+//             source.code.toLowerCase().includes(query)
+//         );
 
-        if (matchedSources.length) {
+//         if (matchedSources.length) {
 
-            matchedSources.forEach(source => {
-                const suggestion = document.createElement("div");
-                suggestion.textContent = source.code; // Display the label
-                suggestion.dataset.id = source.id; // Store the id in data attributes
-                suggestion.dataset.code = source.code; // Store the code in data attributes
+//             matchedSources.forEach(source => {
+//                 const suggestion = document.createElement("div");
+//                 suggestion.textContent = source.code; // Display the label
+//                 suggestion.dataset.id = source.id; // Store the id in data attributes
+//                 suggestion.dataset.code = source.code; // Store the code in data attributes
 
-                suggestion.addEventListener("click", function () {
-                    searchInput.value = source.code; // Set the input value to the code
-                    suggestionsBox.innerHTML = ""; // Clear suggestions
-                    suggestionsBox.style.display = "none"; // Hide suggestions
-                    selectedSourceLabel.textContent = `${source.label}`;
+//                 suggestion.addEventListener("click", function () {
+//                     searchInput.value = source.code; // Set the input value to the code
+//                     suggestionsBox.innerHTML = ""; // Clear suggestions
+//                     suggestionsBox.style.display = "none"; // Hide suggestions
+//                     selectedSourceLabel.textContent = `${source.label}`;
 
-                });
+//                 });
 
-                suggestionsBox.appendChild(suggestion);
-            });
-            suggestionsBox.style.display = "block"; // Show suggestions
+//                 suggestionsBox.appendChild(suggestion);
+//             });
+//             suggestionsBox.style.display = "block"; // Show suggestions
             
-        } else {
-            suggestionsBox.style.display = "none"; // Hide suggestions if no matches
-        }
+//         } else {
+//             suggestionsBox.style.display = "none"; // Hide suggestions if no matches
+//         }
 
-        const exactMatch = existingSources.find(source => source.code.toLowerCase() === query);
+//         const exactMatch = existingSources.find(source => source.code.toLowerCase() === query);
         
-        if (exactMatch) {
-            selectedSourceLabel.textContent = exactMatch.label;  // Only update if there's an exact match
-        } else {
-            selectedSourceLabel.textContent = ""; // Clear the label if there's no exact match
-        }
+//         if (exactMatch) {
+//             selectedSourceLabel.textContent = exactMatch.label;  // Only update if there's an exact match
+//         } else {
+//             selectedSourceLabel.textContent = ""; // Clear the label if there's no exact match
+//         }
 
-    } else {
-        suggestionsBox.style.display = "none"; // Hide suggestions if query is empty
-        selectedSourceLabel.textContent = "";
-    }
-});
-
-
-// Hide suggestions on blur
-searchInput.addEventListener("blur", function () {
-    setTimeout(() => suggestionsBox.style.display = "none", 200);
-});
+//     } else {
+//         suggestionsBox.style.display = "none"; // Hide suggestions if query is empty
+//         selectedSourceLabel.textContent = "";
+//     }
+// });
 
 
-const sourceInputField = document.getElementById("source-code");
+// // Hide suggestions on blur
+// searchInput.addEventListener("blur", function () {
+//     setTimeout(() => suggestionsBox.style.display = "none", 200);
+// });
 
-sourceInputField.addEventListener("keypress", function (e) {
 
-    if (e.key === " " || e.keyCode === 32) {
-        e.preventDefault();  
-    }
-});
+// const sourceInputField = document.getElementById("source-code");
+
+// sourceInputField.addEventListener("keypress", function (e) {
+
+//     if (e.key === " " || e.keyCode === 32) {
+//         e.preventDefault();  
+//     }
+// });
 
 
 

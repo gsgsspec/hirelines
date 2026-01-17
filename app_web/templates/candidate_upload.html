@@ -17,15 +17,12 @@
                 <h5 class="mb-0 p-clr" style="font-weight: 600">Candidates Upload</h5> -->
             <div class="card-title-table">
                     <h4 class="card-header">Candidates Upload</h4>
-                    <div class="p-3 text-align-right d-flex align-items-center justify-content-center"></div>
            
-                {% if candidates_upload_data.display_flag == "Y" and candidates_upload_data.status == "C" %}
-                    <!-- <div class="row justify-content-end"> -->
-                    <div class="col-sm-10 text-end">
-                        <button id="download-report" class="btn btn-primary">Previous Candidate Upload Report</button>
-                    </div>
-                    <!-- </div> -->
-                {% endif %}
+                    {% if candidates_upload_data.display_flag == "Y" and candidates_upload_data.status == "C" %}
+                        <!-- <div class="row justify-content-end"> -->
+                        <button id="download-report" class="btn btn-primary" style="margin-right: 10px;">Previous Candidate Upload Report</button>
+                        <!-- </div> -->
+                    {% endif %}
             </div>
             <div class="card-body">
                 {% if candidates_upload_data.display_flag == "Y" and candidates_upload_data.status == "I" %}
@@ -48,9 +45,20 @@
                     </div>
 
                     <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label">Source <span style="color: red;">*</span></label>
+                        <div class="col-sm-5">
+                            <select id="source-type" class="form-select" required>
+                                <option value="" selected disabled></option>
+                                {% for source in sources_data %}
+                                    <option value="{{ source.code }}">{{ source.code }} - {{ source.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">Source code</label>
                         <div class="col-sm-3">
-                            <!-- <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5" maxlength="5" pattern="[^ ]*" required> -->
                             <input type="text" id="source-code" class="form-control" placeholder="Code" minlength="5"
                                 maxlength="5" pattern="^[a-zA-Z0-9]*$" required>
                             <div id="existing-sources" class="existing-sources"></div>
@@ -62,7 +70,7 @@
                         <div class="col-sm-3" style="padding-left: 0px;">
                             <label class="col-form-label p-clr" id="selected-source"></label>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">File</label>
@@ -85,11 +93,11 @@
     </div>
 </div>
 
-<script>
+<!-- <script>
 
     var sourcesData = JSON.parse('{{ sources_data|escapejs }}');
 
-</script>
+</script> -->
 
 <script>
     $(document).ready(function () {

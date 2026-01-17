@@ -85,6 +85,7 @@ def fetch_gmail_attachments():
             for part in msg_data["payload"].get("parts", []):
 
                 if part.get("filename"):
+                    
                     filename = part["filename"]
 
                     allowed_ext = (".pdf", ".doc", ".docx")
@@ -114,7 +115,21 @@ def fetch_gmail_attachments():
 
                     if user:
                         source = Source.objects.filter(userid=user['id']).last()
-                        sourceid = source.id
+                        if source:
+                            sourceid = source.id
+
+                        else:
+                            code = f"RC{user['id']:03}"
+                            source = Source(
+                                code=code,
+                                label=user["name"],
+                                companyid=user["companyid"],
+                                userid=user['id'],
+                            )
+
+                            source.save()
+
+                            sourceid = source.id
 
                     new_resume = Resume(
                         sourceid = sourceid,

@@ -453,7 +453,8 @@ def addCandidatePage(request):
 
         jds_list = getCompanyJdData(company_id)
 
-        sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+        # sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+        sources_data = getCompanySourcesData(user_data.companyid)
 
         return render(request, "portal_index.html", {"template_name": 'add_candidate.html','menuItemList': menuItemList,'jds_data':jds_list,'sources_data':sources_data})
 
@@ -896,7 +897,8 @@ def uploadCandidatesPage(request):
         company_id = getCompanyId(user_mail)
 
         jds_list = getCompanyJdData(company_id)
-        sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+        # sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+        sources_data = getCompanySourcesData(user_data.companyid)
 
         candidates_upload_data = getCompanyCandidateUploadData(company_id)
 
@@ -1102,7 +1104,7 @@ def updateProfileDetailsPage(request, pid):
 
         menuItemList = get_functions_service(user_role)
 
-        profile_data = getProfileData(pid, user_data)
+        profile_data = getProfileDmodata(pid, user_data)
         profile_details=getProfileDetailsService(pid)
     
         
@@ -1121,7 +1123,9 @@ def addProfilePage(request):
 
         menuItemList = get_functions_service(user_role)
 
-        sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+        # sources_data = json.dumps(getCompanySourcesData(user_data.companyid))
+        sources_data = getCompanySourcesData(user_data.companyid)
+        print("sources_data",sources_data)
 
         return render(request, "portal_index.html", {"template_name": 'add_profile.html','menuItemList':menuItemList, "sources_data":sources_data})
 

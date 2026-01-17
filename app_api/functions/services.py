@@ -238,6 +238,16 @@ def registerUserService(dataObjs):
 
             company_branding.save()
 
+            code = f"RC{user.id:03}"
+            source = Source(
+                code=code,
+                label=user.name,
+                companyid=user.companyid,
+                userid=user.id,
+            )            
+
+            source.save()
+
             acert_domain = getConfig()["DOMAIN"]["acert"]
             endpoint = "/api/add-company"
 
@@ -2598,6 +2608,7 @@ def addNewUserService(company_id, user_data):
                 return {"userAlreadyExisted": "Y"}
             else:
                 userRole = Role.objects.filter(id=user_data["userRole"]).last()
+
                 save_user = User(
                     companyid=company_id,
                     name=user_data["userName"],
@@ -2609,17 +2620,17 @@ def addNewUserService(company_id, user_data):
                 )
                 save_user.save()
 
-                if save_user.role == "Recruiter":
-                    code = f"RC{save_user.id:03}"
+                # if save_user.role == "Recruiter":
+                code = f"RC{save_user.id:03}"
 
-                    source = Source(
-                        code=code,
-                        label=save_user.name,
-                        companyid=save_user.companyid,
-                        userid=save_user.id,
-                    )
+                source = Source(
+                    code=code,
+                    label=save_user.name,
+                    companyid=save_user.companyid,
+                    userid=save_user.id,
+                )
 
-                    source.save()
+                source.save()
 
                 return {
                     "userAlreadyExisted": "N",
@@ -2642,27 +2653,28 @@ def addNewUserService(company_id, user_data):
                 userFind.location = user_data["newUserLocation"]
                 userFind.save()
 
-                if userFind.role == "Recruiter":
+                # if userFind.role == "Recruiter":
 
-                    code = f"RC{userFind.id:03}"
+                code = f"RC{userFind.id:03}"
 
-                    source = Source.objects.filter(
-                        code=code, companyid=userFind.companyid
-                    ).last()
+                source = Source.objects.filter(
+                    code=code, companyid=userFind.companyid
+                ).last()
 
-                    if source:
+                if source:
+                    if not source.label:
                         source.label = userFind.name
-                        source.userid = userFind.id
+                    source.userid = userFind.id
 
-                    else:
-                        source = Source(
-                            code=code,
-                            label=userFind.name,
-                            companyid=userFind.companyid,
-                            userid=userFind.id,
-                        )
+                else:
+                    source = Source(
+                        code=code,
+                        label=userFind.name,
+                        companyid=userFind.companyid,
+                        userid=userFind.id,
+                    )
 
-                    source.save()
+                source.save()
 
                 # Convert userFind to a dictionary format for JSON serialization
                 user_data_response = {
@@ -3975,8 +3987,8 @@ def getEmailFetchUsers():
     try:
 
         users = list(
-            User.objects.filter(role__icontains="Recruiter").values(
-                "id", "email", "companyid"
+            User.objects.filter(status="A").values(
+                "id", "email", "companyid", "name"
             )
         )
         return users
