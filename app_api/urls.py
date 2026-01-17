@@ -106,6 +106,9 @@ urlpatterns = [
     path('change-client-status',views.changeClientStatus),
     
     path("recruiters-performance", views.recruiters_performance),
+    path("search", views.search_jd_library),
+    path("jddetail", views.jd_library_detail),
+
 
 
 

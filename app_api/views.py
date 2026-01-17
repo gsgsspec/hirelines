@@ -26,7 +26,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal,JobDescriptionLibrary
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
@@ -2893,5 +2893,64 @@ def recruiters_performance(request):
         return JsonResponse({
             "statusCode": 1,
             "data": [],
+            "error": str(e)
+        })
+        
+        
+        
+
+@api_view(['GET'])
+def search_jd_library(request):
+    try:
+        query = request.GET.get("q", "").strip()
+
+        qs = JobDescriptionLibrary.objects.filter(
+            title__icontains=query
+        ).values("id", "title")[:10]
+
+        data = list(qs)
+
+        return JsonResponse(data, safe=False)
+
+    except Exception as e:
+        return JsonResponse({
+            "error": str(e)
+        })
+
+
+@api_view(['GET'])
+def jd_library_detail(request):
+    try:
+        jd_id = request.GET.get("id")
+
+        jd = JobDescriptionLibrary.objects.get(id=jd_id)
+
+        data = {
+            "title": jd.title,
+            "description": jd.description or "",
+            "role": jd.role or "",
+            "min_exp": jd.min_exp or "",
+            "max_exp": jd.max_exp or "",
+            "budget": jd.budget or "",
+            "work_location": jd.work_location or "",
+            "no_positions": jd.positions or "",
+            "primary_skills": jd.primary_skills if jd.primary_skills else [],
+            "secondary_skills": jd.secondary_skills if jd.secondary_skills else [],
+        }
+
+        return JsonResponse({
+            "status": 1,
+            "data": data
+        })
+
+    except JobDescriptionLibrary.DoesNotExist:
+        return JsonResponse({
+            "status": 0,
+            "message": "JD not found"
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "status": 0,
             "error": str(e)
         })

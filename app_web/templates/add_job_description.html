@@ -37,13 +37,30 @@
                   </div> -->
 
                 </div>
-                <div class="row mb-3 container-center">
+                <!-- <div class="row mb-3 container-center">
                   <label class="col-sm-2 col-form-label" for="searchJobDescription">JD Title</label>
-                  <div class="col-sm-9 position-relative">
-                    <input type="form-control" id="jdTitle" class="form-control" placeholder="Job Description Title" autocomplete="off">
+                  <div class="col-sm-9 position-relative"> -->
+                    <!-- <input type="form-control" id="jdTitle" class="form-control" placeholder="Job Description Title" autocomplete="off"> -->
+<!--                    
                   </div>
 
+                </div> -->
+                <div class="row mb-3 container-center">
+                  <label class="col-sm-2 col-form-label">JD Title</label>
+                  <div class="col-sm-9 position-relative">
+                    <input type="text"
+                          class="form-control"
+                          id="jdTitle"
+                          autocomplete="off">
+
+                    <!-- Suggestions -->
+                    <div class="suggestions-box border"
+                        id="jdSuggestionsBox"
+                        style="display:none; position:absolute; background:#fff; width:100%; max-height:150px; overflow-y:auto; z-index:1000;">
+                    </div>
+                  </div>
                 </div>
+
 
                 <!-- Your Existing Form Fields -->
                 <div class="row mb-3 container-center">
@@ -274,3 +291,143 @@ input[type=submit] {
 </style>
 <script src="{% static 'js/tech_list.js' %}"></script>
 <script src="{% static 'js/add_job_description.js' %}"></script>
+<script>
+var technologiesList = languages;
+var jdSelectedSkillsList = [];
+var jdSelectedSecondarySkillsList = [];
+
+$(document).ready(function () {
+
+    const jdInput = $("#jdTitle");
+    const suggestionsBox = $("#jdSuggestionsBox");
+
+    jdInput.on("keyup", function () {
+
+        let value = jdInput.val().trim();
+
+        if (value.length < 2) {
+            suggestionsBox.hide();
+            return;
+        }
+
+        $.ajax({
+            url: CONFIG['portal'] + "/api/search",
+            type: "GET",
+            data: { q: value },
+
+            success: function (data) {
+
+                suggestionsBox.empty();
+
+                if (!data || data.length === 0) {
+                    suggestionsBox.append(`<div class="p-2 text-muted">No JD Found</div>`);
+                } else {
+                    data.forEach(jd => {
+                        suggestionsBox.append(`
+                            <div class="search_item p-2"
+                                 data-id="${jd.id}"
+                                 style="cursor:pointer">
+                                ${jd.title}
+                            </div>
+                        `);
+                    });
+                }
+
+                suggestionsBox.show();
+            }
+        });
+    });
+
+    $(document).on("click", ".search_item", function () {
+
+        let jdId = $(this).data("id");
+
+        suggestionsBox.hide();
+
+        $.ajax({
+            url: CONFIG['portal'] + "/api/jddetail",
+            type: "GET",
+            data: { id: jdId },
+
+            success: function (res) {
+
+                if (!res || res.status !== 1) return;
+
+                let data = res.data;
+
+                clearAllSkills();
+
+                $("#jdTitle").val(data.title);
+                $("#JobDescription").val(data.description);
+                $("#jdRole").val(data.role);
+                $("#min_experince").val(data.min_exp);
+                $("#max_experince").val(data.max_exp);
+                $("#jdBudget").val(data.budget);
+                $("#jdNoPositions").val(data.no_positions || "");
+                $("#jdWorkLocation").val(data.work_location);
+
+                let primarySkills = data.primary_skills;
+
+                if (typeof primarySkills === "string") {
+                    primarySkills = JSON.parse(primarySkills);
+                }
+
+                if (Array.isArray(primarySkills)) {
+                    primarySkills.forEach(skill => {
+                        let actualKey = Object.keys(languages).find(
+                            k => k.toLowerCase() === skill.toLowerCase()
+                        );
+
+                        if (actualKey) {
+                            selectedSkill(actualKey);
+                        }
+                    });
+
+                    $("#jdSkillsContainer").show();
+                }
+
+                let secondarySkills = data.secondary_skills;
+
+                if (typeof secondarySkills === "string") {
+                    secondarySkills = JSON.parse(secondarySkills);
+                }
+
+                if (Array.isArray(secondarySkills)) {
+                    secondarySkills.forEach(skill => {
+                        let actualKey = Object.keys(languages).find(
+                            k => k.toLowerCase() === skill.toLowerCase()
+                        );
+
+                        if (actualKey) {
+                            selectedSecondarySkill(actualKey);
+                        }
+                    });
+
+                    $("#jdSecondarySkillsContainer").show();
+                }
+            }
+        });
+    });
+
+    $(document).on("click", function (e) {
+        if (!$(e.target).closest("#jdTitle, #jdSuggestionsBox").length) {
+            suggestionsBox.hide();
+        }
+    });
+
+});
+
+function clearAllSkills() {
+
+    $("#skillsListMainContainer").empty();
+    $("#secondarySkillsListMainContainer").empty();
+
+    jdSelectedSkillsList = [];
+    jdSelectedSecondarySkillsList = [];
+
+    technologiesList = { ...languages };
+
+    emptySkillsContainer();
+    emptySecondarySkillsContainer();
+}
+</script>
