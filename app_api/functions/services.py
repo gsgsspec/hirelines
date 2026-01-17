@@ -5421,28 +5421,29 @@ def getDocParsedData(dataObjs):
 from django.db.models import Count, Case, When, IntegerField
 def RecruitersPerformanceService(dataObjs):
     cid = dataObjs["cid"]
-
     today = date.today()
 
-    # 🔹 Get dates from request (strings from input type="date")
+    # -------------------------------------------------
+    # Date handling
+    # -------------------------------------------------
     from_date_str = dataObjs.get("from_date")
     to_date_str = dataObjs.get("to_date")
 
-    # 🔹 DEFAULT: current month 1st → today
-    if from_date_str:
-        from_date = datetime.strptime(from_date_str, "%Y-%m-%d").date()
-    else:
-        from_date = today.replace(day=1)
+    from_date = (
+        datetime.strptime(from_date_str, "%Y-%m-%d").date()
+        if from_date_str else today.replace(day=1)
+    )
+    to_date = (
+        datetime.strptime(to_date_str, "%Y-%m-%d").date()
+        if to_date_str else today
+    )
 
-    if to_date_str:
-        to_date = datetime.strptime(to_date_str, "%Y-%m-%d").date()
-    else:
-        to_date = today
-
-    # 🔹 Datetime range for filtering
     from_dt = datetime.combine(from_date, time.min)
     to_dt = datetime.combine(to_date, time.max)
 
+    # -------------------------------------------------
+    # STEP-1: ProfileActivity (SOURCE OF TRUTH)
+    # -------------------------------------------------
     qs = (
         ProfileActivity.objects
         .filter(companyid=cid, datentime__range=(from_dt, to_dt))
@@ -5454,46 +5455,96 @@ def RecruitersPerformanceService(dataObjs):
             client_interview=Count(Case(When(activitycode="CL", then=1), output_field=IntegerField())),
             submitted=Count(Case(When(activitycode="E1", then=1), output_field=IntegerField())),
             waiting=Count(Case(When(activitycode="WF", then=1), output_field=IntegerField())),
+            rejected=Count(Case(When(activitycode="RJ", then=1), output_field=IntegerField())),
             selected=Count(Case(When(activitycode="CS", then=1), output_field=IntegerField())),
         )
     )
 
-    user_map = {u.id: u.name for u in User.objects.filter(companyid=cid)}
-    jd_map = {j.id: j.title for j in JobDesc.objects.filter(companyid=cid)}
+    profile_ids = qs.values_list("profileid", flat=True)
+    user_ids = qs.values_list("acvityuserid", flat=True)
 
+    # -------------------------------------------------
+    # STEP-2: Candidate → MULTIPLE jobids per profile
+    # -------------------------------------------------
+    profile_job_map = defaultdict(set)
+
+    for c in (
+        Candidate.objects
+        .filter(profileid__in=profile_ids)
+        .values("profileid", "jobid")
+    ):
+        profile_job_map[c["profileid"]].add(c["jobid"])
+
+    # -------------------------------------------------
+    # STEP-3: JobDesc → jobid → JD title
+    # -------------------------------------------------
+    all_job_ids = {jid for jids in profile_job_map.values() for jid in jids}
+
+    jobdesc_map = {
+        j["id"]: j["title"]
+        for j in JobDesc.objects
+            .filter(id__in=all_job_ids)
+            .values("id", "title")
+    }
+
+    # Recruiter names
+    user_map = {
+        u.id: u.name
+        for u in User.objects.filter(id__in=user_ids)
+    }
+
+    # -------------------------------------------------
+    # STEP-4: Recruiter → JD aggregation
+    # -------------------------------------------------
     recruiter_totals = defaultdict(lambda: defaultdict(int))
     recruiter_jds = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
 
     for r in qs:
         recruiter = user_map.get(r["acvityuserid"], "HR-Admin")
-        jd = jd_map.get(r["profileid"], "Unknown JD")
 
-        for k in r:
-            if k not in ("acvityuserid", "profileid"):
-                recruiter_totals[recruiter][k] += r[k]
-                recruiter_jds[recruiter][jd][k] += r[k]
+        job_ids = profile_job_map.get(r["profileid"])
+        if not job_ids:
+            continue
 
+        for job_id in job_ids:
+            jd_title = jobdesc_map.get(job_id)
+            if not jd_title:
+                continue
+
+            for k in r:
+                if k not in ("acvityuserid", "profileid"):
+                    recruiter_totals[recruiter][k] += r[k]
+                    recruiter_jds[recruiter][jd_title][k] += r[k]
+
+    # -------------------------------------------------
+    # FINAL RESPONSE (FILTER ZEROS)
+    # -------------------------------------------------
     final = {}
 
-    for recruiter in recruiter_totals:
+    for recruiter, jd_data in recruiter_jds.items():
         rows = []
 
-        # TOTAL ROW
-        rows.append({
+        # JD rows (only if any count > 0)
+        for jd, counts in jd_data.items():
+            if not any(v > 0 for v in counts.values()):
+                continue
+            rows.append({
+                "jd": jd,
+                **counts
+            })
+
+        # Skip recruiter if no JD activity
+        if not rows:
+            continue
+
+        # TOTAL row (NOTE: inflated if multiple JDs per profile)
+        rows.insert(0, {
             "jd": "",
             **recruiter_totals[recruiter]
         })
 
-        # JD-WISE ROWS
-        for jd, vals in recruiter_jds[recruiter].items():
-            rows.append({
-                "jd": jd,
-                **vals
-            })
-
         final[recruiter] = rows
 
-    # 🔹 Return raw dates for input type="date"
     return {
         "from_date": from_date.strftime("%Y-%m-%d"),
         "to_date": to_date.strftime("%Y-%m-%d"),

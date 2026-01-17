@@ -46,7 +46,7 @@
                     <thead>
                         <tr>
                             <th rowspan="1">Recruiter</th>
-                            <th colspan="3" class="text-center">Internal</th>
+                            <th colspan="4" class="text-center">Internal</th>
                             <th colspan="5" class="text-center" style="text-align: center !important;">Client</th>
                         </tr>
 
@@ -55,10 +55,11 @@
                             <th>Sourced</th>
                             <th>Profiled</th>
                             <th>Screened</th>
-                            <th>Interview</th>
+                            <th>Interviewed</th>
                             <th>Submitted</th>
-                            <th>Interview</th>
+                            <th>Interviewed</th>
                             <th>Waiting</th>
+                            <th>Rejected</th>
                             <th>Selected</th>
                         </tr>
                     </thead>
@@ -82,6 +83,7 @@
                             <td class="text-end">{{ jd.submitted }}</td>
                             <td class="text-end">{{ jd.client_interview }}</td>
                             <td class="text-end">{{ jd.waiting }}</td>
+                            <td class="text-end">{{ jd.rejected }}</td>
                             <td class="text-end">{{ jd.selected }}</td>
                         </tr>
                         {% endfor %}
@@ -234,11 +236,12 @@
                         '<c t="inlineStr" r="B2"><is><t>Sourced</t></is></c>' +
                         '<c t="inlineStr" r="C2"><is><t>Profiled</t></is></c>' +
                         '<c t="inlineStr" r="D2"><is><t>Screened</t></is></c>' +
-                        '<c t="inlineStr" r="E2"><is><t>Interview</t></is></c>' +
+                        '<c t="inlineStr" r="E2"><is><t>Interviewed</t></is></c>' +
                         '<c t="inlineStr" r="F2"><is><t>Submitted</t></is></c>' +
-                        '<c t="inlineStr" r="G2"><is><t>Interview</t></is></c>' +
+                        '<c t="inlineStr" r="G2"><is><t>Interviewed</t></is></c>' +
                         '<c t="inlineStr" r="H2"><is><t>Waiting</t></is></c>' +
-                        '<c t="inlineStr" r="I2"><is><t>Selected</t></is></c>' +
+                        '<c t="inlineStr" r="I2"><is><t>Rejected</t></is></c>' +
+                        '<c t="inlineStr" r="J2"><is><t>Selected</t></is></c>' +
                         '</row>';
 
                     sheetData.innerHTML = header1 + header2 + sheetData.innerHTML;
@@ -307,7 +310,7 @@
                     mergeCells.setAttribute('count', '2');
                     mergeCells.innerHTML =
                         '<mergeCell ref="B1:E1"/>' +
-                        '<mergeCell ref="F1:I1"/>';
+                        '<mergeCell ref="F1:J1"/>';
                 }
             }
         ]
@@ -393,6 +396,7 @@
                             tr += "<td class='text-end'>" + (r.submitted || 0) + "</td>";
                             tr += "<td class='text-end'>" + (r.client_interview || 0) + "</td>";
                             tr += "<td class='text-end'>" + (r.waiting || 0) + "</td>";
+                            tr += "<td class='text-end'>" + (r.rejected || 0) + "</td>";
                             tr += "<td class='text-end'>" + (r.selected || 0) + "</td>";
                             tr += "</tr>";
 
