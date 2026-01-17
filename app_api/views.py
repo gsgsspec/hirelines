@@ -1680,9 +1680,7 @@ def filter_profiles_api(request):
 
     company_id=User.objects.get(email=login_user).companyid 
 
-    filtered_profiles = Profile.objects.filter(companyid=company_id)
-
-
+    filtered_profiles = Profile.objects.filter(companyid=company_id).order_by("-dateofcreation")
 
     if title:
         filtered_profiles = filtered_profiles.filter(title__icontains=title)

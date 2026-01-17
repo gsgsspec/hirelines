@@ -932,7 +932,7 @@ def profilesPage(request):
         ]
 
         # Simple: Convert queryset → list of dictionaries
-        profile_details = list(Profile.objects.filter(companyid=user_data.companyid).values())
+        profile_details = list(Profile.objects.filter(companyid=user_data.companyid).values().order_by("-dateofcreation"))
         source_list=list(Source.objects.filter(companyid=user_data.companyid).values())
 
         #  Add source name + status text
