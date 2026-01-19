@@ -26,7 +26,7 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal,JobDescriptionLibrary
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal,jdlibrary
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
@@ -2904,7 +2904,7 @@ def search_jd_library(request):
     try:
         query = request.GET.get("q", "").strip()
 
-        qs = JobDescriptionLibrary.objects.filter(
+        qs = jdlibrary.objects.filter(
             title__icontains=query
         ).values("id", "title")[:10]
 
@@ -2923,7 +2923,7 @@ def jd_library_detail(request):
     try:
         jd_id = request.GET.get("id")
 
-        jd = JobDescriptionLibrary.objects.get(id=jd_id)
+        jd = jdlibrary.objects.get(id=jd_id)
 
         data = {
             "title": jd.title,
@@ -2931,9 +2931,7 @@ def jd_library_detail(request):
             "role": jd.role or "",
             "min_exp": jd.min_exp or "",
             "max_exp": jd.max_exp or "",
-            "budget": jd.budget or "",
             "work_location": jd.work_location or "",
-            "no_positions": jd.positions or "",
             "primary_skills": jd.primary_skills if jd.primary_skills else [],
             "secondary_skills": jd.secondary_skills if jd.secondary_skills else [],
         }
@@ -2943,7 +2941,7 @@ def jd_library_detail(request):
             "data": data
         })
 
-    except JobDescriptionLibrary.DoesNotExist:
+    except jdlibrary.DoesNotExist:
         return JsonResponse({
             "status": 0,
             "message": "JD not found"

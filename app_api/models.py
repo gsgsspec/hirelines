@@ -687,19 +687,17 @@ class Client(models.Model):
         db_table = 'client'
         
         
-class JobDescriptionLibrary(models.Model):
+class jdlibrary(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=350, null=True)
     description = models.CharField(max_length=3024, null=True)
     role = models.CharField(max_length=50)
     min_exp = models.IntegerField()
     max_exp = models.IntegerField()
-    budget = models.DecimalField(max_digits=13, decimal_places=2, null=True)
     primary_skills =models.CharField(max_length=2048, null=True)
     secondary_skills = models.CharField(max_length=2048, null=True)
-    positions = models.IntegerField(null=True)
     work_location =  models.CharField(max_length=512, null=True)
     
     
     class Meta:
-        db_table = 'jobdescriptionlibrary'
+        db_table = 'jdlibrary'

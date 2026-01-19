@@ -188,11 +188,17 @@
 </div>
 
 <style>
-#suggestionsBox{
-  width: 200px !important;
+#jdSuggestionsBox {
+  left: 12px;
+  right: 12px;
+  width: auto;
+  max-width: calc(100% - 24px); 
+  box-sizing: border-box;
   border-radius: 7px;
   margin-top: 5px;
 }
+
+
 #secondarySuggestionsBox{
   width: 200px !important;
   border-radius: 7px;
@@ -362,8 +368,6 @@ $(document).ready(function () {
                 $("#jdRole").val(data.role);
                 $("#min_experince").val(data.min_exp);
                 $("#max_experince").val(data.max_exp);
-                $("#jdBudget").val(data.budget);
-                $("#jdNoPositions").val(data.no_positions || "");
                 $("#jdWorkLocation").val(data.work_location);
 
                 let primarySkills = data.primary_skills;

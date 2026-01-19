@@ -328,25 +328,24 @@ ADD COLUMN  completion int DEFAULT NULL;
 ==================Mounika==================
 
 
-CREATE TABLE jobdescriptionlibrary (
+CREATE TABLE jdlibrary (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(350) NULL,
     description VARCHAR(3024) NULL,
     role VARCHAR(50) NOT NULL,
     min_exp INT NOT NULL,
     max_exp INT NOT NULL,
-    budget DECIMAL(13,2) NULL,
     primary_skills VARCHAR(2048) NULL,
     secondary_skills VARCHAR(2048) NULL,
-    positions INT NULL,
     work_location VARCHAR(512) NULL
 );
+
 
 ====================Sample library data===========================
 
 
-INSERT INTO jobdescriptionlibrary
-(title, description, role, min_exp, max_exp, budget, work_location, positions, primary_skills, secondary_skills)
+INSERT INTO jdlibrary
+(title, description, role, min_exp, max_exp, work_location, primary_skills, secondary_skills)
 VALUES
 (
  'Java Backend Developer',
@@ -354,9 +353,7 @@ VALUES
  'Development',
  3,
  5,
- 10.00,
  'Bangalore',
- 3,
  '["java","spring","rest api","hibernate","mysql"]',
  '["docker","kafka"]'
 );
@@ -364,8 +361,8 @@ VALUES
 
 
 
-INSERT INTO jobdescriptionlibrary
-(title, description, role, min_exp, max_exp, budget, work_location, positions, primary_skills, secondary_skills)
+INSERT INTO jdlibrary
+(title, description, role, min_exp, max_exp, work_location, primary_skills, secondary_skills)
 VALUES
 (
  'Java Fullstack Developer',
@@ -373,9 +370,8 @@ VALUES
  'Development',
  3,
  5,
- 12.00,
  'Hyderabad',
- 4,
  '["java","spring","react","html","css","js","mysql"]',
  '["redux","bootstrap"]'
 );
+
