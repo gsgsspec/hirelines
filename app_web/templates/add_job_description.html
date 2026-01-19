@@ -13,22 +13,22 @@
 <div class="content-wrapper">
   <!-- Content -->
   <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="row">
-      <div class="col-xxl">
-        <div class="container-center">
-          <div class="card mb-4 w-75">
-            <!-- <div class="card-header d-flex align-items-center justify-content-between">
+    <div class="row gx-3">
+
+      <div class="col-lg-7">
+        <div class="card mb-0 full-width-form">
+          <!-- <div class="card-header d-flex align-items-center justify-content-between">
               <h5 class="mb-0">Add Job Description</h5>
             </div> -->
-            <div class="card-title-table">
-              <h4 class="card-header">Add Job Description</h4>
-              <div class="p-3 text-align-right d-flex align-items-center justify-content-center"></div>
-            </div>
-            <div class="card-body pt-1">
-              <form id="addJD">
-                
-                <!-- Search Job Description with Suggestions -->
-                <!-- <div class="row mb-3 container-center">
+          <div class="card-title-table">
+            <h4 class="card-header">Add Job Description</h4>
+            <div class="p-3 text-align-right d-flex align-items-center justify-content-center"></div>
+          </div>
+          <div class="card-body pt-1">
+            <form id="addJD">
+
+              <!-- Search Job Description with Suggestions -->
+              <!-- <div class="row mb-3 container-center">
                   <label class="col-sm-2 col-form-label" for="searchJobDescription">Search JD</label>
                   <div class="col-sm-9 position-relative">
                     <input type="form-control" id="searchJobDescription" class="form-control" placeholder="Search Job Description" autocomplete="off">
@@ -36,392 +36,556 @@
                     <div class="suggestions-box border" id="suggestionsBox" style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;"></div>
                   </div> -->
 
-                </div>
-                <!-- <div class="row mb-3 container-center">
+          </div>
+          <!-- <div class="row mb-3 container-center">
                   <label class="col-sm-2 col-form-label" for="searchJobDescription">JD Title</label>
                   <div class="col-sm-9 position-relative"> -->
-                    <!-- <input type="form-control" id="jdTitle" class="form-control" placeholder="Job Description Title" autocomplete="off"> -->
-<!--                    
+          <!-- <input type="form-control" id="jdTitle" class="form-control" placeholder="Job Description Title" autocomplete="off"> -->
+          <!--                    
                   </div>
 
                 </div> -->
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label">JD Title</label>
-                  <div class="col-sm-9 position-relative">
-                    <input type="text"
-                          class="form-control"
-                          id="jdTitle"
-                          autocomplete="off">
+          <div class="row mb-3 container-center">
+            <label class="col-sm-2 col-form-label">JD Title</label>
+            <div class="col-sm-9 position-relative">
+              <input type="text" class="form-control" id="jdTitle" autocomplete="off">
 
-                    <!-- Suggestions -->
-                    <div class="suggestions-box border"
-                        id="jdSuggestionsBox"
-                        style="display:none; position:absolute; background:#fff; width:100%; max-height:150px; overflow-y:auto; z-index:1000;">
-                    </div>
-                  </div>
-                </div>
-
-
-                <!-- Your Existing Form Fields -->
-                <div class="row mb-3 container-center">
-                  <label for="JobDescription" class="col-sm-2 col-form-label">Description</label>
-                  <div class="col-sm-9 ">
-                    <textarea class="form-control" id="JobDescription" rows="3"></textarea>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="jdRole">Role</label>
-                  <div class="col-sm-9">
-                    <select class="form-select" id="jdRole" aria-label="Default select example">
-                      <option value="0"></option>
-                      <option value="Development">Developer</option>
-                      <option value="Testing">Tester</option>
-                      <option value="Deployment">Deployment</option>
-                      <option value="Administrator">Administrator</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label for="min_experince" class="col-sm-2 col-form-label">Experiences</label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="min_experince" placeholder="Min" style="margin-right: 1rem; height: max-content;" />
-                    <input type="number" class="form-control w-25 custm-sm-input-width" id="max_experince" placeholder="Max" style="height: max-content;" />
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label for="jdBudget" class="col-sm-2 col-form-label">Budget <small>(LPA)</small></label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="jdBudget" placeholder="" style="margin-right: 1rem; height: max-content;"  />
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label for="jdNoPositions" class="col-sm-2 col-form-label">No of Positions</label>
-                  <div style="display: flex; justify-content: start;" class="col-sm-9">
-                    <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="jdNoPositions" placeholder="Members count.." style="margin-right: 1rem; height: max-content;" />
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="jdWorkLocation">Work Location</label>
-                  <div class="col-sm-9">
-                    <input type="text" class="form-control" id="jdWorkLocation" />
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="">Skill Set (Primary)</label>
-                  <div class="autocomplete col-sm-9">
-                    <input class="form-control custm-sm-input-width" id="searchNewSkill" type="text" name="" placeholder="Search skills">
-                    <div class="suggestions-box border" id="suggestionsBox" style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;"></div>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center" id="jdSkillsContainer">
-                  <label for="jdSkills" class="col-sm-2 col-form-label"></label>
-                  <div class="col-sm-9">
-                    <div class="skillsListContainer" id="skillsListMainContainer">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label">Skill Set (Secondary)</label>
-                  <div class="autocomplete col-sm-9">
-                    <input class="form-control custm-sm-input-width" id="searchSecondarySkill" type="text" name="" placeholder="Add Secondary Skill">
-                    <div class="suggestions-box border" id="secondarySuggestionsBox" style="display:none; position:absolute; background:#fff; width:100%; max-height:150px; overflow-y:auto; z-index:10;"></div>
-                  </div>
-                </div>
-
-
-                <div class="row mb-3 container-center" id="jdSecondarySkillsContainer">
-                  <label class="col-sm-2 col-form-label"></label>
-                  <div class="col-sm-9">
-                    <div class="skillsListContainer" id="secondarySkillsListMainContainer"></div>
-                  </div>
-                </div>
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="Hiring-Manager">Hiring Manager</label>
-                      <div class="col-sm-9">
-                            <select class="form-select" id="Hiring-Manager" aria-label="Default select example">
-                                  <option value="0"></option>
-                                      {% for hiring_manager in hiring_managers %}
-                                          <option value="{{hiring_manager.id}}">{{hiring_manager.name}}</option>
-                                      {% endfor %}
-                            </select>
-                      </div>
-                </div>
-
-
-                <div class="row mb-3 container-center">
-                  <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Special Notes <small>(Optional)</small></label>
-                  <div class="col-sm-9">
-                    <textarea id="JdanySpecialNotes" class="form-control" placeholder="Special instruction" rows="3"></textarea>
-                  </div>
-                </div>
-
-                <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
-                  <div class="px-0 my-0" style="display: flex;justify-content: end; width: max-content; padding-right: 2.5rem !important;">
-                    <button type="button" id="restJdForm" class="btn btn-secondary" style="margin-right: 10px;  padding: 0.2625rem 1rem;" onclick="resetJd()">Reset</button>
-                    <button type="submit" id="submitJd" class="btn btn-primary" style="padding: 0.2625rem 1rem;">Create</button>
-                  </div>
-                </div>
-
-                <div class="row mb-2 container-center" style="display: flex;justify-content: space-between; align-items: center;">
-                  <div class="px-0 success" id="validater" hidden style="color: green; width: max-content;  margin-left: 3rem;">
-                    <i class="fas fa-check-circle"></i>
-                    &nbsp;
-                      Job Description created redirecting to jd setup
-                  </div>
-                </div>
-
-              </form>
+              <!-- Suggestions -->
+              <div class="suggestions-box border" id="jdSuggestionsBox"
+                style="display:none; position:absolute; background:#fff; width:100%; max-height:150px; overflow-y:auto; z-index:1000;">
+              </div>
             </div>
           </div>
+
+
+          <!-- Your Existing Form Fields -->
+          <div class="row mb-3 container-center">
+            <label for="JobDescription" class="col-sm-2 col-form-label">Description</label>
+            <div class="col-sm-9 ">
+              <textarea class="form-control" id="JobDescription" rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="row mb-3 container-center">
+            <label class="col-sm-2 col-form-label" for="jdRole">Role</label>
+            <div class="col-sm-9">
+              <select class="form-select" id="jdRole" aria-label="Default select example">
+                <option value="0"></option>
+                <option value="Development">Developer</option>
+                <option value="Testing">Tester</option>
+                <option value="Deployment">Deployment</option>
+                <option value="Administrator">Administrator</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3 container-center">
+            <label for="min_experince" class="col-sm-2 col-form-label">Experiences</label>
+            <div style="display: flex; justify-content: start;" class="col-sm-9">
+              <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="min_experince"
+                placeholder="Min" style="margin-right: 1rem; height: max-content;" />
+              <input type="number" class="form-control w-25 custm-sm-input-width" id="max_experince" placeholder="Max"
+                style="height: max-content;" />
+            </div>
+          </div>
+
+          <div class="row mb-3 container-center">
+            <label for="jdBudget" class="col-sm-2 col-form-label">Budget <small>(LPA)</small></label>
+            <div style="display: flex; justify-content: start;" class="col-sm-9">
+              <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="jdBudget" placeholder=""
+                style="margin-right: 1rem; height: max-content;" />
+            </div>
+          </div>
+
+          <div class="row mb-3 container-center">
+            <label for="jdNoPositions" class="col-sm-2 col-form-label">No of Positions</label>
+            <div style="display: flex; justify-content: start;" class="col-sm-9">
+              <input type="number" class="form-control w-25 mr-2 custm-sm-input-width" id="jdNoPositions"
+                placeholder="Members count.." style="margin-right: 1rem; height: max-content;" />
+            </div>
+          </div>
+
+          <div class="row mb-3 container-center">
+            <label class="col-sm-2 col-form-label" for="jdWorkLocation">Work Location</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="jdWorkLocation" />
+            </div>
+          </div>
+
+          <div class="row mb-3 container-center">
+            <label class="col-sm-2 col-form-label" for="">Skill Set (Primary)</label>
+            <div class="autocomplete col-sm-9">
+              <input class="form-control custm-sm-input-width" id="searchNewSkill" type="text" name=""
+                placeholder="Search skills">
+              <div class="suggestions-box border" id="suggestionsBox"
+                style="display: none; position: absolute; background: #fff; width: 100%; max-height: 150px; overflow-y: auto; z-index: 10;">
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3 container-center" id="jdSkillsContainer">
+            <label for="jdSkills" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-9">
+              <div class="skillsListContainer" id="skillsListMainContainer">
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3 container-center">
+            <label class="col-sm-2 col-form-label">Skill Set (Secondary)</label>
+            <div class="autocomplete col-sm-9">
+              <input class="form-control custm-sm-input-width" id="searchSecondarySkill" type="text" name=""
+                placeholder="Add Secondary Skill">
+              <div class="suggestions-box border" id="secondarySuggestionsBox"
+                style="display:none; position:absolute; background:#fff; width:100%; max-height:150px; overflow-y:auto; z-index:10;">
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row mb-3 container-center" id="jdSecondarySkillsContainer">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-9">
+              <div class="skillsListContainer" id="secondarySkillsListMainContainer"></div>
+            </div>
+          </div>
+          <div class="row mb-3 container-center">
+            <label class="col-sm-2 col-form-label" for="Hiring-Manager">Hiring Manager</label>
+            <div class="col-sm-9">
+              <select class="form-select" id="Hiring-Manager" aria-label="Default select example">
+                <option value="0"></option>
+                {% for hiring_manager in hiring_managers %}
+                <option value="{{hiring_manager.id}}">{{hiring_manager.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+
+          <div class="row mb-3 container-center">
+            <label class="col-sm-2 col-form-label" for="JdanySpecialNotes">Special Notes
+              <small>(Optional)</small></label>
+            <div class="col-sm-9">
+              <textarea id="JdanySpecialNotes" class="form-control" placeholder="Special instruction"
+                rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="row mb-1 container-center" style="display: flex;justify-content: end; align-items: center;">
+            <div class="px-0 my-0"
+              style="display: flex;justify-content: end; width: max-content; padding-right: 2.5rem !important;">
+              <button type="button" id="restJdForm" class="btn btn-secondary"
+                style="margin-right: 10px;  padding: 0.2625rem 1rem;" onclick="resetJd()">Reset</button>
+              <button type="submit" id="submitJd" class="btn btn-primary"
+                style="padding: 0.2625rem 1rem;">Create</button>
+            </div>
+          </div>
+
+          <div class="row mb-2 container-center"
+            style="display: flex;justify-content: space-between; align-items: center;">
+            <div class="px-0 success" id="validater" hidden
+              style="color: green; width: max-content;  margin-left: 3rem;">
+              <i class="fas fa-check-circle"></i>
+              &nbsp;
+              Job Description created redirecting to jd setup
+            </div>
+          </div>
+
         </div>
       </div>
+      <!-- </div> -->
+
+      <!-- RIGHT : JD PREVIEW PANEL -->
+<div class="col-lg-5 jd-preview-panel">
+
+  <p class="mb-2 fw-semibold">
+    Would you like some help in creating the job description?
+  </p>
+
+  <!-- HELPER SECTION (TEXT ONLY) -->
+  <div class="jd-helper">
+    <p class="text-muted small mb-2">
+      No, thanks! I’ll write my own
+    </p>
+
+    <div class="text-muted small mb-2">or</div>
+
+    <p class="text-primary small mb-0" style="cursor:pointer;">
+      Choose From Sample JDs
+    </p>
+  </div>
+
+  <!-- JD PREVIEW CARD -->
+  <div class="jd-preview-card">
+
+    <!-- HEADER -->
+    <div class="jd-preview-header">
+      <div>
+        <h4 id="pvTitle" class="mb-1">
+          Job Title will appear here
+        </h4>
+        <p class="text-muted small mb-0">
+          <span id="pvRole">Role</span> ·
+          <span id="pvExp">Experience range</span>
+        </p>
+      </div>
+
+      <button class="btn btn-primary btn-sm">
+        Add to JD
+      </button>
+    </div>
+
+    <!-- BODY -->
+    <div class="jd-preview-body">
+
+      <h6>Description</h6>
+      <p id="pvDesc" class="preview-text">
+        Job description preview will appear here
+      </p>
+
+      <h6 class="mt-3">Location</h6>
+      <p id="pvLocation" class="preview-text">
+        Work location
+      </p>
+
+      <h6 class="mt-3">Primary Skills</h6>
+      <p id="pvPrimarySkills" class="preview-text">
+        Add primary skills (e.g. Java, Python, React)
+      </p>
+
+      <h6 class="mt-3">Secondary Skills</h6>
+      <p id="pvSecondarySkills" class="preview-text">
+        Add secondary skills (optional)
+      </p>
+
+    </div>
+  </div>
+
+</div>
+
+      </form>
+
+
+
+
     </div>
   </div>
 </div>
+</div>
+</div>
+
+
 
 <style>
-#jdSuggestionsBox {
-  left: 12px;
-  right: 12px;
-  width: auto;
-  max-width: calc(100% - 24px); 
-  box-sizing: border-box;
-  border-radius: 7px;
-  margin-top: 5px;
+  /* RIGHT PREVIEW PANEL */
+.jd-preview-panel {
+  background: #fff;
+  padding: 16px;
 }
 
-
-#secondarySuggestionsBox{
-  width: 200px !important;
-  border-radius: 7px;
-  margin-top: 5px;
-}
-.search_item:hover{
-  background-color: var(--primary-color);
-  color: #fff;
-}
-#searchJobDescription {
-  text-align: left; /* Ensure text is aligned to the left */
-}
-#searchJobDescription {
-    text-align: left;  /* Ensures the text is always aligned left */
-    padding-left: 5px; /* Optional: Adds a little space from the left edge */
-}
-/* skill search bar */
-/*the container must be positioned relative:*/
-.autocomplete {
-  position: relative;
-  display: inline-block;
+/* HELPER BOX */
+.jd-helper {
+  background: #fafafa;
+  border: 1px solid #f0ad4e;
+  padding: 12px;
+  margin: 0 auto 16px auto;
+  width: 75%;
+  max-width: 320px;
+  text-align: center;
+  border-radius: 8px;
 }
 
-input[type=submit] {
-  background-color: DodgerBlue;
-  color: #fff;
-  cursor: pointer;
+/* PREVIEW CARD */
+.jd-preview-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
 }
 
-.autocomplete-items {
-  position: absolute;
-  border: 1px solid #d4d4d4;
-  z-index: 99;
-  /*position the autocomplete items to be the same width as the container:*/
-  top: 110%;
-  left: 12px;
-  right: 0;
-  height: 120px;
-  overflow-y: scroll;
-  width: 200px;
-  border-radius: 0.5rem;
-}
-
-.autocomplete-items div {
-  padding: 10px;
-  cursor: pointer;
-  background-color: #fff; 
-  border-bottom: 1px solid #d4d4d4; 
-}
-
-/*when hovering an item:*/
-.autocomplete-items div:hover {
-  background-color: #e9e9e9; 
-}
-
-/*when navigating through the items using the arrow keys:*/
-.autocomplete-active {
-  background-color: DodgerBlue !important; 
-  color: #ffffff; 
-}
-.custm-sm-input-width{
-  width: 200px !important;
-}
-
-.skillIteamContainer{
-  display: flex; 
-  align-items: center;
-  justify-content: center;
-  width: max-content;
-  padding: 0.4rem 0.7rem;
-  border: lightgrey solid 0.5px;
-  border-radius: 0.5rem;
-  margin: 0.5rem;
-  box-shadow: 0 0.125rem 0.25rem 0 rgba(133, 146, 163, 0.4);
-  cursor: pointer;
-}
-.skillTitle{
-  text-transform: capitalize;
-}
-
-.skillsListContainer{
+/* HEADER */
+.jd-preview-header {
   display: flex;
-  justify-content: start;
-  align-items: start;
-  flex-wrap: wrap;
-  width: 100%; 
-  height: auto;
-  border: 0.5px lightgray solid; 
-  border-radius: 0.5rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
 }
-.customremovecls{
-  border: 0.5px solid lightgray;
-  border-radius: 0.2rem;
-  padding: 2px 5px;
+
+/* BODY */
+.jd-preview-body {
+  padding: 14px 16px;
 }
+
+.jd-preview-body h6 {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.preview-text {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+  .container-xxl {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .full-width-form {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .jd-preview-card {
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 120px);
+  }
+
+  #jdSuggestionsBox {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: calc(100% - 24px);
+    box-sizing: border-box;
+    border-radius: 7px;
+    margin-top: 5px;
+  }
+
+
+  #secondarySuggestionsBox {
+    width: 200px !important;
+    border-radius: 7px;
+    margin-top: 5px;
+  }
+
+  .search_item:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+
+  #searchJobDescription {
+    text-align: left;
+    /* Ensure text is aligned to the left */
+  }
+
+  #searchJobDescription {
+    text-align: left;
+    /* Ensures the text is always aligned left */
+    padding-left: 5px;
+    /* Optional: Adds a little space from the left edge */
+  }
+
+  /* skill search bar */
+  /*the container must be positioned relative:*/
+  .autocomplete {
+    position: relative;
+    display: inline-block;
+  }
+
+  input[type=submit] {
+    background-color: DodgerBlue;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 110%;
+    left: 12px;
+    right: 0;
+    height: 120px;
+    overflow-y: scroll;
+    width: 200px;
+    border-radius: 0.5rem;
+  }
+
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+  }
+
+  /*when hovering an item:*/
+  .autocomplete-items div:hover {
+    background-color: #e9e9e9;
+  }
+
+  /*when navigating through the items using the arrow keys:*/
+  .autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+  }
+
+  .custm-sm-input-width {
+    width: 200px !important;
+  }
+
+  .skillIteamContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    padding: 0.4rem 0.7rem;
+    border: lightgrey solid 0.5px;
+    border-radius: 0.5rem;
+    margin: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem 0 rgba(133, 146, 163, 0.4);
+    cursor: pointer;
+  }
+
+  .skillTitle {
+    text-transform: capitalize;
+  }
+
+  .skillsListContainer {
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-wrap: wrap;
+    width: 100%;
+    height: auto;
+    border: 0.5px lightgray solid;
+    border-radius: 0.5rem;
+  }
+
+  .customremovecls {
+    border: 0.5px solid lightgray;
+    border-radius: 0.2rem;
+    padding: 2px 5px;
+  }
 </style>
 <script src="{% static 'js/tech_list.js' %}"></script>
 <script src="{% static 'js/add_job_description.js' %}"></script>
 <script>
-var technologiesList = languages;
-var jdSelectedSkillsList = [];
-var jdSelectedSecondarySkillsList = [];
+  var technologiesList = languages;
+  var jdSelectedSkillsList = [];
+  var jdSelectedSecondarySkillsList = [];
 
-$(document).ready(function () {
+  $(document).ready(function () {
 
     const jdInput = $("#jdTitle");
     const suggestionsBox = $("#jdSuggestionsBox");
 
     jdInput.on("keyup", function () {
 
-        let value = jdInput.val().trim();
+      let value = jdInput.val().trim();
 
-        if (value.length < 2) {
-            suggestionsBox.hide();
-            return;
-        }
+      if (value.length < 2) {
+        suggestionsBox.hide();
+        return;
+      }
 
-        $.ajax({
-            url: CONFIG['portal'] + "/api/search",
-            type: "GET",
-            data: { q: value },
+      $.ajax({
+        url: CONFIG['portal'] + "/api/search",
+        type: "GET",
+        data: { q: value },
 
-            success: function (data) {
+        success: function (data) {
 
-                suggestionsBox.empty();
+          suggestionsBox.empty();
 
-                if (!data || data.length === 0) {
-                    suggestionsBox.append(`<div class="p-2 text-muted">No JD Found</div>`);
-                } else {
-                    data.forEach(jd => {
-                        suggestionsBox.append(`
+          if (!data || data.length === 0) {
+            suggestionsBox.append(`<div class="p-2 text-muted">No JD Found</div>`);
+          } else {
+            data.forEach(jd => {
+              suggestionsBox.append(`
                             <div class="search_item p-2"
                                  data-id="${jd.id}"
                                  style="cursor:pointer">
                                 ${jd.title}
                             </div>
                         `);
-                    });
-                }
+            });
+          }
 
-                suggestionsBox.show();
-            }
-        });
+          suggestionsBox.show();
+        }
+      });
     });
 
     $(document).on("click", ".search_item", function () {
 
-        let jdId = $(this).data("id");
+      let jdId = $(this).data("id");
 
-        suggestionsBox.hide();
+      suggestionsBox.hide();
 
-        $.ajax({
-            url: CONFIG['portal'] + "/api/jddetail",
-            type: "GET",
-            data: { id: jdId },
+      $.ajax({
+        url: CONFIG['portal'] + "/api/jddetail",
+        type: "GET",
+        data: { id: jdId },
 
-            success: function (res) {
+        success: function (res) {
 
-                if (!res || res.status !== 1) return;
+          if (!res || res.status !== 1) return;
 
-                let data = res.data;
+          let data = res.data;
 
-                clearAllSkills();
+          clearAllSkills();
 
-                $("#jdTitle").val(data.title);
-                $("#JobDescription").val(data.description);
-                $("#jdRole").val(data.role);
-                $("#min_experince").val(data.min_exp);
-                $("#max_experince").val(data.max_exp);
-                $("#jdWorkLocation").val(data.work_location);
+          $("#jdTitle").val(data.title);
+          $("#JobDescription").val(data.description);
+          $("#jdRole").val(data.role);
+          $("#min_experince").val(data.min_exp);
+          $("#max_experince").val(data.max_exp);
+          $("#jdWorkLocation").val(data.work_location);
 
-                let primarySkills = data.primary_skills;
+          let primarySkills = data.primary_skills;
 
-                if (typeof primarySkills === "string") {
-                    primarySkills = JSON.parse(primarySkills);
-                }
+          if (typeof primarySkills === "string") {
+            primarySkills = JSON.parse(primarySkills);
+          }
 
-                if (Array.isArray(primarySkills)) {
-                    primarySkills.forEach(skill => {
-                        let actualKey = Object.keys(languages).find(
-                            k => k.toLowerCase() === skill.toLowerCase()
-                        );
+          if (Array.isArray(primarySkills)) {
+            primarySkills.forEach(skill => {
+              let actualKey = Object.keys(languages).find(
+                k => k.toLowerCase() === skill.toLowerCase()
+              );
 
-                        if (actualKey) {
-                            selectedSkill(actualKey);
-                        }
-                    });
+              if (actualKey) {
+                selectedSkill(actualKey);
+              }
+            });
 
-                    $("#jdSkillsContainer").show();
-                }
+            $("#jdSkillsContainer").show();
+          }
 
-                let secondarySkills = data.secondary_skills;
+          let secondarySkills = data.secondary_skills;
 
-                if (typeof secondarySkills === "string") {
-                    secondarySkills = JSON.parse(secondarySkills);
-                }
+          if (typeof secondarySkills === "string") {
+            secondarySkills = JSON.parse(secondarySkills);
+          }
 
-                if (Array.isArray(secondarySkills)) {
-                    secondarySkills.forEach(skill => {
-                        let actualKey = Object.keys(languages).find(
-                            k => k.toLowerCase() === skill.toLowerCase()
-                        );
+          if (Array.isArray(secondarySkills)) {
+            secondarySkills.forEach(skill => {
+              let actualKey = Object.keys(languages).find(
+                k => k.toLowerCase() === skill.toLowerCase()
+              );
 
-                        if (actualKey) {
-                            selectedSecondarySkill(actualKey);
-                        }
-                    });
+              if (actualKey) {
+                selectedSecondarySkill(actualKey);
+              }
+            });
 
-                    $("#jdSecondarySkillsContainer").show();
-                }
-            }
-        });
+            $("#jdSecondarySkillsContainer").show();
+          }
+        }
+      });
     });
 
     $(document).on("click", function (e) {
-        if (!$(e.target).closest("#jdTitle, #jdSuggestionsBox").length) {
-            suggestionsBox.hide();
-        }
+      if (!$(e.target).closest("#jdTitle, #jdSuggestionsBox").length) {
+        suggestionsBox.hide();
+      }
     });
 
-});
+  });
 
-function clearAllSkills() {
+  function clearAllSkills() {
 
     $("#skillsListMainContainer").empty();
     $("#secondarySkillsListMainContainer").empty();
@@ -433,5 +597,121 @@ function clearAllSkills() {
 
     emptySkillsContainer();
     emptySecondarySkillsContainer();
+  }
+</script>
+<script>
+/*************************************************
+ * HELPER: SHOW / HIDE HEADING + VALUE
+ *************************************************/
+function toggleSection(valueElId, headingText) {
+  const valueEl = document.getElementById(valueElId);
+  const headingEl = valueEl.previousElementSibling; // <h6>
+
+  if (valueEl.innerText.trim()) {
+    headingEl.style.display = "block";
+    valueEl.style.display = "block";
+  } else {
+    headingEl.style.display = "none";
+    valueEl.style.display = "none";
+  }
 }
+
+
+/*************************************************
+ * READ SKILLS FROM DOM
+ *************************************************/
+function syncPreviewSkillsFromDOM() {
+
+  // PRIMARY
+  let primary = [];
+  document.querySelectorAll("#skillsListMainContainer .skillTitle")
+    .forEach(el => primary.push(el.innerText.trim()));
+
+  const pvPrimary = document.getElementById("pvPrimarySkills");
+  pvPrimary.innerText = primary.join(", ");
+  toggleSection("pvPrimarySkills");
+
+  // SECONDARY
+  let secondary = [];
+  document.querySelectorAll("#secondarySkillsListMainContainer .skillTitle")
+    .forEach(el => secondary.push(el.innerText.trim()));
+
+  const pvSecondary = document.getElementById("pvSecondarySkills");
+  pvSecondary.innerText = secondary.join(", ");
+  toggleSection("pvSecondarySkills");
+}
+
+
+/*************************************************
+ * MAIN PREVIEW UPDATE
+ *************************************************/
+function updateJDPreviewFinal() {
+
+  // TITLE
+  const title = document.getElementById("jdTitle").value;
+  document.getElementById("pvTitle").innerText = title;
+
+  // ROLE
+  const roleSelect = document.getElementById("jdRole");
+  const roleText =
+    roleSelect.value !== "0"
+      ? roleSelect.options[roleSelect.selectedIndex].text
+      : "";
+  document.getElementById("pvRole").innerText = roleText;
+
+  // EXPERIENCE
+  const min = document.getElementById("min_experince").value;
+  const max = document.getElementById("max_experince").value;
+  document.getElementById("pvExp").innerText =
+    (min || max) ? `${min || 0} - ${max || 0} yrs` : "";
+
+  // DESCRIPTION
+  document.getElementById("pvDesc").innerText =
+    document.getElementById("JobDescription").value;
+  toggleSection("pvDesc");
+
+  // LOCATION
+  document.getElementById("pvLocation").innerText =
+    document.getElementById("jdWorkLocation").value;
+  toggleSection("pvLocation");
+
+  // SKILLS
+  syncPreviewSkillsFromDOM();
+}
+
+
+/*************************************************
+ * OBSERVE SKILL DOM CHANGES
+ *************************************************/
+function observeSkills() {
+  const config = { childList: true, subtree: true };
+
+  const primaryBox = document.getElementById("skillsListMainContainer");
+  const secondaryBox = document.getElementById("secondarySkillsListMainContainer");
+
+  if (primaryBox) {
+    new MutationObserver(syncPreviewSkillsFromDOM)
+      .observe(primaryBox, config);
+  }
+  if (secondaryBox) {
+    new MutationObserver(syncPreviewSkillsFromDOM)
+      .observe(secondaryBox, config);
+  }
+}
+
+
+/*************************************************
+ * EVENTS
+ *************************************************/
+document.addEventListener("input", updateJDPreviewFinal);
+document.addEventListener("change", updateJDPreviewFinal);
+
+$(document).ajaxComplete(function () {
+  updateJDPreviewFinal();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  observeSkills();
+  updateJDPreviewFinal();
+});
 </script>
