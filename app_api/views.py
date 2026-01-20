@@ -19,6 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 from allauth.account.utils import perform_login
 from allauth.account import app_settings as allauth_settings
 from app_api.functions.masterdata import auth_user, getCompanyId
+from django.db.models import Q
 
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
@@ -2945,6 +2946,97 @@ def jd_library_detail(request):
         return JsonResponse({
             "status": 0,
             "message": "JD not found"
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "status": 0,
+            "error": str(e)
+        })
+
+
+@api_view(['GET'])
+def validate_profile(request):
+    try:
+        first = request.GET.get("firstname", "").strip()
+        middle = request.GET.get("middlename", "").strip()
+        last = request.GET.get("lastname", "").strip()
+        email = request.GET.get("email", "").strip()
+        mobile = request.GET.get("mobile", "").strip()
+        profile_id = request.GET.get("profile_id")
+
+        name_exists = False
+        email_exists = False
+        mobile_exists = False
+
+        name_profile_code = None
+        email_profile_code = None
+        mobile_profile_code = None
+
+        
+        if email:
+            email_obj = Profile.objects.filter(email__iexact=email)
+
+            if profile_id:
+                email_obj = email_obj.exclude(id=profile_id)
+
+            # email_obj = email_obj.first()
+            email_obj = email_obj
+            if email_obj:
+                email_exists = True
+                # email_profile_code = email_obj.profilecode
+                email_profile_code = list(
+                    email_obj.values_list("profilecode", flat=True)
+                )
+
+
+       
+        if mobile:
+            mobile_obj = Profile.objects.filter(mobile=mobile)
+
+            if profile_id:
+                mobile_obj = mobile_obj.exclude(id=profile_id)
+
+            # mobile_obj = mobile_obj.first()
+            mobile_obj = mobile_obj
+            if mobile_obj:
+                mobile_exists = True
+                # mobile_profile_code = mobile_obj.profilecode
+                mobile_profile_code = list(
+                    mobile_obj.values_list("profilecode", flat=True)
+                )
+
+        # if first:
+        #     name_obj = Profile.objects.filter(
+        #         firstname__iexact=first,
+        #         middlename__iexact=middle,
+        #         lastname__iexact=last
+        #     )
+        if first or middle or last:
+            name_obj = Profile.objects.filter(
+                Q(firstname__iexact=first, middlename__iexact=middle, lastname__iexact=last) |
+                Q(firstname__iexact=last, middlename__iexact=middle, lastname__iexact=first)
+            )
+            if profile_id:
+                name_obj = name_obj.exclude(id=profile_id)
+
+            # name_obj = name_obj.first()
+            name_obj = name_obj
+            if name_obj:
+                name_exists = True
+                # name_profile_code = name_obj.profilecode
+                name_profile_code = list(
+                    name_obj.values_list("profilecode", flat=True)
+                )
+
+
+        return JsonResponse({
+            "name_exists": name_exists,
+            "email_exists": email_exists,
+            "mobile_exists": mobile_exists,
+            "name_profile_code": name_profile_code,
+            "email_profile_code": email_profile_code,
+            "mobile_profile_code": mobile_profile_code
         })
 
     except Exception as e:

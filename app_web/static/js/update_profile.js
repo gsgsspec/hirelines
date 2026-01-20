@@ -949,3 +949,63 @@ function requestprefill(pid, doc_parser_id) {
         }
     });
 }
+
+
+
+
+let typingTimer;
+const delay = 500;
+
+function liveValidateUpdate() {
+    clearTimeout(typingTimer);
+
+    typingTimer = setTimeout(() => {
+        $.ajax({
+            url: CONFIG['portal'] + "/api/validate_profile",
+            method: "GET",
+            data: {
+                firstname: $("#FirstName").val(),
+                middlename: $("#MiddleName").val(),
+                lastname: $("#LastName").val(),
+                email: $("#Email").val(),
+                mobile: $("#Mobile").val(),
+                profile_id: CURRENT_PROFILE_ID   
+            },
+            success: function (res) {
+
+                
+                $("#name-error, #email-error, #mobile-error")
+                    .addClass("d-none")
+                    .text("");
+
+                
+                if (res.name_exists) {
+                    $("#name-error")
+                        .removeClass("d-none")
+                        .text(`Name already exists for this Profile Code: ${res.name_profile_code}`);
+                }
+
+                
+                if (res.email_exists) {
+                    $("#email-error")
+                        .removeClass("d-none")
+                        .text(`Email already exists for this Profile Code: ${res.email_profile_code}`);
+                }
+
+            
+                if (res.mobile_exists) {
+                    $("#mobile-error")
+                        .removeClass("d-none")
+                        .text(`Mobile already exists for this Profile Code: ${res.mobile_profile_code}`);
+                }
+
+                
+                
+            }
+        });
+    }, delay);
+}
+
+
+$("#FirstName, #MiddleName, #LastName, #Email, #Mobile")
+    .on("keyup blur", liveValidateUpdate);

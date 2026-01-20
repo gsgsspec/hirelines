@@ -109,6 +109,8 @@ urlpatterns = [
     path("search", views.search_jd_library),
     path("jddetail", views.jd_library_detail),
 
+    path("validate_profile",views.validate_profile)
+
 
 
 

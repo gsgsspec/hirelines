@@ -29,6 +29,7 @@ document.getElementById("save-data").onclick = function () {
             'middlename': $('#middlename').val(),
             'lastname': $('#lastname').val(),
             'email': $('#email').val(),
+            'mobile': $('#Mobile').val(),
             'source-code': $('#source-type').val()
         }
 
@@ -244,3 +245,57 @@ function handleFile(file) {
     document.getElementById("filePreview").style.display = "flex";
     document.getElementById("removeBtn").style.display = "block";
 }
+
+
+let typingTimer;
+const delay = 500;
+
+function liveValidate() {
+    clearTimeout(typingTimer);
+
+    typingTimer = setTimeout(() => {
+        $.ajax({
+            url: CONFIG['portal'] + "/api/validate_profile",
+            method: "GET",
+            data: {
+                firstname: $("#firstname").val(),
+                middlename: $("#middlename").val(),
+                lastname: $("#lastname").val(),
+                email: $("#email").val(),
+                mobile: $("#Mobile").val()
+            },
+            success: function (res) {
+
+              
+                $("#name-error").addClass("d-none").text("");
+                $("#email-error").addClass("d-none").text("");
+                $("#mobile-error").addClass("d-none").text("");
+
+                if (res.name_exists) {
+                    $("#name-error")
+                        .removeClass("d-none")
+                        
+                         .text(`Name already exists for this Profile Code: ${res.name_profile_code}`);
+                }
+
+                if (res.email_exists ) {
+                    $("#email-error")
+                        .removeClass("d-none")
+                        .text(`Email already exists  for this Profile Code: ${res.email_profile_code}`);
+                }
+
+            
+
+                 if (res.mobile_exists ) {
+                    $("#mobile-error")
+                        .removeClass("d-none")
+                        .text(`Mobile already exists for this Profile Code: ${res.mobile_profile_code}`);
+                }
+
+            }
+        });
+    }, delay);
+}
+
+$("#firstname, #middlename, #lastname, #email, #Mobile")
+    .on("keyup blur", liveValidate);

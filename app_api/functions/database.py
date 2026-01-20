@@ -988,6 +988,7 @@ def addProfileDB(dataObjs,fileObjs, user_data):
             middlename = dataObjs["middlename"],
             lastname = dataObjs["lastname"],
             email = dataObjs["email"],
+            mobile = dataObjs["mobile"],
             status = "D"
         )
 

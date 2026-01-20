@@ -1104,7 +1104,7 @@ def updateProfileDetailsPage(request, pid):
 
         menuItemList = get_functions_service(user_role)
 
-        profile_data = getProfileDmodata(pid, user_data)
+        profile_data = getProfileData(pid, user_data)
         profile_details=getProfileDetailsService(pid)
     
         
