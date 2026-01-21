@@ -1842,7 +1842,7 @@ def updateProfileCompletion(profile_id):
         print(f"Calculated Completion: {completion_percentage}%")
 
         # 4. Update status if total percentage is more than 60
-        if completion_percentage > 60:
+        if completion_percentage >= 60:
             profile.status = 'R'  # Change Draft to Ready
             profile.save()
             print(f"Profile {profile_id} status updated to Ready.")

@@ -5051,9 +5051,9 @@ def shortlistProfileService(dataObjs,user_data):
                 new_candidate.save()
 
                 if candidate["papertype"] == "S":
-                    addProfileActivityDB(profile.id,"SC","Screening Sent")
+                    addProfileActivityDB(profile.id,"SC","Screening Sent",user_data.id)
                 elif candidate["papertype"] == "E":
-                    addProfileActivityDB(profile.id,"CT","Coding Test Sent")
+                    addProfileActivityDB(profile.id,"CT","Coding Test Sent",user_data.id)
 
             profile.status = "I"
             profile.save()
