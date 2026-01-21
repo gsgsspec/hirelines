@@ -79,32 +79,120 @@ if (screening_count === 0 && coding_count === 0 && interview_count === 0 && offe
 } else {
 
     window.onload = function () {
-        var chart = new CanvasJS.Chart("funnelChartContainer", {
-          animationEnabled: true,
-          theme: "light2",
-          backgroundColor: "#f4f6f9",  // Light background color for contrast
-          data: [{
-            type: "funnel",
-            indexLabelFontSize: 20,
-            toolTipContent: "<b>{label}</b>: {y} candidates",
-            indexLabel: "{y}",
-            indexLabelPlacement: "inside", // Centers labels
-            indexLabelFontColor: "white",  // White font for contrast in each layer
-            neckWidth: "30%",  // Narrow neck for the funnel shape
-            neckHeight: "30%", // Tall neck to emphasize the funnel shape
-            valueRepresents: "area",
-            // showInLegend: true,
-            // legendText: "{label}",
-            dataPoints: [
-              { y: screening_count, label: "Screening", color: "#17b0e3" },
-              { y: coding_count, label: "Coding", color: "#3bc482" },
-              { y: interview_count, label: "Interview", color: "#e3cd09" },
-              { y: offer_count, label: "Offer Letter", color: "#93c131" }
-            ]
-          }]
-        });
-        chart.render();
-    }
+
+        const chart = echarts.init(document.getElementById('funnelChartContainer'));
+
+        const stages = [
+            { key: 'Screening', value: screening_count, color: '#17b0e3' },
+            { key: 'Coding', value: coding_count, color: '#3bc482' },
+            { key: 'Interview', value: interview_count, color: '#e3cd09' },
+            { key: 'Offer Letter', value: offer_count, color: '#93c131' }
+        ];
+
+        const nonZeroStages = stages.filter(stage => stage.value > 0);
+
+        if (nonZeroStages.length < 2) {
+            chart.clear();
+            chart.setOption({
+                graphic: {
+                    type: 'text',
+                    left: 'center',
+                    top: 'middle',
+                    style: {
+                        text: 'Not enough data to build funnel',
+                        fill: '#999',
+                        fontSize: 16,
+                        fontWeight: 500
+                    }
+                }
+            });
+            return;
+        }
+
+
+
+        const funnelData = nonZeroStages.map(stage => ({
+            name: stage.key,
+            value: stage.value,
+            itemStyle: { color: stage.color }
+        }));
+
+
+        if (!funnelData.length) {
+            chart.clear();
+            chart.showLoading({
+                text: 'No data available',
+                color: '#999'
+            });
+            return;
+        }
+
+        const option = {
+            backgroundColor: '#f4f6f9',
+            tooltip: {
+                trigger: 'item',
+                formatter: '<b>{b}</b>: {c} candidates'
+            },
+            series: [{
+                type: 'funnel',
+                top: 0,
+                bottom: 0,
+                width: '80%',
+                minSize: funnelData.length === 1 ? '60%' : '20%', // 👈 better single block look
+                maxSize: '100%',
+                gap: 0,
+                funnelAlign: 'center',
+                sort: 'descending',
+
+                label: {
+                    show: true,
+                    position: 'inside',
+                    color: '#ffffff',
+                    fontSize: 20,
+                    formatter: '{c}'
+                },
+
+                itemStyle: {
+                    borderWidth: 0
+                },
+
+                data: funnelData
+            }]
+        };
+
+        chart.setOption(option);
+    };
+
+
+
+
+    // window.onload = function () {
+    //     var chart = new CanvasJS.Chart("funnelChartContainer", {
+    //       animationEnabled: true,
+    //       theme: "light2",
+    //       backgroundColor: "#f4f6f9",  // Light background color for contrast
+    //       data: [{
+    //         type: "funnel",
+    //         indexLabelFontSize: 20,
+    //         toolTipContent: "<b>{label}</b>: {y} candidates",
+    //         indexLabel: "{y}",
+    //         indexLabelPlacement: "inside", // Centers labels
+    //         indexLabelFontColor: "white",  // White font for contrast in each layer
+    //         neckWidth: "30%",  // Narrow neck for the funnel shape
+    //         neckHeight: "30%", // Tall neck to emphasize the funnel shape
+    //         valueRepresents: "area",
+    //         // showInLegend: true,
+    //         // legendText: "{label}",
+    //         dataPoints: [
+    //           { y: screening_count, label: "Screening", color: "#17b0e3" },
+    //           { y: coding_count, label: "Coding", color: "#3bc482" },
+    //           { y: interview_count, label: "Interview", color: "#e3cd09" },
+    //           { y: offer_count, label: "Offer Letter", color: "#93c131" }
+    //         ]
+    //       }]
+    //     });
+    //     chart.render();
+    // }
 }
 
 
