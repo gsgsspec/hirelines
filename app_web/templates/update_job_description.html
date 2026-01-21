@@ -207,14 +207,31 @@
                                         </p>
                                     {% endif %}
                                 </div>
+
+                                
                                 {% endif %}
 
+                                <!-- {% if user_role == "Hiring-Manager" or user_role == "HR-Admin" and jd_details.approval_status == "O" %}
+                                <div class="row mt-2 container-left">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter" style="width: 150px;"> Job Boards</button>
+                                </div>
+                                {% endif %}
+                                 -->
 
                                 {% if user_role == "HR-Admin" %}
 
                                 <div class="row mb-1 container-center">
+
+                                    
+
                                     <div
                                         style="display: flex; justify-content: flex-end; width: 100%; padding-right: 2.5rem; gap: 15px;">
+
+                                        {% if jd_details.approval_status == "O" %}
+                                            <div>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter" style="width: 200px;">Publish in Job Boards</button>
+                                            </div>
+                                        {% endif %}
 
                                         <button type="button" class="btn btn-secondary"
                                             onclick="window.location.href='/job-descriptions'" style="width: 90px;">
@@ -242,6 +259,12 @@
                                 <div class="row mb-1 container-center">
                                     <div
                                         style="display: flex; justify-content: flex-end; width: 100%; padding-right: 2.5rem; gap: 15px;">
+
+                                        {% if jd_details.approval_status == "O" %}
+                                            <div>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter" style="width: 200px;">Publish in Job Boards</button>
+                                            </div>
+                                        {% endif %}
 
                                         <!-- Recruiting Manager Action Buttons -->
                                         <div id="rmActionButtons" style="display: flex; gap: 15px;">
@@ -274,6 +297,8 @@
 
                                 {% endif %}
 
+                                
+
                                 <div class="row mb-2 container-center"
                                     style="display: flex;justify-content: space-between; align-items: center;">
                                     <div class="px-0 success" id="validater" hidden
@@ -287,6 +312,68 @@
                             </form>
                         </div>
                     </div>
+                </div>
+
+                <div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header wk-modal-header">
+                            <h5 class="modal-title p-clr">Job Boards</h5>
+                        </div>
+                      
+                        <div class="modal-body">
+                            <div class="row">
+
+                                {% for board in job_boards %}
+                                    <div class="col-12 mb-3">
+                                        <div class="d-flex align-items-center border rounded p-3">
+
+                                        <!-- Checkbox -->
+                                        <input
+                                            class="form-check-input me-3"
+                                            type="checkbox"
+                                            name="job_boards"
+                                            value="{{ board.id }}"
+                                            id="jobboard_{{ board.id }}"
+                                            {% if board.selected_jb == "Y" %} checked {% endif %} 
+                                        >
+
+                                        <!-- Logo -->
+                                        <img
+                                            src="{{ board.logo }}"
+                                            alt="Job Board"
+                                            style="width: 100px; height: 42px; object-fit: contain;"
+                                            class="me-3"
+                                        >
+
+                                        <!-- Publish Info -->
+                                        <div class="flex-grow-1 small">
+                                            {% if board.published_at %}
+                                            <div class="text-success fw-semibold">
+                                                Published on {{ board.published_at }}
+                                            </div>
+                                            <div class="text-muted">
+                                                By {{ board.published_by }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                <p class="text-muted text-center">No active job boards available.</p>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="publishBtn" {% if not job_boards %} disabled {% endif %}>Publish</button>
+                        </div>
+                    </div>
+                  </div>
                 </div>
 
             </div>
@@ -442,6 +529,11 @@
         border: 0.5px solid lightgray;
         border-radius: 0.2rem;
         padding: 2px 5px;
+    }
+
+    .wk-modal-header {
+        background: var(--light-primary-color);
+        padding: 1rem;
     }
 </style>
 

@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from app_api.models import User
+from app_api.models import User, Company
 
 
 def auth_user(user_mail):
@@ -25,5 +25,13 @@ def getCompanyId(user_email):
     try:
         user = User.objects.filter(email=user_email).last()
         return user.companyid
+    except Exception as e:
+        raise
+
+
+def getUserCompany(companyid):
+    try:
+        company = Company.objects.get(id=companyid)
+        return company
     except Exception as e:
         raise

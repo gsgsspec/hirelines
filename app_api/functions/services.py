@@ -73,7 +73,10 @@ from app_api.models import (
     Lookupmaster,
     ProfileAnalysis,
     Workspace,
-    Client
+    Client,
+    JobBoard,
+    JobBoardCredential,
+    JDJobBoards
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -5562,3 +5565,83 @@ def RecruitersPerformanceService(dataObjs):
         "to_date": to_date.strftime("%Y-%m-%d"),
         "data": final
     }
+
+
+
+def getJobboards(user_data):
+    try:
+        job_boards = []
+
+        active_job_boards = JobBoard.objects.filter(status="A").order_by("name")
+        
+        for job_board in active_job_boards:
+
+            job_board_credentials = JobBoardCredential.objects.filter(jobboardid=job_board.id,companyid=user_data.companyid).last()
+
+            status = "I"
+            if job_board_credentials:
+                status = "A" if job_board_credentials.status == "A" else "I"
+
+            job_boards.append({
+                "id":job_board.id,
+                "name": job_board.name,
+                "logo": job_board.logo_path,
+                "status": status
+            })
+        
+        return job_boards
+
+    except Exception as e:
+        raise
+
+
+def jobBoardConfigService(dataObjs,companyid):
+    try:
+
+        job_board_credentials = JobBoardCredential.objects.filter(jobboardid=dataObjs["job-board-id"],companyid=companyid).last()
+
+        if job_board_credentials:
+            return {
+                "api_key":job_board_credentials.apikey,
+                "endpoint":job_board_credentials.endpoint,
+                "username":job_board_credentials.username,
+                "password":job_board_credentials.password,
+                "status":job_board_credentials.status,
+            }
+
+        return {
+            "api_key": "",
+            "endpoint": "",
+            "username": "",
+            "password": "",
+            "is_enabled": "I",
+        }
+        
+    except Exception as e:
+        raise
+
+
+
+def getJDJobboards(user_data,jd_id):
+    try:
+        job_boards = []
+
+        job_board_credentials = JobBoardCredential.objects.filter(companyid=user_data.companyid,status="A")
+        
+        for job_board_credential in job_board_credentials:
+
+            job_board = JobBoard.objects.get(id=job_board_credential.jobboardid)
+
+            jd_jobboard = JDJobBoards.objects.filter(companyid=user_data.companyid,jobdescid=jd_id,status="A",jobboardid=job_board.id).last()
+
+            job_boards.append({
+                "id":job_board.id,
+                "name": job_board.name,
+                "logo": job_board.logo_path,
+                "selected_jb": "Y" if jd_jobboard else "N"
+            })
+        
+        return job_boards
+
+    except Exception as e:
+        raise

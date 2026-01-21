@@ -109,10 +109,9 @@ urlpatterns = [
     path("search", views.search_jd_library),
     path("jddetail", views.jd_library_detail),
 
-    path("validate_profile",views.validate_profile)
-
-
-
-
+    path("validate_profile",views.validate_profile),
+    path("job-board-config", views.jobBoardConfig),
+    path("save-job-board-config", views.saveJobBoardConfig),
+    path("save-jb-job-boards", views.saveJDJobBoards),
 
 ]

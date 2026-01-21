@@ -10,7 +10,7 @@ from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
-    ResumeFile, WorkCal,ProfileAddress,Lookupmaster,Workspace
+    ResumeFile, WorkCal,ProfileAddress,Lookupmaster,Workspace, JobBoardCredential, JDJobBoards
 from django.db import transaction
 
 from .doc2pdf import convert_word_binary_to_pdf
@@ -1850,5 +1850,81 @@ def updateProfileCompletion(profile_id):
             print(f"Profile {profile_id} remains in Draft (Percentage: {completion_percentage}%)")
 
         print("profile_id",profile_id)
+    except Exception as e:
+        raise
+
+
+def saveJobBoardConfigDB(dataObjs,companyid):
+    try:
+
+        job_board_credentials = JobBoardCredential.objects.filter(jobboardid=dataObjs["job_board_id"],companyid=companyid).last()
+
+        if job_board_credentials:
+            job_board_credentials.apikey= dataObjs["api_key"]
+            job_board_credentials.endpoint = dataObjs["endpoint"]
+            job_board_credentials.username = dataObjs["username"]
+            job_board_credentials.password = dataObjs["password"]
+            job_board_credentials.status = dataObjs["status"]
+
+            job_board_credentials.save()
+
+        else:
+            job_board_credentials = JobBoardCredential(
+                companyid = companyid,
+                jobboardid = dataObjs["job_board_id"],
+                apikey = dataObjs["api_key"],
+                endpoint = dataObjs["endpoint"],
+                username = dataObjs["username"],
+                password = dataObjs["password"],
+                status = dataObjs["status"]
+            )
+
+            job_board_credentials.save()
+
+    except Exception as e:
+        raise
+
+
+def saveJDJobBoardsDB(dataObjs,user):
+    try:
+
+        jobdescid = dataObjs["jobid"]
+        companyid = user.companyid
+
+        user_selected_jobboards = set(map(int, dataObjs.get("job_board_ids", [])))
+
+        existing_jobboards = JDJobBoards.objects.filter(
+            companyid=companyid,
+            jobdescid=jobdescid
+        )
+
+        existing_jobboard_ids = set(
+            existing_jobboards.values_list("jobboardid", flat=True)
+        )
+
+        to_create_jobboards = user_selected_jobboards - existing_jobboard_ids
+
+        if to_create_jobboards:
+            JDJobBoards.objects.bulk_create([
+                JDJobBoards(
+                    companyid=companyid,
+                    jobdescid=jobdescid,
+                    jobboardid=jobboard_id,
+                    publishedon=datetime.now(),
+                    publishedby=user.id,
+                    status="A"
+                )
+                for jobboard_id in to_create_jobboards
+            ])
+
+        to_delete_jobboards = existing_jobboard_ids - user_selected_jobboards
+
+        if to_delete_jobboards:
+            JDJobBoards.objects.filter(
+                companyid=companyid,
+                jobdescid=jobdescid,
+                jobboardid__in=to_delete_jobboards
+            ).delete()
+
     except Exception as e:
         raise

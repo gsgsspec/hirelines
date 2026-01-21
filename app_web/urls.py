@@ -56,6 +56,7 @@ urlpatterns = [
     path("workspace",active_user_required(views.workspacePage)),
     path("workspace/<int:wid>",active_user_required(views.workspaceDetailsPage)),
     path('clients-list',views.clientLst),
-    path('recruiters-performance-report',views.recruiters_performance_reportPage)
+    path('recruiters-performance-report',views.recruiters_performance_reportPage),
+    path('job-boards',active_user_required(views.jobBoardsPage)),
 
 ]

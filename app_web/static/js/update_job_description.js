@@ -547,3 +547,49 @@ document.addEventListener('DOMContentLoaded', function() {
     // 3. Run it whenever the dropdown changes
     hiringManagerSelect.addEventListener('change', toggleButton);
 });
+
+
+document.getElementById("publishBtn")?.addEventListener("click", function () {
+
+    // Get selected job boards
+    const selectedBoards = Array.from(
+        document.querySelectorAll('input[name="job_boards"]:checked')
+    ).map(cb => cb.value);
+
+    const dataObjs = {
+        "job_board_ids": selectedBoards,
+        "jobid":JdId
+    }
+
+    const final_data = {
+        data: JSON.stringify(dataObjs),
+        csrfmiddlewaretoken: CSRF_TOKEN
+    };
+    console.log("dataObjs",dataObjs);
+
+    $.post(CONFIG['portal'] + "/api/save-jb-job-boards", final_data, function (res) {
+
+        if (res.statusCode === 0) {
+
+            Swal.fire({
+                icon: "success",
+                title: "Published Successfully",
+                text: "Job has been published to selected job boards.",
+                timer: 2000,             
+                showConfirmButton: false
+            });
+
+            const modalEl = document.getElementById("modalCenter");
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+        }
+
+    }).fail(function () {
+        Swal.fire({
+            icon: "error",
+            title: "Server Error",
+            text: "Something went wrong. Please try again."
+        });
+    });
+
+});

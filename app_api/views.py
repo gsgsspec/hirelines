@@ -18,20 +18,21 @@ from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from allauth.account.utils import perform_login
 from allauth.account import app_settings as allauth_settings
-from app_api.functions.masterdata import auth_user, getCompanyId
+from app_api.functions.masterdata import auth_user, getCompanyId, getUserCompany
 from django.db.models import Q
 
 from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
-        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService
+        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService, jobBoardConfigService
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal,jdlibrary
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
-    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB,updateWorkspaceDB,updateProfileCompletion
+    updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB,updateWorkspaceDB,updateProfileCompletion, \
+    saveJobBoardConfigDB, saveJDJobBoardsDB
 from app_api.functions.constants import hirelines_registration_script, const_profile_status
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -1115,7 +1116,8 @@ def updateCompanyBrandingView(request):
 
 def getUserName(request):
     user = auth_user(request.user)
-    return JsonResponse({"name": user.name})
+    company = getUserCompany(user.companyid)
+    return JsonResponse({"name": user.name,"companyname":company.name})
 
 
 @api_view(['POST'])
@@ -3049,3 +3051,85 @@ def validate_profile(request):
             "status": 0,
             "error": str(e)
         })
+    
+
+@api_view(['POST'])
+def jobBoardConfig(request):
+
+    response = {
+        "data": None,
+        "error": None,
+        "statusCode": 1
+    }
+
+    try:
+        if request.method == "POST":
+
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get("data"))
+
+            config_data = jobBoardConfigService(dataObjs,user.companyid)
+
+            response["data"] = config_data
+            response["statusCode"] = 0
+
+    except Exception as e:
+        response["data"] = "Error in getting Job Board Config"
+        response["error"] = str(e)
+
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def saveJobBoardConfig(request):
+
+    response = {
+        "data": None,
+        "error": None,
+        "statusCode": 1
+    }
+
+    try:
+        if request.method == "POST":
+
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get("data"))
+
+            saveJobBoardConfigDB(dataObjs,user.companyid)
+
+            response["data"] = "success"
+            response["statusCode"] = 0
+
+    except Exception as e:
+        response["data"] = "Error in getting saving Job Board Config"
+        response["error"] = str(e)
+
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def saveJDJobBoards(request):
+
+    response = {
+        "data": None,
+        "error": None,
+        "statusCode": 1
+    }
+
+    try:
+        if request.method == "POST":
+
+            user = auth_user(request.user)
+            dataObjs = json.loads(request.POST.get("data"))
+
+            saveJDJobBoardsDB(dataObjs,user)
+
+            response["data"] = "success"
+            response["statusCode"] = 0
+
+    except Exception as e:
+        response["data"] = "Error in saving JD Job Boards"
+        response["error"] = str(e)
+
+    return JsonResponse(response)
+

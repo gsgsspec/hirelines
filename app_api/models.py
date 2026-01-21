@@ -701,3 +701,40 @@ class jdlibrary(models.Model):
     
     class Meta:
         db_table = 'jdlibrary'
+
+
+class JobBoard(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    logo_path = models.CharField(max_length=100, null=True, blank=True)
+    status = models.CharField(max_length=1, null=True, blank=True)
+
+    class Meta:
+        db_table = 'jobboard'
+
+
+class JobBoardCredential(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True, blank=True)
+    jobboardid = models.IntegerField(null=True, blank=True)
+    apikey = models.CharField(max_length=512, null=True, blank=True)
+    endpoint = models.CharField(max_length=512, null=True, blank=True)
+    username = models.CharField(max_length=100, null=True, blank=True)
+    password = models.CharField(max_length=100, null=True, blank=True)
+    status = models.CharField(max_length=1, null=True, blank=True)
+
+    class Meta:
+        db_table = 'jobboardcredential'
+
+
+class JDJobBoards(models.Model):
+    id = models.AutoField(primary_key=True)
+    companyid = models.IntegerField(null=True, blank=True)
+    jobdescid = models.IntegerField(null=True, blank=True)
+    jobboardid = models.IntegerField(null=True, blank=True)
+    publishedon = models.DateTimeField(null=True, blank=True)
+    publishedby = models.IntegerField(null=True, blank=True)
+    status = models.CharField(max_length=1, null=True, blank=True)
+
+    class Meta:
+        db_table = 'jdjobboard'

@@ -22,6 +22,7 @@ var menuItemsUrls = {
     'work-calender':['/work-calender'],
     'recruiter-dashboard':['recruiter-dashboard'],
     'workspace':['/workspace'],
+    'job-boards':['/job-boards'],
 };
 
 // var menuItems = document.querySelectorAll('.menu-item');
@@ -140,6 +141,11 @@ function fetchUserName() {
             const userNameMenu = document.getElementById("user-name-menu");
             if (userNameMenu) {
                 userNameMenu.innerHTML += data.name;
+            }
+
+            const companyName = document.getElementById("company-name-menu");
+            if (companyName) {
+                companyName.innerHTML += data.companyname;
             }
         })
         .catch(error => {

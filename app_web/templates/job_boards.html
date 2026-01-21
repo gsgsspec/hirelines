@@ -1,0 +1,193 @@
+{% load static %}
+
+<div class="container-center">
+    <div class="w-100">
+        <div class="card mb-4">
+            <div class="card-title-table">
+                <h4 class="card-header">Job Boards</h4>
+            </div>
+
+            <div class="filter-bar p-4 pb-0">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="defaultCheck1">
+                    <label class="form-check-label" for="defaultCheck1">
+                        Show enabled Job boards
+                    </label>
+                </div>
+
+                <input
+                    id="searchInput"
+                    class="form-control search-input"
+                    type="search"
+                    placeholder="Search Job boards"
+                    aria-label="Search">
+            </div>
+            
+
+            <div class="row g-4 p-4 mt-2 pt-0">
+                {% for job_board in job_boards %}
+                <div class="col-md-6 col-lg-4 job-board-col">
+                    <div class="card jb-card-minimal h-100 text-center" data-job-id="{{ job_board.id }}" data-name="{{ job_board.name|lower }}">
+                        {% if job_board.status == "A" %}
+                        <span class="badge bg-success jb-status">Enabled</span>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <img src="{{ job_board.logo }}" class="jb-logo mb-2 mt-2" alt="">
+                            <h6 class="fw-semibold">{{ job_board.name }}</h6>
+
+                            <button 
+                                class="btn btn-outline-primary btn-sm mt-2 configure-btn"
+                                data-job-id="{{ job_board.id }}"
+                                data-job-name="{{ job_board.name }}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalScrollable">
+                                Configure
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div id="noResultsMessage" class="text-center text-muted mt-4" style="display: none;">
+                    <p class="fw-semibold mb-1">No Job Boards Found</p>
+                    <small>Try adjusting your search or filters</small>
+                </div>
+
+            </div>
+
+            <div class="modal fade" id="modalScrollable" tabindex="-1" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header wk-modal-header">
+                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                        <h5 class="modal-title p-clr" id="modalScrollableTitle">Job Board</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="jobBoardConfigForm">
+                            <input type="hidden" id="job_board_id">
+                            <input type="hidden" id="status">
+
+                            <div class="mb-3">
+                                <label class="form-label">API Key</label>
+                                <input type="text" class="form-control" id="api_key" maxlength="512" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Endpoint</label>
+                                <input type="text" class="form-control" id="endpoint" maxlength="512" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" maxlength="100" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" autocomplete="new-password" maxlength="100" required>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_enabled">
+                                <label class="form-check-label" for="is_enabled">Enabled</label>
+                            </div>
+                        </form>
+
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveJobBoardConfig">Save changes</button>
+                    </div> 
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/job_boards.js' %}"></script>
+
+<style>
+    .jb-img-sec {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .jdb-enb-sec {
+        display: flex;
+        justify-content: end;
+        
+    }
+
+    .jb-card-minimal {
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .jb-logo {
+        max-height: 60px;
+        object-fit: contain;
+    }
+
+    .jb-status {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+    }
+
+    .wk-modal-header {
+        background: var(--light-primary-color);
+        padding: 1rem;
+    }
+
+    .jb-status {
+        transition: all 0.2s ease;
+    }
+
+    .jb-card-minimal.disabled {
+        opacity: 0.5;
+    }
+
+    .filter-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        gap: 16px;
+    }
+
+    .filter-bar .form-check {
+        position: relative;
+        z-index: 5;
+        flex-shrink: 0;
+    }
+
+    .filter-bar .search-input {
+        max-width: 300px;
+        flex-grow: 0;
+    }
+
+    .col-md-6 {
+        transition: opacity 0.2s ease;
+    }
+
+    .job-board-col {
+        transition: 
+            opacity 0.25s ease,
+            transform 0.25s ease;
+    }
+
+    .job-board-col.hidden {
+        opacity: 0;
+        transform: scale(0.95);
+        pointer-events: none;
+    }
+
+
+</style>

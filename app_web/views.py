@@ -7,7 +7,8 @@ from app_api.functions.masterdata import user_not_active,auth_user, get_current_
 from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate, Company, Branding, Profile,Source,ProfileExperience,ProfileSkills,Lookupmaster, ProfileActivity
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
-    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst,RecruitersPerformanceService
+    getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst,RecruitersPerformanceService, \
+    getJobboards, getJDJobboards
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -351,9 +352,12 @@ def update_jobdescription(request,update_jd_id):
         is_hiring_manager = False
         if jd_details and jd_details.get('hiringmanager'):
             is_hiring_manager = str(jd_details.get('hiringmanager')) == str(user_id)
+
+        job_boards = getJDJobboards(user_data,update_jd_id)
         menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
                         child['menuItemLink'] == currentPath]
-        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details,'user_role':user_role,'recruiters_data':recruiters_data,'hiring_managers':hiring_managers,'is_hiring_manager':is_hiring_manager})
+        return render(request, "portal_index.html", {"template_name": 'update_job_description.html', 'menuItemList': menuItemList,'jd_details':jd_details,'user_role':user_role,'recruiters_data':recruiters_data,'hiring_managers':hiring_managers,'is_hiring_manager':is_hiring_manager,
+                                                     "job_boards":job_boards})
     except Exception as e:
         raise
 
@@ -1371,5 +1375,32 @@ def recruiters_performance_reportPage(request):
                                                                      "recruiter_report": recruiters_performance["data"], "from_date": recruiters_performance["from_date"], "to_date": recruiters_performance["to_date"],
                                                                      })
     
+    except Exception as e:
+        raise
+
+
+
+
+def jobBoardsPage(request):
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+        
+        job_boards = getJobboards(user_data)
+
+        if menuItemObjList:
+            return render(request, "portal_index.html", {"template_name": "job_boards.html", 'menuItemList': menuItemList,"job_boards":job_boards})
+        else:
+            return redirect('../')
+
     except Exception as e:
         raise
