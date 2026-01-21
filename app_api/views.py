@@ -2964,6 +2964,11 @@ def validate_profile(request):
         email = request.GET.get("email", "").strip()
         mobile = request.GET.get("mobile", "").strip()
         profile_id = request.GET.get("profile_id")
+        
+        company_id = getCompanyId(request.user)
+
+
+        print("company_id",company_id)
 
         name_exists = False
         email_exists = False
@@ -2975,7 +2980,7 @@ def validate_profile(request):
 
         
         if email:
-            email_obj = Profile.objects.filter(email__iexact=email)
+            email_obj = Profile.objects.filter(email__iexact=email,  companyid=company_id  )
 
             if profile_id:
                 email_obj = email_obj.exclude(id=profile_id)
@@ -2992,7 +2997,7 @@ def validate_profile(request):
 
        
         if mobile:
-            mobile_obj = Profile.objects.filter(mobile=mobile)
+            mobile_obj = Profile.objects.filter(mobile=mobile,   companyid=company_id  )
 
             if profile_id:
                 mobile_obj = mobile_obj.exclude(id=profile_id)
@@ -3013,7 +3018,7 @@ def validate_profile(request):
         #         lastname__iexact=last
         #     )
         if first or middle or last:
-            name_obj = Profile.objects.filter(
+            name_obj = Profile.objects.filter( companyid=company_id ).filter(
                 Q(firstname__iexact=first, middlename__iexact=middle, lastname__iexact=last) |
                 Q(firstname__iexact=last, middlename__iexact=middle, lastname__iexact=first)
             )
