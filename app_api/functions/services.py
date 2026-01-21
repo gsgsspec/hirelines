@@ -4128,7 +4128,7 @@ def getProfileData(pid, user_data):
 
         profile_awards = []
 
-        if projects_data:
+        if awards_data:
 
             for award in awards_data:
 
