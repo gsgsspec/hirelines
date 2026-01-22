@@ -76,7 +76,13 @@
                                 {% endif %}
                             </td>
 
-                            <td class="text-end">{{ jd.sourced }}</td>
+                            <td class="text-end">
+                                {% if forloop.first %}
+                                    {{ jd.sourced|default:0 }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </td>
                             <td class="text-end">{{ jd.profiled }}</td>
                             <td class="text-end">{{ jd.screened }}</td>
                             <td class="text-end">{{ jd.client_interview }}</td>

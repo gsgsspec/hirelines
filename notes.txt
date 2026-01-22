@@ -373,6 +373,8 @@ VALUES
  'Hyderabad',
  '["java","spring","react","html","css","js","mysql"]',
  '["redux","bootstrap"]'
+ );
+
 
 ================Srikanth ==============
 CREATE TABLE jobboard (
