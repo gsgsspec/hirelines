@@ -11,6 +11,7 @@
                     <i class='bx bx-info-circle'data-bs-toggle="tooltip" data-bs-offset="0,6" data-bs-placement="left" data-bs-html="true" style="font-size: 25px;color: var(--primary-color);cursor: pointer;"
                         data-bs-original-title="<span>Resumes will sync every hour</span>"></i> &nbsp;
                     <button class="btn btn-primary" id="sync-btn"><i class="fas fa-sync-alt"></i> &nbsp; Sync with email </button> &nbsp;&nbsp;
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable"><i class="fas fa-file-alt"></i> &nbsp; Add Resume</button>&nbsp;&nbsp;
                 </div>
             </div>
 
@@ -89,6 +90,68 @@
 
                 </div> -->
 
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalScrollable" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header wk-modal-header">
+                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                        <h5 class="modal-title p-clr" id="modalScrollableTitle">New Resume</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addResumeForm">
+
+                            <div class="row mb-3">
+                                <label class="form-label">Upload Resume <span style="color: red;">*</span></label>
+                                <div>
+
+                                    <div class="upload-box" id="uploadBox" onclick="document.getElementById('resumeInput').click()" ondragover="dragOver(event)" 
+                                        ondragleave="dragLeave(event)" 
+                                        ondrop="dropFile(event)">
+
+                                    <!-- Remove Icon (top-right) -->
+                                    <div id="removeBtn" class="remove-btn" onclick="removeFile(event)"><i class="fas fa-times" style="color: #ff4d4d;"></i></div>
+
+                                    <!-- Default text -->
+                                        <div id="defaultText" class="upload-text">
+                                            Upload Resume<br>
+                                            <small style="font-size:13px;">(PDF or Word only)</small>
+                                        </div>
+
+                                        <!-- Preview inside box -->
+                                        <div id="filePreview" class="file-preview">
+                                            <img id="fileIcon" class="file-icon">
+                                            <div id="fileName" class="file-name"></div>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="file" id="resumeInput" accept=".pdf,.doc,.docx" hidden>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <label class="form-label">Source <span style="color: red;">*</span></label>
+                                    <select class="form-select" id="r-source" required>
+                                        <option value="" selected disabled>Select Source</option>
+                                        {% for source in sources_data %}
+                                            <option value="{{ source.code }}">{{ source.code }} - {{ source.label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="addResumeBtn">Save</button>
+                    </div> 
+                </div>
             </div>
         </div>
     </div>

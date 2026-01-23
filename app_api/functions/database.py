@@ -1928,3 +1928,47 @@ def saveJDJobBoardsDB(dataObjs,user):
 
     except Exception as e:
         raise
+
+
+def addResumeDB(dataObjs,fileObjs, user_data):
+    try:
+
+        file_binary = fileObjs.read()
+
+        ext = os.path.splitext(fileObjs.name)[1].lower()
+
+        if ext in [".doc", ".docx"]:
+            
+            try:
+                pdf_binary = convert_word_binary_to_pdf(file_binary)
+            except:
+                pdf_binary = file_binary
+
+        elif ext == ".pdf":
+            pdf_binary = file_binary
+
+        else:
+            raise Exception("Unsupported file format")
+        
+        source = Source.objects.filter(companyid=user_data.companyid,code=dataObjs['source']).last()
+        
+        resume = Resume(
+            sourceid = source.id,
+            companyid = user_data.companyid,
+            filename = fileObjs.name,
+            datentime = datetime.now(),
+            status = "A"
+        )
+
+        resume.save()
+
+        resume_file = ResumeFile(
+            resumeid = resume.id,
+            filename = fileObjs.name,
+            filecontent = pdf_binary
+        )
+
+        resume_file.save()
+
+    except Exception as e:
+        raise

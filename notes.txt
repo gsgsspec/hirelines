@@ -412,6 +412,7 @@ INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Linkedin','/static
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Indeed','/static/lib/portal/img/jobboards/indeed.png','A');
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Naukri','/static/lib/portal/img/jobboards/naukri.png','A');
 
+INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`, `enable`, `function_icon`, `orderby`) VALUES ('Overall Dashboard', 'Overall Dashboard', 'overall-dashboard', 'HR-Admin', 'fas fa-chart-line', '1');
 
 ===============manikanta======
 

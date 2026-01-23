@@ -4959,6 +4959,8 @@ def getJdProfileData(dataObjs,user_data):
             exp_strength = int(round(match_info.get("exp_strength", 0)))
             skill_strength = int(round(match_info.get("skill_strength", 0)))
             overall_strength = int(round((skill_strength * 0.6) + (exp_strength * 0.4)))
+            skill_math_strength = int(skill_strength * 0.6)
+            exp_math_strength = int(exp_strength * 0.4)
             matched_skills = ",".join(s.capitalize() for s in match_info.get("matched_skills", []))
 
             candidate = Candidate.objects.filter(profileid=profile.id,jobid=dataObjs["jdid"]).last()
@@ -4977,7 +4979,9 @@ def getJdProfileData(dataObjs,user_data):
                         "skill_strength": skill_strength,
                         "matched_skills":matched_skills,
                         "overall_strength": overall_strength,
-                        "candidate_status":c_status
+                        "candidate_status":c_status,
+                        "skill_math_strength":skill_math_strength,
+                        "exp_math_strength":exp_math_strength
                     })
 
             else:
@@ -4993,6 +4997,8 @@ def getJdProfileData(dataObjs,user_data):
                     "skill_strength": skill_strength,
                     "matched_skills":matched_skills,
                     "overall_strength": overall_strength,
+                    "skill_math_strength":skill_math_strength,
+                    "exp_math_strength":exp_math_strength
                 })
 
         matched_profiles.sort(key=lambda x: x["overall_strength"],reverse=True)
@@ -5739,5 +5745,171 @@ def getJDJobboards(user_data,jd_id):
         
         return job_boards
 
+    except Exception as e:
+        raise
+
+
+def getOverallDashboardCounts(company_id):
+    try:
+
+        active_job_desc = JobDesc.objects.filter(companyid=company_id,status="A")
+
+        jd_ids = []
+
+        # Job Description data
+
+        jobs_data = {
+            "active_jds": 0,
+            "total_positions": 0,
+            "candidates_inprocess": 0,
+        }
+
+        for active_jd in active_job_desc:
+
+            jobs_data["active_jds"] += 1
+            jobs_data["total_positions"] += active_jd.positions if active_jd.positions else 0
+            jd_ids.append(active_jd.id)
+
+        inprocess_statuses = ["E", "P", "S"]  
+
+        jobs_data["candidates_inprocess"] = Candidate.objects.filter(
+            companyid=company_id,
+            jobid__in=jd_ids,
+            status__in=inprocess_statuses
+        ).count()
+
+        # Profiles data
+
+        profiles_data = {
+            "to_profile": 0,
+            "active_profiles": 0,
+            "strenght_above_50": 0,
+            "strenght_below_50": 0,
+        }
+
+        pending_resumes = Resume.objects.filter(companyid=company_id,status="P").count()
+        profiles_data["to_profile"] += pending_resumes
+
+        active_profiles = Profile.objects.filter(companyid=company_id,status="R")
+
+        for active_profile in active_profiles:
+            profiles_data["active_profiles"] += 1
+            if active_profile.strength is not None:
+                if active_profile.strength > 50:
+                    profiles_data["strenght_above_50"] += 1
+                elif active_profile.strength <= 50:
+                    profiles_data["strenght_below_50"] += 1
+
+        # Pipeline data
+
+        pipeline_data = {
+            "shortlisted":0,
+            "screening":0,
+            "coding":0,
+            "interview":0,
+        }
+
+        shortlisted_candidates = set()
+
+        registrations = Registration.objects.filter(companyid=company_id,jobid__in=jd_ids)
+
+        for reg in registrations:
+
+            if reg.candidateid:
+                shortlisted_candidates.add(reg.candidateid)
+
+            if reg.papertype == "S" and reg.status == "I":
+                pipeline_data["screening"] += 1
+
+            elif reg.papertype == "E" and reg.status == "I":
+                pipeline_data["coding"] += 1
+
+            elif reg.papertype == "I" and reg.status == "I":
+                pipeline_data["interview"] += 1
+
+        pipeline_data["shortlisted"] = len(shortlisted_candidates)
+
+        # JD Wise Profile activity
+
+        jd_profile_candidates = Candidate.objects.filter(companyid=company_id,jobid__in=jd_ids,profileid__isnull=False)
+
+        jd_profile_map = {}
+
+        for cand in jd_profile_candidates:
+            jd_id = cand.jobid
+            profile_id = cand.profileid
+
+            if jd_id not in jd_profile_map:
+                jd_profile_map[jd_id] = set()
+
+            jd_profile_map[jd_id].add(profile_id)
+
+        jd_name_map = {
+            jd.id: jd.title
+            for jd in JobDesc.objects.filter(id__in=jd_ids)
+        }
+
+        EXCLUDED_ACTIVITY_CODES = ["PC","E1"]
+
+        jd_activity_data = {}
+
+        for jd_id, profile_ids in jd_profile_map.items():
+
+            activity_count = ProfileActivity.objects.filter(
+                profileid__in=profile_ids
+            ).exclude(
+                activitycode__in=EXCLUDED_ACTIVITY_CODES
+            ).count()
+
+            jd_activity_data[jd_id] = {
+                "jd_name": jd_name_map.get(jd_id, ""),
+                "activity_count": activity_count
+            }
+
+        # Day wise Activity
+        today = date.today()
+        last_15_days = [today - timedelta(days=i) for i in range(14, -1, -1)]
+
+        ACTIVITY_CODES = ["PC", "SC", "CT", "IS", "CL", "SL", "RJ"]
+
+        profile_activity_daywise = {
+            d.strftime("%Y-%m-%d"): {code: 0 for code in ACTIVITY_CODES}
+            for d in last_15_days
+        }
+
+        analysis_qs = ProfileAnalysis.objects.filter(
+            companyid=company_id,
+            activitycode__in=ACTIVITY_CODES,
+            year__in=[d.year for d in last_15_days],
+            month__in=[d.month for d in last_15_days],
+            day__in=[d.day for d in last_15_days]
+        ).values(
+            "day", "month", "year", "activitycode"
+        ).annotate(
+            total_profiles=Sum("profilescount")
+        )
+
+        for row in analysis_qs:
+            date_key = f"{row['year']}-{row['month']:02d}-{row['day']:02d}"
+            code = row["activitycode"]
+
+            profile_activity_daywise[date_key][code] = row["total_profiles"] or 0
+
+        print("profile_activity_daywise",profile_activity_daywise)
+
+        dashboard_data = {
+            "jobs_data":jobs_data,
+            "profiles_data":profiles_data,
+            "pipeline_data":pipeline_data,
+            "jd_activity_data":jd_activity_data,
+            "profile_activity_daywise":profile_activity_daywise
+        }
+
+        return dashboard_data
+
+        print("jobs_data",jobs_data)
+        print("profiles_data",profiles_data)
+        print("pipeline_data",pipeline_data)
+        print("jd_ids",jd_ids)
     except Exception as e:
         raise

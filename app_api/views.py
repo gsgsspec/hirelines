@@ -32,7 +32,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
     updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB,updateWorkspaceDB,updateProfileCompletion, \
-    saveJobBoardConfigDB, saveJDJobBoardsDB
+    saveJobBoardConfigDB, saveJDJobBoardsDB, addResumeDB
 from app_api.functions.constants import hirelines_registration_script, const_profile_status
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -3137,3 +3137,29 @@ def saveJDJobBoards(request):
 
     return JsonResponse(response)
 
+
+@api_view(['POST'])
+def addResume(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+            fileObjs = request.FILES.get('resumefile')
+
+            user_data = auth_user(request.user)
+
+            addResumeDB(dataObjs,fileObjs,user_data)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in adding Resume'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)

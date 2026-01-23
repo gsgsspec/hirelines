@@ -59,4 +59,6 @@ urlpatterns = [
     path('recruiters-performance-report',views.recruiters_performance_reportPage),
     path('job-boards',active_user_required(views.jobBoardsPage)),
 
+    path('overall-dashboard',active_user_required(views.overallDashboardPage)),
+
 ]

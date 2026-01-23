@@ -23,6 +23,7 @@ var menuItemsUrls = {
     'recruiter-dashboard':['recruiter-dashboard'],
     'workspace':['/workspace'],
     'job-boards':['/job-boards'],
+    'overall-dashboard':['/overall-dashboard'],
 };
 
 // var menuItems = document.querySelectorAll('.menu-item');

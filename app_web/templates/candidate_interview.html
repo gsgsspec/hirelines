@@ -455,7 +455,8 @@
                               {% for question in coding.paper_questions %}
                                 <p>{{ question.sno }}. {{ question.question }}</p>
                                 <p>Marks : {{ question.marks }}</p>
-                                <textarea class="form-control" rows="23" disabled="">{{ question.response }}</textarea>
+                                {{ question.response|safe }}
+                                <!-- <textarea class="form-control" rows="23" disabled="">{{ question.response }}</textarea> -->
                               {% endfor %}
                             </div>
                           </div>
@@ -582,6 +583,10 @@
 
   </script>
   <style>
+
+    .highlight {
+      background-color: #fff779;
+    }
     .clear-text{
       letter-spacing: 0.2px;
       word-spacing: 0.8px;

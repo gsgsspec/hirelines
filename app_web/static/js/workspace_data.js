@@ -143,7 +143,10 @@ function renderMatchedTable(list,jdid) {
                 <td>${fullname}</td>
                 <td>${p.email}</td>
                 <td>${p.profile_strength}%</td>
-                <td class="${strength_class}">${p.overall_strength}%</td>
+                <td class="${strength_class}">${p.overall_strength}%
+                    <i class='bx bx-info-circle' data-bs-toggle="tooltip" data-bs-offset="0,6" data-bs-placement="top" data-bs-html="true" style="color: var(--primary-color);cursor: pointer;"
+                        data-bs-original-title="<span>Experience : ${p.exp_math_strength}</span> <br> <span> Skills : ${p.skill_math_strength}</span>"></i>
+                </td>
                 <td>${p.total_experience} Yrs -  ${p.exp_strength}%</td>
                 <td>${p.skill_strength}% <i class='bx bx-info-circle' data-bs-toggle="tooltip" data-bs-offset="0,6" data-bs-placement="top" data-bs-html="true" style="color: var(--primary-color);cursor: pointer;"
                         data-bs-original-title="<span>${p.matched_skills}</span>"></i>

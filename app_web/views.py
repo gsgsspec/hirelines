@@ -8,7 +8,7 @@ from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
     getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst,RecruitersPerformanceService, \
-    getJobboards, getJDJobboards
+    getJobboards, getJDJobboards, getOverallDashboardCounts
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -1399,6 +1399,36 @@ def jobBoardsPage(request):
 
         if menuItemObjList:
             return render(request, "portal_index.html", {"template_name": "job_boards.html", 'menuItemList': menuItemList,"job_boards":job_boards})
+        else:
+            return redirect('../')
+
+    except Exception as e:
+        raise
+
+
+def overallDashboardPage(request):
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+        currentPath = get_current_path(request.path)
+
+        company_id = getCompanyId(request.user)
+        
+        dashboard_data = getDashboardData(company_id)
+        dashboard_counts = getOverallDashboardCounts(company_id)
+        # print("dashboard_counts",dashboard_counts)
+
+        menuItemObjList = [child for menuItemObj in menuItemList for child in menuItemObj['child'] if
+                        child['menuItemLink'] == currentPath]
+
+        if menuItemObjList:
+            return render(request, "portal_index.html", {"template_name": "overall_dashboard.html", 'menuItemList': menuItemList,'dashboard_data':dashboard_data,"dashboard_counts":dashboard_counts })
+    
         else:
             return redirect('../')
 

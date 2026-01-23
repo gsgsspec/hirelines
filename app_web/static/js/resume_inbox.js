@@ -299,3 +299,187 @@ document.getElementById("close-resume-preview-btn").addEventListener("click", fu
     document.getElementById("resumeIframe").src = "";
 });
 
+
+document.getElementById("addResumeBtn")?.addEventListener("click", function () {
+
+    const form = document.getElementById('addResumeForm');
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    $("#addResumeBtn").prop("disabled", true);
+        $("#addResumeBtn").html('Please wait &nbsp; <i class="fas fa-circle-notch fa-spin"></i>');
+
+    dataObjs = {
+        'source': $('#r-source').val(),
+    }
+
+    var formData = new FormData();
+
+    formData.append("data", JSON.stringify(dataObjs));
+    formData.append("csrfmiddlewaretoken", CSRF_TOKEN);
+
+    if (!selectedFile) {
+        Swal.fire({
+            icon: "warning",
+            title: "Please attach resume",
+            text: "Resume file is required.",
+            confirmButtonColor: '#274699'
+        });
+
+        $("#addResumeBtn").prop("disabled", false);
+        $("#addResumeBtn").html('Save');
+        return false; 
+    }
+
+    formData.append("resumefile", selectedFile);
+
+    $.ajax({
+        url: CONFIG['portal'] + "/api/add-resume",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+            if (res.statusCode == 0) {
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Resume added",
+                    text: "The resume was added successfully!",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                reloadResumesWithCurrentFilters();
+
+                $("#addResumeBtn").prop("disabled", false);
+                $("#addResumeBtn").html('Save');
+
+                const modalEl = document.getElementById('modalScrollable');
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+
+                resetAddResumeForm()
+
+
+            }else {
+                $("#addResumeBtn").prop("disabled", false);
+                $("#addResumeBtn").html('Save');
+
+                Swal.fire(
+                    "Error",
+                    "Unable to add resume",
+                    "error"
+                );
+            }
+        }
+    });
+
+
+})
+
+
+
+
+let selectedFile = null;
+
+document.getElementById("resumeInput").addEventListener("change", function(event) {
+    if (event.target.files[0]) {
+        handleFile(event.target.files[0]);
+    }
+});
+
+
+function removeFile(event) {
+    event.stopPropagation(); // prevent triggering file picker
+
+    selectedFile = null;
+    document.getElementById("resumeInput").value = "";
+
+    // Reset UI
+    document.getElementById("filePreview").style.display = "none";
+    document.getElementById("defaultText").style.display = "block";
+    document.getElementById("removeBtn").style.display = "none";
+}
+
+
+function dragOver(event) {
+    event.preventDefault();
+    document.getElementById("uploadBox").classList.add("drag-over");
+}
+
+function dragLeave(event) {
+    event.preventDefault();
+    document.getElementById("uploadBox").classList.remove("drag-over");
+}
+
+function dropFile(event) {
+    event.preventDefault();
+    document.getElementById("uploadBox").classList.remove("drag-over");
+
+    const file = event.dataTransfer.files[0];
+    if (!file) return;
+
+    handleFile(file);
+}
+
+
+function handleFile(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    let iconUrl = "";
+
+    if (ext === "pdf") {
+        iconUrl = "/static/img/pdf.png";
+    } else if (ext === "doc" || ext === "docx") {
+        iconUrl = "/static/img/doc.png";
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "Invalid File",
+            text: "Only PDF or Word files are allowed!",
+            confirmButtonColor: "#274699"
+        });
+        return;
+    }
+
+    selectedFile = file;
+
+    document.getElementById("fileIcon").src = iconUrl;
+    document.getElementById("fileName").textContent = file.name;
+
+    document.getElementById("defaultText").style.display = "none";
+    document.getElementById("filePreview").style.display = "flex";
+    document.getElementById("removeBtn").style.display = "block";
+}
+
+
+function resetAddResumeForm() {
+
+    const form = document.getElementById('addResumeForm');
+    form.reset(); // resets select + native inputs
+
+    // Reset file input
+    const fileInput = document.getElementById('resumeInput');
+    fileInput.value = '';
+
+    // Reset custom variables
+    selectedFile = null;
+
+    // Reset upload UI
+    document.getElementById('filePreview').style.display = 'none';
+    document.getElementById('defaultText').style.display = 'block';
+    document.getElementById('fileName').innerText = '';
+    document.getElementById('fileIcon').src = '';
+
+    // Hide remove button
+    document.getElementById('removeBtn').style.display = 'none';
+
+    // Remove error styles if any
+    document.getElementById('uploadBox').classList.remove('error');
+}

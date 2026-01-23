@@ -113,5 +113,6 @@ urlpatterns = [
     path("job-board-config", views.jobBoardConfig),
     path("save-job-board-config", views.saveJobBoardConfig),
     path("save-jb-job-boards", views.saveJDJobBoards),
+    path("add-resume", views.addResume),
 
 ]

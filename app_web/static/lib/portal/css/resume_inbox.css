@@ -16,7 +16,7 @@
 }
 
 .search-box .fa-search {
-    margin:0px 8px;
+    margin: 0px 8px;
     font-size: 14px;
     color: #777;
 }
@@ -84,32 +84,109 @@
 
 /* For Chrome, Edge, Brave */
 ::-webkit-scrollbar {
-  width: 6px;      /* scrollbar width */
-  height: 6px;     /* horizontal scrollbar */
+    width: 6px;
+    /* scrollbar width */
+    height: 6px;
+    /* horizontal scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
-  border-radius: 10px;
+    background: #f1f1f1;
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 10px;
+    background: #c1c1c1;
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+    background: #a8a8a8;
 }
 
 /* For Firefox */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
 }
 
 
 .active-row {
     background-color: var(--light-primary-color) !important;
     color: var(--primary-color);
+}
+
+.wk-modal-header {
+    background: var(--light-primary-color);
+    padding: 1rem;
+}
+
+
+.upload-box.drag-over {
+    border: 2px dashed var(--primary-color) !important;
+    background: var(--light-primary-color);
+}
+
+.upload-box {
+    /* width: 350px; */
+    height: 160px;
+    border: 1px solid #d9dee3;
+    border-radius: 12px;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    flex-direction: column;
+    text-align: center;
+    transition: 0.2s;
+    position: relative;
+    padding: 10px;
+}
+
+.upload-text {
+    font-size: 18px;
+    color: #566a7f;
+}
+
+.file-preview {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.file-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.file-name {
+    max-width: 260px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #2f4d76;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-bottom: 8px;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    /* background: #ff4d4d;
+        color: white; */
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 16px;
+    line-height: 22px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    display: none;
+    /* hidden by default */
 }
