@@ -411,3 +411,12 @@ INSERT INTO `rolespermissions` (`function`, `function_category`, `function_link`
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Linkedin','/static/lib/portal/img/jobboards/linkedin.png','A');
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Indeed','/static/lib/portal/img/jobboards/indeed.png','A');
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Naukri','/static/lib/portal/img/jobboards/naukri.png','A');
+
+
+===============manikanta======
+
+UPDATE rolespermissions
+SET 
+    `function` = 'Interviewer Availability',
+    `function_category` = 'Interviewer Availability'
+WHERE function_link = 'work-calender';

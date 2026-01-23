@@ -1259,9 +1259,9 @@ def saveWorkCalDB(dataObjs):
         if not items:
             raise Exception("No rows provided")
 
-        weekoff1 = items[0].get("weekoff1")
+        # weekoff1 = items[0].get("weekoff1")
        
-        weekoff2 = items[0].get("weekoff2")
+        # weekoff2 = items[0].get("weekoff2")
         
 
         for item in items:
@@ -1274,8 +1274,8 @@ def saveWorkCalDB(dataObjs):
                     startday=item.get("startday"),
                     starttime=item.get("starttime"),
                     hours=item.get("hours"),
-                    weekoff1=weekoff1,
-                    weekoff2=weekoff2
+                    # weekoff1=weekoff1,
+                    # weekoff2=weekoff2
                 )
             else:
                 # INSERT new row
@@ -1285,8 +1285,8 @@ def saveWorkCalDB(dataObjs):
                     startday=item.get("startday"),
                     starttime=item.get("starttime"),
                     hours=item.get("hours"),
-                    weekoff1=weekoff1,
-                    weekoff2=weekoff2
+                    # weekoff1=weekoff1,
+                    # weekoff2=weekoff2
                 )
 
         return True

@@ -12,6 +12,7 @@
                     <th> <strong> Name </strong></th>
                     <th> <strong> Email </strong></th>
                     <th> <strong> HR </strong></th>
+                    <th> <strong> Interviewed on</strong></th>
                     <th> <strong> Interviewed by </strong></th>
                     <th> <strong> Feedback </strong></th>
                 </tr>
@@ -23,6 +24,7 @@
                     <td>{{ int_candidate.c_name }}</td>
                     <td>{{ int_candidate.c_email }}</td>
                     <td>{{ int_candidate.hr }}</td>
+                    <td>{{ int_candidate.interview_datetime }}</td>
                     <td>{{ int_candidate.interviewby }}</td>
                     <td>
                         {% if int_candidate.feedback == "Y" %}

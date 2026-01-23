@@ -161,3 +161,58 @@ function requestprefill(pid, doc_parser_id) {
         }
     });
 }
+
+
+
+
+function updateProfileStrength(data) {
+    // Define the elements
+    const box = document.getElementById("profileStrengthBox");
+    const valueSpan = document.getElementById("profileStrengthValue");
+    
+    // Safety check
+    if (!box || !valueSpan || !data) {
+        console.error("Required elements or data missing for strength update");
+        return;
+    }
+
+    // 1. Get the total strength (handles both object and single value cases)
+    const total = data.strength !== undefined ? data.strength : data;
+    
+    // 2. Update the visible text inside the circle
+    valueSpan.innerText = total + "%";
+
+    // 3. If data is an object (contains scores), update the tooltip
+    if (typeof data === 'object') {
+        const tooltipText = 
+            `Education: ${data.educationscore || 0}` + `\n` +
+            `Experience: ${data.experiencescore || 0}` + `\n` +
+            `Skills: ${data.skillsscore || 0}` + `\n` +
+            `Projects: ${data.projectsscore || 0}` + `\n` +
+            `Certificates: ${data.certificatesscore || 0}` + `\n` +
+            `Awards: ${data.awardsscore || 0}`;
+            
+        // Apply the string to the custom data attribute
+        box.setAttribute("data-tip", tooltipText);
+    }
+    
+    console.log("UI Updated with new strength:", total);
+}
+
+function fetchLatestProfileStrength() {
+    // if (!profileId) return;
+       if (!pid) return;
+
+    $.get(CONFIG['portal'] + "/api/get-profile-strength", {
+        // profile_id: profileId
+        profile_id: pid
+    }).done(function (res) {
+        if (res.statusCode === 0 && res.data !== undefined) {
+            updateProfileStrength(res.data); 
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    fetchLatestProfileStrength();
+});

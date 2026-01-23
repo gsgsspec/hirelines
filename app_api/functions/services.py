@@ -1961,16 +1961,16 @@ def getInterviewCandidates(userid):
         )
         completed_interviews = CallSchedule.objects.filter(
             status="C", companyid=user.companyid, candidateid__in=candidate_ids
-        )
+        ).order_by("-datentime")
 
         user_interviews = []
 
-        for interview in completed_interviews:
+        for interviewer  in completed_interviews:
 
-            candidate = Candidate.objects.get(id=interview.candidateid)
+            candidate = Candidate.objects.get(id=interviewer.candidateid)
 
-            hr = User.objects.get(id=interview.hrid)
-            interview = User.objects.get(id=interview.interviewerid)
+            hr = User.objects.get(id=interviewer.hrid)
+            interview = User.objects.get(id=interviewer.interviewerid)
 
             feedback = ""
 
@@ -1980,6 +1980,8 @@ def getInterviewCandidates(userid):
             if iv_feedback:
                 feedback = iv_feedback.gonogo
 
+            interview_dt = interviewer.datentime
+            
             user_interviews.append(
                 {
                     "cid": candidate.id,
@@ -1989,8 +1991,11 @@ def getInterviewCandidates(userid):
                     "hr": hr.name,
                     "interviewby": interview.name,
                     "feedback": feedback,
+                    "interview_datetime": interview_dt.strftime("%d %b %Y, %I:%M %p") if interview_dt else "",
                 }
             )
+
+            
 
         return user_interviews
 

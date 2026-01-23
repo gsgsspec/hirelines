@@ -319,7 +319,7 @@
                 confirmBtn.onclick = handleSubmit;
                 
                 confirmBtn.innerHTML = state.isSubmitting 
-                    ? `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Booking...` 
+                    ? `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Scheduling...` 
                     : 'Confirm Selection';
             }
 
@@ -460,7 +460,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Scheduled!',
-                text: 'Your interview slot has been successfully booked.',
+                text: 'Your interview slot has been successfully Scheduled.',
                 timer: 2000,
                 showConfirmButton: false
             }).then(() => {

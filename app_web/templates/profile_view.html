@@ -133,6 +133,82 @@
         padding-left: 4px;    /* reduce space after colon */
     }
 
+    .strength-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 4px solid #4caf50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4caf50;
+    font-size: 18px;
+    font-weight: 700;
+
+    position: relative;
+    cursor: default;
+    }
+
+    /* .strength-box::before {
+        content: "Profile Strength";
+        position: absolute;
+        right: 110%;           
+        top: 50%;
+        transform: translateY(-50%);
+        background: #333;
+        color: #fff;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 10;
+    } */
+    .strength-box::before {
+        /* Change 'content' to pull from the 'data-tip' attribute */
+        content: attr(data-tip); 
+        position: absolute;
+        right: 110%;           
+        top: 50%;
+        transform: translateY(-50%);
+        background: #333;
+        color: #fff;
+        padding: 8px 12px; /* Increased padding for better look */
+        font-size: 19px;
+        font-weight: 500;
+        border-radius: 4px;
+        /* This allows the \a line breaks to work */
+        white-space: pre; 
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 10;
+        text-align: left; /* Align scores to the left */
+        line-height: 1.5;
+    }
+
+    .strength-box::after {
+        content: "";
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent transparent #333;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .strength-box:hover::before,
+    .strength-box:hover::after {
+        opacity: 1;
+    }
+
+
 </style>
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb breadcrumb-custom-icon">
@@ -170,8 +246,16 @@
     <main class="content">
 
         <div class="card">
-            <div class="card-title-table">
+            <div class="card-title-table" style="padding-right: 50px;">
                 <h4 class="card-header">Profile {{profile_details.title}} {{profile_details.firstname}} {{profile_details.lastname}}<h4>
+                <div class="strength-box" id="profileStrengthBox" 
+                    data-tip="Education: {{ profile_details.educationscore }}&#10;Experience: {{ profile_details.experiencescore }}&#10;Skills: {{ profile_details.skillsscore }}&#10;Projects: {{ profile_details.projectsscore }}&#10;Certificates: {{ profile_details.certificatesscore }}&#10;Awards: {{ profile_details.awardsscore }} ">
+                    
+                    <span id="profileStrengthValue">
+                        {{ profile_details.strength  }}%
+                    </span>
+                </div>
+
             </div>
             <div class="card-body">
 

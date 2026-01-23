@@ -47,10 +47,10 @@ $(document).ready(function () {
                         container.append(buildRow(item));
                     });
 
-                    container.append(buildWeekOffSection(
-                        res.data[0].weekoff1,
-                        res.data[0].weekoff2
-                    ));
+                    // container.append(buildWeekOffSection(
+                    //     res.data[0].weekoff1,
+                    //     res.data[0].weekoff2
+                    // ));
 
                     $("#saveBtn").text("Update");
 
@@ -58,7 +58,7 @@ $(document).ready(function () {
 
                     window.DB_RECORD_COUNT = 0;
                     container.append(buildRow(null));
-                    container.append(buildWeekOffSection("", ""));
+                    // container.append(buildWeekOffSection("", ""));
                     $("#saveBtn").text("Save");
                 }
 
@@ -68,6 +68,50 @@ $(document).ready(function () {
     }
 
 
+    // function buildRow(item) {
+
+    //     let hasID = item !== null;
+    //     let showDelete = hasID && !(window.DB_RECORD_COUNT === 1);
+    //     let time = hasID && item.starttime ? item.starttime.split(":") : ["", "00"];
+
+    //     return `
+    //     <div class="row work-row mt-3" data-id="${hasID ? item.id : ''}">
+
+    //         <div class="col-md-3">
+    //             <label class="form-label">Day</label>
+    //             <select class="form-select startDay">
+    //                 <option value="">Select</option>
+    //                 ${dayOptions(hasID ? item.startday : "")}
+    //             </select>
+    //         </div>
+
+    //         <div class="col-md-3">
+    //             <label class="form-label">Time (HH:MM)</label>
+    //             <div class="d-flex gap-2">
+    //                 <select class="form-control startHour">
+    //                     ${hourOptions(time[0])}
+    //                 </select>
+    //                 <select class="form-control startMinute">
+    //                     <option value="00" ${time[1] === "00" ? "selected" : ""}>00</option>
+    //                     <option value="30" ${time[1] === "30" ? "selected" : ""}>30</option>
+    //                 </select>
+    //             </div>
+    //         </div>
+
+    //         <div class="col-md-3">
+    //             <label class="form-label">Hours</label>
+    //             <input type="number" class="form-control Hours" value="${hasID ? item.hours : ''}">
+    //         </div>
+
+    //         <div class="col-md-3 d-flex align-items-end">
+    //             ${hasID
+    //             ? `<button class="btn btn-danger deleteDbBtn" style="display:${showDelete ? 'inline-block' : 'none'}">Delete</button>`
+    //             : `<button class="btn btn-danger removeBtn">Remove</button>`
+    //         }
+    //         </div>
+    //     </div>`;
+    // }
+    
     function buildRow(item) {
 
         let hasID = item !== null;
@@ -78,7 +122,7 @@ $(document).ready(function () {
         <div class="row work-row mt-3" data-id="${hasID ? item.id : ''}">
 
             <div class="col-md-3">
-                <label class="form-label">Start Day</label>
+                <label class="form-label">Day</label>
                 <select class="form-select startDay">
                     <option value="">Select</option>
                     ${dayOptions(hasID ? item.startday : "")}
@@ -86,7 +130,7 @@ $(document).ready(function () {
             </div>
 
             <div class="col-md-3">
-                <label class="form-label">Start Time (HH:MM)</label>
+                <label class="form-label">Time (HH:MM)</label>
                 <div class="d-flex gap-2">
                     <select class="form-control startHour">
                         ${hourOptions(time[0])}
@@ -105,52 +149,63 @@ $(document).ready(function () {
 
             <div class="col-md-3 d-flex align-items-end">
                 ${hasID
-                ? `<button class="btn btn-danger deleteDbBtn" style="display:${showDelete ? 'inline-block' : 'none'}">Delete</button>`
-                : `<button class="btn btn-danger removeBtn">Remove</button>`
+                ? 
+                `
+                <i class="fa fa-trash  deleteDbBtn"
+                   style="cursor:pointer; display:${showDelete ? 'inline-block' : 'none'};"></i>
+              `
+            : `
+                <i class="fa fa-times  removeBtn"
+                   style="cursor:pointer;"></i>
+              `
             }
             </div>
         </div>`;
     }
 
 
+    // window.addRow = function () {
+
+    //     let weekOffSection = $("#rowsContainer .weekoff-section");
+
+    //     if (weekOffSection.length) {
+    //         // insert row BEFORE weekoff section
+    //         $(buildRow(null)).insertBefore(weekOffSection);
+    //     } else {
+    //         // fallback (first load)
+    //         $("#rowsContainer").append(buildRow(null));
+    //     }
+
+    //     updateDeleteButtons();
+    // };
     window.addRow = function () {
-
-        let weekOffSection = $("#rowsContainer .weekoff-section");
-
-        if (weekOffSection.length) {
-            // insert row BEFORE weekoff section
-            $(buildRow(null)).insertBefore(weekOffSection);
-        } else {
-            // fallback (first load)
-            $("#rowsContainer").append(buildRow(null));
-        }
-
+        $("#rowsContainer").append(buildRow(null));
         updateDeleteButtons();
     };
 
-    function buildWeekOffSection(wo1, wo2) {
+    // function buildWeekOffSection(wo1, wo2) {
 
-        return `
-        <div class="row mt-4 weekoff-section">
+    //     return `
+    //     <div class="row mt-4 weekoff-section">
 
-            <div class="col-md-3">
-                <label class="form-label">Week Off 1</label>
-                <select class="form-select weekOff1">
-                    <option value="">Select</option>
-                    ${dayOptions(wo1)}
-                </select>
-            </div>
+    //         <div class="col-md-3">
+    //             <label class="form-label">Week Off 1</label>
+    //             <select class="form-select weekOff1">
+    //                 <option value="">Select</option>
+    //                 ${dayOptions(wo1)}
+    //             </select>
+    //         </div>
 
-            <div class="col-md-3">
-                <label class="form-label">Week Off 2</label>
-                <select class="form-select weekOff2">
-                    <option value="">Select</option>
-                    ${dayOptions(wo2)}
-                </select>
-            </div>
+    //         <div class="col-md-3">
+    //             <label class="form-label">Week Off 2</label>
+    //             <select class="form-select weekOff2">
+    //                 <option value="">Select</option>
+    //                 ${dayOptions(wo2)}
+    //             </select>
+    //         </div>
 
-        </div>`;
-    }
+    //     </div>`;
+    // }
 
     function dayOptions(selected) {
         const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -328,8 +383,8 @@ $(document).ready(function () {
         let rows = document.querySelectorAll(".work-row");
         let list = [];
 
-        let weekoff1 = document.querySelector(".weekOff1").value;
-        let weekoff2 = document.querySelector(".weekOff2").value;
+        // let weekoff1 = document.querySelector(".weekOff1").value;
+        // let weekoff2 = document.querySelector(".weekOff2").value;
 
         let isValid = true;
         let errorMsg = "";
@@ -353,8 +408,8 @@ $(document).ready(function () {
                 startday: day,
                 starttime: `${hour}:${minute}`,
                 hours: hours,
-                weekoff1: weekoff1,
-                weekoff2: weekoff2
+                // weekoff1: weekoff1,
+                // weekoff2: weekoff2
             });
         });
 

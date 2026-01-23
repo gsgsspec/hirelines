@@ -2366,10 +2366,14 @@ def getworkcal(request):
         # Fetch ALL rows
         rows = WorkCal.objects.filter(userid=user_id, companyid=company_id)
 
+        # if not rows.exists():
+        #     response['data'] = []
+        #     response['weekoff1'] = ""
+        #     response['weekoff2'] = ""
+        #     response['statusCode'] = 0
+        #     return JsonResponse(response)
         if not rows.exists():
             response['data'] = []
-            response['weekoff1'] = ""
-            response['weekoff2'] = ""
             response['statusCode'] = 0
             return JsonResponse(response)
 
@@ -2383,8 +2387,8 @@ def getworkcal(request):
                 "startday": r.startday,
                 "starttime": r.starttime.strftime("%H:%M:%S") if r.starttime else None,
                 "hours": r.hours,
-                "weekoff1": r.weekoff1,
-                "weekoff2": r.weekoff2
+                # "weekoff1": r.weekoff1,
+                # "weekoff2": r.weekoff2
             })
 
       
