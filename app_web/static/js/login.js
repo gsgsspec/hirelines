@@ -19,7 +19,7 @@ document.getElementById('login-btn').onclick=function(){
             if (res.statusCode == 0){   
                 if (res.token == 'token_generated'){
                     if(res.data == 'HR-Admin' || res.data == 'HR-Executive'){
-                        window.location.href = '/dashboard'
+                        window.location.href = '/overall-dashboard'
                     } else if(res.data == 'Interviewer'){
                         window.location.href = '/interviews' 
                     } else if(res.data == 'Recruiter'){

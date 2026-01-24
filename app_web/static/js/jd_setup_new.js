@@ -4032,6 +4032,12 @@ function createQuestionModel(test_id, paperType, QuesType) {
         var myModal = new bootstrap.Modal(modalElement);
         myModal.show();
 
+        $('#new_question_type option').hide();
+        $('#new_question_type option[value="B"]').show();
+        $('#new_question_type option[value="A"]').show();
+        $('#new_question_type option[value="V"]').show();
+
+
     }else{
 
         let key = `previousSelectedSubTopicId_${test_id}`;
@@ -4052,16 +4058,45 @@ function createQuestionModel(test_id, paperType, QuesType) {
                 subTopicElement.setAttribute("data-test-id", test_id);
                 subTopicElement.setAttribute("data-paper-type", paperType);
                 subTopicElement.setAttribute("data-new-question-typefor", 'knowledge');
-    
-                if (paperType == "I"){
+                
+                console.log("paperType",paperType);
+                
+                if (paperType === "I") {
+
                     $('#expected_response_div').hide();
+                    $('#question-complexity-div').show();
+
+                    // Show only Interview
+                    $('#new_question_type option').hide();
+                    $('#new_question_type option[value="I"]').show();
+
                     $('#new_question_type').val('I').change();
-                    $('#question-complexity-div').show();
-                }else {
+
+                } else if (paperType === "S") {
+
                     $('#expected_response_div').show();
-                    $('#new_question_type').val('B').change();
                     $('#question-complexity-div').show();
+
+                    // Show Yes/No, Audio, Video (hide Interview)
+                    $('#new_question_type option').hide();
+                    $('#new_question_type option[value="B"]').show();
+                    $('#new_question_type option[value="A"]').show();
+                    $('#new_question_type option[value="V"]').show();
+
+                    $('#new_question_type').val('B').change();
+
+                } else {
+
+                    $('#expected_response_div').show();
+                    $('#question-complexity-div').show();
+
+                    // Default: only Yes/No
+                    $('#new_question_type option').hide();
+                    $('#new_question_type option[value="B"]').show();
+
+                    $('#new_question_type').val('B').change();
                 }
+
     
                 let modalElement = document.getElementById('createQuestionModal');
                 modalElement.removeAttribute("aria-hidden");
@@ -4075,6 +4110,14 @@ function createQuestionModel(test_id, paperType, QuesType) {
         }
     }
 }
+
+$(document).on('change', '#new_question_type', function () {
+    if ($(this).val() === 'B') {
+        $('#expected_response_div').show();
+    } else {
+        $('#expected_response_div').hide();
+    }
+});
 
 
 

@@ -65,91 +65,130 @@
           <div class="card-container">
             {% for registration in registrations_data %}
             <div class="card flow-card">
-              <label class="s-clr mb-1">{{ registration.type_title }}</label>
-              <b><label class="p-clr mb-1">{{ registration.paper_title }}</label></b>
-              {% if registration.paper_type == "I"%}
-                {%  if registration.call_status == "N"  %}
-                <div style="display: flex;">
-                  <button class="btn btn-primary" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
-                  <button class="btn btn-primary" style="margin-left: 12px;" onclick="sendSchedulingLink()">Request To Schedule Interview</button>
-                  </div>
-                {% elif registration.call_status == "W" %}
-                 <label>Interview Scheduling mail sent.</label>
-                 <label>Waiting for Candidate to Schedule.</label>
-                  <div class="mt-2 d-flex justify-content-start">
-                    <button class="btn btn-primary " onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
-                  </div>
+              <label class="s-clr mb-1 test-type-hd">{{ registration.type_title }}</label>
+              <div class="test-card-data">
 
-                   <!-- <label>Waiting for Candidate to Schedule</label> -->
+                <b><label class="p-clr mb-1">{{ registration.paper_title }}</label></b>
+                {% if registration.paper_type == "I"%}
+                  {%  if registration.call_status == "N"  %}
+                  <div style="display: flex;">
+                    <button class="btn btn-primary" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
+                    <button class="btn btn-primary" style="margin-left: 12px;" onclick="sendSchedulingLink()">Request To Schedule Interview</button>
+                    </div>
+                  {% elif registration.call_status == "W" %}
+                   <label>Interview Scheduling mail sent.</label>
+                   <label>Waiting for Candidate to Schedule.</label>
+                    <div class="mt-2 d-flex justify-content-start">
+                      <button class="btn btn-primary " onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}'">Schedule Interview</button>
+                    </div>
+  
+                     <!-- <label>Waiting for Candidate to Schedule</label> -->
+  
+                  {% elif registration.call_status == "S" %}
+                    <label>Interview scheduled</label>
+                    <label>Scheduled Time : {{ registration.scheduled_time }}</label>
+                    <label>Interviewer : {{ registration.interviewer_name }}</label>
+                    <div class="mt-2 d-flex justify-content-start">
+                      <button class="btn btn-primary btn-sm" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}?status=R&Page=C'">Reschedule</button>
+                    </div>
+                  {% elif registration.call_status == "C" %}
+                    <label>Completed on : {{ registration.call_completion_date }}</label>
+                    <label>Interviewer : {{ registration.interviewer_name }}</label>
+                    <label>Interview is completed</label>
+                  {% endif %}
+                  {% if registration.reg_status == "O" %}
+                    <label>Offer Letter is Released</label>
+                  {% elif registration.reg_status == "H" %}
+                    <label>Offer is on Hold</label>
+                  {% elif registration.reg_status == "R" %}
+                    <label>Rejected</label>
+                  {% endif %}
+                {% else %}
+                {% if registration.reg_status == "P" %}
+                    
+                    <label>Promote >= {{ registration.pass_percentage }}%</label>
+                    {% if registration.hold_check == "Y" %}
+                    <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
+                    <label>Fail < {{ registration.hold_percentage }}%</label>
+                    {% else %}
+                    <label>Fail < {{ registration.pass_percentage }}%</label>
+                    {% endif %}
+                    <label>
+                      Scored :
+                      {% if registration.score_percentage >= registration.pass_percentage %}
+                          <span style="color: green; font-weight: 600;">
+                              {{ registration.score_percentage }}%
+                          </span>
+                      {% else %}
+                          <span style="color: red; font-weight: 600;">
+                              {{ registration.score_percentage }}%
+                          </span>
+                      {% endif %}
+                    </label>
 
-                {% elif registration.call_status == "S" %}
-                  <label>Interview scheduled</label>
-                  <label>Scheduled Time : {{ registration.scheduled_time }}</label>
-                  <label>Interviewer : {{ registration.interviewer_name }}</label>
-                  <div class="mt-2 d-flex justify-content-start">
-                    <button class="btn btn-primary btn-sm" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}?status=R&Page=C'">Reschedule</button>
-                  </div>
-                {% elif registration.call_status == "C" %}
-                  <label>Completed on : {{ registration.call_completion_date }}</label>
-                  <label>Interviewer : {{ registration.interviewer_name }}</label>
-                  <label>Interview is completed</label>
-                {% endif %}
-                {% if registration.reg_status == "O" %}
-                  <label>Offer Letter is Released</label>
-                {% elif registration.reg_status == "H" %}
-                  <label>Offer is on Hold</label>
-                {% elif registration.reg_status == "R" %}
-                  <label>Rejected</label>
-                {% endif %}
-              {% else %}
-              {% if registration.reg_status == "P" %}
-                  
-                  <label style="color: green;">Promote >= {{ registration.pass_percentage }}%</label>
-                  {% if registration.hold_check == "Y" %}
-                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
-                  <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
-                  {% else %}
-                  <label style="color: red;">Fail < {{ registration.pass_percentage }}%</label>
+                    <hr style="margin: 10px 0px;">
+                    <label>Status : <label style="color: green;">Promoted</label>  &nbsp;<i class="fas fa-check" style="color: #008000;"></i></label>
+                    <label>Completed on : {{ registration.completion_date }}</label>
+                  {% elif registration.reg_status == "F" %}
+                    <label>Promote >= {{ registration.pass_percentage }}%</label>
+                    {% if registration.hold_check == "Y" %}
+                    <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
+                    <label>Fail < {{ registration.hold_percentage }}%</label>
+                    {% else %}
+                    <label>Fail < {{ registration.pass_percentage }}%</label>
+                    {% endif %}
+                    <label>
+                    Scored :
+                    {% if registration.score_percentage >= registration.pass_percentage %}
+                        <span style="color: green; font-weight: 600;">
+                            {{ registration.score_percentage }}%
+                        </span>
+                    {% else %}
+                        <span style="color: red; font-weight: 600;">
+                            {{ registration.score_percentage }}%
+                        </span>
+                    {% endif %}
+                  </label>
+
+                    <hr style="margin: 10px 0px;">
+                    <label>Status : <label style="color: red;">Failed&nbsp;<i class="fas fa-times" style="color: red;"></i> {% if registration.star_zero == "Y" %} (Scored 0 in a star question) {% endif %}</label>
+                    <label>Completed on : {{ registration.completion_date }}</label>
+                  {% elif registration.reg_status == "E" %}
+                    <label>Under Evaluation</label>
+                  {% elif registration.reg_status == "I" %}
+                    <label>Initiated</label>
+                  {% elif registration.reg_status == "H" %}
+                    <label>Promote >= {{ registration.pass_percentage }}%</label>
+                    {% if registration.hold_check == "Y" %}
+                    <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
+                    <label>Fail < {{ registration.hold_percentage }}%</label>
+                    {% else %}
+                    <label>Fail < {{ registration.pass_percentage }}%</label>
+                    {% endif %}
+                    <label>
+                      Scored :
+                      {% if registration.score_percentage >= registration.pass_percentage %}
+                          <span style="color: green; font-weight: 600;">
+                              {{ registration.score_percentage }}%
+                          </span>
+                      {% else %}
+                          <span style="color: red; font-weight: 600;">
+                              {{ registration.score_percentage }}%
+                          </span>
+                      {% endif %}
+                    </label>
+
+                    <hr style="margin: 10px 0px;">
+                    <label>Candidate is on Hold</label>
+                    <select class="form-select" id="regid-{{ registration.reg_id }}" required>
+                      <option selected disabled></option>
+                      <option value="P">Promote next round</option>
+                      <option value="R">Reject</option>
+                    </select>
+                    <button class="btn btn-primary mt-2 update-btn" onclick="updateCandidateWorkflow('{{ registration.reg_id }}')">Send</button>
                   {% endif %}
-                  <label>Scored :  {{ registration.score_percentage }}%</label>
-                  <hr style="margin: 10px 0px;">
-                  <label>Status : <label style="color: green;">Promoted</label>  &nbsp;<i class="fas fa-check" style="color: #008000;"></i></label>
-                  <label>Completed on : {{ registration.completion_date }}</label>
-                {% elif registration.reg_status == "F" %}
-                  <label style="color: green;">Promote >= {{ registration.pass_percentage }}%</label>
-                  {% if registration.hold_check == "Y" %}
-                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
-                  <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
-                  {% else %}
-                  <label style="color: red;">Fail < {{ registration.pass_percentage }}%</label>
-                  {% endif %}
-                  <label>Scored :  {{ registration.score_percentage }}%</label>
-                  <hr style="margin: 10px 0px;">
-                  <label>Status : <label style="color: red;">Failed&nbsp;<i class="fas fa-times" style="color: red;"></i> {% if registration.star_zero == "Y" %} (Scored 0 in a star question) {% endif %}</label>
-                  <label>Completed on : {{ registration.completion_date }}</label>
-                {% elif registration.reg_status == "E" %}
-                  <label>Under Evaluation</label>
-                {% elif registration.reg_status == "I" %}
-                  <label>Initiated</label>
-                {% elif registration.reg_status == "H" %}
-                  <label style="color: green;">Promote >= {{ registration.pass_percentage }}%</label>
-                  {% if registration.hold_check == "Y" %}
-                  <label>Hold {{ registration.hold_percentage }}% - {{ registration.hold_range }}%</label>
-                  <label style="color: red;">Fail < {{ registration.hold_percentage }}%</label>
-                  {% else %}
-                  <label style="color: red;">Fail < {{ registration.pass_percentage }}%</label>
-                  {% endif %}
-                  <label>Scored :  {{ registration.score_percentage }}%</label>
-                  <hr style="margin: 10px 0px;">
-                  <label>Candidate is on Hold</label>
-                  <select class="form-select" id="regid-{{ registration.reg_id }}" required>
-                    <option selected disabled></option>
-                    <option value="P">Promote next round</option>
-                    <option value="R">Reject</option>
-                  </select>
-                  <button class="btn btn-primary mt-2 update-btn" onclick="updateCandidateWorkflow('{{ registration.reg_id }}')">Send</button>
                 {% endif %}
-              {% endif %}
+              </div>
             </div>
             
             {% if not forloop.last %}
@@ -262,6 +301,19 @@
     width: 350px;
     border: 1px solid #d9dee3;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* padding: 10px; */
+  }
+
+  .test-type-hd {
+    background: var(--light-primary-color);
+    color: var(--primary-color);
+    padding: 10px;
+    font-weight: 700;
+  }
+
+  .test-card-data {
+    display: flex;
+    flex-direction: column;
     padding: 10px;
   }
 </style>

@@ -21,7 +21,8 @@ new Chart(ctx, {
         datasets: [{
             label: "Profile Activity Count",
             data: counts,
-            borderWidth: 1
+            borderWidth: 1,
+            maxBarThickness: 60
         }]
     },
     options: {
@@ -46,7 +47,7 @@ const profileActivityData = JSON.parse(document.getElementById("profileActivityD
 
 // Activity codes (order matters for lines)
 const ACTIVITY_LABEL_MAP = {
-    PC: "Profiles",
+    PC: "Profiled",
     SC: "Screening",
     CT: "Coding",
     IS: "Interview",

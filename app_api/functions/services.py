@@ -2151,6 +2151,7 @@ def getCandidateWorkflowData(cid):
                             paper_brules.passscore if paper_brules.passscore else ""
                         )
                         hold_check = paper_brules.hold
+                        
 
                     elif workflow.papertype == "E":
 
@@ -5895,7 +5896,7 @@ def getOverallDashboardCounts(company_id):
 
             profile_activity_daywise[date_key][code] = row["total_profiles"] or 0
 
-        print("profile_activity_daywise",profile_activity_daywise)
+        # print("profile_activity_daywise",profile_activity_daywise)
 
         dashboard_data = {
             "jobs_data":jobs_data,
