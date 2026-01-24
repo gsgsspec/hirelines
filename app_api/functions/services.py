@@ -5555,8 +5555,16 @@ def RecruitersPerformanceService(dataObjs):
     resume_sourced_map = defaultdict(int)
 
     for r in resume_qs:
+        # source_user_id = source_user_map.get(r["sourceid"])
+        # if not source_user_id:
+        #     continue
         source_user_id = source_user_map.get(r["sourceid"])
+
         if not source_user_id:
+            profile_id = resume_profile_map.get(r["id"])
+            recruiter_id = profile_recruiter_map.get(profile_id)
+            if recruiter_id:
+                resume_sourced_map[user_map[recruiter_id]["name"]] += 1
             continue
 
         source_user = user_map.get(source_user_id)
