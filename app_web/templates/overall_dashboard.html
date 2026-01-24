@@ -1,127 +1,193 @@
 {% load static %}
 
-<!-- <div id="display_icon" style="display:block;cursor:pointer" onclick='showFullPage()'><i class="bx bx-menu bx-sm"></i></div>
-<div id="hide_icon" style="display:none;cursor:pointer" onclick='hideFullPage()'><i class="bx bx-menu bx-sm"></i></div> -->
-
 <div class="candidates-loader-wrapper" id="dashboard-loader">
     <div class="candidates-loader">
         <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 512 512"><path fill="#274699" d="M496 384H64V80c0-8.8-7.2-16-16-16H16C7.2 64 0 71.2 0 80v336c0 17.7 14.3 32 32 32h464c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zM464 96H345.9c-21.4 0-32.1 25.9-17 41l32.4 32.4L288 242.8l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0l-68.7 68.7c-6.3 6.3-6.3 16.4 0 22.6l22.6 22.6c6.3 6.3 16.4 6.3 22.6 0L192 237.3l73.4 73.4c12.5 12.5 32.8 12.5 45.3 0l96-96 32.4 32.4c15.1 15.1 41 4.4 41-17V112c0-8.8-7.2-16-16-16z"/></svg>
     </div>
 </div>
 
-<div>
+<div class="mb-4">
     <h4 class="p-clr">Jobs</h4>
-    <div class="col-lg-12 col-md-12 source-div animate-on-load" data-animation="zoomIn">
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100 animate__animated">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #8763ee;background-color: #efebfd;">Active JD's</span>
-                    <div class="card-body">
-                        <h3 class="card-title mb-2 counter">{{ dashboard_counts.jobs_data.active_jds }}</h3>
+    <div class="row g-6 animate-on-load" data-animation="zoomIn">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-primary h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-primary">
+                                <i class="bx bx-file icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter" >{{ dashboard_counts.jobs_data.active_jds }}</h4>
                     </div>
+                    <p class="mb-2">Active JD's</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #00d462;background-color: #defaeb;">Total Positions</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1 counter">{{ dashboard_counts.jobs_data.total_positions }}</h3>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-warning h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-warning">
+                                <i class="bx bx-group icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter">{{ dashboard_counts.jobs_data.total_positions }}</h4>
                     </div>
+                    <p class="mb-2">Total Positions</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #1f68f3;background-color:#e2ebfd;"> Candidates in-process</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1 counter">{{ dashboard_counts.jobs_data.candidates_inprocess }}</h3>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-emerald h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded" style="background:rgba(0,168,120,.15);color:#00a878;">
+                                <i class="bx bx-user-voice icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter">{{ dashboard_counts.jobs_data.candidates_inprocess }}</h4>
                     </div>
+                    <p class="mb-2">Candidates in-process</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div>
+<div class="mb-4">
     <h4 class="p-clr">Profiles</h4>
-    <div class="col-lg-12 col-md-12 source-div animate-on-load" data-animation="zoomIn">
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100 animate__animated">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #8763ee;background-color: #efebfd;">Profile Pending</span>
-                    <div class="card-body">
-                        <h3 class="card-title mb-2 counter">{{ dashboard_counts.profiles_data.to_profile }}</h3>
+    <div class="row g-6 animate-on-load" data-animation="zoomIn">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-primary h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-primary">
+                                <i class="bx bx-user-x icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter" >{{ dashboard_counts.profiles_data.to_profile }}</h4>
                     </div>
+                    <p class="mb-2">Profiles Pending</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #00d462;background-color: #defaeb;">Active Profiles</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1 counter">{{ dashboard_counts.profiles_data.active_profiles }}</h3>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-warning h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-warning">
+                                <i class="bx bx-user-check icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter">{{ dashboard_counts.profiles_data.active_profiles }}</h4>
                     </div>
+                    <p class="mb-2">Active Profiles</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #1f68f3;background-color:#e2ebfd;"> Strength < 50</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1 counter">{{ dashboard_counts.profiles_data.strenght_below_50 }}</h3>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-danger h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-danger">
+                                <i class="bx bx-trending-down icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter">{{ dashboard_counts.profiles_data.strenght_below_50 }}</h4>
                     </div>
+                    <p class="mb-2">Strength < 50</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #1f68f3;background-color:#e2ebfd;"> Strength > 50</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1 counter">{{ dashboard_counts.profiles_data.strenght_above_50 }}</h3>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-emerald h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded" style="background:rgba(0,168,120,.15);color:#00a878;">
+                                <i class="bx bx-trending-up icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter">{{ dashboard_counts.profiles_data.strenght_above_50 }}</h4>
                     </div>
+                    <p class="mb-2">Strength > 50</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
-<div>
-    <h4 class="p-clr">Pipelines</h4>
-    <div class="col-lg-12 col-md-12 source-div animate-on-load" data-animation="zoomIn">
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100 animate__animated">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #8763ee;background-color: #efebfd;">Shortlisted</span>
-                    <div class="card-body">
-                        <h3 class="card-title mb-2 counter">{{ dashboard_counts.pipeline_data.shortlisted }}</h3>
+<div class="mb-4">
+    <h4 class="p-clr">Pipeline</h4>
+    <div class="row g-6 animate-on-load" data-animation="zoomIn">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-emerald h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded" style="background:rgba(0,168,120,.15);color:#00a878;">
+                                <i class="bx bx-list-check icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter" >{{ dashboard_counts.pipeline_data.shortlisted }}</h4>
                     </div>
+                    <p class="mb-2">Shortlisted</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #00d462;background-color: #defaeb;">In Screening</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1 counter">{{ dashboard_counts.pipeline_data.screening }}</h3>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-warning h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-warning">
+                                <i class="bx bx-search-alt icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter">{{ dashboard_counts.pipeline_data.screening }}</h4>
                     </div>
+                    <p class="mb-2">In Screening</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #1f68f3;background-color:#e2ebfd;">In Coding</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1 counter">{{ dashboard_counts.pipeline_data.coding }}</h3>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-slate h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded" style="background:rgba(88,86,214,.15);color:#5856d6;">
+                                <i class="bx bx-code-alt icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter">{{ dashboard_counts.pipeline_data.coding }}</h4>
                     </div>
+                    <p class="mb-2">In Coding</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-3 col-6 mb-4">
-                <div class="card h-100">
-                    <span class="source-fs source-heading fw-semibold d-block" style="color: #1f68f3;background-color:#e2ebfd;">In Interview</span>
-                    <div class="card-body">
-                        <h3 class="card-title text-nowrap mb-1 counter">{{ dashboard_counts.pipeline_data.interview }}</h3>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card card-border-shadow-info h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar me-4">
+                            <span class="avatar-initial rounded bg-label-info">
+                                <i class="bx bx-video icon-lg"></i>
+                            </span>
+                        </div>
+                        <h4 class="mb-0 counter">{{ dashboard_counts.pipeline_data.interview }}</h4>
                     </div>
+                    <p class="mb-2">In Interview</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <div class="card mb-3">
     <div class="card-title-table">
@@ -140,7 +206,128 @@
         <canvas id="profileActivityLineChart"></canvas>
     </div>
 </div>
+<style>
+    /* ===== TOP CARD COLORS ===== */
 
+    /* PRIMARY */
+    .card-border-shadow-primary {
+        border-bottom: 2px solid rgba(105, 108, 255, .35);
+    }
+
+    .card-border-shadow-primary:hover {
+        border-bottom-color: #696cff;
+    }
+
+    /* WARNING */
+    .card-border-shadow-warning {
+        border-bottom: 2px solid rgba(255, 171, 0, .35);
+    }
+
+    .card-border-shadow-warning:hover {
+        border-bottom-color: #ffab00;
+    }
+
+    /* DANGER */
+    .card-border-shadow-danger {
+        border-bottom: 2px solid rgba(255, 62, 29, .35);
+    }
+
+    .card-border-shadow-danger:hover {
+        border-bottom-color: #ff3e1d;
+    }
+
+    /* INFO */
+    .card-border-shadow-info {
+        border-bottom: 2px solid rgba(3, 195, 236, .35);
+    }
+
+    .card-border-shadow-info:hover {
+        border-bottom-color: #03c3ec;
+    }
+
+    /* ===== BOTTOM CARD COLORS (UNIQUE – NO DUPLICATES) ===== */
+
+    /* MAROON – Rejected by Client */
+    .card-border-shadow-maroon {
+        border-bottom: 2px solid rgba(128, 0, 64, .35);
+    }
+
+    .card-border-shadow-maroon:hover {
+        border-bottom-color: #800040;
+    }
+
+    /* EMERALD – Selected by Client */
+    .card-border-shadow-emerald {
+        border-bottom: 2px solid rgba(0, 168, 120, .35);
+    }
+
+    .card-border-shadow-emerald:hover {
+        border-bottom-color: #00a878;
+    }
+
+    /* SLATE PURPLE – Waiting Feedback */
+    .card-border-shadow-slate {
+        border-bottom: 2px solid rgba(88, 86, 214, .35);
+    }
+
+    .card-border-shadow-slate:hover {
+        border-bottom-color: #5856d6;
+    }
+
+    /* ===== COMMON STYLES ===== */
+
+    .card-body {
+        padding: 20px 22px;
+    }
+
+    .avatar {
+        width: 46px;
+        height: 46px;
+    }
+
+    .avatar-initial {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+    }
+
+    .icon-lg {
+        font-size: 2rem;
+    }
+
+    .card h4.counter{
+        font-size: 2.2rem;
+        font-weight: 400;
+        color: #384551;
+    }
+
+    .card p.mb-2 {
+        font-size: 16px;
+        color: #6f6b7d;
+        margin-bottom: 0px !important;
+    }
+
+    .text-heading {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .text-body-secondary {
+        font-size: 14px;
+        color: #a1a1aa;
+    }
+
+    .credits-container {
+        display: none;
+    }
+
+    .form-label {
+        white-space: nowrap;
+    }
+</style>
 <style>
 
     :root {
