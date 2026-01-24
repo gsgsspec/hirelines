@@ -40,11 +40,12 @@
 
             <div class="table-responsive text-nowrap table-cls mb-2">
 
-                <table class="table table-bordered table-hover table-striped" id="recruiter_performance_table"
-                    style="border-top: 1px solid #b8bfc6; border-bottom: 1px solid #b8bfc6;">
+               <table class="table table-bordered table-hover table-striped"
+       id="recruiter_performance_table">
+
 
                     <thead>
-                        <tr>
+                        <tr style="background-color: #e3f0fc;">
                             <th rowspan="1">Recruiter</th>
                             <th colspan="4" class="text-center">Internal</th>
                             <th colspan="5" class="text-center" style="text-align: center !important;">Client</th>
@@ -99,92 +100,106 @@
 </div>
 
 <style>
-    
-    /* Vertically align From / To label and date input */
-    .row.align-items-center label {
-        margin-bottom: 0;
-        line-height: 1;
-    }
 
-    .row.align-items-center input[type="date"] {
-        vertical-align: middle;
-    }
+.row.align-items-center label {
+    margin-bottom: 0;
+    line-height: 1;
+}
 
-    .date-input {
-        width: 160px;
-    }
+.row.align-items-center input[type="date"] {
+    vertical-align: middle;
+}
 
-    .card-header {
-        padding-bottom: 6px;
-    }
+.date-input {
+    width: 160px;
+}
 
-    .card-title-table {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        /* vertical center */
-        padding-right: 15px;
-    }
+.card-header {
+    padding-bottom: 6px;
+}
 
-    /* FIX card-header default padding */
-    .card-title-table .card-header {
-        margin-bottom: 0;
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
+.card-title-table {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 15px;
+}
 
-    /* Export button vertical alignment */
-    #export-buttons-container {
-        display: flex;
-        align-items: center;
-    }
+.card-title-table .card-header {
+    margin-bottom: 0;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+#export-buttons-container {
+    display: flex;
+    align-items: center;
+}
+
+.dt-buttons button {
+    padding: 5px 15px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    background-color: #274699;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.dataTables_filter {
+    margin-bottom: 5px !important;
+}
+
+.dataTables_length {
+    margin: 10px !important;
+}
 
 
-    .dt-buttons button {
-        padding: 5px 15px;
-        font-size: 14px;
-        border: 1px solid #ccc;
-        background-color: #274699;
-        border-radius: 4px;
-        cursor: pointer;
-        color: white;
-    }
+.table-cls table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
 
-    .dataTables_filter {
-        margin-bottom: 5px !important;
-    }
+/* Outer border */
+.table-cls .table {
+    border: 1px solid #e4e6e8 !important;
+}
 
-    .dataTables_length {
-        margin: 10px !important;
-    }
+/* Header cells */
+.table-cls thead th {
+    border-bottom: 1px solid #e4e6e8 !important;
+    border-right: 1px solid #e4e6e8 !important;
+    border-left: none !important;
+    border-top: none !important;
+}
 
-    /* Custom CSS to move the sorting arrows to the left for columns 2, 3, and 4 */
-    th:nth-child(3),
-    th:nth-child(4),
-    th:nth-child(5) {
-        text-align: left !important;
-    }
+/* Body cells */
+.table-cls tbody td {
+    border-bottom: 1px solid #e4e6e8 !important;
+    border-right: 1px solid #e4e6e8 !important;
+    border-left: none !important;
+    border-top: none !important;
+}
 
-    th:nth-child(3) .sorting,
-    th:nth-child(4) .sorting,
-    th:nth-child(5) .sorting {
-        float: left;
-        margin-left: 10px;
-        /* Adjust spacing as needed */
-    }
+/* Remove last column right border */
+.table-cls thead th:last-child,
+.table-cls tbody td:last-child {
+    border-right: none !important;
+}
 
-    th:nth-child(3) .sorting_asc,
-    th:nth-child(4) .sorting_asc,
-    th:nth-child(5) .sorting_asc {
-        margin-left: 10px;
-    }
+/* Remove overlap between header & body */
+.table-cls tbody tr:first-child td {
+    border-top: none !important;
+}
 
-    th:nth-child(3) .sorting_desc,
-    th:nth-child(4) .sorting_desc,
-    th:nth-child(5) .sorting_desc {
-        margin-left: 10px;
-    }
+/* Safety */
+.table-cls thead th,
+.table-cls tbody td {
+    box-shadow: none !important;
+}
+
 </style>
+
 <script>
 
    function addExportButton(table) {
@@ -326,7 +341,7 @@
             order: [],
             ordering: false,
             paging: true,
-            pageLength: 10,
+            pageLength: 50,
             pagingType: "simple_numbers",
             language: {
                 search: "",

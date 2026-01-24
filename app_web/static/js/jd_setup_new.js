@@ -1,3 +1,33 @@
+function getQuestionTypeIndicator(questionType) {
+
+    if (questionType === 'A') {
+        return `
+            <span class="qtype-badge qtype-audio"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  title="Audio Question">
+                <i class="fas fa-microphone"></i>
+            </span>
+        `;
+    }
+
+    if (questionType === 'V') {
+        return `
+            <span class="qtype-badge qtype-video"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  title="Video Question">
+                <i class="fas fa-video"></i>
+            </span>
+        `;
+    }
+
+    return '';
+}
+
+
+
+
 var perviousSelectedTest = null
 var screeningBackgroundColor = '#efebfd'; var codingBackgroundColor = '#defaeb'; var interviewBackgroundColor = '#e2ebfd'
 var screenMainColor = '#8763ee'; var codingMainColor = '#00d462'; var interviewMainColor = '#1f68f3';
@@ -951,7 +981,23 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         var questionElement = document.createElement('li');
         questionElement.id = `question_id_${ques['questionId']}`
         // questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');  // Assuming ques is an object with 'question' key
-        questionElement.innerText = ques['question']
+        // questionElement.innerText = ques['question']
+        var questionTextSpan = document.createElement('span');
+        questionTextSpan.classList.add('question-text');
+        questionTextSpan.innerText = ques['question'];
+        questionElement.appendChild(questionTextSpan);
+
+        // 🔥 Audio / Video badge for JD Screening
+        let qTypeBadge = getQuestionTypeIndicator(
+            (ques['questionType'] || '').toUpperCase()
+        );
+
+        if (qTypeBadge) {
+            let badgeWrapper = document.createElement('span');
+            badgeWrapper.innerHTML = qTypeBadge;
+            questionElement.appendChild(badgeWrapper);
+        }
+
         let questionMarks = ques['marks']
 
         let firstInpt = document.createElement('input');
@@ -1403,7 +1449,23 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         var questionElement = document.createElement('li');
         questionElement.id = `question_id_${ques['questionId']}`
         // questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');  // Assuming ques is an object with 'question' key
-        questionElement.innerText = ques['question']
+        // questionElement.innerText = ques['question']
+        var questionTextSpan = document.createElement('span');
+        questionTextSpan.classList.add('question-text');
+        questionTextSpan.innerText = ques['question'];
+        questionElement.appendChild(questionTextSpan);
+
+        // 🔥 Audio / Video badge for JD Screening
+        let qTypeBadge = getQuestionTypeIndicator(
+            (ques['questionType'] || '').toUpperCase()
+        );
+
+        if (qTypeBadge) {
+            let badgeWrapper = document.createElement('span');
+            badgeWrapper.innerHTML = qTypeBadge;
+            questionElement.appendChild(badgeWrapper);
+        }
+
         
         let questionMarks = ques['marks']
         console.log('questionMarks',ques)
@@ -1538,7 +1600,23 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
             var questionElement = document.createElement('li');
             questionElement.id = `question_id_${ques['questionId']}`;
             // questionElement.innerText = ques['question'].replace(/\\u[0-9A-Fa-f]{4}/g, '').replace(/\s+/g, ' ');
-            questionElement.innerText = ques['question']
+            // questionElement.innerText = ques['question']
+            var questionTextSpan = document.createElement('span');
+            questionTextSpan.classList.add('question-text');
+            questionTextSpan.innerText = ques['question'];
+            questionElement.appendChild(questionTextSpan);
+
+            // 🔥 Audio / Video badge for JD Screening
+            let qTypeBadge = getQuestionTypeIndicator(
+                (ques['questionType'] || '').toUpperCase()
+            );
+
+            if (qTypeBadge) {
+                let badgeWrapper = document.createElement('span');
+                badgeWrapper.innerHTML = qTypeBadge;
+                questionElement.appendChild(badgeWrapper);
+            }
+
             questionMarks = ques['marks']
 
             var firstInpt = document.createElement('input');
