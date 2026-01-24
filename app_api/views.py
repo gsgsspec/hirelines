@@ -2461,25 +2461,88 @@ def delete_work_cal(request, id):
    
 
 
+# @api_view(['POST'])
+# def update_jd_status(request):
+#     response = {"statusCode": 1, "error": None}
+
+#     try:
+#         body = json.loads(request.POST.get("data"))
+#         print("body",body)
+#         jd_id = body.get("JdID")
+#         new_status = body.get("status")
+#         comments = body.get("comments")  
+
+
+#         jd = JobDesc.objects.get(id=jd_id)
+#         jd.approval_status = new_status
+#         if comments is not None:
+#             jd.comments = comments
+  
+        
+#         jd.save()
+
+#         response["statusCode"] = 0
+
+#     except Exception as e:
+#         response["error"] = str(e)
+
+#     return JsonResponse(response)
 @api_view(['POST'])
 def update_jd_status(request):
     response = {"statusCode": 1, "error": None}
 
     try:
         body = json.loads(request.POST.get("data"))
-        print("body",body)
+
         jd_id = body.get("JdID")
-        new_status = body.get("status")
-        comments = body.get("comments")  
+        
+        status = body.get("status")
+        
+        hiring_manager_id = body.get("hiring_manager_id")
+        
+        comments = body.get("comments", "")
 
 
         jd = JobDesc.objects.get(id=jd_id)
-        jd.approval_status = new_status
-        if comments is not None:
-            jd.comments = comments
-  
-        
+      
+
+       
+        if status == "F":
+            jd.hiringmanager_id = hiring_manager_id
+
+        jd.approval_status = status
+        jd.comments = comments
         jd.save()
+
+       
+        if status == "F":
+            hr = User.objects.get(id=jd.createdby)
+       
+            hiringmanager= User.objects.get(id=hiring_manager_id)
+            
+
+            acert_domain = getConfig()['DOMAIN']['acert']
+            endpoint = "/api/get-approval-mail"
+            url = urljoin(acert_domain, endpoint)
+
+            payload = {
+                "companyId": jd.companyid,
+                "toEmail": hiringmanager.email,
+                "first_name": hiringmanager.name,
+                "jdTitle": jd.title,
+                "hrName": hr.name,
+                "jdId": jd.id
+            }
+
+            acert_res = requests.post(
+                url,
+                json=payload,
+                headers={"Content-Type": "application/json"}
+            ).json()
+
+            if acert_res.get("statusCode") != 0:
+                response["error"] = "ACERT approval mail failed"
+                return JsonResponse(response)
 
         response["statusCode"] = 0
 

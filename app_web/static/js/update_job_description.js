@@ -336,18 +336,62 @@ document.getElementById('addJD').addEventListener('submit', function(event) {
 });
 
 
-function updateJDStatus(statusCode, successMsg) {
-    let comments = "";
+// function updateJDStatus(statusCode, successMsg) {
+//     let comments = "";
 
+//     if (statusCode === 'R') {
+//         comments = document.getElementById("reviseComments")?.value.trim() || "";
+//     }
+
+//     const payload = {
+//         JdID: JdId,
+//         status: statusCode,
+//         comments: comments
+
+//     };
+
+//     $.ajax({
+//         url: CONFIG['portal'] + "/api/update-status",
+//         type: "POST",
+//         data: {
+//             data: JSON.stringify(payload),
+//             csrfmiddlewaretoken: CSRF_TOKEN
+//         },
+//         success: function (res) {
+//             if (res.statusCode === 0) {
+//                 if (statusCode === 'R') {
+//                     $('#reviseModal').modal('hide');
+//                 }
+//                 showSuccessMessage(successMsg);
+//                 setInterval(5000)
+//                 window.location.href = '/job-descriptions';
+
+//             } else {
+//                 showFailureMessage("Status update failed");
+//             }
+//         }
+//     });
+// }
+function updateJDStatus(statusCode, successMsg) {
+
+    let comments = "";
     if (statusCode === 'R') {
         comments = document.getElementById("reviseComments")?.value.trim() || "";
+    }
+
+    const hiringManagerId = document.getElementById('Hiring-Manager')?.value || "";
+
+    
+    if (statusCode === 'F' && !hiringManagerId) {
+        alert("Please select Hiring Manager before sending for approval");
+        return;
     }
 
     const payload = {
         JdID: JdId,
         status: statusCode,
-        comments: comments
-
+        comments: comments,
+        hiring_manager_id: hiringManagerId   
     };
 
     $.ajax({
@@ -363,9 +407,7 @@ function updateJDStatus(statusCode, successMsg) {
                     $('#reviseModal').modal('hide');
                 }
                 showSuccessMessage(successMsg);
-                setInterval(5000)
                 window.location.href = '/job-descriptions';
-
             } else {
                 showFailureMessage("Status update failed");
             }
