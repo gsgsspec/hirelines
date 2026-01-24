@@ -1,5 +1,16 @@
 
 const profileId = window.location.pathname.split('/')[2]; // profileId 
+// Track which tabs have unsaved changes
+const CHANGED_TABS = {
+    personal: false,
+    education: false,
+    experience: false,
+    projects: false,
+    awards: false,
+    certifications: false,
+    skills: false
+};
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('candidates-loader');
@@ -70,6 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error parsing JSON:", e);
         }
     }
+    $("#Person-detais").on("input change", "input, select", function () {
+        CHANGED_TABS.personal = true;
+    });
 
     // Prefill Education Table
     if (EducationData.length > 0) {
@@ -98,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Prefill Skills (Skills use the specific renderSkill function, not the table function)
     if (SkillsData.length > 0) {
-        SkillsData.forEach(skill => renderSkill(skill));
+        // SkillsData.forEach(skill => renderSkill(skill));
+        SkillsData.forEach(skill => renderSkill(skill, true));
     }
 
     // Hide the loader when done
@@ -125,13 +140,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const loader = document.getElementById('candidates-loader');
+// document.addEventListener('DOMContentLoaded', () => {
+//     const loader = document.getElementById('candidates-loader');
 
-    window.addEventListener('load', () => {
-        loader.style.display = 'none';
-    });
-});
+//     window.addEventListener('load', () => {
+//         loader.style.display = 'none';
+//     });
+// });
 
 function tabSwitch(selectedTab) {
 
@@ -446,60 +461,62 @@ function getTableData(tableSelector) {
     return rows;
 }
 
+// $(document).on("click", ".save-table-btn", function () {
+//     let tableSelector = $(this).data("target");   // "#projectTable"
+//     let saveUrl = $(this).data("url");       // Django endpoint
+
+//     let tableData = getTableData(tableSelector);
+
+//     // If validation failed, stop here (getTableData already showed Swal)
+//     // if (!tableData || tableData.length === 0) {
+//     //     return;
+//     // }
+//        if (!tableData) {
+//         return;
+//     }
+
+//     let dataObj = {
+//         "data": tableData,
+//         "profile_id": profileId
+//     };
+
+//     let final_data = {
+//         'data': JSON.stringify(dataObj),
+//         csrfmiddlewaretoken: CSRF_TOKEN,
+//     };
+
+//     console.log("final_data", final_data);
+
+//     $.post(CONFIG['portal'] + saveUrl, final_data)
+//         .done(function (res) {
+
+//             Swal.fire({
+//                 title: "Saved Successfully!",
+//                 icon: "success",
+//                 timer: 1500,
+//                 showConfirmButton: "OK"
+//             });
+//             fetchLatestProfileStrength();
+
+//         })
+//         .fail(function (err) {
+
+//             Swal.fire({
+//                 title: "Error!",
+//                 text: "Something went wrong while saving.",
+//                 icon: "error",
+//                 confirmButtonText: "OK"
+//             });
+//         });
+// });
 $(document).on("click", ".save-table-btn", function () {
-    let tableSelector = $(this).data("target");   // "#projectTable"
-    let saveUrl = $(this).data("url");       // Django endpoint
-
-    let tableData = getTableData(tableSelector);
-
-    // If validation failed, stop here (getTableData already showed Swal)
-    // if (!tableData || tableData.length === 0) {
-    //     return;
-    // }
-       if (!tableData) {
-        return;
-    }
-
-    let dataObj = {
-        "data": tableData,
-        "profile_id": profileId
-    };
-
-    let final_data = {
-        'data': JSON.stringify(dataObj),
-        csrfmiddlewaretoken: CSRF_TOKEN,
-    };
-
-    console.log("final_data", final_data);
-
-    $.post(CONFIG['portal'] + saveUrl, final_data)
-        .done(function (res) {
-
-            Swal.fire({
-                title: "Saved Successfully!",
-                icon: "success",
-                timer: 1500,
-                showConfirmButton: "OK"
-            });
-            fetchLatestProfileStrength();
-
-        })
-        .fail(function (err) {
-
-            Swal.fire({
-                title: "Error!",
-                text: "Something went wrong while saving.",
-                icon: "error",
-                confirmButtonText: "OK"
-            });
-        });
+    saveAllEditedTabs();
 });
 
-
-$(document).on("click", ".add-row-btn", function () {
-    let tableSelector = $(this).data("target");
-    addRow(tableSelector);
-});
+// $(document).on("click", ".add-row-btn", function () {
+//     let tableSelector = $(this).data("target");
+//     addRow(tableSelector);
+// });
 
 
 $(document).on("click", ".delete-row-plain-icon", function (e) {
@@ -508,99 +525,121 @@ $(document).on("click", ".delete-row-plain-icon", function (e) {
 });
 
 
+// $(document).on("submit", "#Person-detais", function (e) {
+//     e.preventDefault();   // stop normal browser submit
+
+//     let dataObj = {
+//         title: $("#Title").val(),
+//         firstname: $("#FirstName").val(),
+//         middlename: $("#MiddleName").val(),
+//         lastname: $("#LastName").val(),
+//         email: $("#Email").val(),
+//         mobile: $("#Mobile").val(),
+//         linkedin: $("#Linkedin").val(),
+//         facebook: $("#Facebook").val(),
+//         passport: $("#Passport").val(),
+//         dob: $("#DateOfBirth").val(),
+//         father_name: $("#FatherName").val(),
+//         native_of: $("#NativeOf").val(),
+//         AddressLine1: $("#AddressLine1").val(),
+//         AddressLine2: $("#AddressLine2").val(),
+//         city: $("#City").val(),
+//         state: $("#State").val(),
+//         country: $("#Country").val(),
+//         zipcode: $("#Zipcode").val(),
+//         profileid: profileId
+//     };
+
+//     $.post(
+//         CONFIG['portal'] + "/api/update-profile",
+//         {
+//             data: JSON.stringify(dataObj),
+//             csrfmiddlewaretoken: CSRF_TOKEN
+//         },
+//         function (response) {
+//             console.log("Saved!", response);
+//         }
+//     ).done(function (res) {
+
+//         Swal.fire({
+//             title: "Saved Successfully!",
+//             icon: "success",
+//             timer: 1500,
+//             showConfirmButton: "OK"
+//         });
+//         fetchLatestProfileStrength();
+
+//         const checkbox = document.getElementById("sendWelcomeMail");
+//         const sendMail = checkbox?.checked;
+
+//         if (sendMail) {
+//             $.post(CONFIG['portal'] + "/api/send-welcome-mail", {
+//                 profile_id: profileId,
+//                 csrfmiddlewaretoken: CSRF_TOKEN
+//             })
+//                 .done(function () {
+
+//                     checkbox.checked = false;
+//                     checkbox.disabled = true;
+//                     checkbox.closest(".form-check")?.remove();
+
+//                     Swal.fire({
+//                         title: "Welcome Email Sent!",
+//                         icon: "success",
+//                         timer: 1500,
+//                         showConfirmButton: "OK",
+//                         confirmButtonColor: "#274699"
+//                     });
+//                 })
+//                 .fail(function () {
+//                     Swal.fire("Mail Failed", "Unable to send welcome email", "error");
+//                 });
+//         }
+//     })
+//         .fail(function (err) {
+
+//             Swal.fire({
+//                 title: "Error!",
+//                 text: "Something went wrong while saving.",
+//                 icon: "error",
+//                 confirmButtonText: "OK"
+//             });
+//         });
+// });
 $(document).on("submit", "#Person-detais", function (e) {
-    e.preventDefault();   // stop normal browser submit
-
-    let dataObj = {
-        title: $("#Title").val(),
-        firstname: $("#FirstName").val(),
-        middlename: $("#MiddleName").val(),
-        lastname: $("#LastName").val(),
-        email: $("#Email").val(),
-        mobile: $("#Mobile").val(),
-        linkedin: $("#Linkedin").val(),
-        facebook: $("#Facebook").val(),
-        passport: $("#Passport").val(),
-        dob: $("#DateOfBirth").val(),
-        father_name: $("#FatherName").val(),
-        native_of: $("#NativeOf").val(),
-        AddressLine1: $("#AddressLine1").val(),
-        AddressLine2: $("#AddressLine2").val(),
-        city: $("#City").val(),
-        state: $("#State").val(),
-        country: $("#Country").val(),
-        zipcode: $("#Zipcode").val(),
-        profileid: profileId
-    };
-
-    $.post(
-        CONFIG['portal'] + "/api/update-profile",
-        {
-            data: JSON.stringify(dataObj),
-            csrfmiddlewaretoken: CSRF_TOKEN
-        },
-        function (response) {
-            console.log("Saved!", response);
-        }
-    ).done(function (res) {
-
-        Swal.fire({
-            title: "Saved Successfully!",
-            icon: "success",
-            timer: 1500,
-            showConfirmButton: "OK"
-        });
-        fetchLatestProfileStrength();
-
-        const checkbox = document.getElementById("sendWelcomeMail");
-        const sendMail = checkbox?.checked;
-
-        if (sendMail) {
-            $.post(CONFIG['portal'] + "/api/send-welcome-mail", {
-                profile_id: profileId,
-                csrfmiddlewaretoken: CSRF_TOKEN
-            })
-                .done(function () {
-
-                    checkbox.checked = false;
-                    checkbox.disabled = true;
-                    checkbox.closest(".form-check")?.remove();
-
-                    Swal.fire({
-                        title: "Welcome Email Sent!",
-                        icon: "success",
-                        timer: 1500,
-                        showConfirmButton: "OK",
-                        confirmButtonColor: "#274699"
-                    });
-                })
-                .fail(function () {
-                    Swal.fire("Mail Failed", "Unable to send welcome email", "error");
-                });
-        }
-    })
-        .fail(function (err) {
-
-            Swal.fire({
-                title: "Error!",
-                text: "Something went wrong while saving.",
-                icon: "error",
-                confirmButtonText: "OK"
-            });
-        });
+    e.preventDefault();
+    saveAllEditedTabs();
 });
-
 var technologiesList = languages;
 
 const skillsContainer = $("#skillsContainer");
 
-function renderSkill(skillName) {
+// function renderSkill(skillName) {
+//     if (!skillName) return;
+
+//     // Prevent Duplicates
+//     let exists = false;
+//     $("#skillsContainer .skill-text").each(function () {
+//         if ($(this).text().trim().toLowerCase() === skillName.toLowerCase()) exists = true;
+//     });
+//     if (exists) return;
+
+//     let skillHtml = `
+//         <div class="skill-bubble">
+//             <span class="skill-text" contenteditable="false">${skillName}</span>
+//             <span class="delete-skill-icon">&times;</span>
+//         </div>
+//     `;
+//     skillsContainer.append(skillHtml);
+//     CHANGED_TABS.skills = true;
+// }
+function renderSkill(skillName, isPrefill = false) {
     if (!skillName) return;
 
-    // Prevent Duplicates
     let exists = false;
     $("#skillsContainer .skill-text").each(function () {
-        if ($(this).text().trim().toLowerCase() === skillName.toLowerCase()) exists = true;
+        if ($(this).text().trim().toLowerCase() === skillName.toLowerCase())
+            exists = true;
     });
     if (exists) return;
 
@@ -611,6 +650,11 @@ function renderSkill(skillName) {
         </div>
     `;
     skillsContainer.append(skillHtml);
+
+    // ✅ ONLY mark changed if user action
+    if (!isPrefill) {
+        CHANGED_TABS.skills = true;
+    }
 }
 
 $(document).ready(function () {
@@ -671,57 +715,62 @@ $(document).ready(function () {
     });
 
    
-    $(document).on("click", function (e) {
-        if (!$(e.target).closest("#skillInput, #suggestion-box").length) {
-            $("#suggestion-box").hide();
-        }
-    });
+    // $(document).on("click", function (e) {
+    //     if (!$(e.target).closest("#skillInput, #suggestion-box").length) {
+    //         $("#suggestion-box").hide();
+    //     }
+    // });
 
 
     $(document).on("click", ".delete-skill-icon", function () {
+        CHANGED_TABS.skills = true;
         $(this).closest(".skill-bubble").fadeOut(200, function () {
             $(this).remove();
         });
     });
 
 
-    $("#save-skills-btn").on("click", function () {
-        let saveUrl = $(this).data("url");
-        let skillsList = [];
+    // $("#save-skills-btn").on("click", function () {
+    //     let saveUrl = $(this).data("url");
+    //     let skillsList = [];
 
 
-        $("#skillsContainer .skill-bubble .skill-text").each(function () {
-            skillsList.push($(this).text().trim());
-        });
+    //     $("#skillsContainer .skill-bubble .skill-text").each(function () {
+    //         skillsList.push($(this).text().trim());
+    //     });
 
-        let dataObj = {
-            "skills": skillsList,
-            "profile_id": profileId
-        };
+    //     let dataObj = {
+    //         "skills": skillsList,
+    //         "profile_id": profileId
+    //     };
 
-        $.post(CONFIG['portal'] + saveUrl, {
-            data: JSON.stringify(dataObj),
-            csrfmiddlewaretoken: CSRF_TOKEN
-        }).done( function (res) {
+    //     $.post(CONFIG['portal'] + saveUrl, {
+    //         data: JSON.stringify(dataObj),
+    //         csrfmiddlewaretoken: CSRF_TOKEN
+    //     }).done( function (res) {
             
-            Swal.fire({
-            icon: "success",
-            title: "Saved!",
-            text: "Your skills have been saved successfully.",
-            timer: 1500,
-            showConfirmButton: false
-            });
-            fetchLatestProfileStrength(); 
+    //         Swal.fire({
+    //         icon: "success",
+    //         title: "Saved!",
+    //         text: "Your skills have been saved successfully.",
+    //         timer: 1500,
+    //         showConfirmButton: false
+    //         });
+    //         fetchLatestProfileStrength(); 
 
-        }).fail(function (xhr) {
-        Swal.fire({
-            icon: "error",
-            title: "Oops!",
-            text: "Something went wrong while saving.",
-        });
+    //     }).fail(function (xhr) {
+    //     Swal.fire({
+    //         icon: "error",
+    //         title: "Oops!",
+    //         text: "Something went wrong while saving.",
+    //     });
+    // });
+
+    //     });
+    $("#save-skills-btn").on("click", function () {
+        saveAllEditedTabs();
     });
 
-        });
     });
 
 // });
@@ -1009,3 +1058,184 @@ function liveValidateUpdate() {
 
 $("#FirstName, #MiddleName, #LastName, #Email, #Mobile")
     .on("keyup blur", liveValidateUpdate);
+
+
+
+// $(document).on("input paste", ".dynamic-table td[contenteditable='true']", function () {
+//     const tableId = $(this).closest("table").attr("id");
+
+//     if (tableId === "EducationTable") CHANGED_TABS.education = true;
+//     if (tableId === "ExperienceTable") CHANGED_TABS.experience = true;
+//     if (tableId === "projectTable") CHANGED_TABS.projects = true;
+//     if (tableId === "AwardsTable") CHANGED_TABS.awards = true;
+//     if (tableId === "CertificationsTable") CHANGED_TABS.certifications = true;
+// });
+
+
+// $("#skillInput").on("keyup", function () {
+//     CHANGED_TABS.skills = true;
+// });
+
+// $(document).on("click", ".suggestion-item, .delete-skill-icon", function () {
+//     CHANGED_TABS.skills = true;
+// });
+
+
+function savePersonalIfChanged() {
+    if (!CHANGED_TABS.personal) return $.Deferred().resolve();
+
+    return $.post(CONFIG['portal'] + "/api/update-profile", {
+        data: JSON.stringify({
+            title: $("#Title").val(),
+            firstname: $("#FirstName").val(),
+            middlename: $("#MiddleName").val(),
+            lastname: $("#LastName").val(),
+            email: $("#Email").val(),
+            mobile: $("#Mobile").val(),
+            linkedin: $("#Linkedin").val(),
+            facebook: $("#Facebook").val(),
+            passport: $("#Passport").val(),
+            dob: $("#DateOfBirth").val(),
+            father_name: $("#FatherName").val(),
+            native_of: $("#NativeOf").val(),
+            AddressLine1: $("#AddressLine1").val(),
+            AddressLine2: $("#AddressLine2").val(),
+            city: $("#City").val(),
+            state: $("#State").val(),
+            country: $("#Country").val(),
+            zipcode: $("#Zipcode").val(),
+            profileid: profileId
+        }),
+        csrfmiddlewaretoken: CSRF_TOKEN
+    }).done(() => {
+        CHANGED_TABS.personal = false;
+        sendWelcomeMailIfChecked();   // ✅ trigger welcome mail here
+    });
+
+}
+
+function saveTableIfChanged(tabKey, tableSelector, apiUrl) {
+    if (!CHANGED_TABS[tabKey]) return $.Deferred().resolve();
+
+    let tableData = getTableData(tableSelector);
+    if (!Array.isArray(tableData)) return $.Deferred().reject();
+
+    return $.post(CONFIG['portal'] + apiUrl, {
+        data: JSON.stringify({
+            data: tableData,
+            profile_id: profileId
+        }),
+        csrfmiddlewaretoken: CSRF_TOKEN
+    }).done(() => CHANGED_TABS[tabKey] = false);
+}
+
+/* ✅ ADD HERE */
+function hasAnyChanges() {
+    return Object.values(CHANGED_TABS).some(val => val === true);
+}
+
+
+function saveSkillsIfChanged() {
+    if (!CHANGED_TABS.skills) return $.Deferred().resolve();
+
+    let skillsList = [];
+    $("#skillsContainer .skill-text").each(function () {
+        skillsList.push($(this).text().trim());
+    });
+
+    return $.post(CONFIG['portal'] + "/api/update-skills", {
+        data: JSON.stringify({
+            skills: skillsList,
+            profile_id: profileId
+        }),
+        csrfmiddlewaretoken: CSRF_TOKEN
+    }).done(() => CHANGED_TABS.skills = false);
+}
+function saveAllEditedTabs() {
+
+    if (!hasAnyChanges()) {
+        Swal.fire("No Changes", "There is nothing to save.", "info");
+        return;
+    }
+
+    document.activeElement?.blur();
+
+    // Swal.fire({
+    //     title: "Saving changes...",
+    //     allowOutsideClick: false,
+    //     didOpen: () => Swal.showLoading()
+    // });
+
+    let promises = [];
+
+    if (CHANGED_TABS.personal)
+        promises.push(savePersonalIfChanged());
+
+    if (CHANGED_TABS.education)
+        promises.push(saveTableIfChanged("education", "#EducationTable", "/api/update-education"));
+
+    if (CHANGED_TABS.experience)
+        promises.push(saveTableIfChanged("experience", "#ExperienceTable", "/api/update-experience"));
+
+    if (CHANGED_TABS.projects)
+        promises.push(saveTableIfChanged("projects", "#projectTable", "/api/update-projects"));
+
+    if (CHANGED_TABS.awards)
+        promises.push(saveTableIfChanged("awards", "#AwardsTable", "/api/update-awards"));
+
+    if (CHANGED_TABS.certifications)
+        promises.push(saveTableIfChanged("certifications", "#CertificationsTable", "/api/update-certifications"));
+
+    if (CHANGED_TABS.skills)
+        promises.push(saveSkillsIfChanged());
+
+    $.when(...promises)
+        .done(function () {
+            Swal.fire("Saved!", "Changes saved successfully", "success");
+            fetchLatestProfileStrength();
+        })
+        .fail(function () {
+            Swal.fire("Error", "Some changes could not be saved", "error");
+        });
+}
+
+let WELCOME_MAIL_SENT = false;
+
+function sendWelcomeMailIfChecked() {
+    if (WELCOME_MAIL_SENT) return;
+
+    const checkbox = document.getElementById("sendWelcomeMail");
+    const sendMail = checkbox?.checked;
+
+    if (!sendMail) return;
+
+    return $.post(CONFIG['portal'] + "/api/send-welcome-mail", {
+        profile_id: profileId,
+        csrfmiddlewaretoken: CSRF_TOKEN
+    })
+    .done(function () {
+        WELCOME_MAIL_SENT = true;
+
+        checkbox.checked = false;
+        checkbox.disabled = true;
+        checkbox.closest(".form-check")?.remove();
+
+        Swal.fire({
+            title: "Welcome Email Sent!",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: "OK",
+            confirmButtonColor: "#274699"
+        });
+    });
+}
+
+$(document).on("input paste", ".dynamic-table td[contenteditable='true']", function () {
+    const tableId = $(this).closest("table").attr("id");
+
+    if (tableId === "EducationTable") CHANGED_TABS.education = true;
+    if (tableId === "ExperienceTable") CHANGED_TABS.experience = true;
+    if (tableId === "projectTable") CHANGED_TABS.projects = true;
+    if (tableId === "AwardsTable") CHANGED_TABS.awards = true;
+    if (tableId === "CertificationsTable") CHANGED_TABS.certifications = true;
+});
