@@ -1957,7 +1957,7 @@ def addResumeDB(dataObjs,fileObjs, user_data):
             companyid = user_data.companyid,
             filename = fileObjs.name,
             datentime = datetime.now(),
-            status = "A"
+            status = "P"
         )
 
         resume.save()
