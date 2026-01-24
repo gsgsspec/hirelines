@@ -5514,13 +5514,10 @@ def RecruitersPerformanceService(dataObjs):
     for r in pa_owner_qs:
         uid = r["acvityuserid"]
         user = user_map.get(uid)
-
         if not user:
             continue
-
-        if user["role"] == "RECRUITER":
-            if r["profileid"] not in profile_recruiter_map:
-                profile_recruiter_map[r["profileid"]] = uid
+        if user["role"] == "RECRUITER" and r["profileid"] not in profile_recruiter_map:
+            profile_recruiter_map[r["profileid"]] = uid
 
     # --------------------------------------------------
     # SOURCE → USER MAP
@@ -5538,56 +5535,6 @@ def RecruitersPerformanceService(dataObjs):
         for p in Profile.objects.filter(companyid=cid)
         if p.resumeid
     }
-
-    # --------------------------------------------------
-    # RESUME SOURCED COUNT
-    # --------------------------------------------------
-    resume_qs = (
-        Resume.objects
-        .filter(
-            companyid=cid,
-            datentime__range=(from_dt, to_dt),
-            status__in=["P", "A"]
-        )
-        .values("id", "sourceid")
-    )
-
-    resume_sourced_map = defaultdict(int)
-
-    for r in resume_qs:
-        # source_user_id = source_user_map.get(r["sourceid"])
-        # if not source_user_id:
-        #     continue
-        source_user_id = source_user_map.get(r["sourceid"])
-
-        if not source_user_id:
-            profile_id = resume_profile_map.get(r["id"])
-            recruiter_id = profile_recruiter_map.get(profile_id)
-            if recruiter_id:
-                resume_sourced_map[user_map[recruiter_id]["name"]] += 1
-            continue
-
-        source_user = user_map.get(source_user_id)
-        if not source_user:
-            continue
-
-        # recruiter source
-        if source_user["role"] == "RECRUITER":
-            resume_sourced_map[source_user["name"]] += 1
-            continue
-
-        # admin source → redirect to recruiter
-        resume_id = r["id"]
-        profile_id = resume_profile_map.get(resume_id)
-        if not profile_id:
-            continue
-
-        recruiter_id = profile_recruiter_map.get(profile_id)
-        if not recruiter_id:
-            continue
-
-        recruiter_name = user_map[recruiter_id]["name"]
-        resume_sourced_map[recruiter_name] += 1
 
     # --------------------------------------------------
     # PROFILE → JOB MAP
@@ -5608,6 +5555,51 @@ def RecruitersPerformanceService(dataObjs):
     }
 
     # --------------------------------------------------
+    # RESUME SOURCED (FIXED: TOTAL + JD-WISE)
+    # --------------------------------------------------
+    resume_qs = (
+        Resume.objects
+        .filter(
+            companyid=cid,
+            datentime__range=(from_dt, to_dt),
+            status__in=["P", "A"]
+        )
+        .values("id", "sourceid")
+    )
+
+    resume_sourced_map = defaultdict(int)
+    recruiter_jd_sourced = defaultdict(lambda: defaultdict(int))
+
+    for r in resume_qs:
+        resume_id = r["id"]
+        source_user_id = source_user_map.get(r["sourceid"])
+
+        profile_id = resume_profile_map.get(resume_id)
+        if not profile_id:
+            continue
+
+        recruiter_id = None
+
+        if source_user_id:
+            source_user = user_map.get(source_user_id)
+            if source_user and source_user["role"] == "RECRUITER":
+                recruiter_id = source_user_id
+        else:
+            recruiter_id = profile_recruiter_map.get(profile_id)
+
+        if not recruiter_id:
+            continue
+
+        recruiter_name = user_map[recruiter_id]["name"]
+
+        resume_sourced_map[recruiter_name] += 1
+
+        for job_id in profile_job_map.get(profile_id, []):
+            jd_title = jobdesc_map.get(job_id)
+            if jd_title:
+                recruiter_jd_sourced[recruiter_name][jd_title] += 1
+
+    # --------------------------------------------------
     # AGGREGATION
     # --------------------------------------------------
     recruiter_totals = defaultdict(lambda: defaultdict(int))
@@ -5616,7 +5608,6 @@ def RecruitersPerformanceService(dataObjs):
     for r in qs:
         uid = r["acvityuserid"]
         user = user_map.get(uid)
-
         if not user:
             continue
 
@@ -5636,12 +5627,11 @@ def RecruitersPerformanceService(dataObjs):
             jd_title = jobdesc_map.get(job_id)
             if not jd_title:
                 continue
-
             for k in r:
                 if k not in ("acvityuserid", "profileid"):
                     recruiter_jds[recruiter][jd_title][k] += r[k]
 
-    # add sourced
+    # add sourced total
     for recruiter, cnt in resume_sourced_map.items():
         recruiter_totals[recruiter]["sourced"] += cnt
 
@@ -5663,7 +5653,7 @@ def RecruitersPerformanceService(dataObjs):
                 "jd": jd,
                 **counts
             }
-            row["sourced"] = recruiter_totals[recruiter].get("sourced", 0)
+            row["sourced"] = recruiter_jd_sourced[recruiter].get(jd, 0)
             rows.append(row)
 
         final[recruiter] = rows
@@ -5673,7 +5663,6 @@ def RecruitersPerformanceService(dataObjs):
         "to_date": to_date.strftime("%Y-%m-%d"),
         "data": final
     }
-
 
 
 
