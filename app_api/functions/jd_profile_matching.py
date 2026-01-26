@@ -32,6 +32,7 @@ def calculateJDProfileMatching(jobid, profiles):
                 "exp_strength": exp_strength,
                 "skill_strength": skill_strength["strength"],
                 "matched_skills": skill_strength["matched_skills"],
+                "not_matched_skills": skill_strength["not_matched_skills"],
             })
 
         return results
@@ -70,7 +71,8 @@ def calculate_skill_strength(jd_skillset, profile_id):
     if not jd_skillset:
         return {
             "strength": 100,
-            "matched_skills": []
+            "matched_skills": [],
+            "not_matched_skills": []
         }
 
     # ---- Fetch profile skills ----
@@ -97,7 +99,8 @@ def calculate_skill_strength(jd_skillset, profile_id):
     if not jd_skills:
         return {
             "strength": 0,
-            "matched_skills": []
+            "matched_skills": [],
+            "not_matched_skills": []
         }
 
     # ---- Profile skills ----
@@ -108,13 +111,16 @@ def calculate_skill_strength(jd_skillset, profile_id):
 
     # ---- Matching ----
     matched = jd_skills & profile_skills
+    not_matched = jd_skills - profile_skills
     strength = (len(matched) / len(jd_skills)) * 100
 
     # print("jd_skills", jd_skills)
     # print("profile_skills", profile_skills)
     # print("matched", matched)
+    # print("not_matched", not_matched)
 
     return {
         "strength": round(strength, 2),
-        "matched_skills": sorted(matched)
+        "matched_skills": sorted(matched),
+        "not_matched_skills": sorted(not_matched)
     }

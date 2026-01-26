@@ -4963,6 +4963,7 @@ def getJdProfileData(dataObjs,user_data):
             skill_math_strength = int(skill_strength * 0.6)
             exp_math_strength = int(exp_strength * 0.4)
             matched_skills = ",".join(s.capitalize() for s in match_info.get("matched_skills", []))
+            not_matched_skills = ",".join(s.capitalize() for s in match_info.get("not_matched_skills", []))
 
             candidate = Candidate.objects.filter(profileid=profile.id,jobid=dataObjs["jdid"]).last()
             if candidate:
@@ -4979,6 +4980,7 @@ def getJdProfileData(dataObjs,user_data):
                         "total_experience": int(match_info.get("total_experience", 0)),
                         "skill_strength": skill_strength,
                         "matched_skills":matched_skills,
+                        "not_matched_skills":not_matched_skills,
                         "overall_strength": overall_strength,
                         "candidate_status":c_status,
                         "skill_math_strength":skill_math_strength,
@@ -4997,6 +4999,7 @@ def getJdProfileData(dataObjs,user_data):
                     "total_experience": int(match_info.get("total_experience", 0)),
                     "skill_strength": skill_strength,
                     "matched_skills":matched_skills,
+                    "not_matched_skills":not_matched_skills,
                     "overall_strength": overall_strength,
                     "skill_math_strength":skill_math_strength,
                     "exp_math_strength":exp_math_strength

@@ -149,7 +149,14 @@ function renderMatchedTable(list,jdid) {
                 </td>
                 <td>${p.total_experience} Yrs -  ${p.exp_strength}%</td>
                 <td>${p.skill_strength}% <i class='bx bx-info-circle' data-bs-toggle="tooltip" data-bs-offset="0,6" data-bs-placement="top" data-bs-html="true" style="color: var(--primary-color);cursor: pointer;"
-                        data-bs-original-title="<span>${p.matched_skills}</span>"></i>
+                        data-bs-original-title="
+                            <div>
+                                <strong>Matched Skills:</strong><br>
+                                <span style='color: #28a745;'>${p.matched_skills || 'None'}</span><br>
+                                <strong>Not Matched Skills:</strong><br>
+                                <span style='color: #dc3545;'>${p.not_matched_skills || 'None'}</span>
+                            </div>
+                    "></i>
                 </td>
                 <td>
                     <button class="btn-primary btn btn-sm shortlist-btn" data-profile-id="${p.id}" data-jdid="${jdid}">Shortlist</button>
