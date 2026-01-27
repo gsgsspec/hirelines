@@ -421,3 +421,12 @@ SET
     `function` = 'Interviewer Availability',
     `function_category` = 'Interviewer Availability'
 WHERE function_link = 'work-calender';
+
+
+============Srikanth 27/01/2026 ===========
+INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('ZipRecruiter','/static/lib/portal/img/jobboards/ziprecruiter.png','A');
+INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Glassdoor','/static/lib/portal/img/jobboards/glassdoor.png','A');
+INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Careers24','/static/lib/portal/img/jobboards/c24.png','A');
+INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Monster','/static/lib/portal/img/jobboards/monster.png','A');
+INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Careerjet','/static/lib/portal/img/jobboards/careerjet.png','A');
+INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Jooble','/static/lib/portal/img/jobboards/jooble.png','A');
