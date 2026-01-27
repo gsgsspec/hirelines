@@ -208,6 +208,12 @@
         opacity: 1;
     }
 
+   .wrap-text {
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.6;
+    }
 
 </style>
 <nav aria-label="breadcrumb">
@@ -452,7 +458,7 @@
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
-                                    <td>
+                                    <td class="wrap-text">
                                         {{ profile_details.skills_display }}
 
                                     </td>
@@ -471,12 +477,8 @@
                             <tbody>
                                 {% for p in profile_details.projects %}
                                 <tr>
-                <td style="
-                    white-space: normal;
-                    word-break: break-word;
-                    overflow-wrap: break-word;
-                    line-height: 1.6;
-                ">
+                                    <td class="wrap-text">
+
                                         {{ p.projectname }}
                                         — {{ p.clientname }}
                                         — {{ p.roleplayed }}
