@@ -12,7 +12,8 @@ from urllib.parse import urljoin
 import requests
 from django.http import JsonResponse, FileResponse
 from app_api.functions.enc_dec import decrypt_code, encrypt_code
-from hirelines.settings import BASE_DIR
+from app_api.functions.voice_comparision import compareVoices
+from hirelines.settings import BASE_DIR,MEDIA_ROOT
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
@@ -3225,4 +3226,81 @@ def addResume(request):
         response['error'] = str(e)
         raise
     
+    return JsonResponse(response)
+
+
+
+import subprocess
+
+@api_view(['POST'])
+def uploadAudioFile(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+
+    try:
+        audio_file = request.FILES.get("speaker_audio")
+
+        folder_path = os.path.join(
+            MEDIA_ROOT,
+            "uploads",
+            "candidate_audio"
+        )
+        os.makedirs(folder_path, exist_ok=True)
+
+        base_name = os.path.splitext(audio_file.name)[0]
+        print("base_name",base_name)
+        scheduleid = base_name.split('_')[0]
+        print("scheduleid",scheduleid)
+        wav_filename = f"{base_name}.wav"
+        wav_path = os.path.join(folder_path, wav_filename)
+
+        process = subprocess.Popen(
+            [
+                "ffmpeg",
+                "-y",           
+                "-f", "webm",
+                "-i", "pipe:0",
+                "-ac", "1",
+                "-ar", "16000",
+                wav_path
+            ],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE
+        )
+
+        for chunk in audio_file.chunks():
+            if process.poll() is not None:
+                break
+            process.stdin.write(chunk)
+
+        process.stdin.close()
+        process.wait()
+
+        if process.returncode != 0:
+            error = process.stderr.read().decode()
+            raise Exception(error)
+        
+        profile_file_path = os.path.join(
+            MEDIA_ROOT,
+            "uploads",
+            "candidate_audio",
+            f"{scheduleid}_profileaudio.wav"
+        )
+
+        if os.path.exists(profile_file_path):
+            result_score = compareVoices(profile_file_path,wav_path)
+            print("result_scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",result_score)
+            response['data'] = float(result_score)
+            response['statusCode'] = 0
+        else:
+            response['data'] = "Profile audio not found"
+            response['statusCode'] = 1
+
+    except Exception as e:
+        response['error'] = str(e)
+
     return JsonResponse(response)

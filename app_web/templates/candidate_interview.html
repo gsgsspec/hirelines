@@ -64,6 +64,10 @@
                         <div class="grid-item cursor-pointer sec_selected" name="ins" id="ins_sec" onclick="show_ins();" style="align-items: center;">
                             <h5 style="font-size: 17px; font-weight: 800;">Job Description</h5>
                         </div>
+                        <div>
+                          <button id="start_record_btn" onclick="startVoiceRecording();">Start record</button>
+                          <button id="stop_record_btn" onclick="stopVoiceRecording();" hidden>Stop record</button>
+                        </div>
                         {% if profile_data %}
                         <div class="grid-item cursor-pointer" name="secs" id="profile_sec"
                             onclick="showProfileInfo();" style="align-items: center;">

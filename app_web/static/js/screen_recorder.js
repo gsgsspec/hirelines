@@ -7089,7 +7089,92 @@ function getURL(arg) {
     return url;
 }
 
+let speakerOnlyStream = null;
+let speakerRecorder = null;
+let speakerChunks = [];
 
+function startVoiceRecording() {
+    console.log("▶ Start speaker recording clicked");
+
+    if (!speakerOnlyStream) {
+        console.warn("❌ speakerOnlyStream is NULL");
+        alert("Speaker audio not ready");
+        return;
+    }
+
+    console.log("🎧 speakerOnlyStream tracks:", speakerOnlyStream.getAudioTracks());
+
+    speakerChunks = [];
+
+    speakerRecorder = new MediaRecorder(speakerOnlyStream, {
+        mimeType: "audio/webm"
+    });
+
+    console.log("🎙 MediaRecorder created:", speakerRecorder);
+
+    speakerRecorder.ondataavailable = e => {
+        console.log("📦 Audio chunk received:", e.data.size);
+        if (e.data.size) speakerChunks.push(e.data);
+    };
+
+    speakerRecorder.onstop = () => {
+        console.log("⏹ Recording stopped");
+        console.log("🧩 Total chunks:", speakerChunks.length);
+
+        const blob = new Blob(speakerChunks, { type: "audio/webm" });
+        console.log("📁 Final blob size:", blob.size);
+
+        sendSpeakerAudioToBackend(blob);
+    };
+
+    speakerRecorder.start();
+    console.log("✅ MediaRecorder started");
+
+    document.getElementById("start_record_btn").hidden = true;
+    document.getElementById("stop_record_btn").hidden = false;
+}
+
+function stopVoiceRecording() {
+    console.log("⏹ Stop speaker recording clicked");
+
+    if (speakerRecorder) {
+        console.log("📡 Recorder state:", speakerRecorder.state);
+    }
+
+    if (speakerRecorder && speakerRecorder.state === "recording") {
+        speakerRecorder.stop();
+    } else {
+        console.warn("⚠ Recorder not running");
+    }
+
+    document.getElementById("start_record_btn").hidden = false;
+    document.getElementById("stop_record_btn").hidden = true;
+}
+
+function sendSpeakerAudioToBackend(blob) {
+    const path = window.location.pathname; 
+    const parts = path.split('/').filter(Boolean);
+    const schid = parts[parts.length - 1];
+    const formData = new FormData();
+    formData.append("speaker_audio", blob, `${schid}_interview.webm`);
+
+    $.ajax({
+        url: CONFIG['portal'] + "/api/upload-audio-file",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            "X-CSRFToken": CSRF_TOKEN  
+        },
+        success: function (res) {
+            console.log("Speaker audio uploaded", res);
+        },
+        error: function (err) {
+            console.error("Upload failed", err);
+        }
+    });
+}
 
 function captureAudioPlusScreen(config) {
     var constraints = { audio: true, video: true };
@@ -7223,20 +7308,45 @@ function captureAudioPlusScreen(config) {
                 var audioDestinationNode = context.createMediaStreamDestination();
 
                 //check to see if we have a screen stream and only then add it
+                // if (screenStream && screenStream.getAudioTracks().length > 0) {
+                //     //get the audio from the screen stream
+                //     const systemSource = context.createMediaStreamSource(screenStream);
+
+                //     //set it's volume (from 0.1 to 1.0)
+                //     const systemGain = context.createGain();
+                //     // systemGain.gain.value = 0.6;
+                //     systemGain.gain.value = 1.0;
+
+
+                //     //add it to the destination
+                //     systemSource.connect(systemGain).connect(audioDestinationNode);
+
+                //     speakerOnlyStream = new MediaStream(
+                //         audioDestinationNode.stream.getAudioTracks()
+                //     );
+
+                // } 
                 if (screenStream && screenStream.getAudioTracks().length > 0) {
-                    //get the audio from the screen stream
                     const systemSource = context.createMediaStreamSource(screenStream);
 
-                    //set it's volume (from 0.1 to 1.0)
                     const systemGain = context.createGain();
-                    // systemGain.gain.value = 0.6;
                     systemGain.gain.value = 1.0;
 
+                    // 🔊 CONNECT SYSTEM AUDIO
+                    systemSource.connect(systemGain);
 
-                    //add it to the destination
-                    systemSource.connect(systemGain).connect(audioDestinationNode);
+                    // ✅ CREATE SPEAKER-ONLY STREAM HERE (BEFORE MIC)
+                    const speakerDestination = context.createMediaStreamDestination();
+                    systemGain.connect(speakerDestination);
 
-                } else {
+                    speakerOnlyStream = new MediaStream(
+                        speakerDestination.stream.getAudioTracks()
+                    );
+
+                    // 🔁 NOW also send system audio to main interview mix
+                    systemGain.connect(audioDestinationNode);
+                }
+                else {
 
                     Swal.fire({
                         title: "",
