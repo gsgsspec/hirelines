@@ -5958,7 +5958,7 @@ def SourcePerformanceService(dataObjs):
         p.id: p.sourceid
         for p in Profile.objects.filter(
             companyid=cid,
-            id__in=candidate_profile_ids
+            id__in=candidate_profile_ids,dateofcreation__range=(from_date, to_date)
         )
     }
 
