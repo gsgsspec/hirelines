@@ -3261,9 +3261,7 @@ def uploadAudioFile(request):
         os.makedirs(folder_path, exist_ok=True)
 
         base_name = os.path.splitext(audio_file.name)[0]
-        print("base_name",base_name)
         scheduleid = base_name.split('_')[0]
-        print("scheduleid",scheduleid)
         wav_filename = f"{base_name}.wav"
         wav_path = os.path.join(folder_path, wav_filename)
 
@@ -3303,8 +3301,27 @@ def uploadAudioFile(request):
 
         if os.path.exists(profile_file_path):
             result_score = compareVoices(profile_file_path,wav_path)
-            print("result_scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",result_score)
-            response['data'] = float(result_score)
+            
+            if result_score:
+                result_score = round(float(result_score),2)
+                level = ""
+                if result_score < 85:
+                    level = "L"
+                elif result_score < 90:
+                    level = "M"
+                else:
+                    level = "H"
+                
+            else:
+                result_score = None
+                level = None
+            
+            call_sch = CallSchedule.objects.get(id=scheduleid)
+            call_sch.audioscore = result_score
+            call_sch.audiolevel = level
+            call_sch.save()
+
+            response['data'] = result_score
             response['statusCode'] = 0
         else:
             response['data'] = "Profile audio not found"

@@ -231,6 +231,8 @@ class CallSchedule(models.Model):
     meetinglink = models.CharField(max_length=100, null=True)
     callendflag = models.CharField(max_length=1,null=True)
     companyid = models.IntegerField(null=True)
+    audioscore = models.IntegerField(null=True)
+    audiolevel = models.CharField(max_length=1,null=True) # H - High, M - Moderate, L - Low
 
     class Meta:
         db_table = 'callschedule'

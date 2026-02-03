@@ -7093,70 +7093,130 @@ let speakerOnlyStream = null;
 let speakerRecorder = null;
 let speakerChunks = [];
 
-function startVoiceRecording() {
-    console.log("▶ Start speaker recording clicked");
+let recordInterval = null;
+let recordTimeout = null;
+let secondsElapsed = 0;
+
+
+
+async function initSpeakerAudio() {
+    try {
+        const displayStream = await navigator.mediaDevices.getDisplayMedia({
+            video: true,
+            audio: true
+        });
+
+        const audioTracks = displayStream.getAudioTracks();
+
+        if (!audioTracks.length) {
+            alert("❌ No system audio selected. Please enable 'Share system audio'");
+            return;
+        }
+
+        speakerOnlyStream = new MediaStream(audioTracks);
+        // console.log("✅ Speaker audio initialized");
+
+    } catch (err) {
+        // console.error("❌ Screen capture failed", err);
+        alert("Screen capture permission denied");
+    }
+}
+
+document.getElementById("start_record_btn").onclick = async function () {
 
     if (!speakerOnlyStream) {
-        console.warn("❌ speakerOnlyStream is NULL");
-        alert("Speaker audio not ready");
-        return;
+        await initSpeakerAudio();
+        if (!speakerOnlyStream) return;
     }
 
-    console.log("🎧 speakerOnlyStream tracks:", speakerOnlyStream.getAudioTracks());
+    Swal.fire({
+        title: "Start Recording?",
+        text: "Recording will stop automatically after 1 minute",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Start",
+        confirmButtonColor: '#274699',
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            startVoiceRecording();
+        }
+    });
+};
+
+function startVoiceRecording() {
 
     speakerChunks = [];
+    secondsElapsed = 0;
 
     speakerRecorder = new MediaRecorder(speakerOnlyStream, {
         mimeType: "audio/webm"
     });
 
-    console.log("🎙 MediaRecorder created:", speakerRecorder);
-
-    speakerRecorder.ondataavailable = e => {
-        console.log("📦 Audio chunk received:", e.data.size);
-        if (e.data.size) speakerChunks.push(e.data);
+    speakerRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) speakerChunks.push(e.data);
     };
 
     speakerRecorder.onstop = () => {
-        console.log("⏹ Recording stopped");
-        console.log("🧩 Total chunks:", speakerChunks.length);
+        clearInterval(recordInterval);
+        clearTimeout(recordTimeout);
+        document.getElementById("record_timer").innerText = "";
 
         const blob = new Blob(speakerChunks, { type: "audio/webm" });
-        console.log("📁 Final blob size:", blob.size);
-
         sendSpeakerAudioToBackend(blob);
     };
 
     speakerRecorder.start();
-    console.log("✅ MediaRecorder started");
+    // console.log("🎙 Recording started");
 
     document.getElementById("start_record_btn").hidden = true;
     document.getElementById("stop_record_btn").hidden = false;
+
+    startTimer();
+
+    // ⏱ AUTO STOP AFTER 1 MIN
+    recordTimeout = setTimeout(() => {
+        stopVoiceRecording();
+    }, 60000);
 }
 
+
 function stopVoiceRecording() {
-    console.log("⏹ Stop speaker recording clicked");
-
-    if (speakerRecorder) {
-        console.log("📡 Recorder state:", speakerRecorder.state);
-    }
-
     if (speakerRecorder && speakerRecorder.state === "recording") {
         speakerRecorder.stop();
-    } else {
-        console.warn("⚠ Recorder not running");
+        console.log("⏹ Recording stopped");
     }
 
     document.getElementById("start_record_btn").hidden = false;
     document.getElementById("stop_record_btn").hidden = true;
 }
 
+
+function startTimer() {
+    recordInterval = setInterval(() => {
+        secondsElapsed++;
+
+        const min = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+        const sec = String(secondsElapsed % 60).padStart(2, "0");
+
+        document.getElementById("record_timer").innerText =
+            `⏱ Recording: ${min}:${sec}`;
+    }, 1000);
+}
+
+
 function sendSpeakerAudioToBackend(blob) {
-    const path = window.location.pathname; 
+
+    const path = window.location.pathname;
     const parts = path.split('/').filter(Boolean);
     const schid = parts[parts.length - 1];
+
     const formData = new FormData();
     formData.append("speaker_audio", blob, `${schid}_interview.webm`);
+
+    // 🔄 show analysing spinner
+    $("#voiceResult").hide();
+    $("#voiceLoading").show();
 
     $.ajax({
         url: CONFIG['portal'] + "/api/upload-audio-file",
@@ -7165,16 +7225,46 @@ function sendSpeakerAudioToBackend(blob) {
         processData: false,
         contentType: false,
         headers: {
-            "X-CSRFToken": CSRF_TOKEN  
+            "X-CSRFToken": CSRF_TOKEN
         },
         success: function (res) {
-            console.log("Speaker audio uploaded", res);
+            // hide spinner
+            $("#voiceLoading").hide();
+
+            const score = Math.round(res.data);
+
+            $("#voiceResult").show();
+            $("#voiceScore").text(score + "%");
+
+            let level = "";
+            let message = "";
+
+            if (score < 85) {
+                level = "low";
+                message = "Low confidence in voice match.";
+            } else if (score < 90) {
+                level = "moderate";
+                message = "Moderate confidence in voice match.";
+            } else {
+                level = "high";
+                message = "High confidence in voice match.";
+            }
+
+            $("#voiceLevel")
+                .removeClass("low moderate high")
+                .addClass(level);
+
+            $("#voiceLevel .level").text(message);
+
         },
         error: function (err) {
-            console.error("Upload failed", err);
+            $("#voiceLoading").hide();
+            console.error("❌ Upload failed", err);
         }
     });
 }
+
+
 
 function captureAudioPlusScreen(config) {
     var constraints = { audio: true, video: true };

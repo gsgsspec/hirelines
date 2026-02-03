@@ -78,7 +78,7 @@
                         {% if profiling_video == "Y" %}
                         <div class="grid-item cursor-pointer" name="secs" id="proxy_sec"
                             onclick="showProxyTab();"style="align-items: center;">
-                            <h5 style="font-size: 17px; font-weight: 800;">Proxy check</h5>
+                            <h5 style="font-size: 17px; font-weight: 800;">Voice Verification</h5>
                         </div>
                         {% endif %}
                         <div class="grid-item cursor-pointer" name="secs" id="verif_sec"
@@ -429,19 +429,33 @@
                       </p>
 
                       <div>
-                        <button class="btn btn-primary" id="start_record_btn" onclick="startVoiceRecording();">Start record</button>
-                        <button class="btn btn-primary" id="stop_record_btn" onclick="stopVoiceRecording();" hidden>Stop & Compare</button>
+                        <button class="btn btn-primary" id="start_record_btn">Start record</button>
+                        <button class="btn btn-danger" onclick="stopVoiceRecording()" id="stop_record_btn" hidden>Stop & Compare</button>
+                        <div id="record_timer" style="margin-top:10px;font-weight:bold;"></div>
                       </div>
                       
-                      <div class="voice-result">
+                      <div id="voiceLoading" style="display:none; margin-top:15px;">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                        <span style="margin-left:8px;">Voice analysing…</span>
+                      </div>
+
+                      <div class="voice-result" id="voiceResult" style="display:none;">
                         <h5>Voice Analysis Result</h5>
-                        <p class="score">Voice Similarity Score: <strong>78%</strong></p>
-                        <p class="level moderate">Moderate confidence in voice match.</p>
+
+                        <div id="voiceLevel">
+                          <p class="score">
+                            Voice Similarity Score:
+                            <strong id="voiceScore">--</strong>
+                          </p>
+  
+                          <p class="level m-0"></p>
+                        </div>
                         <small class="text-muted">
-                          This result is generated through automated voice analysis and should be used
-                          as a supporting indicator only.
+                            This result is generated through automated voice analysis and should be used
+                            as a supporting indicator only.
                         </small>
                       </div>
+
                     </div>
                   </div>
 
@@ -944,6 +958,60 @@
     .layout-page {
         padding-left: 0px !important;
     }
+
+    #voiceLoading {
+      text-align: center;
+      font-size: 18px;
+      /* color: #0d6efd; */
+      color: var(--primary-color);
+    }
+
+    #voiceLoading i {
+      font-size: 22px;
+    }
+
+    /* Base container */
+    #voiceLevel {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+    }
+
+    /* LOW */
+    #voiceLevel.low {
+      background-color: #f8d7da;
+      border: 1px solid #f5c2c7;
+    }
+    #voiceLevel.low .score,
+    #voiceLevel.low .level,
+    #voiceLevel.low #voiceScore {
+      color: #842029;
+    }
+
+    /* MODERATE */
+    #voiceLevel.moderate {
+      background-color: #fff3cd;
+      border: 1px solid #ffecb5;
+    }
+    #voiceLevel.moderate .score,
+    #voiceLevel.moderate .level,
+    #voiceLevel.moderate #voiceScore {
+      color: #664d03;
+    }
+
+    /* HIGH */
+    #voiceLevel.high {
+      background-color: #d1e7dd;
+      border: 1px solid #badbcc;
+    }
+    #voiceLevel.high .score,
+    #voiceLevel.high .level,
+    #voiceLevel.high #voiceScore {
+      color: #0f5132;
+    }
+
+
 </style>
 
 <script>

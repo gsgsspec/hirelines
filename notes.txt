@@ -430,3 +430,14 @@ INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Careers24','/stati
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Monster','/static/lib/portal/img/jobboards/monster.png','A');
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Careerjet','/static/lib/portal/img/jobboards/careerjet.png','A');
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Jooble','/static/lib/portal/img/jobboards/jooble.png','A');
+
+
+
+
+
+Audio Score
+========================
+
+ALTER TABLE `hirelines`.`callschedule` 
+ADD COLUMN `audioscore` INT NULL DEFAULT NULL AFTER `companyid`,
+ADD COLUMN `audiolevel` VARCHAR(1) NULL DEFAULT NULL AFTER `score`;
