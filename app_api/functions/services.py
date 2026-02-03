@@ -5913,4 +5913,180 @@ def getOverallDashboardCounts(company_id):
         print("pipeline_data",pipeline_data)
         print("jd_ids",jd_ids)
     except Exception as e:
-        raise
+        raise 
+    
+def SourcePerformanceService(dataObjs):
+    print("===== SOURCE PERFORMANCE START =====")
+
+    cid = dataObjs["cid"]
+    today = date.today()
+
+    # ---------------- DATE HANDLING ----------------
+    from_date_str = dataObjs.get("from_date")
+    to_date_str = dataObjs.get("to_date")
+
+    from_date = (
+        datetime.strptime(from_date_str, "%Y-%m-%d").date()
+        if from_date_str else today.replace(day=1)
+    )
+    to_date = (
+        datetime.strptime(to_date_str, "%Y-%m-%d").date()
+        if to_date_str else today
+    )
+
+    print("DATE RANGE:", from_date, "→", to_date)
+
+    # ---------------- SOURCE MAP ----------------
+    source_map = {
+        s.id: s.label
+        for s in Source.objects.filter(companyid=cid)
+    }
+
+    # ---------------- CANDIDATE (GATE) ----------------
+    candidate_qs = list(
+        Candidate.objects
+        .filter(companyid=cid, profileid__isnull=False, jobid__isnull=False)
+        .values("profileid", "jobid")
+    )
+
+    print("CANDIDATE QS:", candidate_qs)
+
+    candidate_profile_ids = {c["profileid"] for c in candidate_qs}
+
+    # ---------------- PROFILE → SOURCE ----------------
+    profile_source_map = {
+        p.id: p.sourceid
+        for p in Profile.objects.filter(
+            companyid=cid,
+            id__in=candidate_profile_ids
+        )
+    }
+
+    print("PROFILE → SOURCE MAP:", profile_source_map)
+
+    # ---------------- JOB TITLE MAP ----------------
+    job_ids = {c["jobid"] for c in candidate_qs}
+    print("job_ids",job_ids)
+
+    job_title_map = {
+        j.id: j.title.strip()
+        for j in JobDesc.objects.filter(companyid=cid, id__in=job_ids)
+    }
+
+    print("JOB TITLE MAP:", job_title_map)
+
+    # ---------------- PROFILE ACTIVITY (PROFILE LEVEL) ----------------
+    activity_qs = (
+        ProfileActivity.objects
+        .filter(companyid=cid, profileid__in=candidate_profile_ids)
+        .values("profileid")
+        .annotate(
+            profiled=Count(Case(When(activitycode="PC", then=1), output_field=IntegerField())),
+            screened=Count(Case(When(activitycode="SC", then=1), output_field=IntegerField())),
+            internal_interview=Count(Case(When(activitycode="IC", then=1), output_field=IntegerField())),
+            client_interview=Count(Case(When(activitycode="CI", then=1), output_field=IntegerField())),
+            submitted=Count(Case(When(activitycode="CL", then=1), output_field=IntegerField())),
+            waiting=Count(Case(When(activitycode="CF", then=1), output_field=IntegerField())),
+            rejected=Count(Case(When(activitycode="RJ", then=1), output_field=IntegerField())),
+            selected=Count(Case(When(activitycode="CS", then=1), output_field=IntegerField())),
+        )
+    )
+
+    activity_map = {a["profileid"]: a for a in activity_qs}
+
+    print("ACTIVITY MAP:", activity_map)
+
+    # ---------------- AGGREGATION ----------------
+    final = defaultdict(list)
+
+    # profile → jobs map
+    profile_jobs = defaultdict(list)
+    for c in candidate_qs:
+        profile_jobs[c["profileid"]].append(c["jobid"])
+
+    # We have only ONE source logically, but code supports many
+    source_totals = defaultdict(lambda: {
+        "sourced": 0,
+        "profiled": 0,
+        "screened": 0,
+        "internal_interview": 0,
+        "submitted": 0,
+        "client_interview": 0,
+        "waiting": 0,
+        "rejected": 0,
+        "selected": 0,
+    })
+
+    jd_rows = defaultdict(lambda: defaultdict(lambda: {
+        "sourced": 0,
+        "profiled": 0,
+        "screened": 0,
+        "internal_interview": 0,
+        "submitted": 0,
+        "client_interview": 0,
+        "waiting": 0,
+        "rejected": 0,
+        "selected": 0,
+    }))
+
+    for profile_id, jobs in profile_jobs.items():
+        source_id = profile_source_map.get(profile_id)
+        source_label = source_map.get(source_id)
+
+        if not source_label:
+            continue
+
+        activity = activity_map.get(profile_id, {})
+        job_count = len(jobs)
+
+        for job_id in jobs:
+            jd_title = job_title_map.get(job_id, "Unknown JD")
+
+            # sourced = candidate rows
+            jd_rows[source_label][jd_title]["sourced"] += 1
+            source_totals[source_label]["sourced"] += 1
+
+            # distribute activity equally
+            if job_count:
+                jd_rows[source_label][jd_title]["profiled"] += activity.get("profiled", 0) // job_count
+                jd_rows[source_label][jd_title]["screened"] += activity.get("screened", 0) // job_count
+                jd_rows[source_label][jd_title]["internal_interview"] += activity.get("internal_interview", 0) // job_count
+                jd_rows[source_label][jd_title]["submitted"] += activity.get("submitted", 0) // job_count
+                jd_rows[source_label][jd_title]["client_interview"] += activity.get("client_interview", 0) // job_count
+                jd_rows[source_label][jd_title]["waiting"] += activity.get("waiting", 0) // job_count
+                jd_rows[source_label][jd_title]["rejected"] += activity.get("rejected", 0) // job_count
+                jd_rows[source_label][jd_title]["selected"] += activity.get("selected", 0) // job_count
+
+        # totals (profile-level, counted once)
+        source_totals[source_label]["profiled"] += activity.get("profiled", 0)
+        source_totals[source_label]["screened"] += activity.get("screened", 0)
+        source_totals[source_label]["internal_interview"] += activity.get("internal_interview", 0)
+        source_totals[source_label]["submitted"] += activity.get("submitted", 0)
+        source_totals[source_label]["client_interview"] += activity.get("client_interview", 0)
+        source_totals[source_label]["waiting"] += activity.get("waiting", 0)
+        source_totals[source_label]["rejected"] += activity.get("rejected", 0)
+        source_totals[source_label]["selected"] += activity.get("selected", 0)
+
+    # ---------------- FINAL FORMAT FOR UI ----------------
+    for source, totals in source_totals.items():
+        # TOTAL ROW (first row)
+        final[source].append({
+            "jd": "",
+            **totals
+        })
+
+        # JD rows
+        for jd, counts in jd_rows[source].items():
+            final[source].append({
+                "jd": jd,
+                **counts
+            })
+
+    print("FINAL OUTPUT:", dict(final))
+    print("===== SOURCE PERFORMANCE END =====")
+
+    return {
+        "from_date": from_date.strftime("%Y-%m-%d"),
+        "to_date": to_date.strftime("%Y-%m-%d"),
+        "data": dict(final)
+    }

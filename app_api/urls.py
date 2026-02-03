@@ -115,5 +115,7 @@ urlpatterns = [
     path("save-jb-job-boards", views.saveJDJobBoards),
     path("add-resume", views.addResume),
     path("upload-audio-file", views.uploadAudioFile),
+    path("source-performance", views.source_performance),
+
 
 ]

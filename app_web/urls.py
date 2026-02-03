@@ -60,5 +60,7 @@ urlpatterns = [
     path('job-boards',active_user_required(views.jobBoardsPage)),
 
     path('overall-dashboard',active_user_required(views.overallDashboardPage)),
+    path('source-performance-report',views.source_performance_reportPage),
+
 
 ]
