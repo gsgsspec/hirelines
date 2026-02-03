@@ -564,8 +564,6 @@ def candidateInterview(request,sch_id):
     if not request.user.is_active and not request.user.is_staff:
         return user_not_active(request, after_login_redirect_to=str(request.META["PATH_INFO"]))
     
-    # if checkCompanyTrailPeriod(request.user):
-    #     return redirect('/trial-expired')
     try:
 
         interview_data = getCandidateInterviewData(sch_id)
@@ -577,10 +575,11 @@ def candidateInterview(request,sch_id):
         screening_data = interview_data['screening_data']
         coding_data = interview_data['coding_data']
         profile_data = interview_data['profile_data']
+        profiling_video = interview_data["profiling_video"]
 
         return render(request, "portal_index.html", {"template_name": 'candidate_interview.html','jd_data':jd_data,'cdn_data':cdn_data,
             'sections_questions_lst' : interv_sect_ques["sections_questions_lst"],'interview_sections' : interv_sect_ques['sections_lst'],'profile_data':profile_data,
-            'candidate_data':candidate_data,'screening_data':screening_data,'coding_data':coding_data })
+            'candidate_data':candidate_data,'screening_data':screening_data,'coding_data':coding_data,'profiling_video':profiling_video })
 
     except Exception as e:
         raise

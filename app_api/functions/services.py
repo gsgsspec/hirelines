@@ -7,7 +7,7 @@ import ast
 import time
 import base64
 
-# import ffmpeg
+import ffmpeg
 import re
 import pandas as pd
 from django.db.models import Q, Count, Avg
@@ -93,6 +93,7 @@ from .excel_mapping import validate_excel_with_json
 from hirelines import settings
 from .database import addCandidateDB
 from .jd_profile_matching import calculateJDProfileMatching
+from .voice_comparision import convertProfilingVideo, compareVoices
 
 
 def addCompanyDataService(dataObjs):
@@ -1720,7 +1721,7 @@ def getCandidateInterviewData(scd_id):
             "screening_data": None,
             "coding_data": None,
             "profile_data": None,
-            # "profiling_video_url":None
+            "profiling_video":"N"
         }
 
         acert_domain = getConfig()["DOMAIN"]["acert"]
@@ -1744,15 +1745,16 @@ def getCandidateInterviewData(scd_id):
             interview_data = json_data["data"]["interviewdata"]
             screening_data = json_data["data"]["screeningdata"]
             coding_data = json_data["data"]["codingdata"]
-            # profiling_video_url = json_data["data"]["profiling_video_url"]
+            profiling_video_url = json_data["data"]["profiling_video_url"]
+            print("profiling_video_url",profiling_video_url)
 
-            # if profiling_video_url:
-            #     convertProfilingVideo(profiling_video_url, call_details.id)
+            if profiling_video_url:
+                convertProfilingVideo(profiling_video_url, call_details.id)
+                resp['profiling_video'] = "Y" 
 
             resp["interview_data"] = interview_data
             resp["screening_data"] = screening_data
             resp["coding_data"] = coding_data
-            # resp['profiling_video_url'] = profiling_video_url
 
         job_desc = JobDesc.objects.get(id=candidate.jobid)
 

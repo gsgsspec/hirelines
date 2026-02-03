@@ -8,7 +8,7 @@ from pydub import AudioSegment
 
 
 from hirelines import settings
-from app_api.models import CallSchedule, Candidate
+from app_api.models import CallSchedule
 
 
 def convertProfilingVideo(video_url, schedule_id):
@@ -18,7 +18,7 @@ def convertProfilingVideo(video_url, schedule_id):
 
         file_name = f"{call_details.id}_profileaudio.wav"
 
-        profiling_dir = os.path.join(settings.MEDIA_ROOT, "uploads","candidate_profile_audio")
+        profiling_dir = os.path.join(settings.MEDIA_ROOT, "uploads","candidate_audio")
         os.makedirs(profiling_dir, exist_ok=True)
 
         parsed_url = urlparse(video_url)
@@ -26,7 +26,6 @@ def convertProfilingVideo(video_url, schedule_id):
         video_path = os.path.join(profiling_dir, filename)
 
         wav_path = os.path.join(profiling_dir, file_name)
-
 
         # Checking if already profiling audio exists
         if os.path.exists(wav_path):
@@ -48,7 +47,6 @@ def convertProfilingVideo(video_url, schedule_id):
 
         # Deleting video file after converting to wav file
         os.remove(video_path)
-
 
     except Exception as e:
         print(f"Error: {e}")

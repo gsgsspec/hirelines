@@ -135,6 +135,7 @@ function showCandidateInfo() {  // it shows the candidate details
   $('.profile_sec').prop("hidden", true);
   $("#verif_sec").addClass("sec_selected");
   $("#ins_sec").removeClass('sec_selected');
+  $('.proxy_sec').prop("hidden", true);
 }
 
 function showTestData() {  // it shows the tests details
@@ -147,6 +148,7 @@ function showTestData() {  // it shows the tests details
   $('.profile_sec').prop("hidden", true);
   $("#test_data").addClass("sec_selected");
   $("#ins_sec").removeClass('sec_selected');
+  $('.proxy_sec').prop("hidden", true);
 }
 
 function show_ins() { // it shows the candidate details
@@ -158,6 +160,7 @@ function show_ins() { // it shows the candidate details
   $('.profile_sec').prop("hidden", true);
   $("#verif_sec").removeClass("sec_selected");
   $("#ins_sec").addClass('sec_selected');
+  $('.proxy_sec').prop("hidden", true);
 }
 
 
@@ -168,8 +171,25 @@ function showProfileInfo() {  // it shows the profile details
   $('#sec').prop("hidden", true);
   $('.ins').prop("hidden", true);
   $('.test_sec').prop("hidden", true);
+  $('.apl_sec').prop("hidden", true);
   $("#profile_sec").addClass("sec_selected");
   $("#ins_sec").removeClass('sec_selected');
+  $('.proxy_sec').prop("hidden", true);
+}
+
+function showProxyTab() {  // it shows the profile details
+  $("div[name='secs']").removeClass('sec_selected');
+
+  $('.proxy_sec').prop("hidden", false);
+
+  $('.profile_sec').prop("hidden", true);
+  $('#sec').prop("hidden", true);
+  $('.ins').prop("hidden", true);
+  $('.test_sec').prop("hidden", true);
+  $('.apl_sec').prop("hidden", true);
+  $("#proxy_sec").addClass("sec_selected");
+  $("#ins_sec").removeClass('sec_selected');
+  
 }
 
 
@@ -184,6 +204,7 @@ function show_section(sec_id) {  // it shows and hides the sections
   $("#ins_sec").removeClass('sec_selected');
   $('.ins').prop("hidden", true);
   $('.profile_sec').prop("hidden", true);
+  $('.proxy_sec').prop("hidden", true);
 
 
   let elements = document.querySelectorAll('span[name="vs"]');

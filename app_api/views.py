@@ -743,6 +743,16 @@ def interviewFile(request):
     call_details.callendflag = 'Y'
     call_details.save()
 
+    profiling_dir = os.path.join(MEDIA_ROOT, "uploads", "candidate_audio")
+
+    if os.path.exists(profiling_dir):
+        for filename in os.listdir(profiling_dir):
+            if filename.startswith(f"{schid}_"):
+                file_path = os.path.join(profiling_dir, filename)
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+
+
     return JsonResponse({"response": "success"})
 
 

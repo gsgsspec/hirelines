@@ -64,14 +64,21 @@
                         <div class="grid-item cursor-pointer sec_selected" name="ins" id="ins_sec" onclick="show_ins();" style="align-items: center;">
                             <h5 style="font-size: 17px; font-weight: 800;">Job Description</h5>
                         </div>
-                        <div>
+                        <!-- <div>
                           <button id="start_record_btn" onclick="startVoiceRecording();">Start record</button>
                           <button id="stop_record_btn" onclick="stopVoiceRecording();" hidden>Stop record</button>
-                        </div>
+                        </div> -->
+                        
                         {% if profile_data %}
                         <div class="grid-item cursor-pointer" name="secs" id="profile_sec"
                             onclick="showProfileInfo();" style="align-items: center;">
                             <h5 style="font-size: 17px; font-weight: 800;">Profile</h5>
+                        </div>
+                        {% endif %}
+                        {% if profiling_video == "Y" %}
+                        <div class="grid-item cursor-pointer" name="secs" id="proxy_sec"
+                            onclick="showProxyTab();"style="align-items: center;">
+                            <h5 style="font-size: 17px; font-weight: 800;">Proxy check</h5>
                         </div>
                         {% endif %}
                         <div class="grid-item cursor-pointer" name="secs" id="verif_sec"
@@ -410,6 +417,32 @@
                       </table>
                     </div>
                     
+                  </div>
+
+                  <div class="proxy_sec" style="overflow: auto; position: relative; padding:1%;height: 65%;" hidden>
+                    <div class="qol">
+                      <p class="mt-2">
+                        After clicking <strong>Start Record</strong>, ask the candidate to speak clearly.
+                        This audio will be used only for voice analysis.
+                        <br>
+                        <em>Example: “Please tell me about yourself.”</em>
+                      </p>
+
+                      <div>
+                        <button class="btn btn-primary" id="start_record_btn" onclick="startVoiceRecording();">Start record</button>
+                        <button class="btn btn-primary" id="stop_record_btn" onclick="stopVoiceRecording();" hidden>Stop & Compare</button>
+                      </div>
+                      
+                      <div class="voice-result">
+                        <h5>Voice Analysis Result</h5>
+                        <p class="score">Voice Similarity Score: <strong>78%</strong></p>
+                        <p class="level moderate">Moderate confidence in voice match.</p>
+                        <small class="text-muted">
+                          This result is generated through automated voice analysis and should be used
+                          as a supporting indicator only.
+                        </small>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="test_sec" style="overflow: auto; position: relative; padding:1%;height: 65%;" hidden>
