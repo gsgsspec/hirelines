@@ -670,6 +670,7 @@ a:hover {
 .bg-menu-theme .menu-horizontal-prev,
 .bg-menu-theme .menu-horizontal-next {
   color: #697a8d;
+  /* color: #0f1c4f ; */
 }
 .bg-menu-theme .menu-link:hover, .bg-menu-theme .menu-link:focus,
 .bg-menu-theme .menu-horizontal-prev:hover,

@@ -1,10 +1,9 @@
 import os
 import requests
-import ffmpeg
+
 import numpy as np
 from urllib.parse import urlparse
-from resemblyzer import preprocess_wav, VoiceEncoder
-from pydub import AudioSegment
+
 
 
 from hirelines import settings
@@ -13,6 +12,8 @@ from app_api.models import CallSchedule
 
 def convertProfilingVideo(video_url, schedule_id):
     try:
+
+        import ffmpeg
 
         call_details = CallSchedule.objects.get(id=schedule_id)
 
@@ -56,6 +57,8 @@ def convertProfilingVideo(video_url, schedule_id):
 def compareVoices(file1,file2):
     try:
 
+        from resemblyzer import preprocess_wav, VoiceEncoder
+
         if not file1.endswith(".wav"):
             file1 = convert_audio_to_wav(file1)
         if not file2.endswith(".wav"):
@@ -87,6 +90,9 @@ def compareVoices(file1,file2):
 
 def convert_audio_to_wav(target_file_path: str):
     try:
+
+        from pydub import AudioSegment
+
         # Load audio
         audio = AudioSegment.from_file(target_file_path)
         wav_file = target_file_path.split('.')[0] + ".wav"

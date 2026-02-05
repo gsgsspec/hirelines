@@ -190,16 +190,14 @@ tbody tr:hover {
         <table class="table table-hover" id="profiles-table">
             <thead>
                 <tr>
-                    <th><strong>Date</strong></th>
-                    <th><strong>Profile Code</strong></th>
-                    <th><strong>Strength</strong></th>
-                    <th><strong>Title</strong></th>
-                    <th><strong>First Name</strong></th>
-                    <th><strong>Last Name</strong></th>
-                    <th><strong>Experience</strong></th>
-                    <th><strong>Source</strong></th>
-                    <!-- <th><strong>Skills</strong></th> -->
-                    <th><strong>Status</strong></th>
+                    <th>Date</th>
+                    <th>Source</th>
+                    <th>Profile Code</th>
+                    <th>Name</th>
+                    <th>Title</th>
+                    <th>Experience</th>
+                    <th>Strength</th>
+                    <th>Status</th>
                 </tr>
             </thead>
 
@@ -207,14 +205,12 @@ tbody tr:hover {
                 {% for p in profile_details %}
                 <tr onclick="window.location.href='/profileview/{{p.id}}'">
                     <td>{{ p.formatted_date }}</td>
-                    <td>{{ p.profilecode|default:"" }}</td>
-                    <td>{{ p.profilestrength}}%</td>
-                    <td>{{ p.title|default:"" }}</td>
-                    <td>{{ p.firstname|default:"" }}</td>
-                    <td>{{ p.lastname|default:"" }}</td>
-                    <td>{{ p.final_experience }}</td>
                     <td>{{ p.source_code }}</td>
-                    <!-- <td>{{ p.primaryskills_name }}, {{ p.secondaryskills_name }}</td> -->
+                    <td>{{ p.profilecode|default:"" }}</td>
+                    <td>{{ p.firstname|default:"" }} {{ p.lastname|default:"" }}</td>
+                    <td>{{ p.title|default:"" }}</td>
+                    <td>{{ p.final_experience }}</td>
+                    <td>{{ p.profilestrength}}%</td>
                     <td>{{ p.status_text }}</td>
                 </tr>
                 {% endfor %}

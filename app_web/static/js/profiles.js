@@ -177,14 +177,12 @@ function filter_profiles() {
                     $("#profiles-table tbody").append(
                         tr
                         + '<td>' + p["date"] + '</td>'
-                        + '<td>' + p["code"] + '</td>'
-                        + '<td>' + p["profilestrength"] + '%'+ '</td>'
-                        + '<td>' + p["title"] + '</td>'
-                        + '<td>' + p["firstname"] + '</td>'
-                        + '<td>' + p["lastname"] + '</td>'
-                        + '<td>' + p["experience"] + '</td>'
                         + '<td>' + p["source"] + '</td>'
-                        // + '<td>' + skillsText + '</td>' 
+                        + '<td>' + p["code"] + '</td>'
+                        + '<td>' + p["firstname"] + " " + p["lastname"] + '</td>'
+                        + '<td>' + p["title"] + '</td>'
+                        + '<td>' + p["experience"] + '</td>'
+                        + '<td>' + p["profilestrength"] + '%'+ '</td>'
                         + '<td>' + p["status"] + '</td>'
                         + '</tr>'
                     );
