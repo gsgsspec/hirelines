@@ -325,7 +325,8 @@
 
 .login-header {
     height: 100vh;
-    background-image: url("/static/lib/homePage/images/login.jpg");
+    /* background-image: url("/static/lib/homePage/images/login.jpg"); */
+    background-image: url("/static/lib/homePage/images/76824.webp");
     background-repeat: no-repeat;
     background-size: cover;
 }
