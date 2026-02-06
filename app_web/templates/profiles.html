@@ -210,8 +210,34 @@ tbody tr:hover {
                     <td>{{ p.firstname|default:"" }} {{ p.lastname|default:"" }}</td>
                     <td>{{ p.title|default:"" }}</td>
                     <td>{{ p.final_experience }}</td>
-                    <td>{{ p.profilestrength}}%</td>
-                    <td>{{ p.status_text }}</td>
+                    <!-- <td>{{ p.profilestrength }}%</td>
+                    <td>{{ p.status_text }}</td> -->
+                    <td>
+                        <div class="strength-wrap">
+                            <div class="bar 
+                                {% if p.profilestrength >= 70 %} green
+                                {% elif p.profilestrength >= 40 %} orange
+                                {% else %} red
+                                {% endif %}
+                            " style="--w:{{p.profilestrength}}%;">
+                                <span></span>
+                            </div>
+                            <span class="percent">{{ p.profilestrength }}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="pill 
+                            {% if p.status_text == 'Draft' %} draft
+                            {% elif p.status_text == 'Ready' %} ready
+                            {% elif p.status_text == 'Hired' %} hired
+                            {% elif p.status_text == 'Rejected' %} rejected
+                            {% elif p.status_text == 'Process' %} process
+                            {% else %} draft
+                            {% endif %}
+                        ">
+                            {{ p.status_text }}
+                        </span>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -219,6 +245,84 @@ tbody tr:hover {
 
     </div>
 </div>
+
+<style>
+
+    .strength-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width: 160px;
+}
+
+.bar{
+  width: 100px;
+  height: 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.bar span{
+  display:block;
+  height:100%;
+  width: var(--w, 0%);
+  border-radius: 999px;
+}
+
+/* Strength colors */
+.bar.green span{ background:#16a34a; }
+.bar.orange span{ background:#f59e0b; }
+.bar.red span{ background:#ef4444; }
+
+.percent{
+  font-weight:700;
+  font-size: 13px;
+  color:#0f172a;
+}
+
+    .pill{
+  display:inline-flex;
+  align-items:center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid transparent;
+}
+
+/* Status Colors */
+.pill.draft{
+  background:#F1F5F9;
+  color:#334155;
+  border-color:#E2E8F0;
+}
+
+.pill.ready{
+  background:#DBEAFE;
+  color:#1E40AF;
+  border-color:#BFDBFE;
+}
+
+.pill.hired{
+  background:#DCFCE7;
+  color:#166534;
+  border-color:#BBF7D0;
+}
+
+.pill.rejected{
+  background:#FEE2E2;
+  color:#991B1B;
+  border-color:#FECACA;
+}
+
+.pill.process{
+  background:#FFEDD5;
+  color:#9A3412;
+  border-color:#FED7AA;
+}
+
+</style>
 
 <script src="{% static 'js/profiles.js' %}"></script>
 <script>

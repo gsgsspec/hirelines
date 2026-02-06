@@ -253,14 +253,16 @@
 
         <div class="card">
             <div class="card-title-table" style="padding-right: 50px;">
-                <h4 class="card-header">Profile {{profile_details.title}} {{profile_details.firstname}} {{profile_details.lastname}}<h4>
-                <div class="strength-box" id="profileStrengthBox" 
+                <h4 class="card-header">Profile {{profile_details.title}} {{profile_details.firstname}} {{profile_details.lastname}}</h4>
+                <!-- <div class="strength-box" id="profileStrengthBox" 
                     data-tip="Education: {{ profile_details.educationscore }}&#10;Experience: {{ profile_details.experiencescore }}&#10;Skills: {{ profile_details.skillsscore }}&#10;Projects: {{ profile_details.projectsscore }}&#10;Certificates: {{ profile_details.certificatesscore }}&#10;Awards: {{ profile_details.awardsscore }} ">
                     
                     <span id="profileStrengthValue">
                         {{ profile_details.strength  }}%
                     </span>
-                </div>
+                </div> -->
+
+                
 
             </div>
             <div class="card-body">
@@ -269,19 +271,31 @@
                     <div style="display: flex; gap: 12px; flex-grow: 1;">
                         <!-- <span id="active" class="custm-tab p-clr activeTab shadow"
                             onclick="tabSwitch(this.id)">Profile</span> -->
-                            <span id="active" class="custm-tab p-clr activeTab shadow" onclick="tabSwitch(this.id)" style="display: flex; align-items: center; cursor: pointer;">
-                                Profile
-                                <span id="editIcon" 
-                                    style="margin-left: 8px; font-size: 1rem;" 
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
-                                    title="Edit Profile"
-                                    onclick="event.stopPropagation(); window.location.href='/update-profile-data/{{profile_details.id}}'">
-                                    <i class="fas fa-edit"></i>
-                                </span>
+                        
+                        <span id="active" class="custm-tab p-clr activeTab shadow" onclick="tabSwitch(this.id)" style="display: flex; align-items: center; cursor: pointer;">
+                            Profile
+                            <span id="editIcon" 
+                                style="margin-left: 8px; font-size: 1rem;" 
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="Edit Profile"
+                                onclick="event.stopPropagation(); window.location.href='/update-profile-data/{{profile_details.id}}'">
+                                <i class="fas fa-edit"></i>
                             </span>
+                        </span>
 
                         <span id="Inactive" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Activity</span>
+
+                        <div class="strengthRow" id="profileStrengthBox"
+                            data-tip="Education: {{ profile_details.educationscore }}&#10;Experience: {{ profile_details.experiencescore }}&#10;Skills: {{ profile_details.skillsscore }}&#10;Projects: {{ profile_details.projectsscore }}&#10;Certificates: {{ profile_details.certificatesscore }}&#10;Awards: {{ profile_details.awardsscore }} ">
+
+                            <label class="p-clr"><b>Strength</b></label>
+                            <div class="bar">
+                                <div class="fill" id="fill"></div>
+                            </div>
+
+                            <span class="pct" id="profileStrengthValue">{{ profile_details.strength  }}</span>
+                        </div>
 
                     </div>
 
@@ -538,6 +552,98 @@
             </div>
     </main>
 </div>
+
+
+<style>
+
+    /* Container */
+    .strengthRow{
+      width: min(520px, 92%);
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      position: relative;
+      margin-left: auto;
+    }
+
+    /* Bar */
+    .bar{
+      flex:1;
+      height: 10px;
+      background:#e5eaf5;
+      border-radius: 999px;
+      overflow:hidden;
+    }
+
+    .fill{
+      height:100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 600ms ease;
+    }
+
+    /* Strength Colors */
+    .fill.green{ background:#22c55e; }
+    .fill.orange{ background:#f59e0b; }
+    .fill.red{ background:#ef4444; }
+
+    /* Percentage */
+    .pct{
+      font-weight: 800;
+      font-size: 15px;
+      color:var(--primary-color);
+      min-width: 42px;
+      text-align:right;
+    }
+
+    /* Tooltip */
+    .strengthRow::after{
+      content: attr(data-tip);
+      position: absolute;
+      left: 0;
+      top: calc(100% + 12px);
+      width: max-content;
+      max-width: 340px;
+
+      background: #0f172a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.4;
+
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: 0.18s ease;
+      white-space: pre-line;
+      z-index: 99;
+    }
+
+    .strengthRow:hover::after{
+      opacity: 1;
+      transform: translateY(0px);
+    }
+  </style>
+ <script>
+    // Read % from HTML
+    const strengthText = document.getElementById("profileStrengthValue").innerText.trim();
+    const strength = parseInt(strengthText.replace("%",""), 10) || 0;
+
+    // Your logic
+    var strengthClass = "red";
+    if (strength >= 70) strengthClass = "green";
+    else if (strength >= 40) strengthClass = "orange";
+
+    // Apply bar
+    const fill = document.getElementById("fill");
+    fill.style.width = strength + "%";
+    fill.classList.add(strengthClass);
+</script>
+
 <script>
     const pid = "{{ profile_details.id }}";
 </script>

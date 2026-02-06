@@ -188,6 +188,58 @@ function filter_profiles() {
                     );
                 }
 
+                // for (var n = 0; n < FILTERED_DATA.length; n++) {
+
+                //     var p = FILTERED_DATA[n];
+
+                //     var strength = parseInt(p["profilestrength"] || 0);
+
+                //     // Strength color
+                //     var strengthClass = "red";
+                //     if (strength >= 70) strengthClass = "green";
+                //     else if (strength >= 40) strengthClass = "orange";
+
+                //     // Status class
+                //     var statusText = (p["status"] || "").trim();
+                //     var statusClass = "draft";
+
+                //     if (statusText === "Draft") statusClass = "draft";
+                //     else if (statusText === "Ready") statusClass = "ready";
+                //     else if (statusText === "Hired") statusClass = "hired";
+                //     else if (statusText === "Rejected") statusClass = "rejected";
+                //     else if (statusText === "Process") statusClass = "process";
+
+                //     var tr = '<tr onclick="window.location.href=\'/profileview/' + p["id"] + '\'" style="cursor:pointer;">';
+
+                //     $("#profiles-table tbody").append(
+                //         tr
+                //         + '<td>' + (p["date"] || "") + '</td>'
+                //         + '<td>' + (p["source"] || "") + '</td>'
+                //         + '<td>' + (p["code"] || "") + '</td>'
+                //         + '<td>' + (p["firstname"] || "") + " " + (p["lastname"] || "") + '</td>'
+                //         + '<td>' + (p["title"] || "") + '</td>'
+                //         + '<td>' + (p["experience"] || "") + '</td>'
+
+                //         // Strength Progress Bar
+                //         + '<td>'
+                //         +   '<div class="strength-wrap">'
+                //         +     '<div class="bar ' + strengthClass + '" style="--w:' + strength + '%;">'
+                //         +       '<span></span>'
+                //         +     '</div>'
+                //         +     '<span class="percent">' + strength + '%</span>'
+                //         +   '</div>'
+                //         + '</td>'
+
+                //         // Status Badge
+                //         + '<td>'
+                //         +   '<span class="pill ' + statusClass + '">' + statusText + '</span>'
+                //         + '</td>'
+
+                //         + '</tr>'
+                //     );
+                // }
+
+
             }
 
             // 4️⃣ REINITIALIZE DATATABLE
