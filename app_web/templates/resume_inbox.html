@@ -4,8 +4,8 @@
 
 <div class="container-center">
     <div class="w-100">
-        <div class="card mb-4">
-            <div class="card-title-table">
+        <div class="card mb-4 br-0">
+            <div class="card-title-table br-0">
                 <h4 class="card-header">Resume Inbox</h4>
                 <div>
                     <i class='bx bx-info-circle'data-bs-toggle="tooltip" data-bs-offset="0,6" data-bs-placement="left" data-bs-html="true" style="font-size: 25px;color: var(--primary-color);cursor: pointer;"
@@ -72,24 +72,6 @@
                         style="border: none;">
                     </iframe>   
                 </div>
-                <!-- <div id="resumePreview" class="w-50 mb-1" style="display: none; position: fixed; top: 80px; left: 80px; z-index: 9999;">
-    
-                    <div id="resumeDragHandle" class="d-flex justify-content-start pb-2" style="cursor: move;gap:10px;background: var(--light-primary-color);">
-                        <button class="btn btn-secondary btn-sm" id="close-resume-preview-btn"><i class="fas fa-times"></i></button>
-                        <button class="btn btn-danger btn-sm" id="delete-resume-btn"><i class="fas fa-trash-alt"></i></button>
-                        <button class="btn btn-primary btn-sm" id="add-profile-btn" style="margin-left: auto;"><i class="fas fa-user-plus"></i>&nbsp; Add to Profile</button>
-                    </div>
-
-                    <iframe 
-                        id="resumeIframe"
-                        src=""
-                        width="100%" 
-                        height="500px"
-                        style="border: none; pointer-events: auto;">
-                    </iframe>
-
-                </div> -->
-
             </div>
         </div>
 
@@ -157,77 +139,6 @@
     </div>
 </div>
 
-
-<!-- <script>
-  const preview = document.getElementById("resumePreview");
-  const handle = document.getElementById("resumeDragHandle");
-
-  let isDragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
-
-  function movePreview(clientX, clientY) {
-    const rect = preview.getBoundingClientRect();
-
-    const maxX = window.innerWidth - rect.width;
-    const maxY = window.innerHeight - rect.height;
-
-    const left = clamp(clientX - offsetX, 0, maxX);
-    const top  = clamp(clientY - offsetY, 0, maxY);
-
-    preview.style.left = left + "px";
-    preview.style.top  = top + "px";
-  }
-
-  // Mouse events
-  handle.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    offsetX = e.clientX - preview.offsetLeft;
-    offsetY = e.clientY - preview.offsetTop;
-    document.body.style.userSelect = "none";
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-    movePreview(e.clientX, e.clientY);
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-    document.body.style.userSelect = "";
-  });
-
-  // Touch events (mobile)
-  handle.addEventListener("touchstart", (e) => {
-    const touch = e.touches[0];
-    isDragging = true;
-    offsetX = touch.clientX - preview.offsetLeft;
-    offsetY = touch.clientY - preview.offsetTop;
-  });
-
-  document.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
-    const touch = e.touches[0];
-    movePreview(touch.clientX, touch.clientY);
-  });
-
-  document.addEventListener("touchend", () => {
-    isDragging = false;
-  });
-
-  // Keep inside window on resize
-  window.addEventListener("resize", () => {
-    const rect = preview.getBoundingClientRect();
-    preview.style.left = clamp(rect.left, 0, window.innerWidth - rect.width) + "px";
-    preview.style.top  = clamp(rect.top, 0, window.innerHeight - rect.height) + "px";
-  });
-</script> -->
-
-
 <script>
     $(document).ready(function() {
         $.noConflict();
@@ -247,9 +158,9 @@
 
 
 <style>
-    .credits-container {
+    /* .credits-container {
         display: none;
-    }
+    } */
 
     .btn-sm {
         font-size: 15px;

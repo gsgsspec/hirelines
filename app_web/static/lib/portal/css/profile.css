@@ -1,0 +1,222 @@
+.table-responsive .filter-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 filters per row */
+    column-gap: 40px;
+    row-gap: 20px;
+}
+
+/* Each filter block */
+.filter-col {
+    display: flex;
+    align-items: center;
+}
+
+/* LABEL */
+.filter-col label {
+    width: 35%;
+    font-weight: 500;
+    color: #697a8d;
+}
+
+/* SHORT LABEL */
+.filter-col .short-label {
+    width: 20% !important;
+}
+
+/* INPUTS */
+.filter-col input,
+.filter-col select {
+    width: 65%;
+}
+
+/* BUTTON AREA */
+.filter-actions {
+    text-align: right;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-actions button {
+    min-width: 90px;
+    padding: 6px 12px;
+}
+
+tbody tr:hover {
+    cursor: pointer;
+}
+
+.filter-icon-col {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.filter-icon-col i.fa-filter {
+    font-size: 26px;
+    color: #274699;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.filters-row .filter-wrapper,
+.filters-row .filter-actions {
+    display: none;
+}
+
+.filter-icon {
+    cursor: pointer;
+}
+
+.filter-icon svg {
+    cursor: pointer;
+}
+
+.filter-icon svg {
+    color: #274699;
+}
+
+.strength-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 160px;
+}
+
+.bar {
+    width: 100px;
+    height: 8px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    overflow: hidden;
+}
+
+.bar span {
+    display: block;
+    height: 100%;
+    width: var(--w, 0%);
+    border-radius: 999px;
+}
+
+/* Strength colors */
+.bar.green span {
+    background: #16a34a;
+}
+
+.bar.orange span {
+    background: #f59e0b;
+}
+
+.bar.red span {
+    background: #ef4444;
+}
+
+.percent {
+    font-weight: 700;
+    font-size: 13px;
+    color: #0f172a;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    border: 1px solid transparent;
+}
+
+/* Status Colors */
+.pill.draft {
+    background: #F1F5F9;
+    color: #334155;
+    border-color: #E2E8F0;
+}
+
+.pill.ready {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border-color: #BFDBFE;
+}
+
+.pill.hired {
+    background: #DCFCE7;
+    color: #166534;
+    border-color: #BBF7D0;
+}
+
+.pill.rejected {
+    background: #FEE2E2;
+    color: #991B1B;
+    border-color: #FECACA;
+}
+
+.pill.process {
+    background: #FFEDD5;
+    color: #9A3412;
+    border-color: #FED7AA;
+}
+
+#side-layout-container {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Fix table layout so columns don't jump */
+#profiles-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Make thead + tbody behave like block so tbody can scroll */
+#profiles-table thead,
+#profiles-table tbody {
+    display: block;
+}
+
+/* Scroll only tbody */
+#profiles-table tbody {
+    max-height: 450px;
+    /* change height */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Make each row align like a table */
+#profiles-table thead tr,
+#profiles-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Sticky header */
+#profiles-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+}
+
+/* Optional: nicer look */
+#profiles-table thead th {
+    border-bottom: 1px solid #ddd;
+}
+
+/* Hide scrollbar (Chrome, Edge, Safari) */
+#profiles-table tbody::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+/* Hide scrollbar (Firefox) */
+#profiles-table tbody {
+    scrollbar-width: none;
+}
+
+/* Hide scrollbar (IE/old Edge) */
+#profiles-table tbody {
+    -ms-overflow-style: none;
+}

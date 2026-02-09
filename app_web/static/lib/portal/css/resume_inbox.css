@@ -190,3 +190,9 @@
     display: none;
     /* hidden by default */
 }
+
+
+#side-layout-container {
+    padding-left: 0;
+    padding-right: 0;
+}

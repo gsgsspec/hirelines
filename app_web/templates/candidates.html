@@ -6,8 +6,8 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-title-table">
+<div class="card br-0">
+    <div class="card-title-table br-0">
         <h4 class="card-header">Candidates</h4>
         <h4 class="header-btn">
             <button class="btn btn-primary" type="button" onclick="window.location.href='/upload-candidates'"><i class="fas fa-file-upload"></i>&ensp; 
@@ -64,6 +64,77 @@
 <style>
     tbody tr:hover {
         cursor: pointer;
+    }
+
+    #side-layout-container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Fix table layout so columns don't jump */
+    #candidates-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    /* Make thead + tbody behave like block so tbody can scroll */
+    #candidates-table thead,
+    #candidates-table tbody {
+        display: block;
+    }
+
+    /* Scroll only tbody */
+    #candidates-table tbody {
+        max-height: 450px;
+        /* change height */
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    /* Make each row align like a table */
+    #candidates-table thead tr,
+    #candidates-table tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    /* Sticky header */
+    #candidates-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #fff;
+    }
+
+    /* Optional: nicer look */
+    #candidates-table thead th {
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Hide scrollbar (Chrome, Edge, Safari) */
+    #candidates-table tbody::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+
+    /* Hide scrollbar (Firefox) */
+    #candidates-table tbody {
+        scrollbar-width: none;
+    }
+
+    /* Hide scrollbar (IE/old Edge) */
+    #candidates-table tbody {
+        -ms-overflow-style: none;
+    }
+
+    #del-header {
+        width: 50px;
+    }
+
+    .del-cheks {
+        width: 50px;
     }
 </style>
 

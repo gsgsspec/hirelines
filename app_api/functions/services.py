@@ -4990,22 +4990,23 @@ def getJdProfileData(dataObjs,user_data):
                     })
 
             else:
-                matched_profiles.append({
-                    "id":profile.id,
-                    "firstname":profile.firstname,
-                    "middlename":profile.middlename,
-                    "lastname":profile.lastname,
-                    "email":profile.email,
-                    "profile_strength": profile.strength if profile.strength else 0,
-                    "exp_strength": exp_strength,
-                    "total_experience": int(match_info.get("total_experience", 0)),
-                    "skill_strength": skill_strength,
-                    "matched_skills":matched_skills,
-                    "not_matched_skills":not_matched_skills,
-                    "overall_strength": overall_strength,
-                    "skill_math_strength":skill_math_strength,
-                    "exp_math_strength":exp_math_strength
-                })
+                if profile.status == "R":
+                    matched_profiles.append({
+                        "id":profile.id,
+                        "firstname":profile.firstname,
+                        "middlename":profile.middlename,
+                        "lastname":profile.lastname,
+                        "email":profile.email,
+                        "profile_strength": profile.strength if profile.strength else 0,
+                        "exp_strength": exp_strength,
+                        "total_experience": int(match_info.get("total_experience", 0)),
+                        "skill_strength": skill_strength,
+                        "matched_skills":matched_skills,
+                        "not_matched_skills":not_matched_skills,
+                        "overall_strength": overall_strength,
+                        "skill_math_strength":skill_math_strength,
+                        "exp_math_strength":exp_math_strength
+                    })
 
         matched_profiles.sort(key=lambda x: x["overall_strength"],reverse=True)
 
@@ -5880,13 +5881,14 @@ def getOverallDashboardCounts(company_id):
             for d in last_15_days
         }
 
+        date_filter = Q()
+        for d in last_15_days:
+            date_filter |= Q(year=d.year, month=d.month, day=d.day)
+
         analysis_qs = ProfileAnalysis.objects.filter(
             companyid=company_id,
-            activitycode__in=ACTIVITY_CODES,
-            year__in=[d.year for d in last_15_days],
-            month__in=[d.month for d in last_15_days],
-            day__in=[d.day for d in last_15_days]
-        ).values(
+            activitycode__in=ACTIVITY_CODES
+        ).filter(date_filter).values(
             "day", "month", "year", "activitycode"
         ).annotate(
             total_profiles=Sum("profilescount")
@@ -5896,7 +5898,9 @@ def getOverallDashboardCounts(company_id):
             date_key = f"{row['year']}-{row['month']:02d}-{row['day']:02d}"
             code = row["activitycode"]
 
-            profile_activity_daywise[date_key][code] = row["total_profiles"] or 0
+            # extra safe check
+            if date_key in profile_activity_daywise:
+                profile_activity_daywise[date_key][code] = row["total_profiles"] or 0
 
         # print("profile_activity_daywise",profile_activity_daywise)
 
