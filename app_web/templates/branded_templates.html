@@ -1,0 +1,137 @@
+{% load static %}
+
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Branded Resume Templates</h4>
+    </div>
+
+    <div class="card-body">
+
+        {% if resume_templates %}
+            <div class="row">
+
+                {% for t in resume_templates %}
+                    <div class="col-md-3 mb-3">
+
+                        <label class="template-card">
+                            <!-- Radio (MUST be before template-inner for CSS + selector to work) -->
+                            <input type="radio" name="resume_template"
+                                   value="{{ t.id }}"
+                                   {% if t.selected == "Y" %}checked{% endif %}>
+
+                            <!-- Card Content -->
+                            <div class="template-inner">
+                                <div class="template-title">
+                                    {{ t.name }}
+                                </div>
+
+                                <!-- Preview Placeholder -->
+                                <div class="template-preview">
+                                    <img src="{{t.thumbnail}}"
+                                         alt="Template Preview"
+                                         class="img-fluid">
+                                </div>
+                            </div>
+                        </label>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="mt-2">
+                <button class="btn btn-primary" id="saveTemplateBtn">Set as default template</button>
+            </div>
+
+        {% else %}
+            <p class="text-muted">No templates available.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+    .template-card {
+        width: 100%;
+        cursor: pointer;
+        display: block;
+    }
+
+    /* hide the radio */
+    .template-card input[type="radio"] {
+        display: none;
+    }
+
+    /* normal */
+    .template-inner {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 14px;
+        background: #fff;
+        transition: 0.2s ease;
+        height: 100%;
+    }
+
+    /* hover */
+    .template-card:hover .template-inner {
+        border-color: #60a5fa;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+
+    /* selected border */
+    .template-card input[type="radio"]:checked + .template-inner {
+        border: 2px solid var(--primary-color);
+        box-shadow: 0 10px 26px rgba(115, 141, 197, 0.18);
+        color: var(--primary-color);
+    }
+
+    .template-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        /* color: #111827; */
+    }
+
+    .template-sub {
+        margin-bottom: 12px;
+    }
+
+    .template-preview {
+        width: 100%;
+        /* height: 180px; */
+        height: auto;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #f1f5f9;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .template-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* badges toggle */
+    .selected-badge {
+        display: none;
+    }
+
+    .choose-badge {
+        display: inline-block;
+    }
+
+    .template-card input[type="radio"]:checked + .template-inner .selected-badge {
+        display: inline-block;
+    }
+
+    .template-card input[type="radio"]:checked + .template-inner .choose-badge {
+        display: none;
+    }
+</style>
+
+<script src="{% static 'js/resume_templates.js' %}"></script>
