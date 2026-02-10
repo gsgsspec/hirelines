@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: a4;
+            margin-left: 1cm;
+            margin-right: 1cm;
+            margin-top: 1cm;
+            margin-bottom: 1.5cm;
+
+            @frame pg_no_footer {
+                -pdf-frame-content: pg_no_footer;
+                bottom: 0cm;
+                margin-top: 0.2cm;
+                margin-left: 18.6cm;
+                height: 1cm;
+
+            }
+
+            @frame footer_frame {
+                -pdf-frame-content: footer_frame;
+                bottom: 0.05cm;
+                height: 1cm;
+                margin-left: 1cm;
+                margin-right: 1cm;
+            }
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #111;
+        }
+
+        hr {
+            margin: 8px 0;
+        }
+
+        .p-clr { color: #274699; }
+
+        /* HEADER */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header-logo-cell {
+            width: 90px;
+            vertical-align: top;
+            padding-top: 2px;
+        }
+
+        .header-logo {
+            height: 55px;
+            width: auto;
+        }
+
+        .header-name-cell {
+            vertical-align: top;
+            padding-left: 12px;
+        }
+
+        .candidate-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            padding: 0;
+            line-height: 28px;
+            color: #274699;
+        }
+
+        .candidate-meta {
+            font-size: 12px;
+            margin: 2px 0 0 0;
+            padding: 0;
+            line-height: 18px;
+            color: #222;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* MAIN 2 COLUMN */
+        .layout-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .left-col {
+            width: 34%;
+            vertical-align: top;
+            padding: 10px 12px 10px 10px;
+            border-right: 1px solid #ddd;
+            background-color: #f3f6ff;
+        }
+
+        .right-col {
+            width: 66%;
+            vertical-align: top;
+            padding-left: 12px;
+        }
+
+        .section-heading {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0 6px 0;
+            padding-bottom: 2px;
+            border-bottom: 1px solid #274699;
+        }
+
+        /* PERSONAL DETAILS TABLE */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .details-label {
+            width: 30%;
+            padding: 4px 0;
+            vertical-align: top;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .details-data {
+            width: 70%;
+            padding: 4px 0;
+            vertical-align: top;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .content-block {
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            font-size: 9px;
+            text-align: left;
+        }
+
+        .custom-list {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="pg_no_footer">
+        Page <pdf:pagenumber> of <pdf:pagecount>
+    </div>
+
+    <div id="footer_frame">
+        <hr>
+        <div class="footer">
+            (Powered by Hirelines) This resume is submitted by {#user_name#} @ {#company_name#} on {#creation_date#}
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <table class="header-table">
+        <tr>
+            <td class="header-logo-cell" rowspan="2">
+                <img src="{#comapany_logo#}" class="header-logo">
+            </td>
+
+            <td class="header-name-cell">
+                <p class="candidate-name">{#firstname#}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="header-name-cell">
+                <p class="candidate-meta">
+                    <span class="meta-label">{#title#}</span>
+                    &nbsp; | &nbsp;
+                    <span>Experience: {#final_experience#}</span>
+                </p>
+            </td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <!-- MAIN BODY -->
+    <table class="layout-table">
+        <tr>
+
+            <!-- LEFT -->
+            <td class="left-col">
+
+                <div class="section-heading p-clr">Personal Details</div>
+
+                <table class="details-table">
+                    <tr>
+                        <td class="details-label">Title</td>
+                        <td class="details-data">: {#title#}</td>
+                    </tr>
+                    <tr>
+                        <td class="details-label">First Name</td>
+                        <td class="details-data">: {#firstname#}</td>
+                    </tr>
+                    <tr>
+                        <td class="details-label">Last Name</td>
+                        <td class="details-data">: XXXXX</td>
+                    </tr>
+                    <tr>
+                        <td class="details-label">Email</td>
+                        <td class="details-data">: XXXXXXXXX@gmail.com</td>
+                    </tr>
+                    <tr>
+                        <td class="details-label">Mobile</td>
+                        <td class="details-data">: 91XXXXXXXXXX</td>
+                    </tr>
+                    <tr>
+                        <td class="details-label">DOB</td>
+                        <td class="details-data">: {#dob#}</td>
+                    </tr>
+                </table>
+
+                <div class="section-heading p-clr">Certificates</div>
+                <div class="content-block">
+                    {#certificates_data#}
+                </div>
+
+                <div class="section-heading p-clr">Awards</div>
+                <div class="content-block">
+                    {#awards_data#}
+                </div>
+
+            </td>
+
+            <!-- RIGHT -->
+            <td class="right-col">
+                <br>
+                <div class="section-heading p-clr">Education</div>
+                <div class="content-block">
+                    {#education_data#}
+                </div>
+
+                <div class="section-heading p-clr">Experience</div>
+                <div class="content-block">
+                    {#experience_data#}
+                </div>
+
+                <div class="section-heading p-clr">Skills</div>
+                <div class="content-block">
+                    {#skills_data#}
+                </div>
+
+                <div class="section-heading p-clr">Projects</div>
+                <div class="content-block">
+                    {#projects_data#}
+                </div>
+
+            </td>
+
+        </tr>
+    </table>
+
+</body>
+</html>

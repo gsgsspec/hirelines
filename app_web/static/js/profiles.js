@@ -176,7 +176,7 @@ function filter_profiles() {
 
                     $("#profiles-table tbody").append(
                         tr
-                        + '<td>' + p["date"] + '</td>'
+                        + '<td style="width: 180px;">' + p["date"] + '</td>'
                         + '<td>' + p["source"] + '</td>'
                         + '<td>' + p["code"] + '</td>'
                         + '<td>' + p["firstname"] + " " + p["lastname"] + '</td>'

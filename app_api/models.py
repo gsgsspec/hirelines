@@ -130,6 +130,7 @@ class Company(models.Model):
     freetrail = models.CharField(max_length=1, null=True)  # C - Completed, I - In-progress 
     registrationdate = models.DateTimeField(null=True)
     contactperson = models.CharField(max_length=100, null=True, blank=True)
+    resumetemplateid = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'company'
@@ -740,3 +741,16 @@ class JDJobBoards(models.Model):
 
     class Meta:
         db_table = 'jdjobboard'
+
+
+class ResumeTemplate(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=40,null=True, blank=True)
+    thumbnail = models.CharField(max_length=100,null=True, blank=True)
+    filename = models.CharField(max_length=100,null=True, blank=True) 
+    default_template = models.CharField(max_length=1,null=True, blank=True)
+    status = models.CharField(max_length=1, null=True, blank=True)
+
+    class Meta:
+        db_table = 'resumetemplate'
+

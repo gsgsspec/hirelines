@@ -116,6 +116,7 @@ urlpatterns = [
     path("add-resume", views.addResume),
     path("upload-audio-file", views.uploadAudioFile),
     path("source-performance", views.source_performance),
+    path("update-resume-template", views.updateResumeTemplate),
 
 
 ]

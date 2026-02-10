@@ -62,5 +62,6 @@ urlpatterns = [
     path('overall-dashboard',active_user_required(views.overallDashboardPage)),
     path('source-performance-report',views.source_performance_reportPage),
 
+    path('resume-templates',active_user_required(views.resumeTemplatesPage)),
 
 ]

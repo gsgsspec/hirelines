@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm 1cm 1.8cm 1cm;
+
+            @frame pg_no_footer {
+                -pdf-frame-content: pg_no_footer;
+                bottom: 0.2cm;
+                margin-top: 0.1cm;
+                margin-left: 18.6cm;
+                height: 0.7cm;
+            }
+
+            @frame footer_frame {
+                -pdf-frame-content: footer_frame;
+                bottom: 0.05cm;
+                height: 1cm;
+                margin-left: 1cm;
+                margin-right: 1cm;
+            }
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            color: #111;
+        }
+
+        hr {
+            margin: 8px 0;
+        }
+
+        .p-clr { color: #274699; }
+
+        /* HEADER */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .logo-cell {
+            width: 90px;
+            vertical-align: middle;
+        }
+
+        .head-cell {
+            vertical-align: middle;
+            padding-left: 10px;
+        }
+
+        .name {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            color: #274699;
+        }
+
+        .meta {
+            margin: 2px 0 0 0;
+            font-size: 12px;
+        }
+
+        /* SECTION */
+        .section {
+            margin-top: 14px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #274699;
+            border-bottom: 1px solid #274699;
+            padding-bottom: 2px;
+            margin: 0 0 6px 0;
+        }
+
+        /* PERSONAL DETAILS TABLE */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .details-label {
+            width: 15%;
+            padding: 2px 0;
+            font-weight: bold;
+            white-space: nowrap;
+            vertical-align: top;
+        }
+
+        .details-data {
+            width: 85%;
+            padding: 4px 0;
+            vertical-align: top;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .footer {
+            font-size: 9px;
+            text-align: left;
+        }
+
+        .custom-list {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="pg_no_footer">
+        Page <pdf:pagenumber> of <pdf:pagecount>
+    </div>
+
+    <div id="footer_frame">
+        <hr>
+        <div class="footer">
+            (Powered by Hirelines) This resume is submitted by {#user_name#} @ {#company_name#} on {#creation_date#}
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <table class="header-table">
+        <tr>
+            <td class="logo-cell">
+                <img src="{#comapany_logo#}" style="height:55px; width:auto;">
+            </td>
+            <td class="head-cell">
+                <p class="name">{#firstname#}</p>
+                <p class="meta">{#title#} | Experience: {#final_experience#}</p>
+            </td>
+        </tr>
+    </table>
+
+    <hr>
+    <br>
+    <!-- PERSONAL DETAILS -->
+    <div class="section">
+        <div class="section-title" style="border-bottom: 0px;">Personal Details</div>
+        <table class="details-table">
+            <tr>
+                <td class="details-label">Title</td>
+                <td class="details-data">: {#title#}</td>
+            </tr>
+            <tr>
+                <td class="details-label">First Name</td>
+                <td class="details-data">: {#firstname#}</td>
+            </tr>
+            <tr>
+                <td class="details-label">Last Name</td>
+                <td class="details-data">: XXXXX</td>
+            </tr>
+            <tr>
+                <td class="details-label">Email</td>
+                <td class="details-data">: XXXXXXXXX@gmail.com</td>
+            </tr>
+            <tr>
+                <td class="details-label">Mobile</td>
+                <td class="details-data">: 91XXXXXXXXXX</td>
+            </tr>
+            <tr>
+                <td class="details-label">DOB</td>
+                <td class="details-data">: {#dob#}</td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <!-- EDUCATION -->
+    <div class="section">
+        <div class="section-title">Education</div>
+        {#education_data#}
+    </div>
+    <br>
+    <!-- EXPERIENCE -->
+    <div class="section">
+        <div class="section-title">Experience</div>
+        {#experience_data#}
+    </div>
+    <br>
+    <!-- SKILLS -->
+    <div class="section">
+        <div class="section-title">Skills</div>
+        {#skills_data#}
+    </div>
+    <br>
+    <!-- PROJECTS -->
+    <div class="section">
+        <div class="section-title">Projects</div>
+        {#projects_data#}
+    </div>
+    <br>
+    <!-- CERTIFICATES -->
+    <div class="section">
+        <div class="section-title">Certificates</div>
+        {#certificates_data#}
+    </div>
+    <br>
+    <!-- AWARDS -->
+    <div class="section">
+        <div class="section-title">Awards</div>
+        {#awards_data#}
+    </div>
+
+</body>
+</html>

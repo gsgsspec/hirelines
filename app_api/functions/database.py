@@ -1972,3 +1972,14 @@ def addResumeDB(dataObjs,fileObjs, user_data):
 
     except Exception as e:
         raise
+
+
+def updateResumeTemplateDB(dataObjs,user_data):
+    try:
+
+        company = Company.objects.get(id=user_data.companyid)
+        company.resumetemplateid = dataObjs["template_id"]
+        company.save()
+
+    except Exception as e:
+        raise

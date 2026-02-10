@@ -8,7 +8,7 @@ from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
     getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst,RecruitersPerformanceService, \
-    getJobboards, getJDJobboards, getOverallDashboardCounts,SourcePerformanceService
+    getJobboards, getJDJobboards, getOverallDashboardCounts,SourcePerformanceService, getResumeTemplates
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -1457,6 +1457,26 @@ def source_performance_reportPage(request):
         return render(request, "portal_index.html", {"template_name": 'source_performance_report.html','menuItemList':menuItemList,
                                                                      "recruiter_report": source_performance["data"], "from_date": source_performance["from_date"], "to_date": source_performance["to_date"],
                                                                      })
+    
+    except Exception as e:
+        raise
+
+
+def resumeTemplatesPage(request):
+    try:
+
+        user_mail = request.user
+        user_data = auth_user(user_mail)
+
+        user_role = user_data.role
+
+        menuItemList = get_functions_service(user_role)
+
+        company_id = getCompanyId(request.user)
+
+        resume_templates = getResumeTemplates(company_id)
+
+        return render(request, "portal_index.html", {"template_name": "branded_templates.html", 'menuItemList': menuItemList,"resume_templates":resume_templates })
     
     except Exception as e:
         raise

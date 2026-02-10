@@ -76,7 +76,8 @@ from app_api.models import (
     Client,
     JobBoard,
     JobBoardCredential,
-    JDJobBoards
+    JDJobBoards,
+    ResumeTemplate
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -4205,11 +4206,31 @@ def generateBrandedProfile(profile_id, user_data):
 
         root_path = BASE_DIR
 
-        resume_template_path = open(
-            root_path + "/media/branded_resumes/branded_resume_template.html", "r"
-        )
+        resume_template = ResumeTemplate.objects.filter(default_template="Y").first()
 
-        resume_template = resume_template_path.read()
+        if company.resumetemplateid:
+            resume_template = ResumeTemplate.objects.get(id=company.resumetemplateid)
+        else:
+            resume_template = ResumeTemplate.objects.filter(default_template="Y").first()
+
+        default_template = ""
+
+        if resume_template and resume_template.filename:
+            default_template = resume_template.filename
+        else:
+            default_template = "branded_resume_template.html"
+
+        
+        resume_template_path = os.path.join(settings.BASE_DIR, "media", "branded_resumes", default_template)
+
+        # resume_template_path = open(
+        #     root_path + f"/media/branded_resumes/{default_template}", "r"
+        # )
+
+        # resume_template = resume_template_path.read()
+
+        with open(resume_template_path, "r", encoding="utf-8") as f:
+            resume_template = f.read()
 
         updated_resume = resume_template.replace(
             "{#comapany_logo#}",
@@ -4264,14 +4285,27 @@ def generateBrandedProfile(profile_id, user_data):
 
         skills_data = ""
 
-        if profile_details["skills"]["primaryskills"]:
+        primary_skills = profile_details["skills"]["primaryskills"]
+
+        if primary_skills:
+            primary_skills = ", ".join([s.strip() for s in primary_skills.split(",") if s.strip()])
+            
             skills_data = f"""
-                <li class="custom-list">{profile_details["skills"]["primaryskills"]}</li>
+                <li class="custom-list">{primary_skills}</li>
             """
         else:
             skills_data = """
                 <li class="custom-list">No Skills</li>
             """
+
+        # if profile_details["skills"]["primaryskills"]:
+        #     skills_data = f"""
+        #         <li class="custom-list">{profile_details["skills"]["primaryskills"]}</li>
+        #     """
+        # else:
+        #     skills_data = """
+        #         <li class="custom-list">No Skills</li>
+        #     """
 
         projects_data = ""
 
@@ -6096,3 +6130,48 @@ def SourcePerformanceService(dataObjs):
         "to_date": to_date.strftime("%Y-%m-%d"),
         "data": dict(final)
     }
+
+
+def getResumeTemplates(companyid):
+    try:
+
+        company = Company.objects.get(id=companyid)
+
+        resumetemplates = ResumeTemplate.objects.filter(status="A")
+
+        company_template_id = getattr(company, "resumetemplateid", None)
+
+        default_template_id = None
+        if not company_template_id:
+            default_template = resumetemplates.filter(default_template="Y").first()
+            if default_template:
+                default_template_id = default_template.id
+
+        templates_data = []
+
+        for template in resumetemplates:
+
+            selected = "N"
+
+            if company_template_id and template.id == company_template_id:
+                selected = "Y"
+
+            elif not company_template_id and default_template_id and template.id == default_template_id:
+                selected = "Y"
+
+            if template.thumbnail:
+                thumbnail_url = f"{settings.MEDIA_URL}branded_resumes/{template.thumbnail}"
+            else:
+                thumbnail_url = ""
+
+            templates_data.append({
+                "id": template.id,
+                "name": template.name,
+                "thumbnail": thumbnail_url,
+                "selected": selected
+            })
+
+        return templates_data
+
+    except Exception as e:
+        raise

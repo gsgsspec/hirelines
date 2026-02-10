@@ -432,12 +432,26 @@ INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Careerjet','/stati
 INSERT INTO `jobboard` (`name`,`logo_path`,`status`) VALUES ('Jooble','/static/lib/portal/img/jobboards/jooble.png','A');
 
 
+======================== Audio Score(Balu) 03-02-2025 ===============
 
-
-
-Audio Score
-========================
-
-ALTER TABLE `hirelines`.`callschedule` 
+ALTER TABLE `callschedule` 
 ADD COLUMN `audioscore` INT NULL DEFAULT NULL AFTER `companyid`,
-ADD COLUMN `audiolevel` VARCHAR(1) NULL DEFAULT NULL AFTER `score`;
+ADD COLUMN `audiolevel` VARCHAR(1) NULL DEFAULT NULL AFTER `audioscore`;
+
+
+
+========================= Resume Template ---- Srikanth 10-02-2025 ============================
+
+CREATE TABLE resumetemplate (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(40) NULL,
+  thumbnail VARCHAR(100) NULL,
+  filename VARCHAR(100) NULL,
+  default_template VARCHAR(1) NULL,
+  status VARCHAR(1) NULL
+);
+
+INSERT INTO resumetemplate (`name`, `filename`, `status`, `default_template`, `thumbnail`) VALUES ('Classic Resume', 'classic_template.html', 'A', 'Y', 'two_column.png');
+INSERT INTO resumetemplate (`name`, `filename`, `status`, `default_template`, `thumbnail`) VALUES ('Two Column Resume', 'two_column_template.html', 'A', NULL, 'two_column.png');
+
+ALTER TABLE company add column resumetemplateid int null;

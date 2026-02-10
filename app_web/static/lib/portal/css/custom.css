@@ -540,3 +540,13 @@ table.dataTable thead th, table.dataTable thead td {
   scrollbar-width: thin;
   scrollbar-color: #c1c1c1 #f1f1f1;
 }
+
+
+.index-menu-settings {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  font-size: 21px;
+  margin-right: 10px;
+  cursor: pointer;
+}
