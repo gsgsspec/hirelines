@@ -97,11 +97,35 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
 
                 jd_title = ''
                 jd_desc = ''
+                experience = ''
+                skills = ''
+                location = ''
 
                 jd_details = JobDesc.objects.filter(id=dataObjs["jd"]).last()
                 if jd_details:
                     jd_title = jd_details.title or ''
                     jd_desc = jd_details.description or ''
+                    if jd_details.expmin is not None and jd_details.expmax is not None:
+                        experience = f"{jd_details.expmin} - {jd_details.expmax} Years"
+
+                    # Proper skills formatting
+                    raw_skills = jd_details.skillset or []
+                    skill_list = []
+
+                    if isinstance(raw_skills, list):
+                        for skill in raw_skills:
+                            if isinstance(skill, dict):
+                                for value in skill.values():
+                                    if isinstance(value, str) and "," in value:
+                                        skill_list.extend([s.strip() for s in value.split(",")])
+                                    else:
+                                        skill_list.append(str(value))
+                    else:
+                        skill_list = [str(raw_skills)]
+
+                    skills = ", ".join(skill_list)
+
+                    location = jd_details.location or ''
 
                 acert_domain = getConfig()['DOMAIN']['acert']
                 # Adding candidate at acert via api
@@ -118,10 +142,14 @@ def addCandidateDB(dataObjs, cid,workflow_data, user_id=None):
                     'company_id':cid,
                     'reference_id': candidate.candidateid,
                     'jd_title':jd_title,
-                    'jd_desc':jd_desc
+                    'jd_desc':jd_desc,
+                    'experience': experience,
+                    'skills': skills,
+                    'location': location
                 }
 
                 send_candidate_data = requests.post(url, json = candidate_data, verify=False)
+                
                 response_content = send_candidate_data.content
 
                 if response_content:

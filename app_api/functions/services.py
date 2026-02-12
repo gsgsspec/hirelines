@@ -2894,6 +2894,25 @@ def updateCandidateWorkflowService(dataObjs):
             candidate = Candidate.objects.get(id=registration.candidateid)
 
             job_desc = JobDesc.objects.get(id=candidate.jobid)
+            # Proper skills formatting
+            formatted_skills = ""
+            if job_desc.skillset:
+                raw_skills = job_desc.skillset
+                skill_list = []
+
+                if isinstance(raw_skills, list):
+                    for skill in raw_skills:
+                        if isinstance(skill, dict):
+                            for value in skill.values():
+                                if isinstance(value, str) and "," in value:
+                                    skill_list.extend([s.strip() for s in value.split(",")])
+                                else:
+                                    skill_list.append(str(value))
+                else:
+                    skill_list = [str(raw_skills)]
+
+                formatted_skills = ", ".join(skill_list)
+
 
             workflow_data = {
                 "candidate_code": candidate.candidateid,
@@ -2903,6 +2922,12 @@ def updateCandidateWorkflowService(dataObjs):
                 "companyid": candidate.companyid,
                 "job_desc": job_desc.description if job_desc.description else "",
                 "job_title": job_desc.title if job_desc.title else "",
+                "experience": f"{job_desc.expmin} - {job_desc.expmax} Years"
+                  if job_desc.expmin is not None and job_desc.expmax is not None else "",
+
+                "skills": formatted_skills,
+
+                "location": job_desc.location if job_desc.location else "",
             }
 
             acert_domain = getConfig()["DOMAIN"]["acert"]
