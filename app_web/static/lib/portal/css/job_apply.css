@@ -659,3 +659,34 @@ MODAL STYLES
         gap: 5px;
     }
 }
+
+
+.jobdesc {
+    line-height: 1.7;
+    font-size: 15px;
+}
+
+.jd-line {
+    margin-bottom: 8px;
+}
+
+.jd-header {
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+}
+
+.jd-bullet {
+    padding-left: 22px;
+    margin-bottom: 6px;
+    position: relative;
+}
+
+.jd-bullet::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 700;
+}

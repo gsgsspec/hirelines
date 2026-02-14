@@ -62,10 +62,12 @@
                 <section class="card content">
 
                     <div class="section">
-                        <h3><i class="fa-solid fa-circle-info"></i> Job Overview</h3>
-                        <div style="white-space: pre-line; line-height: 1.7;">
+                        <div class="jd-header" style="margin-top: 5px;">Job Overview</div>
+                        <!-- <div style="white-space: pre-line; line-height: 1.7;">
                             {{ jobdesc_data.description }}
-                        </div>
+                        </div> -->
+                        <!-- <div id="jobDescContainer" style="line-height: 1.7;"></div> -->
+                        <div id="jobDescContainer" class="jobdesc"></div>
                     </div>
 
                     <div class="section">
@@ -320,8 +322,43 @@
                 submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> &nbsp; Submit Application`;
             }
         });
-    </script>
+    
+    
+        const rawDesc = `{{ jobdesc_data.description|escapejs }}`;
+        const lines = rawDesc.split(/\r?\n/);
 
+        let html = "";
+
+        lines.forEach(line => {
+            const text = line.trim();
+
+            // Empty line
+            if (!text) {
+            html += `<div class="jd-line"></div>`;
+            return;
+            }
+
+            // Header line (# ...)
+            if (text.startsWith("#")) {
+            const heading = text.replace(/^#\s*/, "");
+            html += `<div class="jd-header">${heading}</div>`;
+            return;
+            }
+
+            // Bullet line (• ...)
+            if (text.startsWith("•")) {
+            const bullet = text.replace(/^•\s*/, "");
+            html += `<div class="jd-bullet">${bullet}</div>`;
+            return;
+            }
+
+            // Normal text
+            html += `<div class="jd-line">${text}</div>`;
+        });
+
+        document.getElementById("jobDescContainer").innerHTML = html;
+    
+    </script>
 
 </body>
 

@@ -298,7 +298,6 @@ def jobDescription(request):
         if menuItemObjList:
             companyId = getCompanyId(user_mail)
             allJds = getCompanyJDsList(companyId,user_role)
-            print("allJds",allJds)
             return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList,'activeJd':allJds['activeJd'], 'inactiveJd': allJds['inactiveJd']})
         else:
             return redirect('../')
