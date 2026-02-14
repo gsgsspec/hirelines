@@ -103,6 +103,30 @@
             </button>
           </div>
 
+          {% if jd_details.status == "A" %}
+
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              id="copyLinkBtn"
+              data-bs-toggle="popover"
+              data-bs-placement="left"
+              data-bs-html="true"
+              data-bs-content="
+                <div class='d-flex flex-column gap-2'>
+                  <textarea style='font-size:15px' id='popoverUrl' class='form-control form-control-sm' rows='4' readonly>{{ jd_details.jd_page_url }} </textarea>
+                  <button class='btn btn-sm btn-primary' onclick='copyPopoverUrl()'>Copy</button>
+                </div>
+                <div id='copyMsg' class='text-success small mt-1' style='display:none;'>Copied!</div>
+              "
+              title="Link"
+              
+            >
+              <i class="fas fa-link"></i>
+            </button>
+          
+          {% endif %}
+
       </div>
 
     </div>

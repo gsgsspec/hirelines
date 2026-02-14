@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ jobdesc_data.title }}</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ jobdesc_data.logo_url }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="{% static 'lib/portal/css/job_apply.css' %}" />
+
+</head>
+
+<body>
+
+    {% if jobdesc_data %}
+    <!-- TOP -->
+    <header class="top" style="background: {{ jobdesc_data.primary_color }}">
+        <div class="container">
+            <div class="hero">
+                <div class="hero-left">
+                    <div class="logo">
+                        <img src="{{ jobdesc_data.logo_url }}" alt="logo">
+                    </div>
+
+                    <div class="hero-title">
+                        <h1>{{ jobdesc_data.title }}</h1>
+                        <div class="sub"> {% if jobdesc_data.jobcode %} Job Code: {{ jobdesc_data.jobcode }} • {% endif %} {{ jobdesc_data.company_name }}</div>
+
+                        <div class="meta">
+                            <div class="pill">
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ jobdesc_data.location }}
+                            </div>
+                            <div class="pill">
+                                <i class="fa-solid fa-briefcase"></i>
+                                {{ jobdesc_data.expmin }} - {{ jobdesc_data.expmax }} Years Experience
+                            </div>
+                            <div class="pill">
+                                <i class="fa-solid fa-user-group"></i>
+                                {{ jobdesc_data.positions }} Positions
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <div class="container">
+            <div class="grid">
+
+                <!-- LEFT CONTENT -->
+                <section class="card content">
+
+                    <div class="section">
+                        <h3><i class="fa-solid fa-circle-info"></i> Job Overview</h3>
+                        <div style="white-space: pre-line; line-height: 1.7;">
+                            {{ jobdesc_data.description }}
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3><i class="fa-solid fa-code"></i> Skills</h3>
+                        <div class="chips">
+                            {% for skill in jobdesc_data.skills %}
+                            <li>{{ skill }}</li>
+                            {% endfor %}
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+                <!-- RIGHT APPLY BOX -->
+                <aside class="card apply">
+                    <h3>Apply for this job</h3>
+
+                    <div class="kv mt-3">
+                        <div class="row">
+                            <span><i class="fa-solid fa-location-dot"></i> Location</span>
+                            <span>{{ jobdesc_data.location }}</span>
+                        </div>
+                        <div class="row">
+                            <span><i class="fa-solid fa-briefcase"></i> Experience</span>
+                            <span>{{ jobdesc_data.expmin }} - {{ jobdesc_data.expmax }} Years</span>
+                        </div>
+                        <div class="row">
+                            <span><i class="fa-solid fa-user-tie"></i> Role</span>
+                            <span>{{ jobdesc_data.role }}</span>
+                        </div>
+                        <div class="row">
+                            <span><i class="fa-solid fa-user-group"></i> Positions</span>
+                            <span>{{ jobdesc_data.positions }}</span>
+                        </div>
+                    </div>
+
+                    <!-- APPLY BUTTON -->
+                    <button class="btn" id="applyBtn" style="background: {{ jobdesc_data.primary_color }}">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        &nbsp; Apply
+                    </button>
+
+                </aside>
+
+            </div>
+        </div>
+    </main>
+
+
+    <div class="modal-overlay" id="applyModal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="applyTitle">
+
+            <div class="modal-head">
+
+                <div class="modal-title" id="applyTitle">{{ jobdesc_data.title }}</div>
+
+                <button class="close-btn" id="closeModalBtn" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="applyForm" enctype="multipart/form-data">
+
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Full Name</label>
+                            <input type="text" id="fullName" placeholder="Enter your name" required />
+                        </div>
+
+                        <div class="field">
+                            <label>Email</label>
+                            <input type="email" id="email" placeholder="Enter your email" required />
+                        </div>
+
+                        <div class="field">
+                            <label>Upload Resume</label>
+                            <input type="file" id="resume" required accept=".pdf,.doc,.docx" />
+                        </div>
+
+                        <input type="hidden" id="jobId" value="{{ jobdesc_data.id }}">
+
+                    </div>
+
+                    <div class="error" id="errorBox"></div>
+                    <div class="success" id="successBox"></div>
+
+                    <div class="modal-actions">
+                        <button type="submit" class="btn" style="background: {{ jobdesc_data.primary_color }}">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            &nbsp; Submit Application
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    {% else %}
+    <div class="no-job-wrap">
+        <div class="no-job-card">
+
+            <div class="no-job-icon">
+                <i class="fa-solid fa-briefcase"></i>
+            </div>
+
+            <h2>No Jobs Found</h2>
+
+            <p>
+                The job you are looking for does not exist, may have expired, or has been removed.
+            </p>
+
+            <div class="no-job-hint">
+                Please try another job link or browse available openings.
+            </div>
+
+        </div>
+    </div>
+
+
+    {% endif %}
+
+    <script>
+        const applyBtn = document.getElementById("applyBtn");
+        const applyModal = document.getElementById("applyModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+
+        const applyForm = document.getElementById("applyForm");
+        const errorBox = document.getElementById("errorBox");
+        const successBox = document.getElementById("successBox");
+
+        const fullName = document.getElementById("fullName");
+        const email = document.getElementById("email");
+        const resume = document.getElementById("resume");
+
+        const jobId = document.getElementById("jobId");
+
+
+        function openModal() {
+            applyModal.style.display = "flex";
+            document.body.style.overflow = "hidden";
+            setTimeout(() => fullName.focus(), 50);
+        }
+
+        function closeModal() {
+            applyModal.style.display = "none";
+            document.body.style.overflow = "auto";
+            errorBox.style.display = "none";
+            successBox.style.display = "none";
+            applyForm.reset();
+        }
+
+        applyBtn.addEventListener("click", openModal);
+        closeModalBtn.addEventListener("click", closeModal);
+
+        applyModal.addEventListener("click", function (e) {
+            if (e.target === applyModal) closeModal();
+        });
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && applyModal.style.display === "flex") {
+                closeModal();
+            }
+        });
+
+        // ✅ REAL SUBMIT
+        applyForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            errorBox.style.display = "none";
+            successBox.style.display = "none";
+
+            // Basic validation
+            if (!fullName.value.trim()) {
+                errorBox.textContent = "Please enter your name.";
+                errorBox.style.display = "block";
+                return;
+            }
+
+            if (!email.value.trim()) {
+                errorBox.textContent = "Please enter your email.";
+                errorBox.style.display = "block";
+                return;
+            }
+
+            if (!resume.files || resume.files.length === 0) {
+                errorBox.textContent = "Please upload your resume.";
+                errorBox.style.display = "block";
+                return;
+            }
+
+            const file = resume.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (file.size > maxSize) {
+                errorBox.textContent = "Resume must be less than 5MB.";
+                errorBox.style.display = "block";
+                return;
+            }
+
+            const fd = new FormData();
+            fd.append("name", fullName.value.trim());
+            fd.append("email", email.value.trim());
+            fd.append("resume", file);
+            fd.append("job_id", jobId.value);
+
+            const API_URL = `${window.location.origin}/api/apply-job-page`;
+
+            try {
+
+                const submitBtn = applyForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> &nbsp; Submitting...`;
+
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    body: fd, // IMPORTANT: do not set Content-Type manually
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || result.statusCode === 1 || result.status === "error") {
+                    throw new Error(result.message || "Something went wrong. Please try again.");
+                }
+
+                successBox.textContent = result.message || "Application submitted successfully!";
+                successBox.style.display = "block";
+
+                setTimeout(() => closeModal(), 1500);
+
+            } catch (err) {
+                errorBox.textContent = err.message || "Upload failed. Please try again.";
+                errorBox.style.display = "block";
+            } finally {
+                const submitBtn = applyForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> &nbsp; Submit Application`;
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>

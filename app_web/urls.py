@@ -64,4 +64,6 @@ urlpatterns = [
 
     path('resume-templates',active_user_required(views.resumeTemplatesPage)),
 
+    path('job-application/<str:jid>',views.jobApplyPage),
+
 ]

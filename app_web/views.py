@@ -8,7 +8,7 @@ from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
     getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst,RecruitersPerformanceService, \
-    getJobboards, getJDJobboards, getOverallDashboardCounts,SourcePerformanceService, getResumeTemplates
+    getJobboards, getJDJobboards, getOverallDashboardCounts,SourcePerformanceService, getResumeTemplates, getJobDescApplyPageData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -298,6 +298,7 @@ def jobDescription(request):
         if menuItemObjList:
             companyId = getCompanyId(user_mail)
             allJds = getCompanyJDsList(companyId,user_role)
+            print("allJds",allJds)
             return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList,'activeJd':allJds['activeJd'], 'inactiveJd': allJds['inactiveJd']})
         else:
             return redirect('../')
@@ -1477,6 +1478,22 @@ def resumeTemplatesPage(request):
         resume_templates = getResumeTemplates(company_id)
 
         return render(request, "portal_index.html", {"template_name": "branded_templates.html", 'menuItemList': menuItemList,"resume_templates":resume_templates })
+    
+    except Exception as e:
+        raise
+
+
+def jobApplyPage(request,jid):
+    try:
+
+        try:
+            jid = decrypt_code(jid)
+
+            jobdesc_data = getJobDescApplyPageData(jid)
+        except:
+            jobdesc_data = None
+
+        return render(request, "job_apply.html",{"jobdesc_data":jobdesc_data})
     
     except Exception as e:
         raise

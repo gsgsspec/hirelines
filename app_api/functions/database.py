@@ -2011,3 +2011,60 @@ def updateResumeTemplateDB(dataObjs,user_data):
 
     except Exception as e:
         raise
+
+
+def addResumeFromJobPageDB(name,email,jobid, resumefile):
+    try:
+
+        jobdesc = JobDesc.objects.get(id=jobid)
+
+        file_binary = resumefile.read()
+
+        ext = os.path.splitext(resumefile.name)[1].lower()
+
+        if ext in [".doc", ".docx"]:
+            
+            try:
+                pdf_binary = convert_word_binary_to_pdf(file_binary)
+            except:
+                pdf_binary = file_binary
+
+        elif ext == ".pdf":
+            pdf_binary = file_binary
+
+        else:
+            raise Exception("Unsupported file format")
+        
+        source = Source.objects.filter(companyid=jobdesc.companyid,code="CARER").last()
+
+        if not source:
+            source = Source(
+                code= "CARER",
+                label = "Careers",
+                companyid = jobdesc.companyid
+            )
+
+            source.save()
+
+        resume = Resume(
+            sourceid = source.id,
+            companyid = jobdesc.companyid,
+            filename = resumefile.name,
+            datentime = datetime.now(),
+            jobid = jobdesc.id,
+            status = "P"
+        )
+
+        resume.save()
+
+        resume_file = ResumeFile(
+            resumeid = resume.id,
+            filename = resumefile.name,
+            filecontent = pdf_binary
+        )
+
+        resume_file.save()
+
+
+    except Exception as e:
+        raise

@@ -33,7 +33,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
     updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB,updateWorkspaceDB,updateProfileCompletion, \
-    saveJobBoardConfigDB, saveJDJobBoardsDB, addResumeDB, updateResumeTemplateDB
+    saveJobBoardConfigDB, saveJDJobBoardsDB, addResumeDB, updateResumeTemplateDB, addResumeFromJobPageDB
 from app_api.functions.constants import hirelines_registration_script, const_profile_status
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -3393,6 +3393,36 @@ def updateResumeTemplate(request):
 
     except Exception as e:
         response['data'] = 'Error in Updating Resume Template'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)
+
+
+@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
+def addResumeFromJobPage(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            name = request.POST.get("name")
+            email = request.POST.get("email")
+            jobid = request.POST.get("job_id")
+            resumefile = request.FILES.get("resume")
+
+            addResumeFromJobPageDB(name,email,jobid, resumefile)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in applying Job'
         response['error'] = str(e)
         raise
     

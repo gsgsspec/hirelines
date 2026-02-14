@@ -497,6 +497,7 @@ class Resume(models.Model):
     companyid = models.IntegerField(null=True)
     status = models.CharField(max_length=1,null=True) # P - Pending Review, D - Soft Deleted, A - Added to Profile
     docparserid = models.IntegerField(null=True)
+    jobid = models.IntegerField(null=True)
 
     class Meta:
         db_table = "resume"

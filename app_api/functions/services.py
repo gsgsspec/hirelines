@@ -95,7 +95,7 @@ from hirelines import settings
 from .database import addCandidateDB
 from .jd_profile_matching import calculateJDProfileMatching
 from .voice_comparision import convertProfilingVideo, compareVoices
-
+from .enc_dec import encrypt_code
 
 def addCompanyDataService(dataObjs):
     try:
@@ -957,6 +957,12 @@ def jdDetails(jdId, companyId):
                                         }
                                     )
 
+            hirelines_domain = getConfig()["DOMAIN"]["hirelines"]
+
+            encoded_jdid = encrypt_code(jdData.id)
+
+            jd_page_url = f"{hirelines_domain}/job-application/{encoded_jdid}"
+
             jdDataDict = {
                 "id": jdData.id,
                 "jdlibraryid": 0 if jdData.jdlibraryid is None else jdData.jdlibraryid,
@@ -985,6 +991,7 @@ def jdDetails(jdId, companyId):
                 "skillsList": modifiedSkillList,
                 "workFlowDetails": workFlowList,
                 "hiringmanager": "" if jdData.hiringmanagerid is None else jdData.hiringmanagerid,
+                "jd_page_url":jd_page_url
             }
             return jdDataDict
         return None  # Return None if no data is found
@@ -6200,3 +6207,63 @@ def getResumeTemplates(companyid):
 
     except Exception as e:
         raise
+
+
+def getJobDescApplyPageData(jid):
+    try:
+
+        jobdesc = JobDesc.objects.filter(id=jid,status="A").last()
+
+        if not jobdesc:
+            return None
+
+        company = Company.objects.get(id=jobdesc.companyid)
+
+        branding = Branding.objects.get(companyid=jobdesc.companyid)
+
+        branding_css = branding.content if branding else ""
+
+        primary_color = extract_css_variable(branding_css, "--brand-primary-color") or "#2563eb"
+        # primary_color = "#273d4e"
+
+        skills_list = []
+
+        if jobdesc.skillset:
+            try:
+                skillset_data = ast.literal_eval(jobdesc.skillset)
+                for item in skillset_data:
+                    if isinstance(item, dict) and len(item) > 0:
+                        skills_list.extend(item.keys())
+            except Exception:
+                skills_list = []
+
+        jobdesc_data = {
+            "id":jobdesc.id,
+            "title":jobdesc.title,
+            "role":jobdesc.role,
+           "description": (jobdesc.description or "").strip(),
+            "expmin":jobdesc.expmin,
+            "expmax":jobdesc.expmax,
+            "department":jobdesc.department,
+            "location":jobdesc.location,
+            "positions":jobdesc.positions,
+            "jobcode":jobdesc.jobcode,
+            "company_name":company.name,
+            "logo_url":branding.logourl,
+            "primary_color":primary_color,
+            "skills":skills_list
+        }
+
+        return jobdesc_data
+
+    except Exception as e:
+        raise
+
+
+def extract_css_variable(css_text, var_name):
+    if not css_text:
+        return None
+
+    pattern = rf"{re.escape(var_name)}\s*:\s*([^;]+);"
+    match = re.search(pattern, css_text)
+    return match.group(1).strip() if match else None

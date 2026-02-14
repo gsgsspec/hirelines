@@ -118,5 +118,6 @@ urlpatterns = [
     path("source-performance", views.source_performance),
     path("update-resume-template", views.updateResumeTemplate),
 
+    path("apply-job-page",views.addResumeFromJobPage),
 
 ]

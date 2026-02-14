@@ -451,7 +451,9 @@ CREATE TABLE resumetemplate (
   status VARCHAR(1) NULL
 );
 
-INSERT INTO resumetemplate (`name`, `filename`, `status`, `default_template`, `thumbnail`) VALUES ('Classic Resume', 'classic_template.html', 'A', 'Y', 'two_column.png');
+INSERT INTO resumetemplate (`name`, `filename`, `status`, `default_template`, `thumbnail`) VALUES ('Classic Resume', 'classic_template.html', 'A', 'Y', 'classic.png');
 INSERT INTO resumetemplate (`name`, `filename`, `status`, `default_template`, `thumbnail`) VALUES ('Two Column Resume', 'two_column_template.html', 'A', NULL, 'two_column.png');
 
 ALTER TABLE company add column resumetemplateid int null;
+
+ALTER TABLE resume add column jobid int null;

@@ -4560,3 +4560,14 @@ function filterQuestions(container, keyword) {
         questionBlock.style.display = text.includes(keyword) ? "" : "none";
     });
 }
+
+
+function copyPopoverUrl() {
+    const url = document.getElementById("popoverUrl").value;
+    const msg = document.getElementById("copyMsg");
+
+    navigator.clipboard.writeText(url).then(() => {
+        msg.style.display = "block";
+        setTimeout(() => (msg.style.display = "none"), 1500);
+    });
+}
