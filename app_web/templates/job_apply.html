@@ -189,7 +189,6 @@
         </div>
     </div>
 
-
     {% endif %}
 
     <script>
@@ -263,10 +262,21 @@
             }
 
             const file = resume.files[0];
-            const maxSize = 5 * 1024 * 1024; // 5MB
+            const maxSize = 1 * 1024 * 1024; // 1MB
+
+            const allowedExt = ["pdf", "doc", "docx"];
+
+            const fileExt = file.name.split(".").pop().toLowerCase();
+
+            if (!allowedExt.includes(fileExt)) {
+                errorBox.textContent = "Only PDF, DOC, or DOCX files are allowed.";
+                errorBox.style.display = "block";
+                return;
+            }
+
 
             if (file.size > maxSize) {
-                errorBox.textContent = "Resume must be less than 5MB.";
+                errorBox.textContent = "Resume must be less than 1MB.";
                 errorBox.style.display = "block";
                 return;
             }
