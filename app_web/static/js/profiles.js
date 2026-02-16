@@ -132,6 +132,8 @@ function filter_profiles() {
         status: $("#begin-from").val(),
         date_from: $("#filter_apl").val(),
         date_to: $("#filter_to_2").val(),
+        strength: $("#filter_strength").val()
+
     };
 
     // DATE VALIDATION

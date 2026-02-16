@@ -1685,9 +1685,13 @@ def filter_profiles_api(request):
     status = data.get("status", "")
     date_from = data.get("date_from", "")
     date_to = data.get("date_to", "")
+    strength = data.get("strength", "")
+
 
     exp_from = int(exp_from) if exp_from else None
     exp_to = int(exp_to) if exp_to else None
+    strength = int(strength) if strength else None
+
 
   
     login_user = request.user
@@ -1746,6 +1750,10 @@ def filter_profiles_api(request):
         "O": "Offered",
         "E": "Employee",
     }
+    if strength is not None:
+        filtered_profiles = filtered_profiles.filter(strength=strength)
+
+
 
     final_output = []
 
