@@ -117,6 +117,12 @@ urlpatterns = [
     path("upload-audio-file", views.uploadAudioFile),
     path("source-performance", views.source_performance),
     path("update-resume-template", views.updateResumeTemplate),
+    path("save-resume-tags",views.saveresumetags),
+    path("get-resume-tags/<int:resume_id>", views.getresumetags),
+    path("save-profile-tags", views.saveprofiletags),
+    path("get-profile-tags/<int:profile_id>", views.getprofiletags),
+    path("delete-tags", views.deletetags),
+
 
     path("apply-job-page",views.addResumeFromJobPage),
 

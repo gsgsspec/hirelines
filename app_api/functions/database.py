@@ -10,7 +10,7 @@ from hirelines.metadata import getConfig
 from .mailing import sendEmail
 from app_api.models import Account, Brules, CompanyCredits, ReferenceId, Candidate, Registration, CallSchedule, User, JobDesc, Company,CompanyData,Workflow, QResponse, \
     IvFeedback, Email_template, Branding, Source, Profile, Resume, ProfileAwards, ProfileActivity, ProfileEducation, ProfileExperience, ProfileProjects, ProfileSkills, ProfileCertificates, \
-    ResumeFile, WorkCal,ProfileAddress,Lookupmaster,Workspace, JobBoardCredential, JDJobBoards
+    ResumeFile, WorkCal,ProfileAddress,Lookupmaster,Workspace, JobBoardCredential, JDJobBoards, Tag
 from django.db import transaction
 
 from .doc2pdf import convert_word_binary_to_pdf
@@ -2068,3 +2068,69 @@ def addResumeFromJobPageDB(name,email,jobid, resumefile):
 
     except Exception as e:
         raise
+# def saveresumetagsDB(dataObjs, user_data):
+#     try:
+#         resume_id = dataObjs.get("resume_id")
+#         print("resume_id",resume_id)
+#         tags = dataObjs.get("tags", [])
+#         print("tags",tags)
+
+#         for tag_name in tags:
+#             tag_name = tag_name.strip()
+#             if not tag_name:
+#                 continue
+
+#             Tag.objects.get_or_create(
+#                 tag=tag_name,
+#                 resumeid=resume_id
+#             )
+
+#         return True
+
+#     except Exception as e:
+#         print("Error:", e)
+#         return False
+
+
+
+def saveresumetagsDB(dataObjs, user_data):
+    try:
+        resume_id = dataObjs.get("resume_id")
+        tags = dataObjs.get("tags", [])
+
+        if not resume_id:
+            return False
+
+     
+        existing_tags = set(
+            Tag.objects.filter(resumeid=resume_id)
+            .values_list("tag", flat=True)
+        )
+
+        
+        normalized_existing = {
+            t.lower().replace(" ", "").strip()
+            for t in existing_tags
+        }
+
+        
+        for tag_name in tags:
+
+            clean_tag = tag_name.strip()
+            if not clean_tag:
+                continue
+
+            normalized = clean_tag.lower().replace(" ", "")
+
+           
+            if normalized not in normalized_existing:
+                Tag.objects.create(
+                    tag=clean_tag,
+                    resumeid=resume_id
+                )
+
+        return True
+
+    except Exception as e:
+        print("Error saving resume tags:", e)
+        return False

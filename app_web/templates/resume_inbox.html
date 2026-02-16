@@ -35,6 +35,8 @@
                                     <th>Name </th>
                                     <th>Date </th>
                                     <th>Status </th>
+                                    <th>Tags</th><!-- ADD THIS -->
+
                                 </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
@@ -52,6 +54,9 @@
                                         {% else %}
                                             <td> - </td>
                                         {% endif %}
+                                        <!-- <td style="display:none;">{{ resume_data.tags }}</td> -->
+                                        <td style="display:none;">{{ resume_data.tags }}</td>
+                                        
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -70,9 +75,50 @@
                         width="100%" 
                         height="500px"
                         style="border: none;">
-                    </iframe>   
+                    </iframe>  
+                    <br><br><br>
+                    <!-- <div class="resume-tags-section">
+                        <label class="form-label">Tags</label>
+                        <input type="text" 
+                            id="resume-tags-input" 
+                            class="form-control" 
+                            placeholder="Enter tags (e.g #RefferedbyGS #ImmediateJoinee  #FromStartup #FlexibleTime )" />
+                    </div> -->
+                    <div class="card-body">
+                        <div class=" mb-3">
+                            <div class="col-sm-12 position-relative">
+                                <div class="resume-tags-section">
+                                    <label class="form-label">Tags</label>
+                                    <input type="text" id="resume-tags-input" class="form-control"
+                                        placeholder="Enter tags separated by comma (e.g #RefferedbyGS ,#ImmediateJoinee , #FromStartup, #FlexibleTime )" />
+                                    <small id="tag-info-msg"
+                                        class="text-warning"
+                                        style="display:none;">
+                                        This tag is already added for this resume
+                                    </small>
+                                </div>
+                           </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-12">
+                                <div id="resume-tags" 
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <br><br>
+                    <div class="row justify-content-end">
+                        <div class="col-sm-10 text-end">
+                            <button id="save-tagsdata" type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+
                 </div>
+                
             </div>
+            
+
         </div>
 
         <div class="modal fade" id="modalScrollable" tabindex="-1" style="display: none;" aria-hidden="true">
@@ -148,6 +194,13 @@
             "order": [],
             "ordering": true,
             // "lengthChange": false,
+            columnDefs: [
+                {
+                    targets: 4,   
+                    visible: false,
+                    searchable: true   
+                }
+            ],
             language: { search: "",searchPlaceholder: "Search..." } ,
             pagingType: 'simple_numbers'
         });
@@ -165,4 +218,21 @@
     .btn-sm {
         font-size: 15px;
     }
+    .tag-badge {
+        display: inline-block;
+        background-color: #f3f4f5;
+        color: rgb(8, 8, 8);
+        padding: 6px 10px;
+        margin: 4px;
+        border-radius: 20px;
+        font-size: 20px;
+    }
+
+    .tag-badge .remove-tag {
+        margin-left: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        color: red;
+    }
+
 </style>

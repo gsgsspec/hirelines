@@ -755,3 +755,13 @@ class ResumeTemplate(models.Model):
     class Meta:
         db_table = 'resumetemplate'
 
+
+class Tag(models.Model):
+    id = models.AutoField(primary_key=True)
+    tag = models.CharField(max_length=40)
+    resumeid = models.IntegerField(null=True, blank=True)
+    profileid = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = "tags"
+    

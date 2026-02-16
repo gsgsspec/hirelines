@@ -1239,3 +1239,276 @@ $(document).on("input paste", ".dynamic-table td[contenteditable='true']", funct
     if (tableId === "AwardsTable") CHANGED_TABS.awards = true;
     if (tableId === "CertificationsTable") CHANGED_TABS.certifications = true;
 });
+
+function normalizeTag(tag) {
+    return tag
+        .toLowerCase()
+        .replace(/\s+/g, "")   // remove all spaces
+        .trim();
+}
+
+
+function profileTagExists(tagName) {
+
+    let normalizedInput = normalizeTag(tagName);
+
+    let exists = false;
+
+    $("#resume-tags .tag-badge").each(function () {
+
+        let text = $(this).clone().children().remove().end().text().trim();
+
+        let normalizedExisting = normalizeTag(text);
+
+        if (normalizedExisting === normalizedInput) {
+            exists = true;
+        }
+    });
+
+    return exists;
+}
+
+function addProfileTag(tagName) {
+
+    if (!tagName) return;
+
+    let normalized = normalizeTag(tagName);
+
+    if (profileTagExists(normalized)) {
+        $("#tag-info-msg").show();
+        $("#resume-tags-input").addClass("is-invalid");
+        return;
+    }
+
+    let tagHtml = `
+        <span class="tag-badge">
+            ${tagName}
+            <span class="remove-tag">&times;</span>
+        </span>
+    `;
+
+    $("#resume-tags").append(tagHtml);
+
+    $("#tag-info-msg").hide();
+    $("#resume-tags-input").removeClass("is-invalid");
+}
+
+
+
+$("#resume-tags-input").on("input", function () {
+
+    let currentVal = normalizeTag($(this).val());
+
+    if (!currentVal) {
+        $("#tag-info-msg").hide();
+        $(this).removeClass("is-invalid");
+        return;
+    }
+
+    if (profileTagExists(currentVal)) {
+        $("#tag-info-msg").show();
+        $(this).addClass("is-invalid");
+    } else {
+        $("#tag-info-msg").hide();
+        $(this).removeClass("is-invalid");
+    }
+});
+
+
+
+
+
+$("#save-data").on("click", function () {
+    processProfileInputValue(); 
+    let tags = [];
+
+    $("#resume-tags .tag-badge").each(function () {
+
+        let text = $(this).clone().children().remove().end().text().trim();
+
+        tags.push(text);
+    });
+
+    $.post(CONFIG['portal'] + "/api/save-profile-tags", {
+
+        data: JSON.stringify({
+            profile_id: profileId,
+            tags: tags
+        }),
+
+        csrfmiddlewaretoken: CSRF_TOKEN
+
+    }, function (res) {
+
+        if (res.statusCode === 0) {
+
+            Swal.fire({
+                icon: "success",
+                title: "Tags Saved",
+                timer: 1200,
+                showConfirmButton: false
+            });
+
+        } else {
+
+            Swal.fire("Error saving tags");
+        }
+    });
+
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (!profileId) return;
+
+    $.get(CONFIG['portal'] + "/api/get-profile-tags/" + profileId, function (res) {
+    if (res.statusCode === 0) {
+        $("#resume-tags").html("");
+        res.tags.forEach(tag => {
+            addProfileTag(tag);
+        });
+    }
+    });
+
+});
+
+function processProfileInputValue() {
+
+    let inputVal = $("#resume-tags-input").val().trim();
+
+    if (!inputVal) return;
+
+    // Split by comma
+    let tagParts = inputVal.split(",");
+
+    tagParts.forEach(part => {
+        let cleaned = part.trim();
+        if (cleaned) {
+            addProfileTag(cleaned);
+        }
+    });
+
+    $("#resume-tags-input").val("");
+}
+
+
+// $(document).on("click", ".remove-tag", function (e) {
+
+//     e.stopPropagation();
+
+//     let tagBadge = $(this).parent();
+//     let tagText = tagBadge.clone().children().remove().end().text().trim();
+
+//     if (!profileId) {
+//         Swal.fire("Profile ID missing");
+//         return;
+//     }
+
+//     $.ajax({
+//         url: CONFIG['portal'] + "/api/delete-tags",
+//         type: "POST",
+//         contentType: "application/json",
+//         data: JSON.stringify({
+//             profile_id: profileId,
+//             tag: tagText
+//         }),
+//         headers: { "X-CSRFToken": CSRF_TOKEN },
+//         success: function (res) {
+//             if (res.statusCode === 0) {
+
+//                 tagBadge.remove();
+
+//                 Swal.fire({
+//                     icon: "success",
+//                     title: "Deleted successfully",
+//                     timer: 1200,
+//                     showConfirmButton: false
+//                 });
+
+//             } else {
+//                 Swal.fire({
+//                     icon: "error",
+//                     title: "Delete failed"
+//                 });
+//             }
+//         },
+//         error: function () {
+//             Swal.fire({
+//                 icon: "error",
+//                 title: "Something went wrong"
+//             });
+//         }
+  
+
+//     });
+
+// });
+$(document).on("click", ".remove-tag", function (e) {
+
+    e.stopPropagation();
+
+    let tagBadge = $(this).parent();
+    let tagText = tagBadge.clone().children().remove().end().text().trim();
+
+    if (!profileId) {
+        Swal.fire({
+            icon: "warning",
+            title: "Profile ID missing"
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: `Delete tag "${tagText}" ?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#274699',
+        cancelButtonColor: '#f25c05',
+        confirmButtonText: "Yes, Delete"
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            $.ajax({
+                url: CONFIG['portal'] + "/api/delete-tags",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    profile_id: profileId,
+                    tag: tagText
+                }),
+                headers: { "X-CSRFToken": CSRF_TOKEN },
+                success: function (res) {
+
+                    if (res.statusCode === 0) {
+
+                        tagBadge.remove();
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "Deleted successfully",
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Delete failed"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Something went wrong"
+                    });
+                }
+            });
+
+        }
+
+    });
+
+});

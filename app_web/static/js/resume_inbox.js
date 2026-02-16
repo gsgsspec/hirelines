@@ -60,6 +60,19 @@ function attachResumeRowClick() {
             } else {
                 document.getElementById("add-profile-btn").style.display = "inline-block";
             }
+            // 🔥 Load existing tags
+            const tagResponse = await fetch(`${CONFIG['portal']}/api/get-resume-tags/${id}`);
+
+            const tagData = await tagResponse.json();
+
+            // Clear old tags
+            $("#resume-tags").html("");
+
+            // Add tags to preview
+            tagData.tags.forEach(tag => {
+                addTagToUI(tag);
+            });
+
             
         });
     });
@@ -182,6 +195,7 @@ function updateResumeTable(resumes){
                 <td>${r.name}</td>
                 <td>${r.date}</td>
                 <td>${status}</td>
+                <td>${r.tags || ""}</td>
             </tr>
         `;
         tbody.insertAdjacentHTML("beforeend", row);
@@ -483,3 +497,289 @@ function resetAddResumeForm() {
     // Remove error styles if any
     document.getElementById('uploadBox').classList.remove('error');
 }
+
+
+function addTagToUI(tagName) {
+    let tagHtml = `
+        <span class="tag-badge">
+            ${tagName}
+            <span class="remove-tag">&times;</span>
+        </span>
+    `;
+    $("#resume-tags").append(tagHtml);
+}
+
+
+// $("#resume-tags-input").on("keypress", function (e) {
+//     if (e.key === "Enter") {
+//         e.preventDefault();
+
+//         let value = $(this).val().trim();
+//         if (!value) return;
+
+//         let exists = false;
+
+//         $(".tag-badge").each(function () {
+//             let text = $(this).clone().children().remove().end().text().trim();
+//             if (text.toLowerCase() === value.toLowerCase()) {
+//                 exists = true;
+//             }
+//         });
+
+//         if (!exists) {
+//             addTagToUI(value);
+//         }
+
+//         $(this).val("");
+//     }
+// });
+function normalizeTag(tag) {
+    return tag
+        .toLowerCase()
+        .replace(/\s+/g, "")   // remove all spaces
+        .trim();
+}
+
+function tagExists(tagName) {
+    let exists = false;
+
+    $(".tag-badge").each(function () {
+        let text = $(this).clone().children().remove().end().text().trim();
+        if (text.toLowerCase() === tagName.toLowerCase()) {
+            exists = true;
+        }
+    });
+
+    return exists;
+}
+
+// function processInputValue() {
+//     let inputVal = $("#resume-tags-input").val().trim();
+
+//     if (!inputVal) return;
+
+//     // Split by comma
+//     let tagParts = inputVal.split(",");
+
+//     tagParts.forEach(part => {
+//         let cleaned = normalizeTag(part);
+
+//         // if (cleaned && !tagExists(cleaned)) {
+//         //     addTagToUI(cleaned);
+//         // }
+//         if (cleaned) {
+//             if (tagExists(cleaned)) {
+//                 $("#tag-error").show();
+//                 return;
+//             }
+//             addTagToUI(cleaned);
+//         }
+//     });
+
+//     $("#resume-tags-input").val("");
+// }
+function processInputValue() {
+    let inputVal = $("#resume-tags-input").val().trim();
+
+    if (!inputVal) return;
+
+    let tagParts = inputVal.split(",");
+
+    tagParts.forEach(part => {
+        let cleaned = normalizeTag(part);
+
+        if (!cleaned) return;
+
+        if (tagExists(cleaned)) {
+            $("#tag-info-msg").show();
+        } else {
+            $("#tag-info-msg").hide();
+            addTagToUI(cleaned);
+        }
+    });
+
+    $("#resume-tags-input").val("");
+}
+
+
+
+$("#save-tagsdata").on("click", function () {
+    processInputValue();
+
+    let tags = [];
+
+    $(".tag-badge").each(function () {
+        let tagText = $(this).clone().children().remove().end().text().trim();
+        tags.push(tagText);
+    });
+
+    let activeRow = $(".resume-row.active-row");
+
+    if (!activeRow.length) {
+        Swal.fire("Select a resume first");
+        return;
+    }
+
+    let resumeId = activeRow.data("id");
+
+    let dataObj = {
+        resume_id: resumeId,
+        tags: tags
+    };
+
+    $.post(CONFIG['portal'] + "/api/save-resume-tags", {
+        data: JSON.stringify(dataObj),
+        csrfmiddlewaretoken: CSRF_TOKEN
+    }, function (res) {
+
+        if (res.statusCode === 0) {
+
+            Swal.fire({
+                icon: "success",
+                title: "Tags saved",
+                timer: 1200,
+                showConfirmButton: false
+            });
+        }
+
+    });
+});
+$("#resume-tags-input").on("input", function () {
+
+    let currentVal = normalizeTag($(this).val());
+
+    if (!currentVal) {
+        $("#tag-info-msg").hide();
+        $(this).removeClass("is-invalid");
+        return;
+    }
+
+    if (tagExists(currentVal)) {
+        $("#tag-info-msg").show();
+        $(this).addClass("is-invalid");
+    } else {
+        $("#tag-info-msg").hide();
+        $(this).removeClass("is-invalid");
+    }
+});
+
+// $(document).on("click", ".remove-tag", function (e) {
+
+//     e.stopPropagation();
+
+//     let tagBadge = $(this).parent();
+//     let tagText = tagBadge.clone().children().remove().end().text().trim();
+
+//     let activeRow = $(".resume-row.active-row");
+
+//     if (!activeRow.length) {
+//         Swal.fire("Select a resume first");
+//         return;
+//     }
+
+//     let resumeId = activeRow.data("id");
+
+//     $.ajax({
+//         url: CONFIG['portal'] + "/api/delete-tags",
+//         type: "POST",
+//         contentType: "application/json",
+//         data: JSON.stringify({
+//             resume_id: resumeId,
+//             tag: tagText
+//         }),
+//         headers: { "X-CSRFToken": CSRF_TOKEN },
+//         success: function (res) {
+//             if (res.statusCode === 0) {
+
+//                 tagBadge.remove();
+
+//                 Swal.fire({
+//                     icon: "success",
+//                     title: "Deleted successfully",
+//                     timer: 1200,
+//                     showConfirmButton: false
+//                 });
+
+//             } else {
+//                 Swal.fire({
+//                     icon: "error",
+//                     title: "Delete failed"
+//                 });
+//             }
+//         },
+//         error: function () {
+//             Swal.fire({
+//                 icon: "error",
+//                 title: "Something went wrong"
+//             });
+//         }
+//     });
+
+// });
+
+$(document).on("click", ".remove-tag", function (e) {
+
+    e.stopPropagation();
+
+    let tagBadge = $(this).parent();
+    let tagText = tagBadge.clone().children().remove().end().text().trim();
+
+    let activeRow = $(".resume-row.active-row");
+
+    if (!activeRow.length) {
+        Swal.fire({
+            icon: "warning",
+            title: "Select a resume first"
+        });
+        return;
+    }
+
+    let resumeId = activeRow.data("id");
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: `Delete tag "${tagText}" ?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#274699',
+        cancelButtonColor: '#f25c05',
+        confirmButtonText: "Yes, Delete"
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            $.ajax({
+                url: CONFIG['portal'] + "/api/delete-tags",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    resume_id: resumeId,
+                    tag: tagText
+                }),
+                headers: { "X-CSRFToken": CSRF_TOKEN },
+                success: function (res) {
+                    if (res.statusCode === 0) {
+
+                        tagBadge.remove();
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "Deleted successfully",
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+
+                    } else {
+                        Swal.fire("Delete failed");
+                    }
+                },
+                error: function () {
+                    Swal.fire("Something went wrong");
+                }
+            });
+
+        }
+
+    });
+
+});

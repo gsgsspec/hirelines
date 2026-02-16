@@ -77,7 +77,8 @@ from app_api.models import (
     JobBoard,
     JobBoardCredential,
     JDJobBoards,
-    ResumeTemplate
+    ResumeTemplate,
+    Tag
 )
 from app_api.functions.database import (
     saveJdNewTest,
@@ -4002,11 +4003,21 @@ def getResumeData(user_data, filters=None):
         )
 
         if resumes:
+            all_tags = Tag.objects.filter(
+                resumeid__in=resumes.values_list("id", flat=True)
+            )
+
+            # Create mapping: resumeid -> [tag1, tag2]
+            tag_map = {}
+
+            for tag in all_tags:
+                tag_map.setdefault(tag.resumeid, []).append(tag.tag)
+
 
             for resume in resumes:
 
                 source = sources.filter(id=resume.sourceid).first()
-
+                resume_tags = tag_map.get(resume.id, [])
                 resumes_data.append(
                     {
                         "id": resume.id,
@@ -4018,6 +4029,7 @@ def getResumeData(user_data, filters=None):
                             else ""
                         ),
                         "status": resume.status,
+                        "tags": " ".join(resume_tags), 
                     }
                 )
 

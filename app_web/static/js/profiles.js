@@ -5,6 +5,14 @@ $(document).ready(function () {
         pageLength: 50,
         // scrollY: '600px',
         "ordering": false,
+        columnDefs: [
+            {
+                targets: 8,   
+                visible: false,
+                searchable: true  
+            }
+        ],
+
         language: { search: "", searchPlaceholder: "Search..." },
         pagingType: 'simple_numbers'
     });
@@ -35,8 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
     fromInput.value = formatDateLocal(firstCurrentMonth);
 
     const loader = document.getElementById('candidates-loader');
+
     window.addEventListener('load', () => {
-        loader.style.display = 'none';
+        if (loader) {
+            loader.style.display = 'none';
+        }
     });
 });
 
@@ -184,6 +195,7 @@ function filter_profiles() {
                         + '<td>' + p["experience"] + '</td>'
                         + '<td>' + p["profilestrength"] + '%'+ '</td>'
                         + '<td>' + p["status"] + '</td>'
+                        + '<td>' + (p["profile_tags"] || "") + '</td>'
                         + '</tr>'
                     );
                 }
@@ -247,6 +259,13 @@ function filter_profiles() {
                 "order": [],
                 "ordering": false,
                 pageLength: 50,
+                columnDefs: [
+                    {
+                        targets: 8,   
+                        visible: false,
+                        searchable: true   
+                    }
+                ],
                 language: { search: "", searchPlaceholder: "Search..." },
                 pagingType: 'simple_numbers'
             });

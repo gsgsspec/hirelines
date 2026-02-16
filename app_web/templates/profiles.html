@@ -122,6 +122,8 @@
                     <th>Experience</th>
                     <th>Strength</th>
                     <th>Status</th>
+                    <th>Tags</th>
+
                 </tr>
             </thead>
 
@@ -161,6 +163,9 @@
                         ">
                             {{ p.status_text }}
                         </span>
+                    </td>
+                    <td>
+                        {{ p.profile_tags|join:"," }}
                     </td>
                 </tr>
                 {% endfor %}

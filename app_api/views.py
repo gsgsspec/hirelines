@@ -28,12 +28,12 @@ from .functions.services import addCompanyDataService, candidateRegistrationServ
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService, jobBoardConfigService,SourcePerformanceService
         
-from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal,jdlibrary
+from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal,jdlibrary,Tag
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
     updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB,updateWorkspaceDB,updateProfileCompletion, \
-    saveJobBoardConfigDB, saveJDJobBoardsDB, addResumeDB, updateResumeTemplateDB, addResumeFromJobPageDB
+    saveJobBoardConfigDB, saveJDJobBoardsDB, addResumeDB, updateResumeTemplateDB, addResumeFromJobPageDB, saveresumetagsDB
 from app_api.functions.constants import hirelines_registration_script, const_profile_status
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -3427,3 +3427,174 @@ def addResumeFromJobPage(request):
         raise
     
     return JsonResponse(response)
+
+
+def saveresumetags(request):
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            user_data = auth_user(request.user)
+           
+
+            saveresumetagsDB(dataObjs,user_data)
+
+        return JsonResponse({"statusCode": 0})
+
+    except Exception as e:
+        return JsonResponse({"statusCode": 1, "error": str(e)})
+    
+
+
+def getresumetags(request, resume_id):
+    try:
+
+        profile = Profile.objects.filter(resumeid=resume_id).first()
+
+        profile_id = profile.id if profile else None
+        
+
+       
+        resume_tags = set(
+            Tag.objects.filter(resumeid=resume_id)
+            .values_list("tag", flat=True)
+        )
+       
+
+        
+        profile_tags = set()
+
+        if profile_id:
+            profile_tags = set(
+                Tag.objects.filter(profileid=profile_id)
+                .values_list("tag", flat=True)
+            )
+       
+
+        
+        combined_tags = list(resume_tags.union(profile_tags))
+
+        return JsonResponse({
+            "statusCode": 0,
+            "tags": combined_tags
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "statusCode": 1,
+            "error": str(e)
+        })
+
+
+def saveprofiletags(request):
+
+    try:
+        data = json.loads(request.POST.get("data"))
+        profile_id = data.get("profile_id")
+        tags = data.get("tags", [])
+       
+
+        if not profile_id:
+            return JsonResponse({"statusCode": 1, "error": "Profile ID missing"})
+
+      
+        existing_tags = Tag.objects.filter(profileid=profile_id).values_list("tag", flat=True)
+       
+        
+        normalized_existing = {
+            tag.lower().replace(" ", "").strip(): tag
+            for tag in existing_tags
+        }
+
+        for tag_name in tags:
+
+            tag_name = tag_name.strip()
+            if not tag_name:
+                continue
+
+            normalized = tag_name.lower().replace(" ", "").strip()
+
+            
+            if normalized not in normalized_existing:
+                Tag.objects.create(tag=tag_name,profileid=profile_id)
+
+        return JsonResponse({"statusCode": 0})
+
+    except Exception as e:
+        print("Error saving profile tags:", e)
+        return JsonResponse({"statusCode": 1, "error": str(e)})
+
+
+def getprofiletags(request, profile_id):
+
+    try:
+        profile = Profile.objects.get(id=profile_id)
+        if not profile_id:
+            return JsonResponse({"statusCode": 1, "error": "Profile ID missing"})
+
+
+        resume_id = profile.resumeid
+        
+
+        resume_tags = Tag.objects.filter(resumeid=resume_id).values_list("tag", flat=True)
+
+        profile_tags = Tag.objects.filter(profileid=profile_id).values_list("tag", flat=True)
+
+        combined_tags = list(resume_tags) + list(profile_tags)
+
+        unique_tags = {}
+        for tag in combined_tags:
+            normalized = tag.lower().replace(" ", "").strip()
+            if normalized not in unique_tags:
+                unique_tags[normalized] = tag
+
+        return JsonResponse({
+            "statusCode": 0,
+            "tags": list(unique_tags.values())
+        })
+    except Exception as e:
+        return JsonResponse({
+            "statusCode": 1,
+            "error": str(e)
+        })
+    
+
+def deletetags(request):
+    try:
+        data = json.loads(request.body)
+
+        profile_id = data.get("profile_id")
+        print("profile_id",profile_id)
+        resume_id = data.get("resume_id")
+        tag_name = data.get("tag")
+
+        if not tag_name:
+            return JsonResponse({"statusCode": 1, "error": "Tag missing"})
+
+       
+        if profile_id:
+            Tag.objects.filter(profileid=profile_id,tag__iexact=tag_name).delete()
+
+            
+            linked_resume_id = (Profile.objects.filter(id=profile_id).values_list("resumeid", flat=True).first())
+
+            if linked_resume_id:
+                Tag.objects.filter(resumeid=linked_resume_id,tag__iexact=tag_name).delete()
+
+        
+        if resume_id:
+            Tag.objects.filter(resumeid=resume_id, tag__iexact=tag_name).delete()
+
+           
+            linked_profile_id = (Profile.objects.filter(resumeid=resume_id).values_list("id", flat=True).first() )
+
+            if linked_profile_id:
+                Tag.objects.filter(profileid=linked_profile_id,tag__iexact=tag_name).delete()
+
+        return JsonResponse({"statusCode": 0})
+
+    except Exception as e:
+        return JsonResponse({
+            "statusCode": 1,
+            "error": str(e)
+        })
