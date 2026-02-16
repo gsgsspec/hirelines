@@ -4003,21 +4003,26 @@ def getResumeData(user_data, filters=None):
         )
 
         if resumes:
-            all_tags = Tag.objects.filter(
-                resumeid__in=resumes.values_list("id", flat=True)
-            )
-
-            # Create mapping: resumeid -> [tag1, tag2]
-            tag_map = {}
-
-            for tag in all_tags:
-                tag_map.setdefault(tag.resumeid, []).append(tag.tag)
-
-
             for resume in resumes:
 
                 source = sources.filter(id=resume.sourceid).first()
-                resume_tags = tag_map.get(resume.id, [])
+            
+                resume_tags = list(Tag.objects.filter(resumeid=resume.id).values_list("tag", flat=True))
+
+            
+                profile = Profile.objects.filter(resumeid=resume.id).first()
+
+                profile_tags = []
+
+                
+                if profile:
+                    profile_tags = list(Tag.objects.filter(profileid=profile.id).values_list("tag", flat=True))
+
+                
+                combined_tags = list(set(resume_tags + profile_tags))
+            # for resume in resumes:
+
+            #     source = sources.filter(id=resume.sourceid).first()
                 resumes_data.append(
                     {
                         "id": resume.id,
@@ -4029,7 +4034,7 @@ def getResumeData(user_data, filters=None):
                             else ""
                         ),
                         "status": resume.status,
-                        "tags": " ".join(resume_tags), 
+                        "tags": " ".join(combined_tags),  
                     }
                 )
 

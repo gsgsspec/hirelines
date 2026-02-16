@@ -510,29 +510,6 @@ function addTagToUI(tagName) {
 }
 
 
-// $("#resume-tags-input").on("keypress", function (e) {
-//     if (e.key === "Enter") {
-//         e.preventDefault();
-
-//         let value = $(this).val().trim();
-//         if (!value) return;
-
-//         let exists = false;
-
-//         $(".tag-badge").each(function () {
-//             let text = $(this).clone().children().remove().end().text().trim();
-//             if (text.toLowerCase() === value.toLowerCase()) {
-//                 exists = true;
-//             }
-//         });
-
-//         if (!exists) {
-//             addTagToUI(value);
-//         }
-
-//         $(this).val("");
-//     }
-// });
 function normalizeTag(tag) {
     return tag
         .toLowerCase()
@@ -541,11 +518,23 @@ function normalizeTag(tag) {
 }
 
 function tagExists(tagName) {
+
+    let normalizedInput = normalizeTag(tagName);
     let exists = false;
 
     $(".tag-badge").each(function () {
-        let text = $(this).clone().children().remove().end().text().trim();
-        if (text.toLowerCase() === tagName.toLowerCase()) {
+
+        let text = $(this)
+            .clone()
+            .children()
+            .remove()
+            .end()
+            .text()
+            .trim();
+
+        let normalizedExisting = normalizeTag(text);
+
+        if (normalizedExisting === normalizedInput) {
             exists = true;
         }
     });
@@ -553,40 +542,16 @@ function tagExists(tagName) {
     return exists;
 }
 
-// function processInputValue() {
-//     let inputVal = $("#resume-tags-input").val().trim();
-
-//     if (!inputVal) return;
-
-//     // Split by comma
-//     let tagParts = inputVal.split(",");
-
-//     tagParts.forEach(part => {
-//         let cleaned = normalizeTag(part);
-
-//         // if (cleaned && !tagExists(cleaned)) {
-//         //     addTagToUI(cleaned);
-//         // }
-//         if (cleaned) {
-//             if (tagExists(cleaned)) {
-//                 $("#tag-error").show();
-//                 return;
-//             }
-//             addTagToUI(cleaned);
-//         }
-//     });
-
-//     $("#resume-tags-input").val("");
-// }
 function processInputValue() {
-    let inputVal = $("#resume-tags-input").val().trim();
 
+    let inputVal = $("#resume-tags-input").val().trim();
     if (!inputVal) return;
 
     let tagParts = inputVal.split(",");
 
     tagParts.forEach(part => {
-        let cleaned = normalizeTag(part);
+
+        let cleaned = part.trim();   
 
         if (!cleaned) return;
 
@@ -594,12 +559,31 @@ function processInputValue() {
             $("#tag-info-msg").show();
         } else {
             $("#tag-info-msg").hide();
-            addTagToUI(cleaned);
+            addTagToUI(cleaned);   
         }
     });
 
     $("#resume-tags-input").val("");
 }
+
+$("#resume-tags-input").on("input", function () {
+
+    let currentVal = $(this).val().trim();
+
+    if (!currentVal) {
+        $("#tag-info-msg").hide();
+        $(this).removeClass("is-invalid");
+        return;
+    }
+
+    if (tagExists(currentVal)) {
+        $("#tag-info-msg").show();
+        $(this).addClass("is-invalid");
+    } else {
+        $("#tag-info-msg").hide();
+        $(this).removeClass("is-invalid");
+    }
+});
 
 
 
@@ -644,78 +628,7 @@ $("#save-tagsdata").on("click", function () {
 
     });
 });
-$("#resume-tags-input").on("input", function () {
 
-    let currentVal = normalizeTag($(this).val());
-
-    if (!currentVal) {
-        $("#tag-info-msg").hide();
-        $(this).removeClass("is-invalid");
-        return;
-    }
-
-    if (tagExists(currentVal)) {
-        $("#tag-info-msg").show();
-        $(this).addClass("is-invalid");
-    } else {
-        $("#tag-info-msg").hide();
-        $(this).removeClass("is-invalid");
-    }
-});
-
-// $(document).on("click", ".remove-tag", function (e) {
-
-//     e.stopPropagation();
-
-//     let tagBadge = $(this).parent();
-//     let tagText = tagBadge.clone().children().remove().end().text().trim();
-
-//     let activeRow = $(".resume-row.active-row");
-
-//     if (!activeRow.length) {
-//         Swal.fire("Select a resume first");
-//         return;
-//     }
-
-//     let resumeId = activeRow.data("id");
-
-//     $.ajax({
-//         url: CONFIG['portal'] + "/api/delete-tags",
-//         type: "POST",
-//         contentType: "application/json",
-//         data: JSON.stringify({
-//             resume_id: resumeId,
-//             tag: tagText
-//         }),
-//         headers: { "X-CSRFToken": CSRF_TOKEN },
-//         success: function (res) {
-//             if (res.statusCode === 0) {
-
-//                 tagBadge.remove();
-
-//                 Swal.fire({
-//                     icon: "success",
-//                     title: "Deleted successfully",
-//                     timer: 1200,
-//                     showConfirmButton: false
-//                 });
-
-//             } else {
-//                 Swal.fire({
-//                     icon: "error",
-//                     title: "Delete failed"
-//                 });
-//             }
-//         },
-//         error: function () {
-//             Swal.fire({
-//                 icon: "error",
-//                 title: "Something went wrong"
-//             });
-//         }
-//     });
-
-// });
 
 $(document).on("click", ".remove-tag", function (e) {
 

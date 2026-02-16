@@ -1268,13 +1268,14 @@ function profileTagExists(tagName) {
     return exists;
 }
 
+
 function addProfileTag(tagName) {
 
     if (!tagName) return;
 
-    let normalized = normalizeTag(tagName);
+    let cleaned = tagName.trim();   
 
-    if (profileTagExists(normalized)) {
+    if (profileTagExists(cleaned)) {   
         $("#tag-info-msg").show();
         $("#resume-tags-input").addClass("is-invalid");
         return;
@@ -1282,7 +1283,7 @@ function addProfileTag(tagName) {
 
     let tagHtml = `
         <span class="tag-badge">
-            ${tagName}
+            ${cleaned}
             <span class="remove-tag">&times;</span>
         </span>
     `;
@@ -1313,6 +1314,25 @@ $("#resume-tags-input").on("input", function () {
         $(this).removeClass("is-invalid");
     }
 });
+
+function processProfileInputValue() {
+
+    let inputVal = $("#resume-tags-input").val().trim();
+
+    if (!inputVal) return;
+
+    // Split by comma
+    let tagParts = inputVal.split(",");
+
+    tagParts.forEach(part => {
+        let cleaned = part.trim();
+        if (cleaned) {
+            addProfileTag(cleaned);
+        }
+    });
+
+    $("#resume-tags-input").val("");
+}
 
 
 
@@ -1372,77 +1392,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-function processProfileInputValue() {
 
-    let inputVal = $("#resume-tags-input").val().trim();
-
-    if (!inputVal) return;
-
-    // Split by comma
-    let tagParts = inputVal.split(",");
-
-    tagParts.forEach(part => {
-        let cleaned = part.trim();
-        if (cleaned) {
-            addProfileTag(cleaned);
-        }
-    });
-
-    $("#resume-tags-input").val("");
-}
-
-
-// $(document).on("click", ".remove-tag", function (e) {
-
-//     e.stopPropagation();
-
-//     let tagBadge = $(this).parent();
-//     let tagText = tagBadge.clone().children().remove().end().text().trim();
-
-//     if (!profileId) {
-//         Swal.fire("Profile ID missing");
-//         return;
-//     }
-
-//     $.ajax({
-//         url: CONFIG['portal'] + "/api/delete-tags",
-//         type: "POST",
-//         contentType: "application/json",
-//         data: JSON.stringify({
-//             profile_id: profileId,
-//             tag: tagText
-//         }),
-//         headers: { "X-CSRFToken": CSRF_TOKEN },
-//         success: function (res) {
-//             if (res.statusCode === 0) {
-
-//                 tagBadge.remove();
-
-//                 Swal.fire({
-//                     icon: "success",
-//                     title: "Deleted successfully",
-//                     timer: 1200,
-//                     showConfirmButton: false
-//                 });
-
-//             } else {
-//                 Swal.fire({
-//                     icon: "error",
-//                     title: "Delete failed"
-//                 });
-//             }
-//         },
-//         error: function () {
-//             Swal.fire({
-//                 icon: "error",
-//                 title: "Something went wrong"
-//             });
-//         }
-  
-
-//     });
-
-// });
 $(document).on("click", ".remove-tag", function (e) {
 
     e.stopPropagation();
