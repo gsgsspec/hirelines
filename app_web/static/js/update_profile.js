@@ -519,10 +519,26 @@ $(document).on("click", ".save-table-btn", function () {
 // });
 
 
+// $(document).on("click", ".delete-row-plain-icon", function (e) {
+//     e.stopPropagation(); // Stop event from triggering row selection
+//     $(this).closest("tr").remove(); // Remove the closest parent table row
+// });
 $(document).on("click", ".delete-row-plain-icon", function (e) {
-    e.stopPropagation(); // Stop event from triggering row selection
-    $(this).closest("tr").remove(); // Remove the closest parent table row
+    e.stopPropagation();
+
+    const tableId = $(this).closest("table").attr("id");
+
+    // Mark correct tab as changed
+    if (tableId === "EducationTable") CHANGED_TABS.education = true;
+    if (tableId === "ExperienceTable") CHANGED_TABS.experience = true;
+    if (tableId === "projectTable") CHANGED_TABS.projects = true;
+    if (tableId === "AwardsTable") CHANGED_TABS.awards = true;
+    if (tableId === "CertificationsTable") CHANGED_TABS.certifications = true;
+
+    // Remove row from UI
+    $(this).closest("tr").remove();
 });
+
 
 
 // $(document).on("submit", "#Person-detais", function (e) {
