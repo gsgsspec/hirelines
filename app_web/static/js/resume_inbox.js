@@ -195,7 +195,7 @@ function updateResumeTable(resumes){
                 <td>${r.name}</td>
                 <td>${r.date}</td>
                 <td>${status}</td>
-                <td>${r.tags || ""}</td>
+                <td style="display:none;">${r.tags || ""}</td>
             </tr>
         `;
         tbody.insertAdjacentHTML("beforeend", row);
