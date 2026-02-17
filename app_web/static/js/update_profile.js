@@ -1408,57 +1408,42 @@ $(document).on("click", ".remove-tag", function (e) {
         return;
     }
 
-    Swal.fire({
-        title: "Are you sure?",
-        text: `Delete tag "${tagText}" ?`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: '#274699',
-        cancelButtonColor: '#f25c05',
-        confirmButtonText: "Yes, Delete"
-    }).then((result) => {
 
-        if (result.isConfirmed) {
+    $.ajax({
+        url: CONFIG['portal'] + "/api/delete-tags",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            profile_id: profileId,
+            tag: tagText
+        }),
+        headers: { "X-CSRFToken": CSRF_TOKEN },
+        success: function (res) {
 
-            $.ajax({
-                url: CONFIG['portal'] + "/api/delete-tags",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({
-                    profile_id: profileId,
-                    tag: tagText
-                }),
-                headers: { "X-CSRFToken": CSRF_TOKEN },
-                success: function (res) {
+            if (res.statusCode === 0) {
 
-                    if (res.statusCode === 0) {
+                tagBadge.remove();
 
-                        tagBadge.remove();
+                Swal.fire({
+                    icon: "success",
+                    title: "Deleted successfully",
+                    timer: 1200,
+                    showConfirmButton: false
+                });
 
-                        Swal.fire({
-                            icon: "success",
-                            title: "Deleted successfully",
-                            timer: 1200,
-                            showConfirmButton: false
-                        });
-
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Delete failed"
-                        });
-                    }
-                },
-                error: function () {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Something went wrong"
-                    });
-                }
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Delete failed"
+                });
+            }
+        },
+        error: function () {
+            Swal.fire({
+                icon: "error",
+                title: "Something went wrong"
             });
-
         }
-
     });
 
 });

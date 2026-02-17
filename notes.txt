@@ -458,11 +458,11 @@ ALTER TABLE company add column resumetemplateid int null;
 
 ALTER TABLE resume add column jobid int null;
 
-
+===============manikanta=============16-02-25========
 
 CREATE TABLE tags (
     id INT AUTO_INCREMENT PRIMARY KEY,
     tag VARCHAR(40) NOT NULL,
     resumeid INT NULL,
-    profileid INT NULL,
+    profileid INT NULL
 );
