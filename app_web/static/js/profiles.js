@@ -4,7 +4,7 @@ $(document).ready(function () {
         "order": [],
         pageLength: 50,
         // scrollY: '600px',
-        "ordering": false,
+        "ordering": true,
         autoWidth: false,
         columnDefs: [
             {
