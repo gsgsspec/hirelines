@@ -5,6 +5,7 @@ $(document).ready(function () {
         pageLength: 50,
         // scrollY: '600px',
         "ordering": false,
+        autoWidth: false,
         columnDefs: [
             {
                 targets: 8,   

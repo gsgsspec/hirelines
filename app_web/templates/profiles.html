@@ -194,7 +194,17 @@
     </div>
 </div>
 
+<style>
+#profiles-table {
+    width: 100% !important;
+    table-layout: fixed;
+}
 
+#profiles-table th,
+#profiles-table td {
+    vertical-align: middle;
+}
+</style>
 <script src="{% static 'js/profiles.js' %}"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
