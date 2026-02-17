@@ -154,10 +154,10 @@
                     <td>{{ p.profilecode|default:"" }}</td>
                     <td>{{ p.firstname|default:"" }} {{ p.lastname|default:"" }}</td>
                     <td>{{ p.title|default:"" }}</td>
-                    <td>{{ p.final_experience }}</td>
+                    <td data-order="{{ p.final_experience|cut:' Years'|cut:' Year' }}">{{ p.final_experience }}</td>
                     <!-- <td>{{ p.profilestrength }}%</td>
                     <td>{{ p.status_text }}</td> -->
-                    <td>
+                    <td data-order="{{ p.profilestrength }}">
                         <div class="strength-wrap">
                             <div class="bar 
                                 {% if p.profilestrength >= 70 %} green

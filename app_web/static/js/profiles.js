@@ -168,6 +168,8 @@ function filter_profiles() {
             for (var n = 0; n < FILTERED_DATA.length; n++) {
 
                 var p = FILTERED_DATA[n];
+                var tr = '<tr onclick="window.location.href=\'/profileview/' + p["id"] + '\'" style="cursor:pointer;">';
+
 
                 // SKILLS TEXT METHOD SAME AS BEFORE
                 let skillsText = "";
@@ -181,27 +183,31 @@ function filter_profiles() {
                     skillsText = "-";
                 }
 
+                 // Experience
+                var expText = p["experience"] || "";
+                var expNumber = parseInt(expText);
+                expNumber = isNaN(expNumber) ? 0 : expNumber;
 
-                for (var n = 0; n < FILTERED_DATA.length; n++) {
+                // for (var n = 0; n < FILTERED_DATA.length; n++) {
 
-                    var p = FILTERED_DATA[n];
+                //     var p = FILTERED_DATA[n];
 
-                    var tr = '<tr onclick="window.location.href=\'/profileview/' + p["id"] + '\'" style="cursor:pointer;">';
-                    var strength = parseInt(p["profilestrength"] || 0);
+                    // var tr = '<tr onclick="window.location.href=\'/profileview/' + p["id"] + '\'" style="cursor:pointer;">';
+                var strength = parseInt(p["profilestrength"] || 0);
 
-                    var strengthClass = "red";
-                    if (strength >= 70) strengthClass = "green";
-                    else if (strength >= 40) strengthClass = "orange";
+                var strengthClass = "red";
+                if (strength >= 70) strengthClass = "green";
+                else if (strength >= 40) strengthClass = "orange";
 
-                    $("#profiles-table tbody").append(
+                $("#profiles-table tbody").append(
                         tr
                         + '<td style="width: 180px;">' + p["date"] + '</td>'
                         + '<td>' + p["source"] + '</td>'
                         + '<td>' + p["code"] + '</td>'
                         + '<td>' + p["firstname"] + " " + p["lastname"] + '</td>'
                         + '<td>' + p["title"] + '</td>'
-                        + '<td>' + p["experience"] + '</td>'
-                        + '<td>'
+                        +'<td data-order="' + expNumber + '">' + expText + '</td>'
+                        + '<td data-order="' + strength + '">'
                         +   '<div class="strength-wrap">'
                         +       '<div class="bar ' + strengthClass + '" style="--w:' + strength + '%;">'
                         +           '<span></span>'
@@ -211,8 +217,8 @@ function filter_profiles() {
                         + '</td>'                        + '<td>' + p["status"] + '</td>'
                         + '<td>' + (p["profile_tags"] || "") + '</td>'
                         + '</tr>'
-                    );
-                }
+                );
+            }
 
                 // for (var n = 0; n < FILTERED_DATA.length; n++) {
 
@@ -266,7 +272,7 @@ function filter_profiles() {
                 // }
 
 
-            }
+            // }
 
             // 4️⃣ REINITIALIZE DATATABLE
             $('#profiles-table').DataTable({
