@@ -29,6 +29,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkboxes = document.querySelectorAll(".jd-checkbox");
     const noActiveMsg = document.getElementById("noActiveMsg");
 
+    document.getElementById("copyCareerUrlBtn").addEventListener("click", function () {
+        const input = document.getElementById("careerUrlInput");
+        navigator.clipboard.writeText(input.value);
+
+        const msg = document.getElementById("copyMsg");
+        msg.style.display = "inline";
+        setTimeout(() => msg.style.display = "none", 1200);
+    });
+
+
     // If no active JD checkboxes exist
     if (checkboxes.length === 0) {
         publishBtn.disabled = true;
