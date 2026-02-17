@@ -2,11 +2,15 @@
 
 
 
-<div class="content-wrapper">
+<!-- <div class="content-wrapper"> -->
     <!-- Content -->
-
-    <div class="container-xxl flex-grow-1 container-p-y pt-0">
-        <h4 class="fw-bold py-2">Evaluation</h4>
+<div class="card">
+    <div class="card-title-table">
+        <h4 class="card-header">Evaluation</h4>
+        <div class="p-3 text-align-right d-flex align-items-center justify-content-center"></div>
+    </div>
+    <!-- <div class="container-xxl flex-grow-1 container-p-y pt-0">
+        <h4 class="fw-bold py-2">Evaluation</h4> -->
 
         <!-- Basic Layout -->
         <div class="row">
@@ -39,32 +43,32 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid">
-        <!-- DATATABLE DEMO 1-->
-        <div class="card">
-            <!-- <div class="card-header">
-                <div class="card-title" id="heading"></div>
-                <div class="evaluation-header-buttons">
-                <button class="btn btn-cancel btn_width ml-2 float-right"
-                        onclick="window.location.href=''" type="button">Exit</button>
-                        <button class="btn btn-cancel btn_width ml-2 float-right"
-                        type="button" id="next-participant-button" style="width:120px" onclick="showNextParticipant(PARTICIPANT)">Next Student</button>
-                        <button class="btn btn-cancel btn_width ml-4 float-right"  onclick="nextquestion()" type="button"style="width:120px">Next Question</button>
+        <div class="container-fluid">
+            <!-- DATATABLE DEMO 1-->
+            <div class="">
+                <!-- <div class="card-header">
+                    <div class="card-title" id="heading"></div>
+                    <div class="evaluation-header-buttons">
+                    <button class="btn btn-cancel btn_width ml-2 float-right"
+                            onclick="window.location.href=''" type="button">Exit</button>
+                            <button class="btn btn-cancel btn_width ml-2 float-right"
+                            type="button" id="next-participant-button" style="width:120px" onclick="showNextParticipant(PARTICIPANT)">Next Student</button>
+                            <button class="btn btn-cancel btn_width ml-4 float-right"  onclick="nextquestion()" type="button"style="width:120px">Next Question</button>
+                    </div>
+                </div> -->
+    
+                <div class="eval-question-section">
+                    <table class="table table-hover w-100" id="questions_table">
+                        <tbody id="questions" style="cursor: pointer;">
+                            <div class="eval-question-div" id="questions">
+                            </div>
+                        </tbody>
+                    </table>
+                    
                 </div>
-            </div> -->
-
-            <div class="card-body eval-question-section">
-                <table class="table table-hover w-100" id="questions_table">
-                    <tbody id="questions" style="cursor: pointer;">
-                        <div class="eval-question-div" id="questions">
-                        </div>
-                    </tbody>
-                </table>
-                
             </div>
+            <p id="p_flag" name="{{hide_reg_number}}" hidden></p>
         </div>
-        <p id="p_flag" name="{{hide_reg_number}}" hidden></p>
     </div>
     <!-- / Content -->
 
