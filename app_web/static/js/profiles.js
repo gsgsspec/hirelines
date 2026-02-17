@@ -187,6 +187,11 @@ function filter_profiles() {
                     var p = FILTERED_DATA[n];
 
                     var tr = '<tr onclick="window.location.href=\'/profileview/' + p["id"] + '\'" style="cursor:pointer;">';
+                    var strength = parseInt(p["profilestrength"] || 0);
+
+                    var strengthClass = "red";
+                    if (strength >= 70) strengthClass = "green";
+                    else if (strength >= 40) strengthClass = "orange";
 
                     $("#profiles-table tbody").append(
                         tr
@@ -196,8 +201,14 @@ function filter_profiles() {
                         + '<td>' + p["firstname"] + " " + p["lastname"] + '</td>'
                         + '<td>' + p["title"] + '</td>'
                         + '<td>' + p["experience"] + '</td>'
-                        + '<td>' + p["profilestrength"] + '%'+ '</td>'
-                        + '<td>' + p["status"] + '</td>'
+                        + '<td>'
+                        +   '<div class="strength-wrap">'
+                        +       '<div class="bar ' + strengthClass + '" style="--w:' + strength + '%;">'
+                        +           '<span></span>'
+                        +       '</div>'
+                        +       '<span class="percent">' + strength + '%</span>'
+                        +   '</div>'
+                        + '</td>'                        + '<td>' + p["status"] + '</td>'
                         + '<td>' + (p["profile_tags"] || "") + '</td>'
                         + '</tr>'
                     );
@@ -260,7 +271,8 @@ function filter_profiles() {
             // 4️⃣ REINITIALIZE DATATABLE
             $('#profiles-table').DataTable({
                 "order": [],
-                "ordering": false,
+                "ordering": true,
+                autoWidth: false,
                 pageLength: 50,
                 columnDefs: [
                     {

@@ -1751,7 +1751,7 @@ def filter_profiles_api(request):
         "E": "Employee",
     }
     if strength is not None:
-        filtered_profiles = filtered_profiles.filter(strength=strength)
+        filtered_profiles = filtered_profiles.filter(strength__gte=strength)
 
 
 
