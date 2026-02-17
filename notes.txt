@@ -466,3 +466,6 @@ CREATE TABLE tags (
     resumeid INT NULL,
     profileid INT NULL
 );
+
+===============Srikanth=============17-02-25========
+ALTER TABLE jobdesc add column webpublish varchar(1) null;

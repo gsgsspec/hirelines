@@ -2134,3 +2134,19 @@ def saveresumetagsDB(dataObjs, user_data):
     except Exception as e:
         print("Error saving resume tags:", e)
         return False
+
+
+def publishCareerJdDB(dataObjs,user_data):
+    try:
+
+        with transaction.atomic():
+
+            JobDesc.objects.filter(companyid=user_data.companyid).update(webpublish=None)
+
+            JobDesc.objects.filter(
+                companyid=user_data.companyid,
+                id__in=dataObjs["job_ids"]
+            ).update(webpublish="Y")
+
+    except Exception as e:
+        raise

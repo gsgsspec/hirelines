@@ -33,7 +33,7 @@ from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Looku
 from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, saveStarQuestion, demoRequestDB, deleteCandidateDB, updateSourcesDataDB, \
     updateCandidateInfoDB, updateDashboardDisplayFlagDB, addProfileDB, addResumeProfileDB, updateProfileDetailsDB, updateProfileEducationDB, updateProfileExperienceDB, updateProfileProjectsDB, updateProfileAwardsDB, updateProfileCertificatesDB, \
     updateProfileSkillsDB,updateProfileActivityDB,saveWorkCalDB,scheduleCandidateInterviewLinkDB,scheduleCandidateInterviewDB, jdRecruiterAssignDB,updateFullProfileDB, addWorkspaceDB, addProfileActivityDB,updateWorkspaceDB,updateProfileCompletion, \
-    saveJobBoardConfigDB, saveJDJobBoardsDB, addResumeDB, updateResumeTemplateDB, addResumeFromJobPageDB, saveresumetagsDB
+    saveJobBoardConfigDB, saveJDJobBoardsDB, addResumeDB, updateResumeTemplateDB, addResumeFromJobPageDB, saveresumetagsDB, publishCareerJdDB
 from app_api.functions.constants import hirelines_registration_script, const_profile_status
 from app_api.functions.email_resume import fetch_gmail_attachments
 
@@ -3606,3 +3606,30 @@ def deletetags(request):
             "statusCode": 1,
             "error": str(e)
         })
+
+
+
+@api_view(['POST'])
+def publishCareerJD(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            user_data = auth_user(request.user)
+
+            publishCareerJdDB(dataObjs,user_data)
+
+            response['data'] = "success"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in Updating Career JD'
+        response['error'] = str(e)
+        raise
+    
+    return JsonResponse(response)

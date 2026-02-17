@@ -91,6 +91,7 @@ class JobDesc(models.Model):
     comments = models.CharField(max_length=100, null=True)
     recruiterids = models.CharField(max_length=100,null=True)
     hiringmanagerid= models.IntegerField(null=True)
+    webpublish = models.CharField(max_length=1,null=True)
 
     class Meta:
         db_table = 'jobdesc'

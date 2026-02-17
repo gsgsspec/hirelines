@@ -6258,7 +6258,7 @@ def getJobDescApplyPageData(jid):
             "id":jobdesc.id,
             "title":jobdesc.title,
             "role":jobdesc.role,
-           "description": (jobdesc.description or "").strip(),
+            "description": (jobdesc.description or "").strip(),
             "expmin":jobdesc.expmin,
             "expmax":jobdesc.expmax,
             "department":jobdesc.department,
@@ -6266,6 +6266,7 @@ def getJobDescApplyPageData(jid):
             "positions":jobdesc.positions,
             "jobcode":jobdesc.jobcode,
             "company_name":company.name,
+            "enc_companyid": encrypt_code(company.id),
             "logo_url":branding.logourl,
             "primary_color":primary_color,
             "skills":skills_list
@@ -6284,3 +6285,48 @@ def extract_css_variable(css_text, var_name):
     pattern = rf"{re.escape(var_name)}\s*:\s*([^;]+);"
     match = re.search(pattern, css_text)
     return match.group(1).strip() if match else None
+
+
+def getCompanyCareers(cid):
+    try:
+
+        company = Company.objects.filter(id=cid).last()
+
+        if not company:
+            return None
+        
+        jds_data = []
+        
+        active_jds = JobDesc.objects.filter(companyid=cid,status="A",webpublish="Y")
+
+        for jd in active_jds:
+            jds_data.append({
+                "id":jd.id,
+                "enc_id": encrypt_code(jd.id),
+                "title":jd.title,
+                "location": jd.location,
+                "positions": jd.positions,
+                "department": jd.department,
+                "expmin": jd.expmin,
+                "expmax": jd.expmax,
+                "jobcode":jd.jobcode if jd.jobcode else None
+            })
+
+        branding = Branding.objects.get(companyid=cid)
+
+        branding_css = branding.content if branding else ""
+
+        primary_color = extract_css_variable(branding_css, "--brand-primary-color") or "#2563eb"
+        
+        careers_data = {
+            "id":company.id,
+            "company_name": company.name,
+            "primary_color":primary_color,
+            "logo_url":branding.logourl,
+            "jds_data": jds_data
+        }
+
+        return careers_data
+
+    except Exception as e:
+        raise

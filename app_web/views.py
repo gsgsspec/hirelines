@@ -8,14 +8,14 @@ from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
     getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst,RecruitersPerformanceService, \
-    getJobboards, getJDJobboards, getOverallDashboardCounts,SourcePerformanceService, getResumeTemplates, getJobDescApplyPageData
+    getJobboards, getJDJobboards, getOverallDashboardCounts,SourcePerformanceService, getResumeTemplates, getJobDescApplyPageData, getCompanyCareers
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
 import json
 import requests
 from app_api.functions.email_resume import fetch_gmail_attachments
-from  app_api.functions.enc_dec import decrypt_code
+from  app_api.functions.enc_dec import decrypt_code, encrypt_code
 
 
 from datetime import datetime
@@ -297,8 +297,11 @@ def jobDescription(request):
                         child['menuItemLink'] == currentPath]
         if menuItemObjList:
             companyId = getCompanyId(user_mail)
+            enc_companyid = encrypt_code(companyId)
+            hirelines_domain = getConfig()["DOMAIN"]["hirelines"]
+            careers_url = f"{hirelines_domain}/carrers-page/{enc_companyid}"
             allJds = getCompanyJDsList(companyId,user_role)
-            return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList,'activeJd':allJds['activeJd'], 'inactiveJd': allJds['inactiveJd']})
+            return render(request, "portal_index.html", {"template_name": "job_descriptions_list.html", 'menuItemList': menuItemList,'activeJd':allJds['activeJd'], 'inactiveJd': allJds['inactiveJd'],'careers_url':careers_url})
         else:
             return redirect('../')
 
@@ -1500,6 +1503,19 @@ def jobApplyPage(request,jid):
             jobdesc_data = None
 
         return render(request, "job_apply.html",{"jobdesc_data":jobdesc_data})
+    
+    except Exception as e:
+        raise
+
+
+def companyCareerPage(request,cid):
+    try:
+
+        cid = decrypt_code(cid)
+        
+        company_careers = getCompanyCareers(cid)
+
+        return render(request, "company_career.html",{"company_careers":company_careers})
     
     except Exception as e:
         raise

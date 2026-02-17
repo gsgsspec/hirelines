@@ -15,6 +15,8 @@
         <div class="tabsContainer">
           <span id="active" class="custm-tab p-clr activeTab shadow" onclick="tabSwitch(this.id)">Active</span>
           <span id="Inactive" class="custm-tab p-clr" onclick="tabSwitch(this.id)">Inactive</span>
+          <span class="custm-tab p-clr" style="margin-left: auto;"  data-bs-toggle="modal" data-bs-target="#modalCenter"><i class="fas fa-suitcase"></i>&nbsp; Careers</span>
+          
         </div>
       </div>
 
@@ -116,6 +118,81 @@
   </div>  
 </div>
 
+
+<div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header wk-modal-header">
+        <h5 class="modal-title p-clr">Career Openings</h5>
+      </div>
+      
+      <div class="modal-body">
+
+        <!-- URL + Copy -->
+        <div class="mb-3">
+          <label class="form-label">Career Page URL</label>
+
+          <div class="d-flex gap-2 align-items-center">
+            <input
+              type="text"
+              class="form-control"
+              id="careerUrlInput"
+              value="{{ careers_url }}"
+              readonly
+            />
+
+            <button type="button" class="btn btn-outline-primary" id="copyCareerUrlBtn">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+
+          <small class="text-muted" id="copyMsg" style="display:none;">Copied!</small>
+        </div>
+
+        <hr />
+
+        <!-- Job List -->
+        <div class="row" id="jdListArea">
+          <label class="form-label mb-3">Include Job descriptions</label>
+          {% for jd in activeJd %}
+            {% if jd.status == "A" %}
+              <div class="col-12 mb-2 jd-item">
+                <div class="form-check">
+                  <input
+                    class="form-check-input jd-checkbox"
+                    type="checkbox"
+                    value="{{ jd.id }}"
+                    id="jd_{{ jd.id }}"
+                    {% if jd.webpublish == "Y" %} checked {% endif %}
+                  />
+                  <label class="form-check-label" for="jd_{{ jd.id }}">
+                    {{ jd.title }}
+                  </label>
+                </div>
+              </div>
+            {% endif %}
+          {% empty %}
+            <p class="text-muted text-center">No active job descriptions available.</p>
+          {% endfor %}
+
+        </div>
+
+          <!-- Message if no ACTIVE jobs (JS will show this) -->
+          <p class="text-muted text-center mt-2" id="noActiveMsg" style="display:none;">
+            No active job descriptions available.
+          </p>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="publishBtn">Publish</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/job_descriptions.js' %}"></script>
+
 <style>
   .jd_card_border{
     border: 0.8px solid #b5b2b261;
@@ -169,11 +246,12 @@
     height: 50px;
     /* border: 0.9px solid #d3d3d369; */
     border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
-    width: 240px;
+    /* width: 240px; */
     padding: 0.5rem;
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
+    gap: 10px;
    }
    .custm-tab{
     height: min-content;
@@ -193,28 +271,3 @@
    }
 
 </style>
-<script>
-  function redirectToJobDetails(redirectId) {
-    window.location.href = '/job-description-set-up/'+redirectId;
-  }
-  function redirectToJobDashboard(jid){
-    window.location.href = '/jd/'+jid;
-  }
-
-  function tabSwitch(element) {
-  if (element === 'active') {
-    $('#active').addClass('activeTab shadow');  // Added both classes with space
-    $('#Inactive').removeClass('activeTab shadow');  // Removed both classes with space
-    $("#activeJdsContainer").fadeIn("slow");
-    $("#InactiveJdsContainer").fadeOut("slow").hide(); // Ensures #InactiveJdsContainer is hidden after fading out
-  }
-
-  if (element === 'Inactive') {
-    $('#Inactive').addClass('activeTab shadow');  // Added both classes with space
-    $('#active').removeClass('activeTab shadow');  // Removed both classes with space
-    $("#activeJdsContainer").fadeOut("slow");
-    $("#InactiveJdsContainer").fadeIn("slow").show(); // Ensures #InactiveJdsContainer is shown after fading in
-  }
-}
-
-</script>

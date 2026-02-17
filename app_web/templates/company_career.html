@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ company_careers.company_name }} | Job Openings</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ company_careers.logo_url }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="{% static 'lib/portal/css/career_page.css' %}" />
+
+</head>
+
+<body>
+
+    <header class="top" style="background: {{ company_careers.primary_color }}">
+        <div class="container">
+            <div class="hero">
+                <div class="hero-left">
+                    <div class="logo">
+                        <img src="{{ company_careers.logo_url }}" alt="logo">
+                    </div>
+
+                    <div class="hero-title">
+                        <h1>{{ company_careers.company_name }}</h1>
+                        <div class="sub"> Job Openings</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+   
+    <div class="container">
+        <div class="job-list">
+    
+        {% if company_careers.jds_data %}
+        
+            {% for job in company_careers.jds_data %}
+                <div class="job-row" onclick="window.location.href='/job-application/{{ job.enc_id }}'">
+    
+                    <div class="job-left">
+                        <h2 class="job-title">{{ job.title }}</h2>
+
+                        {% if jobdesc_data.jobcode %}
+                        <div class="job-code">Job Code: {{ job.jobcode }}</div>
+                        {% endif %}
+    
+                        <div class="meta">
+                            <div class="pill">
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ job.location }}
+                            </div>
+    
+                            <div class="pill">
+                                <i class="fa-solid fa-briefcase"></i>
+                                {{ job.expmin }} - {{ job.expmax }} Years
+                            </div>
+    
+                            <div class="pill">
+                                <i class="fa-solid fa-user-group"></i>
+                                {{ job.positions }} Positions
+                            </div>
+    
+                            {% if job.department %}
+                            <div class="pill">
+                                <i class="fa-solid fa-building"></i>
+                                {{ job.department }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+    
+                    <div class="job-right">
+                        <button class="btn" type="button" style="background: {{ company_careers.primary_color }}">
+                            View Job
+                        </button>
+                    </div>
+    
+                </div>
+                {% endfor %}
+    
+            {% else %}
+                <div class="no-results" style="display:block;">
+                    <h3>No job openings</h3>
+                    <p>No openings available right now.</p>
+                </div>
+            {% endif %}
+    
+        </div>
+    </div>
+
+
+</body>
+
+</html>

@@ -125,5 +125,6 @@ urlpatterns = [
 
 
     path("apply-job-page",views.addResumeFromJobPage),
+    path("publish-career-jds",views.publishCareerJD),
 
 ]
