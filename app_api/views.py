@@ -1690,7 +1690,7 @@ def filter_profiles_api(request):
 
     exp_from = int(exp_from) if exp_from else None
     exp_to = int(exp_to) if exp_to else None
-    strength = int(strength) if strength else None
+    # strength = int(strength) if strength else None
 
 
   
@@ -1750,8 +1750,29 @@ def filter_profiles_api(request):
         "O": "Offered",
         "E": "Employee",
     }
-    if strength is not None:
-        filtered_profiles = filtered_profiles.filter(strength__gte=strength)
+    # if strength is not None:
+    #     filtered_profiles = filtered_profiles.filter(strength__gte=strength)
+    # ===============================
+# EXCEL STYLE STRENGTH FILTER
+# ===============================
+    if strength:
+        import re
+
+        match = re.match(r'([><])?\s*(\d+)', strength)
+
+        if match:
+            operator = match.group(1)
+            value = int(match.group(2))
+
+            if operator == '>':
+                filtered_profiles = filtered_profiles.filter(strength__gt=value)
+
+            elif operator == '<':
+                filtered_profiles = filtered_profiles.filter(strength__lt=value)
+
+            else:  # No operator → exact match
+                filtered_profiles = filtered_profiles.filter(strength=value)
+
 
 
 

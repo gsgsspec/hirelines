@@ -1,5 +1,40 @@
 $(document).ready(function () {
     $.noConflict();
+    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+
+        let input = $('#filter_strength').val().trim();
+        if (!input) return true;
+
+        let table = $('#profiles-table').DataTable();
+        let rowNode = table.row(dataIndex).node();
+        if (!rowNode) return true;
+
+        // Strength column = 7th column
+        let strengthCell = rowNode.querySelector('td:nth-child(7)');
+        if (!strengthCell) return true;
+
+        let strength = parseFloat(strengthCell.getAttribute('data-order')) || 0;
+
+        // Allow only < or >
+        let match = input.match(/^([<>])?\s*(\d+)$/);
+        if (!match) return false; // Invalid input = show nothing
+
+        let operator = match.group = match[1];
+        let value = parseFloat(match[2]);
+
+        if (operator === ">") {
+            return strength > value;
+        }
+
+        if (operator === "<") {
+            return strength < value;
+        }
+
+        // No operator → exact match
+        return strength == value;
+    });
+
+
     $('#profiles-table').DataTable({
         "order": [],
         pageLength: 50,
