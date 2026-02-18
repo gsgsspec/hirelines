@@ -150,7 +150,7 @@
             <tbody class="table-border-bottom-0">
                 {% for p in profile_details %}
                 <tr onclick="window.location.href='/profileview/{{p.id}}'">
-                    <td style="width: 180px;">{{ p.formatted_date }}</td>
+                    <td style="width: 180px;"data-order="{{ p.dateofcreation|date:'Y-m-d H:i:s'}}">{{ p.formatted_date }}</td>
                     <td>{{ p.source_code }}</td>
                     <td>{{ p.profilecode|default:"" }}</td>
                     <td>{{ p.firstname|default:"" }} {{ p.lastname|default:"" }}</td>

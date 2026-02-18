@@ -1827,6 +1827,7 @@ def filter_profiles_api(request):
         final_output.append({
             "id":profile.id,
             "date": profile.dateofcreation.strftime("%d-%b-%Y %I:%M %p"),
+            "date_iso": profile.dateofcreation.strftime("%Y-%m-%d %H:%M:%S"), 
             "code": profile.profilecode if profile.profilecode else "",
             "title": profile.title if profile.title else " " ,
             "firstname": profile.firstname  if profile.firstname else " ",
