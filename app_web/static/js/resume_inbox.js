@@ -163,6 +163,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function updateResumeTable(resumes){
 
+    $('#resume-table').DataTable().destroy();
+
     let tbody = document.querySelector("#resume-table tbody");
 
     tbody.innerHTML = "";
@@ -199,6 +201,22 @@ function updateResumeTable(resumes){
             </tr>
         `;
         tbody.insertAdjacentHTML("beforeend", row);
+    });
+
+    $('#resume-table').DataTable({
+        "pageLength": 50,
+        "lengthMenu": [10, 25, 50 , 100],
+        "order": [],
+        "ordering": true,
+        columnDefs: [
+            {
+                targets: 4,
+                visible: false,
+                searchable: true
+            }
+        ],
+        language: { search: "", searchPlaceholder: "Search..." },
+        pagingType: 'simple_numbers'
     });
 }
 
@@ -508,12 +526,26 @@ function addTagToUI(tagName) {
     `;
     $("#resume-tags").append(tagHtml);
 }
+function loadResumeTags(resumeId) {
+
+    fetch(`${CONFIG['portal']}/api/get-resume-tags/${resumeId}`)
+        .then(res => res.json())
+        .then(data => {
+
+            $("#resume-tags").html("");
+
+            data.tags.forEach(tag => {
+                addTagToUI(tag);
+            });
+
+        });
+}
 
 
 function normalizeTag(tag) {
     return tag
         .toLowerCase()
-        .replace(/\s+/g, "")   // remove all spaces
+        .replace(/\s+/g, "")   
         .trim();
 }
 
@@ -542,29 +574,7 @@ function tagExists(tagName) {
     return exists;
 }
 
-function processInputValue() {
 
-    let inputVal = $("#resume-tags-input").val().trim();
-    if (!inputVal) return;
-
-    let tagParts = inputVal.split(",");
-
-    tagParts.forEach(part => {
-
-        let cleaned = part.trim();   
-
-        if (!cleaned) return;
-
-        if (tagExists(cleaned)) {
-            $("#tag-info-msg").show();
-        } else {
-            $("#tag-info-msg").hide();
-            addTagToUI(cleaned);   
-        }
-    });
-
-    $("#resume-tags-input").val("");
-}
 
 $("#resume-tags-input").on("input", function () {
 
@@ -587,15 +597,33 @@ $("#resume-tags-input").on("input", function () {
 
 
 
-$("#save-tagsdata").on("click", function () {
-    processInputValue();
 
+$("#save-tagsdata").on("click", function () {
+
+    let inputVal = $("#resume-tags-input").val().trim();
+    if (!inputVal) return;
+
+    // let tagParts = inputVal.split(",");
+    // let tags = tagParts.map(t => t.trim()).filter(t => t !== "");
+    let tagParts = inputVal.split(",");
     let tags = [];
 
-    $(".tag-badge").each(function () {
-        let tagText = $(this).clone().children().remove().end().text().trim();
-        tags.push(tagText);
-    });
+    for (let part of tagParts) {
+
+        let cleaned = part.trim();
+        if (!cleaned) continue;
+
+        if (tagExists(cleaned)) {
+            Swal.fire({
+                icon: "warning",
+                title: "Duplicate Tag",
+                text: `"${cleaned}" is already added`
+            });
+            return;
+        }
+
+        tags.push(cleaned);
+    }
 
     let activeRow = $(".resume-row.active-row");
 
@@ -624,11 +652,23 @@ $("#save-tagsdata").on("click", function () {
                 timer: 1200,
                 showConfirmButton: false
             });
+
+          
+            $("#resume-tags-input").val("");
+
+            $('#close-resume-preview-btn').click();
+            reloadResumesWithCurrentFilters();
+            loadResumeTags(resumeId);
         }
 
     });
 });
-
+$("#resume-tags-input").on("keypress", function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            $("#save-tagsdata").click();
+        }
+});
 
 $(document).on("click", ".remove-tag", function (e) {
 

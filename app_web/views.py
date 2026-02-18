@@ -987,12 +987,38 @@ def profilesPage(request):
                 p["primaryskills_name"] = ""
                 p["secondaryskills_name"] = ""
 
+            # profile_tags = list(
+            #     Tag.objects.filter(profileid=p["id"])
+            #     .values_list("tag", flat=True)
+            # )
+
+            # p["profile_tags"] = profile_tags
+            resume_id = p.get("resumeid")
+            
+
+            resume_tags = list(
+                Tag.objects.filter(resumeid=resume_id)
+                .values_list("tag", flat=True)
+            )
+
             profile_tags = list(
                 Tag.objects.filter(profileid=p["id"])
                 .values_list("tag", flat=True)
             )
 
-            p["profile_tags"] = profile_tags
+            combined_tags = resume_tags + profile_tags
+
+            unique_tags = {}
+            for tag in combined_tags:
+                # normalized = tag.lower().replace(" ", "").strip()
+                normalized = tag.lower().strip()
+
+                if normalized not in unique_tags:
+                    unique_tags[normalized] = tag
+
+            p["profile_tags"] = list(unique_tags.values())
+            
+
 
 
 

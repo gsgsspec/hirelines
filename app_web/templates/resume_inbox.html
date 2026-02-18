@@ -76,7 +76,7 @@
                         height="500px"
                         style="border: none;">
                     </iframe>  
-                    <br><br><br>
+                    <br>
                     <!-- <div class="resume-tags-section">
                         <label class="form-label">Tags</label>
                         <input type="text" 
@@ -90,21 +90,25 @@
                             <div class="col-sm-12 position-relative">
                                 <div class="resume-tags-section">
                                     <label class="form-label">Tags</label>
-                                    <div class="row mb-3">
+                                    <!-- <div class="row mb-3">
                                         <div class="col-sm-12">
                                             <div id="resume-tags" 
                                             </div>
                                         </div>
+                                    </div> -->
+                                    <div class="mb-3">
+                                        <div id="resume-tags"></div>
                                     </div>
-                                    <br><br><br>
-                                    <input type="text" id="resume-tags-input" class="form-control"
-                                        placeholder="Enter tags separated by comma (e.g #RefferedbyGS ,#ImmediateJoinee , #FromStartup, #FlexibleTime )" />
+                                    
+                                    <input type="text" id="resume-tags-input" class="form-control"  maxlength="40"
+                                        placeholder="Enter tags separated by comma (e.g #Refferedby, #ImmediateJoinee , #FromStartup, #FlexibleTime )" />
                                     <small id="tag-info-msg"
                                         class="text-warning"
                                         style="display:none;">
                                         This tag is already added for this resume
                                     </small>
                                 </div>
+                                <br>
                                 <div class="row mb-3">
                                         <div class="col-sm-12">
                                         Note : Enter tags separated by comma e.g FromStartup,ImmediateJoinee     
@@ -241,6 +245,12 @@
         cursor: pointer;
         font-weight: bold;
         color: red;
+    }
+    #resume-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 40px;
     }
     
     .dataTables_filter input {

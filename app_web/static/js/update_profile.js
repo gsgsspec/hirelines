@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById("resumeIframe").src = `/static/pdfjs/web/viewer.html?file=${encodedUrl}`;
 
-
+    loadProfileTagsFromDB();
 });
 
 // document.addEventListener('DOMContentLoaded', () => {
@@ -1259,7 +1259,7 @@ $(document).on("input paste", ".dynamic-table td[contenteditable='true']", funct
 function normalizeTag(tag) {
     return tag
         .toLowerCase()
-        .replace(/\s+/g, "")   // remove all spaces
+        .replace(/\s+/g, "")   
         .trim();
 }
 
@@ -1289,13 +1289,7 @@ function addProfileTag(tagName) {
 
     if (!tagName) return;
 
-    let cleaned = tagName.trim();   
-
-    if (profileTagExists(cleaned)) {   
-        $("#tag-info-msg").show();
-        $("#resume-tags-input").addClass("is-invalid");
-        return;
-    }
+    let cleaned = tagName.trim();
 
     let tagHtml = `
         <span class="tag-badge">
@@ -1305,9 +1299,6 @@ function addProfileTag(tagName) {
     `;
 
     $("#resume-tags").append(tagHtml);
-
-    $("#tag-info-msg").hide();
-    $("#resume-tags-input").removeClass("is-invalid");
 }
 
 
@@ -1331,39 +1322,33 @@ $("#resume-tags-input").on("input", function () {
     }
 });
 
-function processProfileInputValue() {
-
-    let inputVal = $("#resume-tags-input").val().trim();
-
-    if (!inputVal) return;
-
-    // Split by comma
-    let tagParts = inputVal.split(",");
-
-    tagParts.forEach(part => {
-        let cleaned = part.trim();
-        if (cleaned) {
-            addProfileTag(cleaned);
-        }
-    });
-
-    $("#resume-tags-input").val("");
-}
-
-
 
 
 
 $("#save-data").on("click", function () {
-    processProfileInputValue(); 
+
+    let inputVal = $("#resume-tags-input").val().trim();
+    if (!inputVal) return;
+
+    let tagParts = inputVal.split(",");
     let tags = [];
 
-    $("#resume-tags .tag-badge").each(function () {
+    for (let part of tagParts) {
 
-        let text = $(this).clone().children().remove().end().text().trim();
+        let cleaned = part.trim();
+        if (!cleaned) continue;
 
-        tags.push(text);
-    });
+        if (profileTagExists(cleaned)) {
+            Swal.fire({
+                icon: "warning",
+                title: "Duplicate Tag",
+                text: `"${cleaned}" is already added`
+            });
+            return;   
+        }
+
+        tags.push(cleaned);
+    }
 
     $.post(CONFIG['portal'] + "/api/save-profile-tags", {
 
@@ -1385,28 +1370,42 @@ $("#save-data").on("click", function () {
                 showConfirmButton: false
             });
 
-        } else {
+            $("#resume-tags-input").val("");
 
+            
+            loadProfileTagsFromDB();
+
+        } else {
             Swal.fire("Error saving tags");
         }
     });
 
 });
+$("#resume-tags-input").on("keypress", function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+        $("#save-data").click();
+    }
+});
 
-document.addEventListener("DOMContentLoaded", function () {
+
+
+function loadProfileTagsFromDB() {
 
     if (!profileId) return;
 
     $.get(CONFIG['portal'] + "/api/get-profile-tags/" + profileId, function (res) {
-    if (res.statusCode === 0) {
-        $("#resume-tags").html("");
-        res.tags.forEach(tag => {
-            addProfileTag(tag);
-        });
-    }
-    });
 
-});
+        if (res.statusCode === 0) {
+
+            $("#resume-tags").html("");
+
+            res.tags.forEach(tag => {
+                addProfileTag(tag);
+            });
+        }
+    });
+}
 
 
 $(document).on("click", ".remove-tag", function (e) {

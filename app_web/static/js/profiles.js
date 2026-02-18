@@ -250,7 +250,9 @@ function filter_profiles() {
                         +       '<span class="percent">' + strength + '%</span>'
                         +   '</div>'
                         + '</td>'                        + '<td>' + p["status"] + '</td>'
-                        + '<td>' + (p["profile_tags"] || "") + '</td>'
+                        // + '<td>' + (p["profile_tags"] || "") + '</td>'
+                        + '<td>' + (p["profile_tags"] ? p["profile_tags"].join(", ") : "") + '</td>'
+
                         + '</tr>'
                 );
             }

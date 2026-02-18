@@ -1779,7 +1779,7 @@ def filter_profiles_api(request):
     final_output = []
 
     for profile in filtered_profiles:
-
+        
         # --- EXPERIENCE ---
         exp = ProfileExperience.objects.filter(profileid=profile.id).first()
         years = (exp.yearto - exp.yearfrom) if exp and exp.yearfrom and exp.yearto else 0
@@ -1805,6 +1805,23 @@ def filter_profiles_api(request):
         else:
             primary_sk = ""
             secondary_sk = ""
+        
+        resume_id = profile.resumeid
+        resume_tags = Tag.objects.filter(resumeid=resume_id).values_list("tag", flat=True)
+
+        profile_tags = Tag.objects.filter(profileid=profile.id).values_list("tag", flat=True)
+
+        combined_tags = list(resume_tags) + list(profile_tags)
+
+        unique_tags = {}
+        for tag in combined_tags:
+            # normalized = tag.lower().replace(" ", "").strip()
+            normalized = tag.lower().strip()
+
+            if normalized not in unique_tags:
+                unique_tags[normalized] = tag
+        
+        final_tags = list(unique_tags.values())
 
         # --- APPEND OUTPUT ---
         final_output.append({
@@ -1819,7 +1836,8 @@ def filter_profiles_api(request):
             "status": const_profile_status.get(profile.status, profile.status),
             "primaryskills_name": primary_sk,
             "secondaryskills_name": secondary_sk,
-            "profilestrength": strength_val
+            "profilestrength": strength_val,
+            "profile_tags": final_tags
         })  
 
     return JsonResponse({"statusCode": 0, "data": final_output})
@@ -3481,38 +3499,40 @@ def getresumetags(request, resume_id):
         profile = Profile.objects.filter(resumeid=resume_id).first()
 
         profile_id = profile.id if profile else None
+
+        resume_tags = Tag.objects.filter(resumeid=resume_id).values_list("tag", flat=True)
+
+        profile_tags = Tag.objects.filter(profileid=profile_id).values_list("tag", flat=True)
+
+        combined_tags = list(resume_tags) + list(profile_tags)
+
+        unique_tags = {}
+        for tag in combined_tags:
+            # normalized = tag.lower().replace(" ", "").strip()
+            normalized = tag.lower().strip()
+
+            if normalized not in unique_tags:
+                unique_tags[normalized] = tag
         
-
-       
-        resume_tags = set(
-            Tag.objects.filter(resumeid=resume_id)
-            .values_list("tag", flat=True)
-        )
-       
-
+        all_tags = list(unique_tags.values())
         
-        profile_tags = set()
-
-        if profile_id:
-            profile_tags = set(
-                Tag.objects.filter(profileid=profile_id)
-                .values_list("tag", flat=True)
-            )
-       
-
-        
-        combined_tags = list(resume_tags.union(profile_tags))
 
         return JsonResponse({
             "statusCode": 0,
-            "tags": combined_tags
+            # "tags": list(unique_tags.values())
+            "tags": all_tags
         })
-
+    
     except Exception as e:
         return JsonResponse({
             "statusCode": 1,
             "error": str(e)
         })
+    
+        
+
+  
+
 
 
 def saveprofiletags(request):
@@ -3573,13 +3593,19 @@ def getprofiletags(request, profile_id):
 
         unique_tags = {}
         for tag in combined_tags:
-            normalized = tag.lower().replace(" ", "").strip()
+            # normalized = tag.lower().replace(" ", "").strip()
+            normalized = tag.lower().strip()
+
             if normalized not in unique_tags:
                 unique_tags[normalized] = tag
+        
+        final_tags = list(unique_tags.values())
+        print("final_tags",final_tags)
 
         return JsonResponse({
             "statusCode": 0,
-            "tags": list(unique_tags.values())
+            # "tags": list(unique_tags.values())
+            "tags": final_tags
         })
     except Exception as e:
         return JsonResponse({
