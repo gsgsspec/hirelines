@@ -926,6 +926,7 @@ def addResumeProfileDB(dataObjs,user_data):
             companyid = resume.companyid,
             dateofcreation = datetime.now(),
             status = "D",
+            strength = 0  
         )
 
         profile.save()
