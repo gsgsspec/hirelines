@@ -169,13 +169,16 @@ function updateResumeTable(resumes){
 
     tbody.innerHTML = "";
 
-    if (!resumes || resumes.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="3" class="text-center">No resumes found</td>
-            </tr>
-        `;
-        return;
+    // if (!resumes || resumes.length === 0) {
+    //     tbody.innerHTML = `
+    //         <tr>
+    //             <td colspan="3" class="text-center">No resumes found</td>
+    //         </tr>
+    //     `;
+    //     return;
+    // }
+    if (!resumes  || resumes.length === 0) {
+        resumes = [];
     }
 
 
@@ -215,7 +218,7 @@ function updateResumeTable(resumes){
                 searchable: true
             }
         ],
-        language: { search: "", searchPlaceholder: "Search..." },
+        language: { search: "", searchPlaceholder: "Search...", emptyTable: "No resumes found", },
         pagingType: 'simple_numbers'
     });
 }
