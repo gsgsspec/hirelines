@@ -140,6 +140,7 @@
                     <th>Name</th>
                     <th>Title</th>
                     <th>Experience</th>
+                    <th>Analysis</th>
                     <th>Strength</th>
                     <th>Status</th>
                     <th>Tags</th>
@@ -156,6 +157,14 @@
                     <td>{{ p.firstname|default:"" }} {{ p.lastname|default:"" }}</td>
                     <td>{{ p.title|default:"" }}</td>
                     <td data-order="{{ p.final_experience|cut:' Years'|cut:' Year' }}">{{ p.final_experience }}</td>
+
+                    <td>
+                        <i class="fas fa-file-alt resume-icon"
+                        onclick="event.stopPropagation(); window.location.href='/resume-analysis/{{p.id}}';"
+                        data-bs-toggle="tooltip"
+                        title="Profile Analysis"></i>
+                    </td>
+                    
                     <!-- <td>{{ p.profilestrength }}%</td>
                     <td>{{ p.status_text }}</td> -->
                     <td data-order="{{ p.profilestrength }}">
@@ -204,6 +213,17 @@
 #profiles-table th,
 #profiles-table td {
     vertical-align: middle;
+}
+.resume-icon {
+    font-size: 18px;
+    color: var(--primary-color);   /* Your primary color */
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.resume-icon:hover {
+    color: var(--primary-color);   /* Hover color */
+    transform: scale(1.15);
 }
 </style>
 <script src="{% static 'js/profiles.js' %}"></script>

@@ -1,0 +1,317 @@
+{% load static %}
+
+<style>
+.container {
+    max-width: 1000px;
+    margin: 32px auto;
+    padding: 20px;
+    display: flex;
+    gap: 18px;
+}
+
+.content {
+    flex: 1;
+}
+
+.card {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+}
+
+.card-header {
+    font-weight: 600;
+    font-size: 18px;
+    background: transparent;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+/* ---------------- Candidate Header ---------------- */
+
+.candidate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    background: #f8f9fc;
+    border-radius: 12px;
+}
+
+.candidate-name {
+    margin: 0;
+    font-weight: 700;
+    font-size: 18px;
+    color: #111827;
+}
+
+.candidate-title {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* ---------------- Simple Cards ---------------- */
+
+.section-wrapper {
+    margin-top: 10px;
+}
+
+.simple-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+}
+
+
+
+.simple-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-icon {
+    font-size: 18px;
+    color: var(--primary-color);
+}
+
+.row-item {
+    display: flex;
+    align-items: center;
+    gap: 50px;   
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f6;
+    font-size: 14px;
+    padding-left: 20px;
+}
+
+.row-item:last-child {
+    border-bottom: none;
+}
+
+.gap-badge {
+    margin-top: 14px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.gap-badge.danger {
+    /* background: #ffe5e5; */
+    color: #d32f2f;
+}
+
+.gap-badge.warning {
+    /* background: #fff4e5; */
+    color: #f57c00;
+}
+
+.gap-badge.success {
+    /* background: #e6f7ee; */
+    color: #1b8a4b;
+}
+
+@media (max-width:768px){
+    .row-item{
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+</style>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb breadcrumb-custom-icon">
+    <li class="breadcrumb-item">
+      <a href="/profiles">Profiles</a>
+      <i class="breadcrumb-icon icon-base bx bx-chevron-right align-middle"></i>
+    </li>
+    <li class="breadcrumb-item active">
+    Profile Gap Analysis
+    </li>
+  </ol>
+</nav>
+
+<div class="container" style="padding-top:0;margin-top:0;">
+    <main class="content">
+        <div class="card">
+            <div class="card-title-table">
+                <h4 class="card-header">Profile Gap Analysis</h4>
+            </div>
+
+            <div class="card-body">
+
+                <!-- Candidate Name & Title -->
+                <div class="candidate-header">
+                    <div>
+                        <h5 style="color: var(--primary-color);">
+                            {{ profile_details.firstname}} {{ profile_details.middlename}} {{ profile_details.lastname}}, {{ profile_details.title}}
+                        </h5>
+                        
+                    </div>
+                </div>
+
+                <div class="section-wrapper">
+
+                    <!-- EDUCATION -->
+                    <div class="simple-card">
+                        <h5 class="simple-title">
+                            <i class="bx bx-book-open section-icon"></i>
+                            Education
+                        </h5>
+
+                        {% if not profile_details.education %}
+                            <div class="row-item">
+                                <span>Education Not Added</span>
+                            </div>
+
+                        {% else %}
+
+                            {% for edu in profile_details.education %}
+                                <div class="row-item">
+                                    <span>{{ edu.yearfrom }} – {{ edu.yearto }}</span>
+                                    <span>{{ edu.course }}</span>
+                                </div>
+                            {% endfor %}
+
+                            {% if profile_details.education_gaps %}
+                                {% for gap in profile_details.education_gaps %}
+                                    <div class="gap-badge {% if gap.years >= 2 %}danger{% else %}warning{% endif %}">
+                                        Gap: {{ gap.from }} – {{ gap.to }} ({{ gap.years }} Years)
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="gap-badge success">
+                                    No Gap
+                                </div>
+                            {% endif %}
+
+                        {% endif %}
+                    </div>
+                    <!-- EXPERIENCE -->
+                    <div class="simple-card">
+                        <h5 class="simple-title">
+                            <i class="bx bx-briefcase-alt section-icon"></i>
+                            Experience
+                        </h5>
+
+                        {% if not profile_details.experience %}
+                            <div class="row-item">
+                                <span>Experience Not Added</span>
+                            </div>
+
+                        {% else %}
+
+                            <!-- Experience List -->
+                            {% for exp in profile_details.experience %}
+                                <div class="row-item">
+                                    <span>
+                                        {{ exp.yearfrom }} –
+                                        {% if exp.yearto %}
+                                            {{ exp.yearto }}
+                                        {% else %}
+                                            Present
+                                        {% endif %}
+                                    </span>
+                                    <span>{{ exp.company }}</span>
+                                </div>
+                            {% endfor %}
+
+                            <!-- Education → First Job Gap -->
+                            {% if profile_details.transition_gap %}
+                                <div class="gap-badge danger">
+                                    Gap after Education:
+                                    {{ profile_details.transition_gap.from }} –
+                                    {{ profile_details.transition_gap.to }}
+                                    ({{ profile_details.transition_gap.years }} Years)
+                                </div>
+                            {% endif %}
+
+                            <!-- Internal Experience Gaps -->
+                            {% if profile_details.experience_gaps %}
+                                {% for gap in profile_details.experience_gaps %}
+                                    <div class="gap-badge {% if gap.years >= 2 %}danger{% else %}warning{% endif %}">
+                                        Gap: {{ gap.from }} – {{ gap.to }} ({{ gap.years }} Years)
+                                    </div>
+                                {% endfor %}
+                            {% elif not profile_details.transition_gap %}
+                                <div class="gap-badge success">
+                                    No Gap
+                                </div>
+                            {% endif %}
+
+                        {% endif %}
+                    </div>
+
+                    <!-- SKILL ANALYSIS -->
+                    <div class="simple-card">
+                        <h5 class="simple-title">
+                            <i class="bx bx-code-alt section-icon"></i>
+                            Skills
+                        </h5>
+
+                        {% if not profile_details.unused_full_string and not profile_details.primaryskills %}
+                            <div class="row-item">
+                                <span>Skills Not Added</span>
+                            </div>
+
+                        {% elif profile_details.unused_full_string %}
+                            <div class="row-item">
+                                <span>
+                                    {{ profile_details.unused_full_string }} not used in projects.
+                                </span>
+                            </div>
+
+                        {% else %}
+                            <div class="row-item">
+                                <span>All Skills Used in Projects.</span>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                     <div class="simple-card">
+                        <h5 class="simple-title">
+                            <i class="bx bx-book section-icon"></i>
+                            Learning
+                        </h5>
+
+                        <div class="row-item">
+                            <span>
+                                {{ profile_details.learning_status }}
+                            </span>
+                        </div>
+                    </div>
+                       
+                    </div>
+                    <div class="simple-card">
+                        <h5 class="simple-title">
+                            <i class="bx bx-award section-icon"></i>
+                            Awards
+                        </h5>
+                        <div class="row-item">
+                            <span>
+                                {{ profile_details.award_status }}
+                            </span>
+                        </div>
+
+                        
+                       
+                       
+                    </div>
+                    
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+

@@ -66,5 +66,8 @@ urlpatterns = [
 
     path('job-application/<str:jid>',views.jobApplyPage),
     path('carrers-page/<str:cid>',views.companyCareerPage),
+    path("resume-analysis/<int:pid>",views.resume_analysisPage),
+
+
 
 ]

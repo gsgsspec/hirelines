@@ -6330,3 +6330,225 @@ def getCompanyCareers(cid):
 
     except Exception as e:
         raise
+    
+from app_api.functions.profile_strength import CalculateProfileScoring
+
+
+
+# ---------------- GAP CALCULATION ----------------
+
+def calculate_gaps(records, start_key="yearfrom", end_key="yearto", include_current_gap=False):
+    gaps = []
+    records = sorted(records, key=lambda x: x.get(start_key) or 0)
+
+    for i in range(len(records) - 1):
+        current_end = records[i].get(end_key)
+        next_start = records[i + 1].get(start_key)
+
+        if current_end and next_start and next_start > current_end:
+            gaps.append({
+                "from": current_end,
+                "to": next_start,
+                "years": next_start - current_end
+            })
+
+    if include_current_gap and records:
+        last_end = records[-1].get(end_key)
+        current_year = datetime.now().year
+
+        if last_end and current_year > last_end:
+            gaps.append({
+                "from": last_end,
+                "to": current_year,
+                "years": current_year - last_end
+            })
+
+    return gaps
+
+
+def calculate_transition_gap(education, experience):
+    if not education or not experience:
+        return None
+
+    edu_end_years = [e.get("yearto") for e in education if e.get("yearto")]
+    exp_start_years = [e.get("yearfrom") for e in experience if e.get("yearfrom")]
+
+    if not edu_end_years or not exp_start_years:
+        return None
+
+    last_edu_year = max(edu_end_years)
+    first_job_year = min(exp_start_years)
+
+    if first_job_year > last_edu_year:
+        return {
+            "from": last_edu_year,
+            "to": first_job_year,
+            "years": first_job_year - last_edu_year
+        }
+
+    return None
+
+
+# ---------------- MAIN SERVICE ----------------
+
+def getResume_AnalysisDetailsService(pid):
+
+    profile = Profile.objects.filter(id=pid).values().first()
+    if not profile:
+        return {}
+
+    data = {
+        "id": profile.get("id"),
+        "firstname": profile.get("firstname", "").capitalize(),
+        "middlename": profile.get("middlename", ""),
+        "lastname": profile.get("lastname", "").capitalize(),
+        "title": profile.get("title", ""),
+    }
+
+    # ---------------- EDUCATION ----------------
+    education = list(
+        ProfileEducation.objects
+        .filter(profileid=pid)
+        .order_by("yearfrom")
+        .values("course", "yearfrom", "yearto")
+    )
+
+    # Keep only B / M / P courses
+    education = [
+        e for e in education
+        if e.get("course") and e["course"].strip()[0].upper() in ["B", "M", "P"]
+    ]
+
+    # ---------------- EXPERIENCE ----------------
+    experience = list(
+        ProfileExperience.objects
+        .filter(profileid=pid)
+        .order_by("yearfrom")
+        .values("jobtitle", "company", "yearfrom", "yearto")
+    )
+
+    # ---------------- GAP CALCULATION ----------------
+    education_gaps = calculate_gaps(
+        education,
+        include_current_gap=False
+    )
+
+    experience_gaps = calculate_gaps(
+        experience,
+        include_current_gap=True
+    )
+
+    transition_gap = calculate_transition_gap(
+        education,
+        experience
+    )
+
+    # ---------------- SCORING ----------------
+    scorer = CalculateProfileScoring()
+    score_result = scorer.score_profile(pid)
+
+    # ---------------- UNUSED SKILLS ----------------
+    primary_record = ProfileSkills.objects.filter(
+        profileid=pid
+    ).values_list("primaryskills", flat=True).first()
+
+    project_records = ProfileProjects.objects.filter(
+        profileid=pid
+    ).values_list("skillsused", flat=True)
+
+    used_skill_names = set()
+
+    for record in project_records:
+        if record:
+            for skill in record.split(","):
+                used_skill_names.add(skill.strip().lower())
+
+    unused_full_string = None
+
+    if primary_record:
+        primary_list = [s.strip() for s in primary_record.split(",")]
+
+        unused_list = [
+            skill for skill in primary_list
+            if skill.lower() not in used_skill_names
+        ]
+
+        if unused_list:
+            unused_full_string = ",".join(unused_list)
+
+    # ---------------- CERTIFICATES ----------------
+    certificates = list(
+        ProfileCertificates.objects
+        .filter(profileid=pid)
+        .values("certname")
+    )
+
+    cert_count = len(certificates)
+
+    # ---------------- EXPERIENCE YEARS ----------------
+    exp_years = scorer.calculate_experience_years(experience)
+
+    # ---------------- EXPECTED CERTIFICATES ----------------
+    if exp_years <= 2:
+        expected = 1
+    elif exp_years <= 4:
+        expected = 2
+    elif exp_years <= 6:
+        expected = 3
+    elif exp_years <= 8:
+        expected = 4
+    else:
+        expected = 5
+
+    # ---------------- LEARNING STATUS ----------------
+    if cert_count >= expected:
+        learning_status = "Active Learner"
+    else:
+        learning_status = "Not an Active Learner"
+
+        # ---------------- AWARDS ----------------
+    awards = list(
+        ProfileAwards.objects
+        .filter(profileid=pid)
+        .values("awardname")
+    )
+
+    award_count = len(awards)
+    
+
+    # ---------------- EXPECTED AWARDS ----------------
+    if exp_years <= 2:
+        expected_awards = 1
+    elif exp_years <= 4:
+        expected_awards = 2
+    elif exp_years <= 6:
+        expected_awards = 3
+    elif exp_years <= 8:
+        expected_awards = 4
+    else:
+        expected_awards = 5
+
+    # ---------------- AWARD STATUS ----------------
+    if award_count >= expected_awards:
+        award_status = "Active Achiever"
+    else:
+        award_status = "Not an Active Achiever"
+
+    # ---------------- FINAL DATA ----------------
+    data.update({
+        "education": education,
+        "experience": experience,
+        "education_gaps": education_gaps,
+        "experience_gaps": experience_gaps,
+        "transition_gap": transition_gap,
+        "unused_full_string": unused_full_string,
+        "learning_status": learning_status,
+        "score_result": score_result,
+        "certificate_count": cert_count,
+        "expected_certificates": expected,
+        "experience_years": exp_years,
+        "award_status": award_status,
+
+    })
+
+    return data
