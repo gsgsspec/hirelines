@@ -140,8 +140,8 @@
                     <th>Name</th>
                     <th>Title</th>
                     <th>Experience</th>
-                    <th>Analysis</th>
                     <th>Strength</th>
+                    <th>Analysis</th>
                     <th>Status</th>
                     <th>Tags</th>
 
@@ -157,13 +157,6 @@
                     <td>{{ p.firstname|default:"" }} {{ p.lastname|default:"" }}</td>
                     <td>{{ p.title|default:"" }}</td>
                     <td data-order="{{ p.final_experience|cut:' Years'|cut:' Year' }}">{{ p.final_experience }}</td>
-
-                    <td>
-                        <i class="fas fa-file-alt resume-icon"
-                        onclick="event.stopPropagation(); window.location.href='/resume-analysis/{{p.id}}';"
-                        data-bs-toggle="tooltip"
-                        title="Profile Analysis"></i>
-                    </td>
                     
                     <!-- <td>{{ p.profilestrength }}%</td>
                     <td>{{ p.status_text }}</td> -->
@@ -179,6 +172,12 @@
                             </div>
                             <span class="percent">{{ p.profilestrength }}%</span>
                         </div>
+                    </td>
+                     <td class="text-center">
+                        <i class="fas fa-file-alt resume-icon"
+                        onclick="event.stopPropagation(); window.location.href='/resume-analysis/{{p.id}}';"
+                        data-bs-toggle="tooltip"
+                        title="Profile Analysis"></i>
                     </td>
                     <td>
                         <span class="pill 

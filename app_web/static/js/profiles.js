@@ -43,7 +43,7 @@ $(document).ready(function () {
         autoWidth: false,
         columnDefs: [
             {
-                targets: 8,   
+                targets: 9,   
                 visible: false,
                 searchable: true  
             }
@@ -52,6 +52,10 @@ $(document).ready(function () {
         language: { search: "", searchPlaceholder: "Search..." },
         pagingType: 'simple_numbers'
     });
+});
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+    new bootstrap.Tooltip(tooltipTriggerEl);
 });
 
 
@@ -234,6 +238,27 @@ function filter_profiles() {
                 if (strength >= 70) strengthClass = "green";
                 else if (strength >= 40) strengthClass = "orange";
 
+                // Status Pill Logic (SAFE VERSION)
+                var statusText = "";
+
+                if (p["status_text"]) {
+                    statusText = p["status_text"].toString();
+                } else if (p["status"]) {
+                    statusText = p["status"].toString();
+                }
+
+                statusText = statusText.trim();
+
+                var statusClass = "draft";
+
+                if (statusText === "Draft") statusClass = "draft";
+                else if (statusText === "Ready") statusClass = "ready";
+                else if (statusText === "Hired") statusClass = "hired";
+                else if (statusText === "Rejected") statusClass = "rejected";
+                else if (statusText === "Process") statusClass = "process";
+
+      
+
                 $("#profiles-table tbody").append(
                         tr
                         // + '<td style="width: 180px;">' + p["date"] + '</td>'
@@ -250,7 +275,18 @@ function filter_profiles() {
                         +       '</div>'
                         +       '<span class="percent">' + strength + '%</span>'
                         +   '</div>'
-                        + '</td>'                        + '<td>' + p["status"] + '</td>'
+                        + '</td>'
+                        + '<td class="text-center">'
+                        + '<i class="fas fa-file-alt resume-icon" '
+                        + 'onclick="event.stopPropagation(); window.location.href=\'/resume-analysis/' + p["id"] + '\';" '
+                        + 'data-bs-toggle="tooltip" '
+                        + 'title="Profile Analysis"></i>'
+                        + '</td>'
+                        
+                        // + '<td>' + p["status"] + '</td>'
+                        + '<td>'
+                        +   '<span class="pill ' + statusClass + '"> '+ statusText + '</span>'
+                        + '</td>'
                         // + '<td>' + (p["profile_tags"] || "") + '</td>'
                         + '<td>' + (p["profile_tags"] ? p["profile_tags"].join(", ") : "") + '</td>'
 
@@ -320,7 +356,7 @@ function filter_profiles() {
                 pageLength: 50,
                 columnDefs: [
                     {
-                        targets: 8,   
+                        targets: 9,   
                         visible: false,
                         searchable: true   
                     }
