@@ -3314,7 +3314,7 @@ def uploadAudioFile(request):
 
         process = subprocess.Popen(
             [
-                "ffmpeg",
+                "/usr/bin/ffmpeg",
                 "-y",           
                 "-f", "webm",
                 "-i", "pipe:0",
