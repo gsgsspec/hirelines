@@ -26,6 +26,7 @@ from app_api.functions.constants import const_profile_status
 
 domains = getConfig()['DOMAIN']
 acert_domain = domains['acert']
+main_domain = domains['main_domain']
 
 def homePage(request):
     try:
@@ -39,6 +40,12 @@ def homePage(request):
 
 def webHomePage(request):
     try:
+        host = request.get_host() 
+        main_domain_hirelines = main_domain.replace("http://", "").replace("https://", "")
+        is_main_domain = host == main_domain_hirelines
+        if not is_main_domain:
+            return redirect("/login")
+
 
         company_types = constants.company_types
 

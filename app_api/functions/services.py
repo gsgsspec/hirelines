@@ -229,6 +229,17 @@ def registerUserService(dataObjs):
                 transtype="I",
                 credits=free_trail_data["interview_credits_charges"],
             ).save()
+            CompanyCredits(
+                companyid=company.id,
+                transtype="R",  # Resume Inbox
+                credits=free_trail_data["resume_inbox_credits"],
+            ).save()
+
+            CompanyCredits(
+                companyid=company.id,
+                transtype="P",  # Profiling
+                credits=free_trail_data["profiling_credits"],
+            ).save()
 
             default_branding = Branding.objects.filter(companyid=0).last()
 
@@ -2735,14 +2746,16 @@ def deductCreditsService(company_id, paper_type, paper_id=None):
         workflow_data = Workflow.objects.filter(
             companyid=company_id, papertype=paper_type
         ).last()
-        job_desc_data = JobDesc.objects.get(id=workflow_data.jobid)
+        job_desc_data = JobDesc.objects.get(id=workflow_data.jobid) if workflow_data else None
+        user_id = job_desc_data.createdby if job_desc_data else None
         transaction = Credits(
             companyid=company_id,
             transdatetime=datetime.now(),
             transtype="D",
             papertype=paper_type,
             points=company_credits.credits,
-            user=job_desc_data.createdby,
+            # user=job_desc_data.createdby,
+            user=user_id,
             transid=paper_id,
             balance=company_account.balance,
         )
@@ -2775,20 +2788,29 @@ def getCompanyCreditsUsageService(dataObjs):
                 "%d-%b-%Y %I:%M %p"
             )
             if usage["transtype"] == "D":
-                workflow = Workflow.objects.filter(
-                    companyid=dataObjs["cid"],
-                    papertype=usage["papertype"],
-                    paperid=usage["transid"],
-                ).last()
-                JD = JobDesc.objects.get(id=workflow.jobid)
-                paper_type = const_paper_types.get(usage["papertype"], "")
-                paper_title = workflow.papertitle if workflow else "-"
-                # usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
-                usage_dict[
-                    "description"
-                ] = f"""{paper_type}
-                {paper_title} - JD ({JD.title})"""
-                usage_dict["debit"] = f'{usage_dict["points"]}'
+                if usage["papertype"] in ["R", "P"]:
+                    if usage["papertype"] == "R":
+                        usage_dict["description"] = "Resume Inbox"
+                    else:
+                        usage_dict["description"] = "Profile Created"
+
+                    usage_dict["debit"] = f'{usage_dict["points"]}'
+
+                else:
+                    workflow = Workflow.objects.filter(
+                        companyid=dataObjs["cid"],
+                        papertype=usage["papertype"],
+                        paperid=usage["transid"],
+                    ).last()
+                    JD = JobDesc.objects.get(id=workflow.jobid)
+                    paper_type = const_paper_types.get(usage["papertype"], "")
+                    paper_title = workflow.papertitle if workflow else "-"
+                    # usage_dict["transdatetime"] = usage["transdatetime"].strftime("%d-%b-%Y %I:%M %p")
+                    usage_dict[
+                        "description"
+                    ] = f"""{paper_type}
+                    {paper_title} - JD ({JD.title})"""
+                    usage_dict["debit"] = f'{usage_dict["points"]}'
             if usage["transtype"] == "C":
                 payments = Payments.objects.get(id=usage_dict["transid"])
                 if payments.modeofpay == "T":

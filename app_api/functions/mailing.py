@@ -57,9 +57,11 @@ def sendRegistrainMail(mail_data):
                 token.write(creds.to_json())
                 
         service = build('gmail', 'v1', credentials=creds)
+        hirelines_sales=email_config['sales']
 
         message = MIMEMultipart("mixed")
         message['To'] = mail_data['email']
+        message['Cc'] = hirelines_sales
         message['From'] = f"Hirelines <{email_config['sender']}>"
         message['Subject'] = "Welcome to Hirelines! Your Account Details"
         emailbody = MIMEText(email_body, "html")
@@ -79,7 +81,6 @@ def sendRegistrainMail(mail_data):
 
     except Exception as e:
         raise
-
 
 
 def sendEmail(company,paper_type,participant_paper_id,event,replacements,to_email,calender_details=None):

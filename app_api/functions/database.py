@@ -1040,6 +1040,7 @@ def addProfileDB(dataObjs,fileObjs, user_data):
 
 def updateProfileDetailsDB(dataObjs):
     try:
+        from app_api.functions.services import deductCreditsService
 
         profile = Profile.objects.get(id=dataObjs["profileid"])
         profile_address, created = ProfileAddress.objects.get_or_create(
@@ -1074,6 +1075,8 @@ def updateProfileDetailsDB(dataObjs):
             profile.dateofbirth = None
 
         profile.save()
+        if created:
+            deductCreditsService(profile.companyid, "P", profile.id)
 
     except Exception as e:
         raise
@@ -1961,6 +1964,8 @@ def saveJDJobBoardsDB(dataObjs,user):
 
 def addResumeDB(dataObjs,fileObjs, user_data):
     try:
+        from app_api.functions.services import deductCreditsService
+
 
         file_binary = fileObjs.read()
 
@@ -1998,6 +2003,8 @@ def addResumeDB(dataObjs,fileObjs, user_data):
         )
 
         resume_file.save()
+        deductCreditsService(user_data.companyid, "R", resume.id)
+
 
     except Exception as e:
         raise
