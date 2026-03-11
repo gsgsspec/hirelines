@@ -1,0 +1,1167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hirelines - AI Hiring Platform</title>
+
+    <meta name="description" content="Hirelines.io is an AI-powered technical hiring platform offering ATS, coding assessments, and interview automation to help companies hire software developers faster and smarter.">
+    <meta name="keywords" content="AI hiring platform, technical hiring software, applicant tracking system, ATS for software companies, interview automation software, developer hiring platform, recruitment automation software, AI recruitment software, coding assessment platform, technical recruitment tools">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JS8GC92LDN"></script> 
+    <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-JS8GC92LDN'); </script>
+    
+    <link rel="icon" href="{% static 'img/logos/fav1.jpg' %}">
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            primary: '#274699',
+                            accent: '#F16E22',
+                            muted: '#64748B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        var CSRF_TOKEN = '{{ csrf_token }}';
+    </script>
+
+    <script src="{% static 'config/config.js' %}"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #274699 !important;
+            background: white;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #274699, #F16E22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+
+
+    <style>
+        #codeArea div::after {
+            content: '|';
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+
+</head>
+
+<body class="bg-white text-gray-900">
+
+    <!-- NAVBAR -->
+
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-black/5 px-4 md:px-6">
+        <div class="max-w-7xl mx-auto h-20 flex items-center justify-between">
+
+            <!-- Logo -->
+            <div class="flex items-center">
+                <img src="{% static 'img/logos/logo-no-background.svg' %}" class="h-10 md:h-12 w-auto" alt="Hirelines">
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-brand-muted">
+                <a href="#problem" class="hover:text-brand-primary transition-colors">The Problem</a>
+                <a href="#solution" class="hover:text-brand-primary transition-colors">Solution</a>
+                <a href="#how-it-works" class="hover:text-brand-primary transition-colors">How it Works</a>
+                <a href="#benefits" class="hover:text-brand-primary transition-colors">Benefits</a>
+                <a href="#features" class="hover:text-brand-primary transition-colors">Features</a>
+                <a href="#pricing" class="hover:text-brand-primary transition-colors">Pricing</a>
+            </div>
+
+            <!-- Desktop Buttons -->
+            <div class="hidden md:flex items-center gap-4">
+                <a href="/login">
+                    <button class="text-sm font-semibold bg-brand-accent text-white px-6 py-2.5 rounded-full hover:bg-brand-accent/90 transition-all shadow-lg shadow-brand-accent/10">
+                        Sign In
+                    </button>
+                </a>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <button id="menuBtn" class="md:hidden text-2xl">
+                ☰
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-black/5 px-4 py-4 space-y-4">
+            <a href="#problem" class="block">The Problem</a>
+            <a href="#solution" class="block">Solution</a>
+            <a href="#how-it-works" class="block">How it Works</a>
+            <a href="#benefits" class="block">Benefits</a>
+            <a href="#features" class="block">Features</a>
+            <a href="#pricing" class="block">Pricing</a>
+
+            <a href="/login" class="block">
+                <button
+                    class="w-full text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-black/5 transition-colors">
+                    Sign In
+                </button>
+            </a>
+
+            <button
+                class="w-full text-sm font-semibold bg-brand-accent text-white px-6 py-2.5 rounded-full hover:bg-brand-accent/90 transition-all">
+                Request Demo
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+
+    <section class="pt-32 pb-16 px-4 sm:px-6 overflow-x-hidden overflow-hidden relative">
+
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-30">
+            <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-accent/20 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+            <div class="animate-fade-in">
+
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 text-brand-accent text-xs font-bold uppercase tracking-wider mb-6">
+
+                    <i data-lucide="zap" class="w-3 h-3"></i>
+
+                    AI-Powered Technical Hiring
+
+                </div>
+
+                <h1 class="text-3xl sm:text-4xl lg:text-7xl font-bold leading-[1.1] mb-8">
+
+                    Hire better engineers,
+                    <span class="text-brand-accent">faster.</span>
+
+                </h1>
+
+                <p class="text-base sm:text-lg lg:text-xl text-brand-muted leading-relaxed mb-10 max-w-xl">
+
+                    Evaluate real technical skills with AI-driven interview automation.
+                    Reduce interview time by 60% while delivering structured, unbiased feedback
+                    to every candidate.
+
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+
+                    <a href="/#how-it-works">
+                        <button
+                            class="bg-brand-accent text-white px-8 py-4 rounded-full font-semibold flex items-center justify-center gap-2 hover:bg-brand-accent/90 transition-all shadow-xl shadow-brand-accent/20">
+    
+                            See How It Works
+
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+    
+                        </button>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="relative mt-10 lg:mt-0">
+
+                <div
+                    class="relative z-0 rounded-2xl overflow-hidden shadow-2xl border border-black/5 bg-slate-900 min-h-[280px] sm:aspect-[4/3] flex flex-col">
+
+
+                    <div class="bg-slate-800/50 border-b border-white/10 p-3 flex items-center justify-between">
+
+                        <div class="flex gap-1.5">
+                            <div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-amber-500/50"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500/50"></div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="flex-1 flex overflow-hidden">
+
+                        <div class="flex-1 p-6 font-mono text-xs text-slate-300 overflow-hidden">
+
+                            <div id="typingCode" class="space-y-3"></div>
+
+                            <div id="testCases"
+                                class="mt-6 border-t border-white/10 pt-4 space-y-2 text-emerald-400 hidden">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="problem" class="py-24 px-6 bg-slate-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="max-w-3xl mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-6"> The technical hiring process is broken </h2>
+                <p class="text-lg text-brand-muted">Traditional methods are slow, biased, and drain your most expensive
+                    resources—your engineers.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <div class="bg-white p-8 rounded-xl shadow">
+
+                    <i data-lucide="users" class="text-red-500"></i>
+
+                    <h3 class="font-bold mt-4">
+                        Resume Noise
+                    </h3>
+
+                    <p class="text-gray-500 text-sm mt-2">
+                        Screening hundreds of resumes but most lack the real skills required.
+                    </p>
+
+                </div>
+
+
+                <div class="bg-white p-8 rounded-xl shadow">
+
+                    <i data-lucide="clock" class="text-amber-500"></i>
+
+                    <h3 class="font-bold mt-4">
+                        Interview Fatigue
+                    </h3>
+
+                    <p class="text-gray-500 text-sm mt-2">
+
+                        Senior engineers spend hours every week doing repetitive screens.
+
+                    </p>
+
+                </div>
+
+
+                <div class="bg-white p-8 rounded-xl shadow">
+
+                    <i data-lucide="target" class="text-blue-500"></i>
+
+                    <h3 class="font-bold mt-4">
+                        Inconsistent Quality
+                    </h3>
+
+                    <p class="text-gray-500 text-sm mt-2">
+
+                        Different interviewers produce inconsistent evaluation results.
+
+                    </p>
+
+                </div>
+
+
+                <div class="bg-white p-8 rounded-xl shadow">
+
+                    <i data-lucide="message-square" class="text-emerald-500"></i>
+
+                    <h3 class="font-bold mt-4">
+                        Feedback Gaps
+                    </h3>
+
+                    <p class="text-gray-500 text-sm mt-2">
+
+                        Candidates receive little to no feedback.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- SOLUTION -->
+
+    <section id="solution" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+            <div class="order-2 lg:order-1">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div class="aspect-square rounded-2xl bg-slate-100 flex items-center justify-center p-8"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-code-xml text-brand-primary opacity-20"
+                                aria-hidden="true">
+                                <path d="m18 16 4-4-4-4"></path>
+                                <path d="m6 8-4 4 4 4"></path>
+                                <path d="m14.5 4-5 16"></path>
+                            </svg></div>
+                        <div class="aspect-[4/3] rounded-2xl bg-brand-accent/10 flex flex-col justify-end p-6">
+                            <div class="text-2xl font-bold text-brand-accent">60%</div>
+                            <div class="text-xs font-bold uppercase tracking-wider text-brand-accent/60">Time Saved
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4 pt-8">
+                        <div
+                            class="aspect-[4/3] rounded-2xl bg-brand-primary text-white p-6 flex flex-col justify-between">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true">
+                                <path
+                                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                                </path>
+                                <path d="m9 12 2 2 4-4"></path>
+                            </svg>
+                            <div class="text-sm font-medium">Unbiased Skill Validation</div>
+                        </div>
+                        <div class="aspect-square rounded-2xl bg-slate-100 flex items-center justify-center p-8"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chart-column text-brand-primary opacity-20"
+                                aria-hidden="true">
+                                <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+                                <path d="M18 17V9"></path>
+                                <path d="M13 17V5"></path>
+                                <path d="M8 17v-3"></path>
+                            </svg></div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 lg:order-2">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-8">A structured, intelligence-first approach to hiring.
+                </h2>
+                <div class="space-y-8">
+                    <div class="flex gap-6">
+                        <div
+                            class="flex-shrink-0 w-10 h-10 rounded-full bg-brand-accent/10 text-brand-accent flex items-center justify-center font-bold">
+                            1</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">Skill Validation Before Interviews</h3>
+                            <p class="text-brand-muted leading-relaxed">Automated technical assessments that go beyond
+                                multiple choice. We evaluate actual code quality, architecture, and problem-solving.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div
+                            class="flex-shrink-0 w-10 h-10 rounded-full bg-brand-accent/10 text-brand-accent flex items-center justify-center font-bold">
+                            2</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">Interview Automation</h3>
+                            <p class="text-brand-muted leading-relaxed">Standardized interview playbooks that ensure
+                                every candidate is evaluated against the same criteria, every single time.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div
+                            class="flex-shrink-0 w-10 h-10 rounded-full bg-brand-accent/10 text-brand-accent flex items-center justify-center font-bold">
+                            3</div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">Instant, Unbiased Feedback</h3>
+                            <p class="text-brand-muted leading-relaxed">AI generates detailed technical reports
+                                immediately after the session, removing recency bias and speeding up decision-making.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WORKFLOW -->
+
+    <section id="how-it-works" class="py-24 px-6 bg-brand-primary text-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-20">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-6">The Hirelines Workflow</h2>
+                <p class="text-white/60">From job opening to final decision, we streamline every step of the technical
+                    evaluation.</p>
+            </div>
+            <div class="grid md:grid-cols-5 gap-8 relative">
+                <div class="hidden md:block absolute top-12 left-0 right-0 h-px bg-white/10"></div>
+                <div class="relative z-10 text-center">
+                    <div
+                        class="w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold mx-auto mb-6 shadow-lg shadow-brand-accent/20">
+                        01</div>
+                    <h3 class="font-bold mb-2">Define Job</h3>
+                    <p class="text-sm text-white/50">Set skills and criteria</p>
+                </div>
+                <div class="relative z-10 text-center">
+                    <div
+                        class="w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold mx-auto mb-6 shadow-lg shadow-brand-accent/20">
+                        02</div>
+                    <h3 class="font-bold mb-2">Screen</h3>
+                    <p class="text-sm text-white/50">Automated skill check</p>
+                </div>
+                <div class="relative z-10 text-center">
+                    <div
+                        class="w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold mx-auto mb-6 shadow-lg shadow-brand-accent/20">
+                        03</div>
+                    <h3 class="font-bold mb-2">Interview</h3>
+                    <p class="text-sm text-white/50">Structured live session</p>
+                </div>
+                <div class="relative z-10 text-center">
+                    <div
+                        class="w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold mx-auto mb-6 shadow-lg shadow-brand-accent/20">
+                        04</div>
+                    <h3 class="font-bold mb-2">Feedback</h3>
+                    <p class="text-sm text-white/50">Instant AI analysis</p>
+                </div>
+                <div class="relative z-10 text-center">
+                    <div
+                        class="w-12 h-12 rounded-full bg-brand-accent text-white flex items-center justify-center font-bold mx-auto mb-6 shadow-lg shadow-brand-accent/20">
+                        05</div>
+                    <h3 class="font-bold mb-2">Decision</h3>
+                    <p class="text-sm text-white/50">Data-driven hire</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="benefits" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl lg:text-4xl font-bold text-center mb-16">Built for the entire hiring team.</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div
+                    class="p-8 rounded-2xl border border-black/5 bg-slate-50 hover:bg-white hover:shadow-xl transition-all group">
+                    <h3 class="text-lg font-bold mb-4 group-hover:text-brand-accent transition-colors">HR &amp; Talent
+                        Teams</h3>
+                    <p class="text-sm text-brand-muted leading-relaxed">Reduce screening time by 80% and improve
+                        candidate NPS.</p>
+                </div>
+                <div
+                    class="p-8 rounded-2xl border border-black/5 bg-slate-50 hover:bg-white hover:shadow-xl transition-all group">
+                    <h3 class="text-lg font-bold mb-4 group-hover:text-brand-accent transition-colors">Engineering
+                        Managers</h3>
+                    <p class="text-sm text-brand-muted leading-relaxed">Get high-signal candidates and reduce interview
+                        load.</p>
+                </div>
+                <div
+                    class="p-8 rounded-2xl border border-black/5 bg-slate-50 hover:bg-white hover:shadow-xl transition-all group">
+                    <h3 class="text-lg font-bold mb-4 group-hover:text-brand-accent transition-colors">CTOs</h3>
+                    <p class="text-sm text-brand-muted leading-relaxed">Build a high-performance culture with
+                        data-driven hiring.</p>
+                </div>
+                <div
+                    class="p-8 rounded-2xl border border-black/5 bg-slate-50 hover:bg-white hover:shadow-xl transition-all group">
+                    <h3 class="text-lg font-bold mb-4 group-hover:text-brand-accent transition-colors">Recruitment Teams
+                    </h3>
+                    <p class="text-sm text-brand-muted leading-relaxed">Deliver structured feedback and close candidates
+                        faster.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 bg-slate-50">
+        <div class="max-w-7xl mx-auto">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 text-center">
+
+                <!-- 10X Time Saver -->
+                <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-brand-accent/10 mb-4">
+                        <i data-lucide="clock" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">10X Time Saver</h3>
+                    <p class="text-brand-muted text-sm">For HR & Interview Panel</p>
+                </div>
+
+                <!-- 25X Communication -->
+                <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-brand-accent/10 mb-4">
+                        <i data-lucide="message-square" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">25X Communication</h3>
+                    <p class="text-brand-muted text-sm">Improved Communication and Collaboration</p>
+                </div>
+
+                <!-- 50X Lead Time -->
+                <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-brand-accent/10 mb-4">
+                        <i data-lucide="timer" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">50X Lead Time Optimization</h3>
+                    <p class="text-brand-muted text-sm">In Hiring the Candidate</p>
+                </div>
+
+                <!-- 75X Hiring Success -->
+                <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-brand-accent/10 mb-4">
+                        <i data-lucide="target" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">75X Hiring Success</h3>
+                    <p class="text-brand-muted text-sm">In Hiring the Right Candidate</p>
+                </div>
+
+                <!-- 100X Insight -->
+                <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-brand-accent/10 mb-4">
+                        <i data-lucide="bar-chart-3" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">100X Insight</h3>
+                    <p class="text-brand-muted text-sm">Into Recruitment Process</p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-20">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-6">Key Features</h2>
+                <p class="text-brand-muted">Powerful tools designed to make technical hiring efficient, fair, and
+                    data-driven.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"> -->
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="filter" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Screening Test</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Quickly filter applicants with targeted assessments that evaluate essential skills and
+                        qualifications.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="code" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Coding Test</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Measure programming expertise through real-world coding scenarios to ensure technical
+                        competence.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="video" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Oneclick Digital Interviews</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Conduct digital interviews instantly with a single click using integrated video interview tools.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="file-code" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Multi Technology Resume Parsing</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Automatically parses resumes across multiple technologies to extract structured candidate data
+                        quickly.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="bar-chart-3" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Profile Strength Calculator</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Analyze candidate profiles and calculate profile strength based on experience, skills, and
+                        relevance.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="git-compare" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Auto Profile Match to JD</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Automatically match candidate profiles with job descriptions to identify the best-fit candidates
+                        instantly.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="send" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">One Click Job Board Posting</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Publish job openings to multiple job boards instantly with a single click.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="activity" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Profile Activity Tracking</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Track candidate profile interactions and engagement across the recruitment process.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="badge-check" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Branded Profiles for Submission</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Present candidate profiles with company branding to create professional submissions.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="layout-dashboard" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Workspace for Recruiter</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        A centralized workspace where recruiters can manage candidates, jobs, and activities
+                        efficiently.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="pie-chart" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Overall Recruiter Dashboards</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Get a complete overview of recruitment performance through visual dashboards and analytics.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="search" class="text-brand-accent"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Profile Source wise Analysis</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">
+                        Analyze candidate sources to identify which channels bring the most qualified profiles.
+                    </p>
+                </div>
+
+
+
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-target text-brand-accent" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Skill-First Screening</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">Validate technical depth with automated
+                        assessments before involving your engineering team.</p>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-lg transition-all group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-chart-column text-brand-accent" aria-hidden="true">
+                            <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+                            <path d="M18 17V9"></path>
+                            <path d="M13 17V5"></path>
+                            <path d="M8 17v-3"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Hiring Insights</h3>
+                    <p class="text-brand-muted text-sm leading-relaxed">Deep analytics on your hiring funnel,
+                        interviewer performance, and candidate quality.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Hirelines -->
+    <section class="py-24 px-6 bg-brand-primary text-white overflow-hidden relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-3xl lg:text-4xl font-bold mb-8">Why Hirelines is not just another ATS.</h2>
+                    <p class="text-lg text-white/70 mb-12">Most platforms focus on managing the workflow. We focus on
+                        the quality of the evaluation itself.</p>
+                    <div class="space-y-10">
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-brand-accent">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-circle-check" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="m9 12 2 2 4-4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Skill-First, Not Resume-First</h3>
+                                <p class="text-white/60 leading-relaxed">Traditional tools rank candidates based on
+                                    keywords. Hirelines ranks them based on demonstrated technical depth and
+                                    problem-solving ability.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-brand-accent">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-circle-check" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="m9 12 2 2 4-4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Interview Intelligence</h3>
+                                <p class="text-white/60 leading-relaxed">We don't just record calls. Our AI analyzes the
+                                    technical discourse, identifies architectural awareness, and flags specific skill
+                                    signals in real-time.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-brand-accent">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-circle-check" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="m9 12 2 2 4-4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Feedback as a Brand Asset</h3>
+                                <p class="text-white/60 leading-relaxed">Turn your rejection emails into a competitive
+                                    advantage. Every candidate receives professional, constructive technical feedback,
+                                    boosting your employer brand.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div
+                        class="aspect-square rounded-3xl bg-linear-to-br from-brand-accent/20 to-transparent border border-white/10 p-8 flex items-center justify-center">
+                        <div class="grid grid-cols-2 gap-4 w-full">
+                            <div class="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                                <div class="text-brand-accent font-bold mb-2">Traditional ATS</div>
+                                <div class="text-xs text-white/40">Workflow Management</div>
+                                <div class="mt-4 h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full w-1/3 bg-white/40"></div>
+                                </div>
+                            </div>
+                            <div class="p-6 rounded-2xl bg-brand-accent text-white shadow-2xl shadow-brand-accent/20">
+                                <div class="font-bold mb-2">Hirelines.io</div>
+                                <div class="text-xs text-white/80">Evaluation Intelligence</div>
+                                <div class="mt-4 h-1 w-full bg-white/30 rounded-full overflow-hidden">
+                                    <div class="h-full w-full bg-white"></div>
+                                </div>
+                            </div>
+                            <div
+                                class="col-span-2 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold mb-1">Feedback Quality</div>
+                                    <div class="text-xs text-white/40">Automated &amp; Technical</div>
+                                </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-zap text-brand-accent"
+                                    aria-hidden="true">
+                                    <path
+                                        d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z">
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-brand-accent/20 rounded-full blur-3xl"></div>
+                    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-brand-primary/40 rounded-full blur-3xl"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Request -->
+    <!-- <section class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="bg-brand-primary rounded-3xl p-12 lg:p-20 text-center text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-4xl lg:text-5xl font-bold mb-8">Ready to transform your technical hiring?</h2>
+                    <p class="text-xl text-white/80 mb-12 max-w-2xl mx-auto">Join 200+ companies that have reclaimed
+                        their engineering time and improved their hiring accuracy.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center"><button
+                            class="bg-brand-accent text-white px-10 py-4 rounded-full font-bold hover:bg-brand-accent/90 transition-all shadow-xl">Request
+                            a Demo</button></div>
+                </div>
+                <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
+                <div class="absolute bottom-0 left-0 w-96 h-96 bg-black/10 rounded-full blur-3xl -ml-48 -mb-48"></div>
+            </div>
+        </div>
+    </section> -->
+
+
+    <!-- Clients -->
+    <section class="py-20 px-4 sm:px-6 bg-white">
+        <div class="max-w-7xl mx-auto text-center">
+
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Clients</h2>
+            </div>
+
+            <div class="flex flex-wrap justify-evenly items-center gap-12">
+
+                <img src="{% static 'lib/homePage/images/brand_logos/gsspec.jpg' %}" 
+                    alt="Client 1"
+                    class="h-20 w-auto object-contain">
+
+                <img src="{% static 'lib/homePage/images/brand_logos/talentforge.png' %}" 
+                    alt="Client 2"
+                    class="h-20 w-auto object-contain">
+
+                <img src="https://alephys.com/wp-content/uploads/al_opt_content/IMAGE/alephys.com//wp-content/uploads/2024/05/Alephys-2-1.png.bv.webp" 
+                    alt="Client 3"
+                    class="h-20 w-auto object-contain">
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="py-24 px-6 bg-gray-50" id="pricing">
+        <div class="max-w-7xl mx-auto">
+
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Simple & Transparent Pricing</h2>
+                <p class="text-brand-muted max-w-2xl mx-auto">
+                    Choose the plan that best fits your hiring needs. Upgrade anytime as your recruitment grows.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+
+                <!-- Free Tier -->
+                <div
+                    class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-xl transition-all flex flex-col">
+                    <h3 class="text-xl font-bold mb-2">Free Tier</h3>
+                    <p class="text-3xl font-bold mb-6">Free</p>
+
+                    <ul class="space-y-3 text-sm text-brand-muted mb-8 flex-grow">
+                        <li>✔ 1 Recruiter</li>
+                        <li>✔ 100 Candidate Profiles</li>
+                        <li>✔ Resume Parsing</li>
+                        <li>✔ Basic Screening</li>
+                    </ul>
+
+                    <button class="w-full py-2 rounded-lg bg-brand-accent text-white font-medium hover:opacity-90" onclick="openDemoForm()">
+                        Get Started
+                    </button>
+                </div>
+
+                <!-- Starter -->
+                <div
+                    class="p-8 rounded-2xl border-2 border-brand-accent bg-white shadow-lg hover:shadow-xl transition-all flex flex-col relative">
+
+                    <span
+                        class="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-accent text-white text-xs px-3 py-1 rounded-full">
+                        Most Popular
+                    </span>
+
+                    <h3 class="text-xl font-bold mb-2">Starter</h3>
+                    <p class="text-3xl font-bold mb-6">₹4999<span class="text-sm font-normal text-gray-500"> /
+                            month</span></p>
+
+                    <ul class="space-y-3 text-sm text-brand-muted mb-8 flex-grow">
+                        <li>✔ 5 Recruiters</li>
+                        <li>✔ 1,000 Candidate Profiles</li>
+                        <li>✔ Resume Parsing</li>
+                        <li>✔ Screening Tests</li>
+                        <li>✔ Recruiter Workspace</li>
+                    </ul>
+
+                    <button class="w-full py-2 rounded-lg bg-brand-accent text-white font-medium hover:opacity-90">
+                        Get Started
+                    </button>
+                </div>
+
+                <!-- Standard -->
+                <div
+                    class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-xl transition-all flex flex-col">
+                    <h3 class="text-xl font-bold mb-2">Standard</h3>
+                    <p class="text-3xl font-bold mb-6">₹9999<span class="text-sm font-normal text-gray-500"> /
+                            month</span></p>
+
+                    <ul class="space-y-3 text-sm text-brand-muted mb-8 flex-grow">
+                        <li>✔ 10 Recruiters</li>
+                        <li>✔ 5,000 Candidate Profiles</li>
+                        <li>✔ Coding Tests</li>
+                        <li>✔ Online Interviews</li>
+                        <li>✔ Dashboard Analytics</li>
+                    </ul>
+
+                    <button class="w-full py-2 rounded-lg bg-brand-accent text-white font-medium hover:opacity-90">
+                        Get Started
+                    </button>
+                </div>
+
+                <!-- Enterprise -->
+                <div
+                    class="p-8 rounded-2xl border border-black/5 bg-white hover:shadow-xl transition-all flex flex-col">
+                    <h3 class="text-xl font-bold mb-2">Enterprise</h3>
+                    <br>
+                    <ul class="space-y-3 text-sm text-brand-muted mb-8 flex-grow">
+                        <li>✔ Unlimited Recruiters</li>
+                        <li>✔ Unlimited Profiles</li>
+                        <li>✔ Custom Integrations</li>
+                        <li>✔ Dedicated Support</li>
+                        <li>✔ Advanced Analytics</li>
+                    </ul>
+
+                    <button class="w-full py-2 rounded-lg bg-brand-accent text-white font-medium hover:opacity-90">
+                        Contact Sales
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Form -->
+    <div id="demoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 px-4">
+
+        <div id="modalContent"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 scale-95 opacity-0 transition-all duration-300">
+
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Get Started</h3>
+                <button onclick="closeDemoForm()" class="text-2xl">&times;</button>
+            </div>
+
+            <form id="registerForm" class="space-y-4">
+
+                <input type="email"
+                    id="reg-bemail"
+                    placeholder="Business Email"
+                    class="w-full border border-black/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-accent">
+
+                <p class="text-red-500 text-sm mt-1 hidden" id="email-invalid">
+                    Please enter email address.
+                </p>
+
+                <p class="text-red-500 text-sm mt-1 hidden" id="domain-check">
+                    Business domain is required
+                </p>
+
+                <p class="text-red-500 text-sm mt-1 hidden" id="existing-email">
+                    Email already registered
+                </p>
+
+                <input type="text"
+                    id="reg-company"
+                    placeholder="Company Name"
+                    class="w-full border border-black/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-accent">
+
+                <p class="text-red-500 text-sm mt-1 hidden" id="company-invalid">
+                    Please enter your company name.
+                </p>
+
+                <select id="reg-companytype"
+                        class="w-full border border-black/10 rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent">
+
+                    <option value="" selected disabled>Company Type</option>
+
+                    {% for company_type in company_types %}
+                    <option value="{{ company_type }}">{{ company_type }}</option>
+                    {% endfor %}
+
+                </select>
+
+                <p class="text-red-500 text-sm mt-1 hidden" id="companytype-invalid">
+                    Please select company type.
+                </p>
+
+                <input type="text"
+                    id="reg-name"
+                    placeholder="Contact Name"
+                    class="w-full border border-black/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-accent">
+
+                <p class="text-red-500 text-sm mt-1 hidden" id="name-invalid">
+                    Please enter your name.
+                </p>
+
+                <input type="text"
+                    id="reg-location"
+                    placeholder="Location"
+                    class="w-full border border-black/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-accent">
+
+                <p class="text-red-500 text-sm mt-1 hidden" id="location-invalid">
+                    Please enter your location.
+                </p>
+
+                <div class="text-red-500 text-sm hidden" id="error-sec">
+                    Something went wrong, Please try again after sometime...
+                </div>
+
+                <div class="text-red-500 text-sm hidden" id="error-existing">
+                    Company already registered, Please contact your company HR/Administrator.
+                </div>
+
+                <div class="text-green-600 text-sm hidden" id="success-sec">
+                    Registration successful ✅
+                </div>
+
+                <button type="submit"
+                        id="register"
+                        class="w-full bg-brand-accent text-white py-3 rounded-lg font-semibold hover:bg-brand-accent/90 transition-all">
+                    Submit Request
+                </button>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-black/5 pt-20 pb-10 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+                <div class="col-span-1 lg:col-span-1">
+                    <div class="mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center">
+                                <img src="{% static 'img/logos/logo-no-background.svg' %}" class="h-12 w-auto"
+                                    alt="Hirelines">
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-brand-muted text-sm leading-relaxed mb-6">The AI-powered technical hiring platform
+                        built for modern software companies.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6">Product</h4>
+                    <ul class="space-y-4 text-sm text-brand-muted">
+                        <li><a href="#features" class="hover:text-brand-primary">The Problem</a></li>
+                        <li><a href="#solution" class="hover:text-brand-primary">Solution</a></li>
+                        <li><a href="#how-it-works" class="hover:text-brand-primary">How it Works</a></li>
+                        <li><a href="#benefits" class="hover:text-brand-primary">Benefits</a></li>
+                        <li><a href="#features" class="hover:text-brand-primary">Features</a></li>
+                        <li><a href="#pricing" class="hover:text-brand-primary">Pricing</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6">Support</h4>
+                    <ul class="space-y-4 text-sm text-brand-muted">
+                        <li><a href="/privacy-policy" class="hover:text-brand-primary">Privacy Policy</a></li>
+                        <li><a href="/tnc" class="hover:text-brand-primary">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-10 border-t border-black/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-sm text-brand-muted">© 2026 Hirelines.io. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script src="{% static 'js/homepage.js' %}"></script>
+    <script src="{% static 'js/webpage_v2.js' %}"></script>
+
+    <style>
+        .typing-line.active::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: white;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+
+</body>
+
+</html>

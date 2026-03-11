@@ -44,12 +44,12 @@ def webHomePage(request):
         main_domain_hirelines = main_domain.replace("http://", "").replace("https://", "")
         is_main_domain = host == main_domain_hirelines
         if not is_main_domain:
-            return redirect("/login")
-
+            return render(request, "company_login.html")
 
         company_types = constants.company_types
 
-        return render(request, "web_index.html", {"template_name": 'web_page.html','company_types': company_types})
+        # return render(request, "web_index.html", {"template_name": 'web_page.html','company_types': company_types})
+        return render(request, "webpage_v2.html", {'company_types': company_types})
 
     except Exception as e:
         raise
@@ -111,30 +111,8 @@ def diff_highlight(preset, user_code):
 def loginPage(request):
     try:
              
-    #     preset = """
-    # def sum(a,b):
-    #     try:
-
-    #         # CODE HERE
-    #         return sum_
-    #     except Exception as e:
-    #         raise"""
-            
-    #     user_code = """
-    # def sum(a,b):
-    #     try:
-    #         sum_ = a  +b
-    #         return sum_
-    #     except Exception as e:
-    #         raise"""
-    #     highlighted_result = diff_highlight(preset, user_code)
-    #     obj={
-    #         "preset": preset.strip(),
-    #         "user_code": user_code.strip(),
-    #         "highlighted_result": highlighted_result
-    #     }
-    #     return render(request, "bk_code_diff.html",{"obj":obj})
-        return render(request, "web_index.html", {"template_name": 'login.html'})
+        # return render(request, "web_index.html", {"template_name": 'login.html'})
+        return render(request, "login_v2.html")
     except Exception as e:
         raise
 
