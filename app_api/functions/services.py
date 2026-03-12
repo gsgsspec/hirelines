@@ -6419,14 +6419,20 @@ def getResume_AnalysisDetailsService(pid):
     if not profile:
         return {}
 
+    # data = {
+    #     "id": profile.get("id"),
+    #     "firstname": profile.get("firstname", "").capitalize(),
+    #     "middlename": profile.get("middlename", ""),
+    #     "lastname": profile.get("lastname", "").capitalize(),
+    #     "title": profile.get("title", ""),
+    # }
     data = {
         "id": profile.get("id"),
-        "firstname": profile.get("firstname", "").capitalize(),
-        "middlename": profile.get("middlename", ""),
-        "lastname": profile.get("lastname", "").capitalize(),
-        "title": profile.get("title", ""),
+        "firstname": (profile.get("firstname") or "").capitalize(),
+        "middlename": profile.get("middlename") or "",
+        "lastname": (profile.get("lastname") or "").capitalize(),
+        "title": profile.get("title") or ""
     }
-
     # ---------------- EDUCATION ----------------
     education = list(
         ProfileEducation.objects
