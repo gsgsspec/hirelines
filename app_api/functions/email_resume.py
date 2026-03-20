@@ -47,6 +47,8 @@ def gmail_service():
 
 def fetch_gmail_attachments():
     try:
+        from app_api.functions.services import deductCreditsService
+
         service = gmail_service()
 
         from_emails = getEmailFetchUsers()
@@ -146,11 +148,12 @@ def fetch_gmail_attachments():
                         filecontent=file_data
                     )
                     resume_file.save()
+                    companyid=user["companyid"]
+                    deductCreditsService(companyid, "R", new_resume.id)
 
     except Exception as e:
         print(str(e))
         print("Saving resume failed:", e)
-
 
 def processEmailsFetch():
     scheduler = BackgroundScheduler()

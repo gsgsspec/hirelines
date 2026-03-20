@@ -2023,6 +2023,8 @@ def updateResumeTemplateDB(dataObjs,user_data):
 
 def addResumeFromJobPageDB(name,email,jobid, resumefile):
     try:
+        from app_api.functions.services import deductCreditsService
+
 
         jobdesc = JobDesc.objects.get(id=jobid)
 
@@ -2072,6 +2074,8 @@ def addResumeFromJobPageDB(name,email,jobid, resumefile):
         )
 
         resume_file.save()
+        deductCreditsService(jobdesc.companyid, "R", resume.id)
+
 
 
     except Exception as e:
