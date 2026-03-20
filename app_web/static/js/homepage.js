@@ -4,10 +4,10 @@ event.preventDefault();
     $('#register').prop('disabled', true);
 
     // Reset all errors
-    $('#email-invalid, #company-invalid, #companytype-invalid, #name-invalid, #location-invalid').addClass('hidden');
+    $('#email-invalid, #company-invalid, #companytype-invalid, #name-invalid, #location-invalid, #companyplan-invalid').addClass('hidden');
     $('#domain-check, #existing-email, #error-existing, #error-sec, #success-sec').addClass('hidden');
 
-    $('#reg-bemail, #reg-company, #reg-companytype, #reg-name, #reg-location').css('border-color', '');
+    $('#reg-bemail, #reg-company, #reg-companytype, #reg-name, #reg-location, #reg-plan').css('border-color', '');
 
     let hasError = false;
 
@@ -26,6 +26,12 @@ event.preventDefault();
     if (!$('#reg-companytype').val()) {
         $('#companytype-invalid').removeClass('hidden');
         $('#reg-companytype').css('border-color', 'red');
+        hasError = true;
+    }
+
+    if (!$('#reg-plan').val()) {
+        $('#companyplan-invalid').removeClass('hidden');
+        $('#reg-plan').css('border-color', 'red');
         hasError = true;
     }
 
@@ -51,7 +57,8 @@ event.preventDefault();
         'reg-company': $('#reg-company').val(),
         'reg-location': $('#reg-location').val(),
         'reg-name': $('#reg-name').val(),
-        'reg-companytype': $('#reg-companytype').val()
+        'reg-companytype': $('#reg-companytype').val(),
+        'reg-plan': $('#reg-plan').val()
     };
 
     let final_data = {

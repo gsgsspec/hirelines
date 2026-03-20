@@ -469,3 +469,8 @@ CREATE TABLE tags (
 
 ===============Srikanth=============17-02-25========
 ALTER TABLE jobdesc add column webpublish varchar(1) null;
+
+
+===============Srikanth=============20-03-25========
+ALTER TABLE companydata add column package int null;
+

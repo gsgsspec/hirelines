@@ -27,7 +27,7 @@ from openpyxl.styles import Border, Side
 from .constants import public_email_domains
 from hirelines.metadata import getConfig
 from hirelines.settings import BASE_DIR
-from .mailing import sendRegistrainMail
+from .mailing import sendRegistrainMail, sendPackageInfoMail
 from app_api.models import (
     Account,
     CompanyCredits,
@@ -154,141 +154,160 @@ def registerUserService(dataObjs):
 
         else:
 
-            company = Company(
-                name=dataObjs["reg-company"],
-                emaildomain=user_email_domain,
-                email=bussiness_email,
-                companytype=dataObjs["reg-companytype"],
-                registrationdate=datetime.now(),
-                status="A",
-                freetrail="I",
-            )
-            company.save()
+            if dataObjs["reg-plan"] == 0:
 
-            user = User(
-                name=dataObjs["reg-name"],
-                datentime=datetime.now(),
-                location=dataObjs["reg-location"],
-                companyid=company.id,
-                role="HR-Admin",
-                password=random_password,
-                email=bussiness_email,
-                status="A",
-            )
+                company = Company(
+                    name=dataObjs["reg-company"],
+                    emaildomain=user_email_domain,
+                    email=bussiness_email,
+                    companytype=dataObjs["reg-companytype"],
+                    registrationdate=datetime.now(),
+                    status="A",
+                    freetrail="I",
+                )
+                company.save()
 
-            user.save()
+                user = User(
+                    name=dataObjs["reg-name"],
+                    datentime=datetime.now(),
+                    location=dataObjs["reg-location"],
+                    companyid=company.id,
+                    role="HR-Admin",
+                    password=random_password,
+                    email=bussiness_email,
+                    status="A",
+                )
 
-            free_trail_data = getConfig()["FREETRAIL"]
+                user.save()
 
-            payments = Payments(
-                companyid=company.id,
-                dateofpay=datetime.now(),
-                modeofpay="T",
-                amount=30000,
-                credits=free_trail_data["registration_grace_credits"],
-            )
-            payments.save()
+                free_trail_data = getConfig()["FREETRAIL"]
 
-            company_account, company_account_flag = Account.objects.get_or_create(
-                companyid=company.id,
-            )
+                payments = Payments(
+                    companyid=company.id,
+                    dateofpay=datetime.now(),
+                    modeofpay="T",
+                    amount=30000,
+                    credits=free_trail_data["registration_grace_credits"],
+                )
+                payments.save()
 
-            company_account.credit = payments.credits
-            company_account.balance = (
-                int(payments.credits) + int(company_account.balance)
-                if company_account.balance
-                else payments.credits
-            )
-            company_account.save()
+                company_account, company_account_flag = Account.objects.get_or_create(
+                    companyid=company.id,
+                )
 
-            credits = Credits(
-                companyid=company.id,
-                transdatetime=payments.dateofpay,
-                transtype="C",
-                user=user.id,
-                transid=payments.id,
-                points=payments.credits,
-                balance=company_account.balance,
-            )
-            credits.save()
+                company_account.credit = payments.credits
+                company_account.balance = (
+                    int(payments.credits) + int(company_account.balance)
+                    if company_account.balance
+                    else payments.credits
+                )
+                company_account.save()
 
-            CompanyCredits(
-                companyid=company.id,
-                transtype="S",
-                credits=free_trail_data["screening_credits_charges"],
-            ).save()
+                credits = Credits(
+                    companyid=company.id,
+                    transdatetime=payments.dateofpay,
+                    transtype="C",
+                    user=user.id,
+                    transid=payments.id,
+                    points=payments.credits,
+                    balance=company_account.balance,
+                )
+                credits.save()
 
-            CompanyCredits(
-                companyid=company.id,
-                transtype="E",
-                credits=free_trail_data["coding_credits_charges"],
-            ).save()
+                CompanyCredits(
+                    companyid=company.id,
+                    transtype="S",
+                    credits=free_trail_data["screening_credits_charges"],
+                ).save()
 
-            CompanyCredits(
-                companyid=company.id,
-                transtype="I",
-                credits=free_trail_data["interview_credits_charges"],
-            ).save()
-            CompanyCredits(
-                companyid=company.id,
-                transtype="R",  # Resume Inbox
-                credits=free_trail_data["resume_inbox_credits"],
-            ).save()
+                CompanyCredits(
+                    companyid=company.id,
+                    transtype="E",
+                    credits=free_trail_data["coding_credits_charges"],
+                ).save()
 
-            CompanyCredits(
-                companyid=company.id,
-                transtype="P",  # Profiling
-                credits=free_trail_data["profiling_credits"],
-            ).save()
+                CompanyCredits(
+                    companyid=company.id,
+                    transtype="I",
+                    credits=free_trail_data["interview_credits_charges"],
+                ).save()
+                CompanyCredits(
+                    companyid=company.id,
+                    transtype="R",  # Resume Inbox
+                    credits=free_trail_data["resume_inbox_credits"],
+                ).save()
 
-            default_branding = Branding.objects.filter(companyid=0).last()
+                CompanyCredits(
+                    companyid=company.id,
+                    transtype="P",  # Profiling
+                    credits=free_trail_data["profiling_credits"],
+                ).save()
 
-            company_branding = Branding(
-                companyid=company.id,
-                content=default_branding.content,
-                logourl=default_branding.logourl if default_branding.logourl else "",
-                sociallinks=(
-                    default_branding.sociallinks if default_branding.sociallinks else ""
-                ),
-                status="A",
-            )
+                default_branding = Branding.objects.filter(companyid=0).last()
 
-            company_branding.save()
+                company_branding = Branding(
+                    companyid=company.id,
+                    content=default_branding.content,
+                    logourl=default_branding.logourl if default_branding.logourl else "",
+                    sociallinks=(
+                        default_branding.sociallinks if default_branding.sociallinks else ""
+                    ),
+                    status="A",
+                )
 
-            code = f"RC{user.id:03}"
-            source = Source(
-                code=code,
-                label=user.name,
-                companyid=user.companyid,
-                userid=user.id,
-            )            
+                company_branding.save()
 
-            source.save()
+                code = f"RC{user.id:03}"
+                source = Source(
+                    code=code,
+                    label=user.name,
+                    companyid=user.companyid,
+                    userid=user.id,
+                )            
 
-            acert_domain = getConfig()["DOMAIN"]["acert"]
-            endpoint = "/api/add-company"
+                source.save()
 
-            url = urljoin(acert_domain, endpoint)
+                acert_domain = getConfig()["DOMAIN"]["acert"]
+                endpoint = "/api/add-company"
 
-            company_data = {
-                "id": company.id,
-                "company_name": company.name,
-                "brand_content": company_branding.content,
-                "company_email": bussiness_email,
-                "company_logo": str(company_branding.logourl),
-                "sociallinks": company_branding.sociallinks,
-            }
+                url = urljoin(acert_domain, endpoint)
 
-            send_company_data = requests.post(url, json=company_data)
+                company_data = {
+                    "id": company.id,
+                    "company_name": company.name,
+                    "brand_content": company_branding.content,
+                    "company_email": bussiness_email,
+                    "company_logo": str(company_branding.logourl),
+                    "sociallinks": company_branding.sociallinks,
+                }
 
-            hirelines_domain = getConfig()["DOMAIN"]["hirelines"]
-            mail_data = {
-                "name": user.name,
-                "email": user.email,
-                "password": user.password,
-                "url": f"{hirelines_domain}/login",
-            }
-            sendRegistrainMail(mail_data)
+                send_company_data = requests.post(url, json=company_data)
+
+                hirelines_domain = getConfig()["DOMAIN"]["hirelines"]
+                mail_data = {
+                    "name": user.name,
+                    "email": user.email,
+                    "password": user.password,
+                    "url": f"{hirelines_domain}/login",
+                }
+                sendRegistrainMail(mail_data)
+
+            else:
+
+                company_data = CompanyData(
+                    companyname=dataObjs["reg-company"],
+                    companyemail=bussiness_email,
+                    location=dataObjs["reg-location"],
+                    contactperson=dataObjs["reg-name"],
+                    companytype=dataObjs["reg-companytype"],
+                    package=dataObjs["reg-plan"],
+                    registerationtime=datetime.now(),
+                )
+
+                company_data.save()
+
+                sendPackageInfoMail(dataObjs)
+
 
         return 0
 

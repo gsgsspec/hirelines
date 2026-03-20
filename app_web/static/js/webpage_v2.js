@@ -138,9 +138,14 @@ function runTests() {
 typeNext();
 
 
-function openDemoForm() {
+function openDemoForm(plan = '') {
     const modal = document.getElementById('demoModal');
     const content = document.getElementById('modalContent');
+
+    const planSelect = document.getElementById('reg-plan');
+    if (plan !== '' && planSelect) {
+        planSelect.value = plan;
+    }
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');

@@ -16,6 +16,8 @@ from email.mime.multipart import MIMEMultipart
 
 from app_api.models import Branding, Company, Email_template
 
+from app_api.functions.constants import package_types
+
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
 
@@ -253,4 +255,69 @@ def sendEmail(company,paper_type,participant_paper_id,event,replacements,to_emai
         
     except Exception as e:
         print(str(e))
+        raise
+
+
+
+def sendPackageInfoMail(dataObjs):
+    try:
+
+        root_path  = getConfig()['DIR']['root_path']
+        email_config = getConfig()['SEND_EMAIL_CONFIG']
+        creds = f"{root_path}{email_config['creds']}"
+        token =  f"{root_path}{email_config['token']}"
+
+        template_file_path =  root_path + "/app_api/functions/email_templates/package.html"
+
+        with open(template_file_path, 'r',encoding="utf-8") as template_file:
+            email_template = template_file.read()
+
+        email_body = (email_template
+            .replace('[user_name]',dataObjs['reg-name'])
+            .replace('[user_email]',dataObjs['reg-bemail'])
+            .replace('[user_company]',dataObjs['reg-company'])
+            .replace('[user_companytype]',dataObjs['reg-companytype'])
+            .replace('[user_location]',dataObjs['reg-location'])
+            .replace('[user_plan]',package_types.get(int(dataObjs['reg-plan']), 'N/A'))
+        )
+        creds = None
+
+        if os.path.exists(token):
+            creds = Credentials.from_authorized_user_file(token, SCOPES)
+
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    cred, SCOPES)
+                creds = flow.run_local_server(port=0)
+            
+            with open(token, 'w') as token:
+                token.write(creds.to_json())
+                
+        service = build('gmail', 'v1', credentials=creds)
+        hirelines_sales=email_config['sales']
+
+        message = MIMEMultipart("mixed")
+        message['To'] = dataObjs['reg-bemail']
+        message['Cc'] = hirelines_sales
+        message['From'] = f"Hirelines <{email_config['sender']}>"
+        message['Subject'] = "Request Received – Hirelines Team"
+        emailbody = MIMEText(email_body, "html")
+        message.attach(emailbody)
+
+        eml_atch = MIMEText('', 'plain')
+        encoders.encode_base64(eml_atch)
+        eml_atch.add_header('Content-Transfer-Encoding', "")
+
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+
+        create_draft_request_body = {
+            'raw': encoded_message
+        }
+        
+        service.users().messages().send(userId="me",body=create_draft_request_body).execute()
+
+    except Exception as e:
         raise

@@ -11,6 +11,13 @@ company_types = [
     "Software Development Company", "HR Consultancy", "Software Product Company", "Enterprise", "Others"
 ]
 
+package_types = {
+    0 : "Free Tier",
+    1 : "Starter",
+    2 : "Standard",
+    3 : "Enterprise",
+}
+
 const_candidate_status = {
     "O": 'Offered',
     "H": 'Hold',
