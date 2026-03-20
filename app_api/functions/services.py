@@ -2914,7 +2914,7 @@ def demoUserService(dataObjs):
         raise
 
 
-def updateCandidateWorkflowService(dataObjs):
+def updateCandidateWorkflowService(dataObjs,user_id):
     try:
 
         registration = Registration.objects.filter(id=dataObjs["reg_id"]).last()
@@ -3021,6 +3021,7 @@ def updateCandidateWorkflowService(dataObjs):
                                         paper_id=next_workflow.paperid,
                                         status="N",
                                         companyid=candidate.companyid,
+                                        hrid = user_id
                                     )
                                     call_schedule.save()
                                 

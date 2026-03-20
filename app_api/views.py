@@ -1443,7 +1443,8 @@ def updateCandidateWorkflow(request):
     try:
         if request.method == "POST":
             dataObjs = json.loads(request.POST.get('data'))
-            updated_data = updateCandidateWorkflowService(dataObjs)
+            user = auth_user(request.user)
+            updated_data = updateCandidateWorkflowService(dataObjs,user.id)
             response['data'] = int(updated_data)
             response['statusCode'] = 0
 
