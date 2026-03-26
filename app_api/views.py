@@ -3495,43 +3495,58 @@ def saveresumetags(request):
     
 
 
+# def getresumetags(request, resume_id):
+#     try:
+
+#         profile = Profile.objects.filter(resumeid=resume_id).first()
+
+#         profile_id = profile.id if profile else None
+
+#         resume_tags = Tag.objects.filter(resumeid=resume_id).values_list("tag", flat=True)
+
+#         profile_tags = Tag.objects.filter(profileid=profile_id).values_list("tag", flat=True)
+
+#         combined_tags = list(resume_tags) + list(profile_tags)
+
+#         unique_tags = {}
+#         for tag in combined_tags:
+#             # normalized = tag.lower().replace(" ", "").strip()
+#             normalized = tag.lower().strip()
+
+#             if normalized not in unique_tags:
+#                 unique_tags[normalized] = tag
+        
+#         all_tags = list(unique_tags.values())
+        
+
+#         return JsonResponse({
+#             "statusCode": 0,
+#             # "tags": list(unique_tags.values())
+#             "tags": all_tags
+#         })
+    
+#     except Exception as e:
+#         return JsonResponse({
+#             "statusCode": 1,
+#             "error": str(e)
+#         })
+    
 def getresumetags(request, resume_id):
     try:
-
-        profile = Profile.objects.filter(resumeid=resume_id).first()
-
-        profile_id = profile.id if profile else None
-
-        resume_tags = Tag.objects.filter(resumeid=resume_id).values_list("tag", flat=True)
-
-        profile_tags = Tag.objects.filter(profileid=profile_id).values_list("tag", flat=True)
-
-        combined_tags = list(resume_tags) + list(profile_tags)
-
-        unique_tags = {}
-        for tag in combined_tags:
-            # normalized = tag.lower().replace(" ", "").strip()
-            normalized = tag.lower().strip()
-
-            if normalized not in unique_tags:
-                unique_tags[normalized] = tag
         
-        all_tags = list(unique_tags.values())
-        
+        resume_tags = Tag.objects.filter(resumeid=resume_id)\
+                                 .values_list("tag", flat=True)
 
         return JsonResponse({
             "statusCode": 0,
-            # "tags": list(unique_tags.values())
-            "tags": all_tags
+            "tags": list(resume_tags)
         })
-    
+
     except Exception as e:
         return JsonResponse({
             "statusCode": 1,
             "error": str(e)
         })
-    
-        
 
   
 

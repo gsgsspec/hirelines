@@ -659,8 +659,8 @@ $("#save-tagsdata").on("click", function () {
           
             $("#resume-tags-input").val("");
 
-            $('#close-resume-preview-btn').click();
-            reloadResumesWithCurrentFilters();
+            // $('#close-resume-preview-btn').click();
+            // reloadResumesWithCurrentFilters();
             loadResumeTags(resumeId);
         }
 
