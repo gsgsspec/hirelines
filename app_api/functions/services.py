@@ -4052,16 +4052,17 @@ def getResumeData(user_data, filters=None):
                 resume_tags = list(Tag.objects.filter(resumeid=resume.id).values_list("tag", flat=True))
 
             
-                profile = Profile.objects.filter(resumeid=resume.id).first()
+                # profile = Profile.objects.filter(resumeid=resume.id).first()
 
-                profile_tags = []
-
-                
-                if profile:
-                    profile_tags = list(Tag.objects.filter(profileid=profile.id).values_list("tag", flat=True))
+                # profile_tags = []
 
                 
-                combined_tags = list(set(resume_tags + profile_tags))
+                # if profile:
+                #     profile_tags = list(Tag.objects.filter(profileid=profile.id).values_list("tag", flat=True))
+
+                
+                # combined_tags = list(set(resume_tags + profile_tags))
+                combined_tags = resume_tags
             # for resume in resumes:
 
             #     source = sources.filter(id=resume.sourceid).first()
