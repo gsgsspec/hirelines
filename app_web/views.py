@@ -110,6 +110,12 @@ def diff_highlight(preset, user_code):
 
 def loginPage(request):
     try:
+
+        host = request.get_host() 
+        main_domain_hirelines = main_domain.replace("http://", "").replace("https://", "")
+        is_main_domain = host == main_domain_hirelines
+        if not is_main_domain:
+            return render(request, "company_login.html")
              
         # return render(request, "web_index.html", {"template_name": 'login.html'})
         return render(request, "login_v2.html")

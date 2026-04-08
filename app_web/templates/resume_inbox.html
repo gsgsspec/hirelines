@@ -33,6 +33,7 @@
                                 <tr>
                                     <th>Source </th>
                                     <th>Name </th>
+                                    <th>Job Description</th>
                                     <th>Date </th>
                                     <th>Status </th>
                                     <th>Tags</th><!-- ADD THIS -->
@@ -44,6 +45,7 @@
                                     <tr class="resume-row" data-id="{{ resume_data.id }}" data-status="{{ resume_data.status }}" style="cursor: pointer;">
                                         <td> {{ resume_data.source }} </td>
                                         <td> {{ resume_data.name }} </td>
+                                        <td> {{ resume_data.job_title }} </td>
                                         <td> {{ resume_data.date }} </td>
                                         {% if resume_data.status == "P" %}
                                             <td>Review Pending</td>
@@ -208,7 +210,7 @@
             // "lengthChange": false,
             columnDefs: [
                 {
-                    targets: 4,   
+                    targets: 5,   
                     visible: false,
                     searchable: true   
                 }

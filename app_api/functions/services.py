@@ -1990,11 +1990,19 @@ def getInterviewCandidates(userid):
 
         user = User.objects.get(id=userid)
 
-        job_desc_ids = list(
-            JobDesc.objects.filter(
-                companyid=user.companyid, interviewers__contains=user.id
-            ).values_list("id", flat=True)
-        )
+        if user.role == "HR-Admin":
+            job_desc_ids = list(
+                JobDesc.objects.filter(
+                    companyid=user.companyid
+                ).values_list("id", flat=True)
+            )
+        else :
+            job_desc_ids = list(
+                JobDesc.objects.filter(
+                    companyid=user.companyid, interviewers__contains=f"'{user.id}'"
+                ).values_list("id", flat=True)
+            )
+
         candidate_ids = list(
             Candidate.objects.filter(
                 companyid=user.companyid, jobid__in=job_desc_ids
@@ -4051,6 +4059,11 @@ def getResumeData(user_data, filters=None):
             
                 resume_tags = list(Tag.objects.filter(resumeid=resume.id).values_list("tag", flat=True))
 
+                if resume.jobid:
+                    job_title = JobDesc.objects.get(id=resume.jobid).title
+                else :
+                    job_title = ""
+
             
                 # profile = Profile.objects.filter(resumeid=resume.id).first()
 
@@ -4071,6 +4084,7 @@ def getResumeData(user_data, filters=None):
                         "id": resume.id,
                         "name": resume.filename or "",
                         "source": source.label or "",
+                        "job_title":job_title,
                         "date": (
                             resume.datentime.strftime("%d-%b-%Y %I:%M %p")
                             if resume.datentime
@@ -5079,7 +5093,7 @@ def getJdProfileData(dataObjs,user_data):
             for item in jd_profile_data
         }
 
-        user_source = Source.objects.filter(companyid=user_data.companyid,userid=user_data.id).last()
+        # user_source = Source.objects.filter(companyid=user_data.companyid,userid=user_data.id).last()
         
         for profile in profiles:
 
@@ -5096,27 +5110,31 @@ def getJdProfileData(dataObjs,user_data):
             candidate = Candidate.objects.filter(profileid=profile.id,jobid=dataObjs["jdid"]).last()
             if candidate:
                 c_status = const_candidate_status.get(candidate.status, "")
-                if candidate.source == user_source.code:
-                    shortlisted_profiles.append({
-                        "id":profile.id,
-                        "firstname":profile.firstname,
-                        "middlename":profile.middlename,
-                        "lastname":profile.lastname,
-                        "email":profile.email,
-                        "profile_strength": profile.strength if profile.strength else 0,
-                        "exp_strength": exp_strength,
-                        "total_experience": int(match_info.get("total_experience", 0)),
-                        "skill_strength": skill_strength,
-                        "matched_skills":matched_skills,
-                        "not_matched_skills":not_matched_skills,
-                        "overall_strength": overall_strength,
-                        "candidate_status":c_status,
-                        "skill_math_strength":skill_math_strength,
-                        "exp_math_strength":exp_math_strength
-                    })
+                # if candidate.source == user_source.code:
+                shortlisted_profiles.append({
+                    "id":profile.id,
+                    "firstname":profile.firstname,
+                    "middlename":profile.middlename,
+                    "lastname":profile.lastname,
+                    "email":profile.email,
+                    "profile_strength": profile.strength if profile.strength else 0,
+                    "exp_strength": exp_strength,
+                    "total_experience": int(match_info.get("total_experience", 0)),
+                    "skill_strength": skill_strength,
+                    "matched_skills":matched_skills,
+                    "not_matched_skills":not_matched_skills,
+                    "overall_strength": overall_strength,
+                    "candidate_status":c_status,
+                    "skill_math_strength":skill_math_strength,
+                    "exp_math_strength":exp_math_strength
+                })
 
             else:
-                if profile.status == "R":
+
+                total_experience = int(match_info.get("total_experience", 0))
+
+                if profile.status == "R" and job_desc.expmin <= total_experience <= job_desc.expmax:
+                    
                     matched_profiles.append({
                         "id":profile.id,
                         "firstname":profile.firstname,
@@ -5125,7 +5143,7 @@ def getJdProfileData(dataObjs,user_data):
                         "email":profile.email,
                         "profile_strength": profile.strength if profile.strength else 0,
                         "exp_strength": exp_strength,
-                        "total_experience": int(match_info.get("total_experience", 0)),
+                        "total_experience": total_experience,
                         "skill_strength": skill_strength,
                         "matched_skills":matched_skills,
                         "not_matched_skills":not_matched_skills,
@@ -5182,7 +5200,7 @@ def shortlistProfileService(dataObjs,user_data):
             candidate_obj['jd'] = dataObjs["jdid"]
             candidate_obj['begin-from'] = workflow_data.paperid
 
-            source = Source.objects.filter(userid=user_data.id,companyid=user_data.companyid).last()
+            source = Source.objects.filter(id=profile.sourceid).last()
             
             if source:
                 candidate_obj["source-code"] = source.code

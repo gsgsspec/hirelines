@@ -920,8 +920,15 @@ def addResumeProfileDB(dataObjs,user_data):
 
         resume = Resume.objects.get(id=dataObjs["resume_id"])
 
+        source = Source.objects.filter(userid=user_data.id,companyid=user_data.companyid).last()
+
+        if source:
+            source_id = source.id
+        else :
+            source_id = resume.sourceid
+
         profile = Profile(
-            sourceid = resume.sourceid,
+            sourceid = source_id,
             resumeid = resume.id,
             companyid = resume.companyid,
             dateofcreation = datetime.now(),

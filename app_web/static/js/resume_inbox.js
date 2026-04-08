@@ -198,6 +198,7 @@ function updateResumeTable(resumes){
             <tr class="resume-row" data-id="${r.id}" data-status="${r.status}" style="cursor: pointer;">
                 <td>${r.source}</td>
                 <td>${r.name}</td>
+                <td>${r.job_title}</td>
                 <td>${r.date}</td>
                 <td>${status}</td>
                 <td style="display:none;">${r.tags || ""}</td>
@@ -213,7 +214,7 @@ function updateResumeTable(resumes){
         "ordering": true,
         columnDefs: [
             {
-                targets: 4,
+                targets: 5,
                 visible: false,
                 searchable: true
             }
