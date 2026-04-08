@@ -571,9 +571,11 @@ def candidateInterview(request,sch_id):
         profile_data = interview_data['profile_data']
         profiling_video = interview_data["profiling_video"]
 
+        reschedule_resons = list(Lookupmaster.objects.filter(lookupid=2, status='A').exclude(lookupmasterid=0).values_list('lookupname', flat=True))
+        
         return render(request, "portal_index.html", {"template_name": 'candidate_interview.html','jd_data':jd_data,'cdn_data':cdn_data,
             'sections_questions_lst' : interv_sect_ques["sections_questions_lst"],'interview_sections' : interv_sect_ques['sections_lst'],'profile_data':profile_data,
-            'candidate_data':candidate_data,'screening_data':screening_data,'coding_data':coding_data,'profiling_video':profiling_video })
+            'candidate_data':candidate_data,'screening_data':screening_data,'coding_data':coding_data,'profiling_video':profiling_video, 'reschedule_resons': reschedule_resons})
 
     except Exception as e:
         raise
@@ -726,7 +728,6 @@ def candidateData(request,cid):
         candidate_info = candidatedata['candidate_info']
         registrations_data = candidatedata['registrations_data']
         feedbacks_data = candidatedata['feedbacks_data']
-
 
         return render(request, "portal_index.html", {"template_name": 'candidate_data.html','menuItemList':menuItemList,'feedbacks_data':feedbacks_data,
                                 'candidate_info':candidate_info,'registrations_data':registrations_data})

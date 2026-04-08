@@ -26,7 +26,8 @@ from hirelines.metadata import getConfig, check_referrer
 from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
-        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService, jobBoardConfigService,SourcePerformanceService
+        downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService, jobBoardConfigService,SourcePerformanceService, \
+        updateRescheduleFlagService
         
 from .models import Account, Branding, Candidate, CompanyCredits, JobDesc, Lookupmaster, Registration, User, User_data, Workflow, InterviewMedia, CallSchedule,Brules,Profile,ProfileExperience,Source,ProfileSkills,Email_template, Company, ResumeFile, Resume, ProfileActivity, WorkCal,jdlibrary,Tag
 # from .functions.database import addCandidateDB, scheduleInterviewDB, interviewResponseDB, addInterviewFeedbackDB, updateEmailtempDB, interviewRemarkSaveDB, updateCompanyDB, 
@@ -776,6 +777,31 @@ def interviewCompletion(request):
 
     except Exception as e:
         response['data'] = 'Error in Saving Meeting Status view'
+        response['error'] = str(e)
+        
+    return JsonResponse(response)
+
+
+@api_view(['POST'])
+def updateRescheduleFlag(request):
+    response = {
+        'data': None,
+        'error': None,
+        'statusCode': 1
+    }
+    try:
+        if request.method == "POST":
+            dataObjs = json.loads(request.POST.get('data'))
+
+            user = auth_user(request.user)
+
+            updateRescheduleFlagService(dataObjs,user.id)
+
+            response['data'] = "Saved"
+            response['statusCode'] = 0
+
+    except Exception as e:
+        response['data'] = 'Error in updateRescheduleFlag view'
         response['error'] = str(e)
         
     return JsonResponse(response)

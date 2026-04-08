@@ -310,6 +310,86 @@ $("#submit_btn").click(function () {
 
 })
 
+$("#reschedule_btn").click(function () {
+
+    $("#reschedule_btn").prop("disabled", true);
+
+    // Build dropdown options
+    let options_html = `<option value="">Select Reason</option>`;
+    reschedule_resons.forEach(function (reason) {
+        options_html += `<option value="${reason}">${reason}</option>`;
+    });
+
+    Swal.fire({
+        title: "Do you want to reschedule interview?",
+        icon: 'warning',
+        html: `
+            <div class="swal-row">
+                <label class="swal-label-inline">Reason</label>
+                <select id="swal_reschedule_reason" class="custom-select-inline">
+                    ${options_html}
+                </select>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonColor: '#3d3d3d',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Reschedule Interview',
+        focusConfirm: false,
+
+        preConfirm: () => {
+            const reason = document.getElementById('swal_reschedule_reason').value;
+            if (!reason) {
+                Swal.showValidationMessage('Please select a reason');
+                return false;
+            }
+            return reason;
+        }
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            let selected_reason = result.value;
+
+            let dataObj_ = {
+                "sch_id": candid_call_shed_id,
+                "reason": selected_reason,
+            };
+
+            let final_data_ = {
+                'data': JSON.stringify(dataObj_),
+                csrfmiddlewaretoken: CSRF_TOKEN,
+            };
+
+            $.post(CONFIG['portal'] + "/api/update-reschedule-flag", final_data_, function (res_) {
+
+                if (res_.statusCode == 0) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Reschedule Status Updated',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
+                    setTimeout(function () {
+                        window.location.href = '/interviews';
+                    }, 1000);
+
+                } else {
+                    $("#reschedule_btn").prop("disabled", false);
+                }
+
+            });
+
+        } else {
+            // Re-enable button if cancelled
+            $("#reschedule_btn").prop("disabled", false);
+        }
+    });
+
+});
+
 
 
 function remarks() {

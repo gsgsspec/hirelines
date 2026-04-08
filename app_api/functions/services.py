@@ -625,8 +625,11 @@ def getCandidatesData(userid):
         )
 
         for candidate in candidates:
-
-            c_status = const_candidate_status.get(candidate.status, "")
+            callschedule = CallSchedule.objects.filter(candidateid=candidate.id).last()
+            if callschedule and callschedule.rescheduleflag and callschedule.rescheduleflag == "Y":
+                c_status = "Reschedule " + (f"({callschedule.reschedulereason})" if callschedule.reschedulereason else "")
+            else:
+                c_status = const_candidate_status.get(candidate.status, "")
 
             job_desc = JobDesc.objects.filter(id=candidate.jobid).last()
 
@@ -1985,6 +1988,21 @@ def interviewCompletionService(dataObjs, user_id):
         raise
 
 
+def updateRescheduleFlagService(dataObjs, user_id):
+    try:
+        call_sch_details = CallSchedule.objects.filter(id=dataObjs["sch_id"]).last()
+        call_sch_details.rescheduleflag = "Y"
+        call_sch_details.reschedulereason = dataObjs["reason"]
+        call_sch_details.save()
+
+        candidate = Candidate.objects.get(id=call_sch_details.candidateid)
+        if candidate.profileid:
+            addProfileActivityDB(candidate.profileid,"IR","Interview Reschedule",user_id)
+
+    except Exception as e:
+        raise
+
+
 def getInterviewCandidates(userid):
     try:
 
@@ -2177,7 +2195,7 @@ def getCandidateWorkflowData(cid):
                         jobid=registration.jobid, paperid=registration.paperid
                     )
 
-                    paper_type = ""
+                    paper_type = reschedule_message = ""
                     call_status = ""
                     scheduled_time = ""
                     interviewer_name = ""
@@ -2245,6 +2263,9 @@ def getCandidateWorkflowData(cid):
                                     if call_schedule.callendeddtt
                                     else ""
                                 )
+                            
+                            if call_schedule.status == "S" and call_schedule.rescheduleflag == "Y":
+                                reschedule_message = f"{call_schedule.reschedulereason}"
                     else:
                         paper_type = ""
 
@@ -2269,6 +2290,7 @@ def getCandidateWorkflowData(cid):
                             "paper_type": workflow.papertype,
                             "type_title": paper_type,
                             "call_status": call_status,
+                            "reschedule_message": reschedule_message,
                             "candidateid": candidate.id,
                             "reg_status": registration.status,
                             "completion_date": (

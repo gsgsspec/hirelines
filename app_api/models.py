@@ -236,6 +236,9 @@ class CallSchedule(models.Model):
     companyid = models.IntegerField(null=True)
     audioscore = models.IntegerField(null=True)
     audiolevel = models.CharField(max_length=1,null=True) # H - High, M - Moderate, L - Low
+    rescheduleflag = models.CharField(max_length=1,null=True) # Y - Reschedule
+    reschedulereason = models.CharField(max_length=250, null=True)
+
 
     class Meta:
         db_table = 'callschedule'

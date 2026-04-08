@@ -285,6 +285,7 @@ def scheduleInterviewDB(user_id, dataObjs):
                 call_details.meetinglink = meeting_link
                 call_details.hrid = user_id
                 call_details.companyid = user.companyid
+                call_details.rescheduleflag = "N"
                 call_details.save()
 
                 # Mail Replacements

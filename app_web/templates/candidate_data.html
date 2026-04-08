@@ -88,6 +88,9 @@
                     <label>Interview scheduled</label>
                     <label>Scheduled Time : {{ registration.scheduled_time }}</label>
                     <label>Interviewer : {{ registration.interviewer_name }}</label>
+                    {% if registration.reschedule_message %}
+                    <label><b>{{ registration.reschedule_message }} - Need to be Rescheduled</b></label>
+                    {% endif %}
                     <div class="mt-2 d-flex justify-content-start">
                       <button class="btn btn-primary btn-sm" onclick="window.location.href='/interview-schedule/{{ registration.candidateid }}?status=R&Page=C'">Reschedule</button>
                     </div>

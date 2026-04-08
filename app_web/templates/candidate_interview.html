@@ -608,7 +608,9 @@
 
               </div>
               <button id="call_flag" hidden>Start Call</button>
-              <button class="btn bg-gradient-dark mb-0 js-btn-next cust-btn-color" style="width:140px;margin-left: 87%; background-color: var(--primary-color); color: white; font-weight: 500;"
+              <button class="btn bg-gradient-dark mb-0 js-btn-next cust-btn-color" style="width:140px;margin-left: 75%; background-color: var(--primary-color); color: white; font-weight: 500;"
+                id="reschedule_btn">Reschedule</button>
+              <button class="btn bg-gradient-dark mb-0 js-btn-next cust-btn-color" style="width:140px;margin-left: 1%; background-color: var(--primary-color); color: white; font-weight: 500;"
                 id="done_btn">End Interview</button>
               <button class="btn bg-gradient-dark mb-0 js-btn-next cust-btn-color mb-3"
                 style="width:140px;float:right;margin-left: 13px; background-color: var(--primary-color); color: white; font-weight: 500;" id="submit_btn" disabled hidden>OK</button>
@@ -631,9 +633,35 @@
     var candid_call_shed_id = "{{ candidate_data.schd_id }}"
     var library_id = "{{ cdn_data.libraryid }}"
     var auth_key = "{{ cdn_data.auth_key }}"
+    var reschedule_resons = {{ reschedule_resons|safe }};
 
   </script>
+
+
   <style>
+
+    .swal-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .swal-label-inline {
+        font-weight: 600;
+        font-size: 14px;
+        min-width: 70px;
+        text-align: left;
+    }
+
+    .custom-select-inline {
+        width: 220px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
 
     .highlight {
       background-color: #fff779;

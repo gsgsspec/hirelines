@@ -442,7 +442,7 @@ ADD COLUMN `audiolevel` VARCHAR(1) NULL DEFAULT NULL AFTER `audioscore`;
 
 ========================= Resume Template ---- Srikanth 10-02-2025 ============================
 
-CREATE TABLE resumetemplate (
+CREATE TABLE hirelines.resumetemplate (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(40) NULL,
   thumbnail VARCHAR(100) NULL,
@@ -473,4 +473,24 @@ ALTER TABLE jobdesc add column webpublish varchar(1) null;
 
 ===============Srikanth=============20-03-25========
 ALTER TABLE companydata add column package int null;
+
+=============================Balu=================08-04-2026
+
+ALTER TABLE callschedule
+ADD COLUMN `rescheduleflag` VARCHAR(1) NULL DEFAULT NULL,
+ADD COLUMN `reschedulereason` VARCHAR(250) NULL DEFAULT NULL;
+
+
+INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookupparam1`, `status`) VALUES ('1', '8', 'Interview Reschedule', 'IR', 'A');
+
+
+INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookupparam1`, `status`) VALUES ('2', '0', 'Reson For Reschedule', 'Reson For Reschedule', 'A');
+INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookupparam1`, `status`) VALUES ('2', '1', 'Call Disconected', 'CD', 'A');
+INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookupparam1`, `status`) VALUES ('2', '2', 'Technical Issue', 'TI', 'A');
+INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookupparam1`, `status`) VALUES ('2', '3', 'Candidate Not Joined', 'CN', 'A');
+INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookupparam1`, `status`) VALUES ('2', '4', 'Interviewer Not Availbe', 'IN', 'A');
+
+
+==========================================================
+
 
