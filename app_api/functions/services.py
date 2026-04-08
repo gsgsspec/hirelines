@@ -4804,7 +4804,8 @@ def send_resume_to_docparser(resumefile_id):
     }
 
     try:
-        response = requests.post(url, files=files, data=data, timeout=10)
+        response = requests.post(url, files=files, data=data, timeout=50)
+        print("response",response)
         response.raise_for_status()
         resp_json = response.json()
         print(f"Doc parser API response: {resp_json}")
@@ -6641,3 +6642,25 @@ def getResume_AnalysisDetailsService(pid):
     })
 
     return data
+
+def get_jd_paperid(paperID):
+    try:
+        print(paperID)
+        jd = None
+        work_flow =Workflow.objects.filter(paperid=paperID).last()
+        if work_flow:
+            jd = JobDesc.objects.get(id=work_flow.jobid)
+        return jd
+    except Exception as err:
+        print("Error in get_jd_paperid : ",str(err))
+        raise
+
+
+def truncate_string(title,limitchars):
+    try:
+        if len(title) > limitchars:
+            return title[:limitchars-3] + "..."
+        return title
+    except Exception as err:
+        print("Error in truncate_string : ",str(err))
+        raise

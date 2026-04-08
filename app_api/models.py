@@ -132,7 +132,6 @@ class Company(models.Model):
     freetrail = models.CharField(max_length=1, null=True)  # C - Completed, I - In-progress 
     registrationdate = models.DateTimeField(null=True)
     contactperson = models.CharField(max_length=100, null=True, blank=True)
-    resumetemplateid = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'company'

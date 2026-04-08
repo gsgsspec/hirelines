@@ -23,7 +23,9 @@ def resume_file_created(sender, instance, created, **kwargs):
     # Call API after DB commit, catch errors so main save never fails
     def call_docparser():
         try:
+            print("instance.id",instance.id)
             docparser_id = send_resume_to_docparser(instance.id)
+            print("docparser_id",docparser_id)
             if docparser_id:
                 # Update Resume table with the returned docparser_id
                 resumeid=ResumeFile.objects.filter(id=instance.id).first().resumeid

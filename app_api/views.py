@@ -23,7 +23,7 @@ from app_api.functions.masterdata import auth_user, getCompanyId, getUserCompany
 from django.db.models import Q
 
 from hirelines.metadata import getConfig, check_referrer
-from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
+from .functions.services import addCompanyDataService, candidateRegistrationService, deductCreditsService, get_jd_paperid, registerUserService, authentication_service, getJdWorkflowService,interviewSchedulingService, jdPublishService, changeUserstatusService, truncate_string, updateJdDataService, skillsWithTopicsWithSubtopicsWithQuestionsService, \
         jdTestAdd, addJdServices, updateJdServices, workFlowDataService, interviewCompletionService,questionsResponseService, getInterviewStatusService, generateCandidateReport, addNewUserService, \
         notifyCandidateService,checkTestHasPaperService, deleteTestInJdService, saveInterviewersService,generateCandidateReport,demoUserService, updateCandidateWorkflowService, dashBoardGraphDataService,mapUploadedCandidateFields, processAddCandidateService, checkJdCandidateRegistrationService, \
         downloadUploadReportService, getResumeData, softDeleteResume, generateBrandedProfile,getRecritmentDashboardData, getJdProfileData, shortlistProfileService, dashBoardDataService, addNewClientService, changeClientstatusService,RecruitersPerformanceService, jobBoardConfigService,SourcePerformanceService, \
@@ -616,6 +616,15 @@ def evaluationView(request):
                 json_data = json.loads(response_content.decode('utf-8'))
 
                 acert_data = json_data['data']
+                try:
+                    for item in acert_data:
+                        jd = get_jd_paperid(item["id"])
+                        if jd :
+                            item["jd_name"] = truncate_string(jd.title,40) if jd.title else ""
+                        else:item["jd_name"] = ""
+                except Exception as err:
+                    print("error in reading acert data")
+                    raise
                 if json_data['statusCode'] == 0:
                     response['data'] = acert_data
                     response['statusCode'] = 0

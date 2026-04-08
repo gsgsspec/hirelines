@@ -25,10 +25,10 @@ function get_papers_data() {
             }
             papers_data.map((paper, index) => {
                 if (paper.paper_count == 0) {
-                    $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class="form-label no_submissions_to_evaluate" style="cursor:pointer;display:none;" >${paper.paper_code} - ${paper.paper_name}  (${paper.paper_count})</p>`)
+                    $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class="form-label no_submissions_to_evaluate" style="cursor:pointer;display:none;" >${paper.paper_code} - <b>${paper.paper_name}</b>  (${paper.paper_count}) ${paper.jd_name ?'('+paper.jd_name+')':""}</p>`)
                     evaluated_papers += 1
                 } else {
-                    $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class="form-label" style="cursor:pointer;" >${paper.paper_code} - ${paper.paper_name}  (${paper.paper_count})</p>`)
+                    $("#papers").append(`<p onclick="filter_data(${paper.id},null)" name="papers" id="paper_${paper.id}" class="form-label" style="cursor:pointer;" >${paper.paper_code} - <b>${paper.paper_name}</b>  (${paper.paper_count}) ${paper.jd_name ?'('+paper.jd_name+')':""}</p>`)
                 }
 
             })
