@@ -321,20 +321,23 @@ $("#reschedule_btn").click(function () {
     });
 
     Swal.fire({
-        title: "Do you want to reschedule interview?",
+        title: "Do you want to reschedule?",
         icon: 'warning',
+        
         html: `
-            <div class="swal-row">
-                <label class="swal-label-inline">Reason</label>
-                <select id="swal_reschedule_reason" class="custom-select-inline">
-                    ${options_html}
-                </select>
+            <div class="d-flex mt-2">
+                <label class="col-sm-3 col-form-label">Reason</label>
+                <div class="col-sm-8">
+                    <select id="swal_reschedule_reason" class="form-select" required>
+                        ${options_html}
+                    </select>
+                </div>
             </div>
         `,
         showCancelButton: true,
-        confirmButtonColor: '#3d3d3d',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Reschedule Interview',
+        confirmButtonColor: '#274699',
+        cancelButtonColor: '#f25c05',
+        confirmButtonText: 'Reschedule',
         focusConfirm: false,
 
         preConfirm: () => {

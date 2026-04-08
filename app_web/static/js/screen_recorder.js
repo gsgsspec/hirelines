@@ -93,8 +93,8 @@ async function checkForAudioOutputChanges() {
           title: 'Headphones plugged/unplugged. Audio will not be recorded',
           text: 'Please Close the tab and rejoin or click "Reload" (Restarts the interview) button below',
           showCancelButton: true,
-          confirmButtonColor: '#3d3d3d',
-          cancelButtonColor: '#d33',
+          confirmButtonColor: '#274699',
+          cancelButtonColor: '#f25c05',
           confirmButtonText: 'Reload'
       }).then((result) => {
           if (result.isConfirmed) {
@@ -6450,8 +6450,8 @@ $("#done_btn").click(function () {
         text: "On ending the call, the candidate interview will be closed within 5 seconds",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3d3d3d',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#274699',
+        cancelButtonColor: '#f25c05',
         confirmButtonText: 'End Interview'
     }).then((result) => {
         if (result.isConfirmed) {
