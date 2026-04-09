@@ -627,7 +627,8 @@ def getCandidatesData(userid):
         for candidate in candidates:
             callschedule = CallSchedule.objects.filter(candidateid=candidate.id).last()
             if callschedule and callschedule.rescheduleflag and callschedule.rescheduleflag == "Y":
-                c_status = "Reschedule " + (f"({callschedule.reschedulereason})" if callschedule.reschedulereason else "")
+                # c_status = "Reschedule " + (f"({callschedule.reschedulereason})" if callschedule.reschedulereason else "")
+                c_status = f"To Reschedule"
             else:
                 c_status = const_candidate_status.get(candidate.status, "")
 
