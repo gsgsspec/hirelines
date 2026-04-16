@@ -8,7 +8,7 @@ from app_api.models import Credits, User, Role, JobDesc, CallSchedule, Candidate
 from app_api.functions.services import getCompanyCreditsUsageService, getJobDescData, getCandidatesData, getJdCandidatesData, get_functions_service, checkCompanyTrailPeriod, getCompanyJdData, getCallScheduleDetails, companyUserLst, \
     getInterviewerCandidates, getCandidateInterviewData, getCompanyJDsList,jdDetails, getCdnData, getInterviewCandidates, getInterviewFeedback, getCandidateWorkflowData, getCompanyData, getDashboardData, getCompanySourcesData, \
     getCompanyCandidateUploadData,getProfileDetailsService,getProfileactivityDetailsService, getResumeData, getProfileData,getSlotsAvailable, getRecruitersData,getRecritmentDashboardData,getWorkspaces, getWorkspaceData, getCompanyClients,get_default_email_template_service,getHiringManagersData,companyClientLst,RecruitersPerformanceService, \
-    getJobboards, getJDJobboards, getOverallDashboardCounts,SourcePerformanceService, getResumeTemplates, getJobDescApplyPageData, getCompanyCareers,getResume_AnalysisDetailsService
+    getJobboards, getJDJobboards, getOverallDashboardCounts,SourcePerformanceService, getResumeTemplates, getJobDescApplyPageData, getCompanyCareers,getResume_AnalysisDetailsService, getRecruiterSourcesData
 from app_api.functions.constants import hirelines_integration_script,hirelines_integration_function
 
 from hirelines.metadata import getConfig
@@ -1111,10 +1111,12 @@ def resumeInboxPage(request):
         # gmail_data = fetch_gmail_attachments()
         sources_data = getCompanySourcesData(user_data.companyid)
 
+        recruiter_sources = getRecruiterSourcesData(user_data)
+
         resumes_data = getResumeData(user_data)
 
         return render(request, "portal_index.html", {"template_name": 'resume_inbox.html','menuItemList':menuItemList,
-            "resumes_data":resumes_data, "user_data":user_data, "sources_data":sources_data
+            "resumes_data":resumes_data, "user_data":user_data, "sources_data":sources_data,"recruiter_sources":recruiter_sources
         })
       
     except Exception as e:

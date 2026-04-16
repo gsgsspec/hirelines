@@ -99,53 +99,104 @@ async function getReportData(cid) {
 }
 
 
-document.getElementById("notify").onclick = function () {
-    $('#notify-candidate').unbind('submit').bind('submit', function (event) {
-        event.preventDefault();
+// document.getElementById("notify").onclick = function () {
+//     $('#notify-candidate').unbind('submit').bind('submit', function (event) {
+//         event.preventDefault();
 
-        $("#notify").prop("disabled", true);
+//         $("#notify").prop("disabled", true);
 
-        dataObj = {
-            'notify': $('#notify').val(),
-            'cid': candidate_code,
+//         dataObj = {
+//             'notify': $('#notify').val(),
+//             'cid': candidate_code,
+//         }
+
+//         var final_data = {
+//             'data': JSON.stringify(dataObj),
+//             csrfmiddlewaretoken: CSRF_TOKEN,
+//         }
+
+//         $.post(CONFIG['portal'] + "/api/notify-candidate", final_data, function (res) {
+
+//             if (res.statusCode == 0) {
+
+//                 Swal.fire({
+//                     position: 'center',
+//                     icon: 'success',
+//                     title: 'Canididate Notified',
+//                     showConfirmButton: false,
+//                     timer: 2000
+//                 })
+
+//                 setTimeout(function () { window.location.reload();}, 2000);
+
+
+//             } else {
+//                 Swal.fire({
+//                     position: 'center',
+//                     icon: 'error',
+//                     title: 'Error in notifying the Candidate',
+//                     text: 'Please try again after some time',
+//                     showConfirmButton: false,
+//                     timer: 1500
+//                 })
+
+//                 $("#notify").prop("disabled", false);
+//             }
+//         })
+
+//     })
+// }
+
+
+$(document).on("click", ".notify-btn", function () {
+
+    let notifyStatus = $(this).data("status");
+    let clickedBtn = $(this);
+
+    $(".notify-btn").prop("disabled", true);
+
+    let dataObj = {
+        notify: notifyStatus,
+        cid: candidate_code,
+    };
+
+    let final_data = {
+        data: JSON.stringify(dataObj),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    };
+
+    $.post(CONFIG['portal'] + "/api/notify-candidate", final_data, function (res) {
+
+        if (res.statusCode == 0) {
+
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Candidate Notified',
+                showConfirmButton: false,
+                timer: 2000
+            });
+
+            setTimeout(function () {
+                window.location.reload();
+            }, 2000);
+
+        } else {
+
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Error in notifying the Candidate',
+                text: 'Please try again after some time',
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            $(".notify-btn").prop("disabled", false);
         }
+    });
 
-        var final_data = {
-            'data': JSON.stringify(dataObj),
-            csrfmiddlewaretoken: CSRF_TOKEN,
-        }
-
-        $.post(CONFIG['portal'] + "/api/notify-candidate", final_data, function (res) {
-
-            if (res.statusCode == 0) {
-
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'Canididate Notified',
-                    showConfirmButton: false,
-                    timer: 2000
-                })
-
-                setTimeout(function () { window.location.reload();}, 2000);
-
-
-            } else {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Error in notifying the Candidate',
-                    text: 'Please try again after some time',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-
-                $("#notify").prop("disabled", false);
-            }
-        })
-
-    })
-}
+});
 
 
 function deleteCandidate(id){

@@ -10,25 +10,33 @@ document.addEventListener("click", function (event) {
 
     card.classList.add("active");
 
-    dataObjs = {
-        'jdid':  jdid
-    }
+    loadJDDetails(jdid)
 
-    var final_data = {
-        'data': JSON.stringify(dataObjs),
-        csrfmiddlewaretoken: CSRF_TOKEN,
-    }
+    // dataObjs = {
+    //     'jdid':  jdid
+    // }
 
-    $.post(CONFIG['portal'] + "/api/jd-profile-data", final_data, function (res) {
+    // var final_data = {
+    //     'data': JSON.stringify(dataObjs),
+    //     csrfmiddlewaretoken: CSRF_TOKEN,
+    // }
 
-        renderJDDetails(res.data);
+    // $.post(CONFIG['portal'] + "/api/jd-profile-data", final_data, function (res) {
 
-    })
+    //     renderJDDetails(res.data);
+
+    // })
 
 });
 
 
-function renderJDDetails(data) {
+function renderJDDetails(data,activeTab = "shortlisted") {
+
+    let shortlistedActive = activeTab === "shortlisted" ? "active" : "";
+    let shortlistedShow = activeTab === "shortlisted" ? "show active" : "";
+
+    let matchedActive = activeTab === "matched" ? "active" : "";
+    let matchedShow = activeTab === "matched" ? "show active" : "";
 
     let html = `
         <h4 class="mb-3 p-clr">${data.title}
@@ -40,23 +48,23 @@ function renderJDDetails(data) {
         <div class="nav-align-top nav-tabs-shadow">
             <ul class="nav nav-tabs nav-fill" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-shortlisted">
+                    <button class="nav-link ${shortlistedActive}" data-bs-toggle="tab" data-bs-target="#tab-shortlisted">
                         Shortlisted (${data.shortlisted_profiles.length})
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-matched">
+                    <button class="nav-link ${matchedActive}" data-bs-toggle="tab" data-bs-target="#tab-matched">
                         Find Matching Profiles (${data.matched_profiles.length})
                     </button>
                 </li>
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="tab-shortlisted">
+                <div class="tab-pane fade ${shortlistedShow}" id="tab-shortlisted">
                     ${renderShortlistedTable(data.shortlisted_profiles,data.jdid)}
                 </div>
 
-                <div class="tab-pane fade" id="tab-matched">
+                <div class="tab-pane fade ${matchedShow}" id="tab-matched">
                     ${renderMatchedTable(data.matched_profiles,data.jdid)}
                 </div>
             </div>
@@ -186,11 +194,15 @@ function renderMatchedTable(list,jdid) {
 
 $(document).on("click", ".shortlist-btn", function () {
 
-    $(this).prop("disabled", true);
+    // $(this).prop("disabled", true);
+
+    const btn = $(this);
+
+    btn.prop("disabled", true);
 
     dataObjs = {
-        "profile_id": $(this).data("profile-id"),
-        "jdid": $(this).data("jdid"),
+        "profile_id": btn.data("profile-id"),
+        "jdid": btn.data("jdid"),
     }
 
     var final_data = {
@@ -217,7 +229,7 @@ $(document).on("click", ".shortlist-btn", function () {
                     confirmButtonColor: '#274699'
                 })
 
-                $(this).prop("disabled", false);
+                btn.prop("disabled", false);
 
                 return 
             }
@@ -233,7 +245,7 @@ $(document).on("click", ".shortlist-btn", function () {
                     confirmButtonColor: '#274699'
                 })
 
-                $(this).prop("disabled", false);
+                btn.prop("disabled", false);
 
                 return 
                 
@@ -244,14 +256,12 @@ $(document).on("click", ".shortlist-btn", function () {
                 icon: 'success',
                 title: 'Profile shortlisted',
                 showConfirmButton: false,
-                timer: 1500,
-                didClose: () => {
-                location.reload();
-            }
+                timer: 1200
             })
+            loadJDDetails(btn.data("jdid"), "matched");
 
             // Optional UX
-            $(this).prop("disabled", true).text("Shortlisted");  
+            // $(this).prop("disabled", true).text("Shortlisted");  
         } else {
             Swal.fire({
                 position: 'center',
@@ -261,7 +271,25 @@ $(document).on("click", ".shortlist-btn", function () {
                 confirmButtonText: 'OK',
                 confirmButtonColor: '#274699'
             })
-            $(this).prop("disabled", false);
+           btn.prop("disabled", false);
         }
     });
 });
+
+
+
+function loadJDDetails(jdid, activeTab = "shortlisted") {
+
+    dataObjs = {
+        'jdid': jdid
+    };
+
+    var final_data = {
+        'data': JSON.stringify(dataObjs),
+        csrfmiddlewaretoken: CSRF_TOKEN,
+    };
+
+    $.post(CONFIG['portal'] + "/api/jd-profile-data", final_data, function (res) {
+        renderJDDetails(res.data, activeTab);
+    });
+}

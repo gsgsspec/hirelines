@@ -958,9 +958,11 @@ def jdDetails(jdId, companyId):
             interviewes_lst = User.objects.filter(
                 status="A", companyid=companyId, role__in=["Interviewer", "HR-Admin", "HR-Executive"]
             ).values("id", "name")
+
             workFlowDetails = Workflow.objects.filter(
                 jobid=jdId, teststatus="A"
             ).values()
+            
             workFlowList = {}
 
             for workFlowData in workFlowDetails:
@@ -4058,22 +4060,69 @@ def getProfileactivityDetailsService(pid):
 def getResumeData(user_data, filters=None):
     try:
 
+        # resumes_data = []
+
+        # if user_data.role == "HR-Admin":
+        #     sources = Source.objects.filter(companyid=user_data.companyid)
+        #     if filters and filters.get("source_ids"):
+        #         sources = sources.filter(id__in=filters["source_ids"])
+        # else:
+        #     sources = Source.objects.filter(
+        #         Q(userid=user_data.id,companyid=user_data.companyid) | Q(code="CARER",companyid=user_data.companyid)
+        #     )
+
+        from django.db.models import Q
+
         resumes_data = []
 
         if user_data.role == "HR-Admin":
             sources = Source.objects.filter(companyid=user_data.companyid)
+
             if filters and filters.get("source_ids"):
                 sources = sources.filter(id__in=filters["source_ids"])
+
+            source_ids = sources.values_list("id", flat=True)
+
+            resumes = (
+                Resume.objects.filter(sourceid__in=source_ids)
+                .exclude(status="D")
+                .order_by("-datentime")
+            )
+
         else:
-            sources = Source.objects.filter(userid=user_data.id)
+            sources = Source.objects.filter(companyid=user_data.companyid).filter(
+                Q(userid=user_data.id) | Q(code="CARER")
+            )
 
-        source_ids = sources.values_list("id", flat=True)
+            if filters and filters.get("source_ids"):
+                sources = sources.filter(id__in=filters["source_ids"])
 
-        resumes = (
-            Resume.objects.filter(sourceid__in=source_ids)
-            .exclude(status="D")
-            .order_by("-datentime")
-        )
+            source_ids = list(sources.values_list("id", flat=True))
+
+            carer_source_ids = list(
+                sources.filter(code="CARER").values_list("id", flat=True)
+            )
+
+            assigned_job_ids = JobDesc.objects.filter(
+                recruiterids__regex=rf'(^|,){user_data.id}(,|$)'
+            ).values_list("id", flat=True)
+
+            resumes = (
+                Resume.objects.filter(
+                    Q(sourceid__in=[sid for sid in source_ids if sid not in carer_source_ids]) |
+                    Q(sourceid__in=carer_source_ids, jobid__in=assigned_job_ids)
+                )
+                .exclude(status="D")
+                .order_by("-datentime")
+            )
+
+        # source_ids = sources.values_list("id", flat=True)
+
+        # resumes = (
+        #     Resume.objects.filter(sourceid__in=source_ids)
+        #     .exclude(status="D")
+        #     .order_by("-datentime")
+        # )
 
         if resumes:
             for resume in resumes:
@@ -4743,7 +4792,7 @@ def get_open_slots(
 def getRecruitersData(jdid,companyid):
     try:
 
-        recruiters = User.objects.filter(companyid=companyid,role="Recruiter",status="A")
+        recruiters = User.objects.filter(companyid=companyid,role__in=["Recruiter","HR-Admin"],status="A")
         jd = JobDesc.objects.get(id=jdid)
         jd_recruiters = jd.recruiterids
 
@@ -6664,4 +6713,29 @@ def truncate_string(title,limitchars):
         return title
     except Exception as err:
         print("Error in truncate_string : ",str(err))
+        raise
+
+
+def getRecruiterSourcesData(user_data):
+    try:
+
+        # sources = Source.objects.filter(companyid=company_id).order_by('label')
+
+        sources = Source.objects.filter(companyid=user_data.companyid).filter(
+            Q(userid=user_data.id) | Q(code="CARER")
+        ).order_by('label')
+
+        if sources:
+
+            sources_data = []
+
+            for source in sources:
+
+                sources_data.append(
+                    {"id": source.id, "code": source.code, "label": source.label}
+                )
+
+            return sources_data
+
+    except Exception as e:
         raise
