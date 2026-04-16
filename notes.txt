@@ -490,7 +490,3 @@ INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookuppar
 INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookupparam1`, `status`) VALUES ('2', '3', 'Candidate Not Joined', 'CN', 'A');
 INSERT INTO lookupmaster (`lookupid`, `lookupmasterid`, `lookupname`, `lookupparam1`, `status`) VALUES ('2', '4', 'Interviewer Not Availbe', 'IN', 'A');
 
-
-==========================================================
-
-

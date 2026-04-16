@@ -57,7 +57,7 @@ var skillsClickesTracker = {}
 // var createTestCard = true
 
 // skills and topics and subtopic
-var skillsTopicSubtopics 
+var skillsTopicSubtopics
 
 
 // adding all questions in a seprate list's depends on the subtopic ids
@@ -89,7 +89,7 @@ function getSkills() {
     var skills = {
         data: skillLst,  // Pass the actual list of skills
         testData: workFlowDetails,  // Pass the actual list of skills
-        companyId : companyId
+        companyId: companyId
     };
 
     // Send as JSON using $.ajax
@@ -114,29 +114,28 @@ function getSkills() {
                 // jdBasedQuesFromPaper = res.data['jdBasedQues']
 
                 for (var key in workFlowDetails) {
-                    
+
                     if (workFlowDetails.hasOwnProperty(key)) {
-                        
+
                         var workflowData = workFlowDetails[key]; // Access the value by the key
-                        console.log('workflowData',workflowData);
                         paper_id = workflowData.paperid
-                        
+
                         // this function call when page loads or page referesh's.
                         // it create html with skills with topic with subtopic 
                         skillsListShowInHtml(workflowData.id, res.data['skillsList'], workflowData.papertype, DynamicQuesCount, paper_id);
 
-                        if(testsList[workflowData.id]['paperid']) {
-                            fillDynamicQuestionsInputField(workflowData.id,DynamicQuesCount[testsList[workflowData.id]['paperid']])
+                        if (testsList[workflowData.id]['paperid']) {
+                            fillDynamicQuestionsInputField(workflowData.id, DynamicQuesCount[testsList[workflowData.id]['paperid']])
                         }
                     }
-                    else{
+                    else {
                         console.log('key condition faill');
                     }
                 }
 
                 paperQuestionsCountAndMarksSetInHTML(papersMarksAndQues)
 
-                console.log('testsList',testsList)
+                console.log('testsList', testsList)
 
             }
         },
@@ -149,26 +148,26 @@ function getSkills() {
 
 
 // get all tests list with this api
-function workFlowData(){
-    
+function workFlowData() {
+
     var jdlib = parseInt(jdId)
     var final_data = {
-        "data":JSON.stringify(jdlib),
+        "data": JSON.stringify(jdlib),
         csrfmiddlewaretoken: CSRF_TOKEN,
     };
 
     $.post(CONFIG['portal'] + "/api/work-flow-data", final_data, function (res) {
-        
-        if (res.statusCode == 0){
-            if(res.data){
-                
-                if(res.data['workFlowData'].length == 0){
+
+        if (res.statusCode == 0) {
+            if (res.data) {
+
+                if (res.data['workFlowData'].length == 0) {
                     loader.style.display = 'none'
                 }
-                
+
                 // // it Creates Test Card
                 // createTest(res.data['workFlowData'],'edit')
-                
+
                 // // // it Create Questions Container for each Test
                 // createWorkFlowContainer(res.data['workFlowData'])
 
@@ -182,21 +181,21 @@ function workFlowData(){
                     createTest(res.data['workFlowData'], 'edit'),
 
                     // it Create Questions Container for each Test card
-                    loopThroughWorkFlowData(res.data['workFlowData'],res.data['skillsLst']),
+                    loopThroughWorkFlowData(res.data['workFlowData'], res.data['skillsLst']),
 
                     // change status in html
                     changeStatusInHtml(res.data['jdStatus'])
                 ])
-                .then(() => {
-                    // console.log("Both functions executed successfully.");
-                })
-                .catch((error) => {
-                    // console.error("An error occurred while executing functions:", error);
-                });
-                
+                    .then(() => {
+                        // console.log("Both functions executed successfully.");
+                    })
+                    .catch((error) => {
+                        // console.error("An error occurred while executing functions:", error);
+                    });
+
                 // Assigning Interviwers 
                 totalinterviwersLst = res.data['selectedJDInterviewers']
-                
+
                 // assign the Jd Status
                 JdStatus = res.data['jdStatus']
 
@@ -210,15 +209,14 @@ function workFlowData(){
 
 function getAllBasicScreeningQuestions(testId) {
     return new Promise((resolve, reject) => {
-        const getQuestions = { jd_id: jdId , test_id: testId};
+        const getQuestions = { jd_id: jdId, test_id: testId };
 
         var final_data = {
             "data": JSON.stringify(getQuestions),
             csrfmiddlewaretoken: CSRF_TOKEN,
         };
 
-        $.post(CONFIG['portal'] + "/api/get-jd-screening-questions", final_data, function(res) {
-            console.log('res',res)
+        $.post(CONFIG['portal'] + "/api/get-jd-screening-questions", final_data, function (res) {
             if (res.statusCode == 0 && res.data) {
                 resolve(res.data); // Resolve with the data
 
@@ -230,7 +228,7 @@ function getAllBasicScreeningQuestions(testId) {
                 // stop the loader, by display none
                 loader.style.display = 'none';
             }
-        }).fail(function(error) {
+        }).fail(function (error) {
             reject(error); // Reject on error
         });
     });
@@ -240,13 +238,13 @@ function getAllBasicScreeningQuestions(testId) {
 
 // when we refresh the page it takes data from the workflow and loops creates the all test cards
 //  create cards by calling this function 
-function createTest(data){
-    if(data.length > 0){
-        for(var test = 0; test < data.length; test++){
-            addTestCardToShow(data[test]['papertitle'], data[test]['promot'],data[test]['papertype'],data[test])  
-            
+function createTest(data) {
+    if (data.length > 0) {
+        for (var test = 0; test < data.length; test++) {
+            addTestCardToShow(data[test]['papertitle'], data[test]['promot'], data[test]['papertype'], data[test])
+
             var key_ = data[test]['id']
-            testsList[[key_]] =  data[test]
+            testsList[[key_]] = data[test]
             testsList_.push(key_)
 
         }
@@ -255,11 +253,11 @@ function createTest(data){
 
 
 // loop through work flow data
-function loopThroughWorkFlowData(data){
-    if(data.length > 0){
+function loopThroughWorkFlowData(data) {
+    if (data.length > 0) {
 
-        for(var containerCount = 0; containerCount < data.length; containerCount++){
-            
+        for (var containerCount = 0; containerCount < data.length; containerCount++) {
+
             skillsClickesTracker = {
                 [`previousSelectedSkill_${data[containerCount]['id']}`]: null,
                 [`previousSelectedTopicId_${data[containerCount]['id']}`]: null,
@@ -270,20 +268,20 @@ function loopThroughWorkFlowData(data){
             };
 
             var testId = data[containerCount]['id']
-            var paperType  = data[containerCount]['papertype']
+            var paperType = data[containerCount]['papertype']
             var PaperTitle = data[containerCount]['papertitle']
             var TestData = data[containerCount]
             var container = 'hide'
             var initalTestCard = false
             var skillsList
 
-            if(containerCount == 0){
+            if (containerCount == 0) {
                 container = 'show'
                 initalTestCard = true
             }
 
             // it create test card questions container.
-            TestCardQuestionsMainContainers(testId,paperType, PaperTitle, container, initalTestCard, TestData)
+            TestCardQuestionsMainContainers(testId, paperType, PaperTitle, container, initalTestCard, TestData)
 
         }
 
@@ -389,25 +387,25 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
         </div>
     `;
     }
-   
+
     // Append the header element to the workflow container
     workFlowContainer.appendChild(testCardHeaderElement);
 
     // Append the workflow container to the main container
     mainContainer.appendChild(workFlowContainer);
-    
+
     if (paperType == 'S') {
         var dynamicQuestionsContainerToHide = document.getElementById(`dynamicQuestionsContainer_${testId}`)
         // hide the dynamic questions count
-        if(dynamicQuestionsContainerToHide){
+        if (dynamicQuestionsContainerToHide) {
             dynamicQuestionsContainerToHide.hidden = true
         }
-        else{
+        else {
             console.log(" can't hide the dynamic questions container ");
         }
     }
-    
-    if(paperType == 'S' || paperType == 'I'){
+
+    if (paperType == 'S' || paperType == 'I') {
 
         var createQuestionContainer = createNewQuestionContainer(testId, paperType);
         testCardHeaderElement.innerHTML += createQuestionContainer;
@@ -417,13 +415,13 @@ function TestCardQuestionsMainContainers(testId, paperType, PaperTitle, showOrHi
     if (instructionsContainer) {
         instructionsContainer.hidden = true;
     }
-    initTooltips(); 
+    initTooltips();
 
 }
 
 
 // test card header test name paper data & save & create New question ETC..... 
-function TestCardQuestionContainerHeader(testId,PaperType,PaperTitle){
+function TestCardQuestionContainerHeader(testId, PaperType, PaperTitle) {
 
     var customHiddelabels = ''
     var showInterviewTest = 'hidden'
@@ -431,31 +429,31 @@ function TestCardQuestionContainerHeader(testId,PaperType,PaperTitle){
     var screeningStaticQuestionsCount = ''
 
     var createCustomQuestion = ''
-    if(PaperType != 'E'){
+    if (PaperType != 'E') {
         // createCustomQuestion = `<button id="CreateCustomQuestion_${testId}" class="btn btn-primary btn-custom-margin-left"> Create Question </button>`
     }
-    else{
+    else {
         createCustomQuestion = ''
     }
 
-    if(PaperType == 'I'){
+    if (PaperType == 'I') {
         showInterviewTest = ""
         customHiddelabels = 'hidden'
     }
-    else{
+    else {
         showInterviewTest = 'hidden'
     }
 
-    if(PaperType == 'S'){
+    if (PaperType == 'S') {
         screeningCustmClass = `screeningTestId_${testId}`
         screeningStaticQuestionsCount = `screeningStaticQuestionsCount_${testId}`
     }
-    else{
+    else {
         screeningCustmClass = ''
         screeningStaticQuestionsCount = ''
     }
-    
-    
+
+
     var wholeContainer = `<div class="testCardQuestionsHeadingContainer">
         <h4 id="Testtitle_${testId}"  class="m-0">${PaperTitle}</h4>
     
@@ -485,14 +483,14 @@ function TestCardQuestionContainerHeader(testId,PaperType,PaperTitle){
 
         </div>
     </div>`
-    
+
     return wholeContainer
 
 }
 
 
 // screening Tabs and screening Questions container for each tab
-function screeningTabs(testId){
+function screeningTabs(testId) {
     var tabs = `<div class="screeningTabsContainer" id="screeningTabsContainer_${testId}">
         <div class="switch-btw-screening">
           <div id="screeningTab_1_${testId}" class="screeningTestTab active-screeningTab" data-screeningtype="basic" onclick="activeScreeningTab(this)">JD Screening</div>
@@ -517,7 +515,7 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
     var skillsAndTopicsAndSubtopicsContainer = document.createElement('div')
     skillsAndTopicsAndSubtopicsContainer.id = `skillsAndTopicsAndSubtopicsContainer_${testId}`
 
-    if(testContainerElement){
+    if (testContainerElement) {
         testContainerElement.appendChild(skillsAndTopicsAndSubtopicsContainer)
     }
 
@@ -532,9 +530,9 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
 
     // Appended to the DOM HTML
     skillsAndTopicsAndSubtopicsContainer.innerHTML += skillsListHtml;
-    
+
     if (skillData) {
-         // Sort skills alphabetically
+        // Sort skills alphabetically
         skillData.sort((a, b) => (a.skill || "").localeCompare(b.skill || "", undefined, { sensitivity: "base" }));
 
         // Sort topics and subtopics alphabetically
@@ -548,15 +546,42 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
                 });
             }
         });
-        
+
         // Loop through skills
         for (let skill_ = 0; skill_ < skillData.length; skill_++) {
             let skillName = skillData[skill_]["skill"];
             let skillId = skillData[skill_]["skillId"];
             let skillTopics = skillData[skill_]["skillTopics"];
+            let topicQuestionCount = skillData[skill_]["question_count"];
+            let selectedCount = 0;
+
+            if (topicQuestionCount && typeof topicQuestionCount === "object") {
+                if (PaperType === "I") {
+                    selectedCount = topicQuestionCount["I"] || 0;
+                }
+                else if (PaperType === "C") {
+                    selectedCount = topicQuestionCount["C"] || 0;
+                }
+                else if (PaperType === "S") {
+                    selectedCount =
+                        (topicQuestionCount["B"] || 0) +
+                        (topicQuestionCount["V"] || 0) +
+                        (topicQuestionCount["R"] || 0) +
+                        (topicQuestionCount["P"] || 0);
+                }
+            }
+            console.log("PaperType", PaperType);
+
+            console.log("topicQuestionCount", topicQuestionCount)
 
             // Adding each skill to the skill list
-            if(skillId == undefined || skillId == null || skillTopics.length == 0){
+            if (
+                skillId == undefined ||
+                skillId == null ||
+                skillTopics.length == 0 ||
+                !topicQuestionCount ||
+                selectedCount === 0
+            ) {
                 skillsHtml = `<button 
                             class="no-data-skill skill"
                             id="Skill_${skillId}_Test_id_${testId}"
@@ -568,7 +593,7 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
                             data-testid="${testId}"
                             >${skillName}</button>`;
             }
-            else{
+            else {
                 skillsHtml = `<button 
                             class="skillItems skill"
                             id="Skill_${skillId}_Test_id_${testId}"
@@ -599,16 +624,49 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
                 let topicScreening = skillTopics[topic_]["screening"];
                 let topicCoding = skillTopics[topic_]["coding"];
                 let topicInterview = skillTopics[topic_]["interview"];
+                let subTopicQuestionCount = skillTopics[topic_]["question_count"];
 
+                console.log("subTopicQuestionCount", subTopicQuestionCount);
+                let topicSelectedCount = 0;
+
+                if (subTopicQuestionCount && typeof subTopicQuestionCount === "object") {
+                    if (PaperType === "I") {
+                        topicSelectedCount = subTopicQuestionCount["I"] || 0;
+                    }
+                    else if (PaperType === "C") {
+                        topicSelectedCount = subTopicQuestionCount["C"] || 0;
+                    }
+                    else if (PaperType === "S") {
+                        topicSelectedCount =
+                            (subTopicQuestionCount["B"] || 0) +
+                            (subTopicQuestionCount["V"] || 0) +
+                            (subTopicQuestionCount["R"] || 0) +
+                            (subTopicQuestionCount["P"] || 0);
+                    }
+                }
                 // Conditions for adding topics based on PaperType
-                skillsTopicsHtml = `<button class="skillItems"
-                                        id="Skill_${skillId}_Topic_${topicId}_Test_id_${testId}"
-                                        onclick="showskillOrTopicOrSubtopicOrQuestions(this.id)" 
-                                        data-type="topic" 
-                                        data-skillid="${skillId}"
-                                        data-topicid="${topicId}"
-                                        data-testid="${testId}" 
-                                        >${topicName}</button>`;
+                if (!subTopicQuestionCount || topicSelectedCount === 0) {
+                    skillsTopicsHtml = `<button class="no-data-skill skillItems"
+                                id="Skill_${skillId}_Topic_${topicId}_Test_id_${testId}"
+                                onclick="return false;"
+                                disabled
+                                data-type="topic" 
+                                data-skillid="${skillId}"
+                                data-topicid="${topicId}"
+                                data-testid="${testId}" 
+                                title="No questions available"
+                                >${topicName}</button>`;
+                }
+                else {
+                    skillsTopicsHtml = `<button class="skillItems"
+                                id="Skill_${skillId}_Topic_${topicId}_Test_id_${testId}"
+                                onclick="showskillOrTopicOrSubtopicOrQuestions(this.id)" 
+                                data-type="topic" 
+                                data-skillid="${skillId}"
+                                data-topicid="${topicId}"
+                                data-testid="${testId}" 
+                                >${topicName}</button>`;
+                }
 
 
                 if (skillsTopicsHtml) {
@@ -637,16 +695,51 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
                     let subTopicInterview = subTopics[subTopic_]["interview"];
 
                     let subtopicQuestionsList = subTopics[subTopic_]["questionsList"];
+                    let questionsCount = subTopics[subTopic_]["question_count"];
+                    let subTopicSelectedCount = 0;
 
-                    skillsSubTopicHtml = `<button class="skillItems" 
-                                            id="Skill_${skillId}_Topic_${topicId}_subTopic_${subTopicId}_Test_id_${testId}"
-                                            onclick="showskillOrTopicOrSubtopicOrQuestions(this.id)" 
-                                            data-type="subtopic"
-                                            data-subtopicid="${subTopicId}"
-                                            data-topicid="${topicId}"
-                                            data-testid="${testId}" 
-                                            >
-                                            ${subTopicName}</button>`;
+                    if (questionsCount && typeof questionsCount === "object") {
+                        if (PaperType === "I") {
+                            subTopicSelectedCount = questionsCount["I"] || 0;
+                        }
+                        else if (PaperType === "C") {
+                            subTopicSelectedCount = questionsCount["C"] || 0;
+                        }
+                        else if (PaperType === "S") {
+                            subTopicSelectedCount =
+                                (questionsCount["B"] || 0) +
+                                (questionsCount["V"] || 0) +
+                                (questionsCount["R"] || 0) +
+                                (questionsCount["P"] || 0);
+                        }
+                    }
+
+                    console.log("subTopicQuestionCount", subTopicQuestionCount);
+
+                    if (!questionsCount || subTopicSelectedCount === 0) {
+                        skillsSubTopicHtml = `<button class="no-data-skill skillItems" 
+                            id="Skill_${skillId}_Topic_${topicId}_subTopic_${subTopicId}_Test_id_${testId}"
+                            onclick="return false;"
+                            disabled
+                            data-type="subtopic"
+                            data-subtopicid="${subTopicId}"
+                            data-topicid="${topicId}"
+                            data-testid="${testId}" 
+                            title="No questions available"
+                            >
+                            ${subTopicName}</button>`;
+                    }
+                    else {
+                        skillsSubTopicHtml = `<button class="skillItems" 
+                            id="Skill_${skillId}_Topic_${topicId}_subTopic_${subTopicId}_Test_id_${testId}"
+                            onclick="showskillOrTopicOrSubtopicOrQuestions(this.id)" 
+                            data-type="subtopic"
+                            data-subtopicid="${subTopicId}"
+                            data-topicid="${topicId}"
+                            data-testid="${testId}" 
+                            >
+                            ${subTopicName}</button>`;
+                    }
 
                     if (skillsSubTopicHtml) {
                         // Append topics to the respective skill container.
@@ -657,21 +750,21 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
                     var subtopicQuestionsMainContainer = document.createElement('div')
                     subtopicQuestionsMainContainer.id = `SubTopicQuestionsContainer_${subTopicId}_test_${testId}`
 
-                    var complexitiesHtmlList = createAQuestion(skillId ,topicId , subTopicId , subtopicQuestionsList , testId, PaperType, paper_id)
+                    var complexitiesHtmlList = createAQuestion(skillId, topicId, subTopicId, subtopicQuestionsList, testId, PaperType, paper_id)
 
                     for (let complexityItem = 0; complexityItem < complexitiesHtmlList.length; complexityItem++) {
                         let complexityElement = complexitiesHtmlList[complexityItem];
-                        
-                        if(complexityElement){
-                            subtopicQuestionsMainContainer.appendChild(complexityElement) 
+
+                        if (complexityElement) {
+                            subtopicQuestionsMainContainer.appendChild(complexityElement)
                         }
 
                         subtopicQuestionsMainContainer.hidden = true
-                        
+
                         skillsAndTopicsAndSubtopicsContainer.appendChild(subtopicQuestionsMainContainer)
 
                     }
-                
+
                 }
 
             }
@@ -683,10 +776,10 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
             // Apply a scrollbar to the container
             // addPerfectScrollbarToDynamicElement(testId);
         }
-        
+
     }
 
-    if(PaperType == 'S'){
+    if (PaperType == 'S') {
 
         skillsAndTopicsAndSubtopicsContainer.hidden = true
         var screeningBasicElementContainer = document.createElement('div')
@@ -695,38 +788,37 @@ function skillsListShowInHtml(testId, skillData, PaperType, DynamicQuesCount, pa
 
         // this function get the data from another function and creates the html with question and add that html in to the webapge.
         genrateHtmlWithScreeningBasicQuestion(testId)
-        
+
     }
-    else{
+    else {
         loader.style.display = 'none';
     }
-    
+
     document.getElementById(`TestContainer_${testId}`).insertAdjacentHTML('beforeend', `
         <div style="display:flex; justify-content:flex-end; margin-top:10px;">
             <button id="save_${testId}" class="btn btn-primary btn-custom-margin-left" data-testid="${testId}" onclick="savePaper(this.id)"> Save </button>
         </div>
     `);
-    
+
     questionCheckAsSelected()
 
     clickOnFirstSkill(testId)
 
-    
+
 }
 
 
 
-function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, PaperType_, paper_id) {
+function createAQuestion(skill_Id, topicId, subTopicId, quesData, test_Id, PaperType_, paper_id) {
 
-    console.log('paper_id',paper_id)
 
     var complexityWiseQuestions = {
-                                    'verylow'  : [],
-                                    'low'      : [],
-                                    'medium'   : [],
-                                    'high'     : [],
-                                    'veryhigh' : []
-                                }
+        'verylow': [],
+        'low': [],
+        'medium': [],
+        'high': [],
+        'veryhigh': []
+    }
 
     for (let question_ = 0; question_ < quesData.length; question_++) {
 
@@ -734,84 +826,84 @@ function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, Pape
 
 
         // coding paper
-        if(PaperType_ == 'E'){
+        if (PaperType_ == 'E') {
             // paper types
-            if(ques['questionType'] == 'C' || ques['questionType'] == 'R'){
+            if (ques['questionType'] == 'C' || ques['questionType'] == 'R') {
 
-                if(ques['questionComplexity'] == 1){
+                if (ques['questionComplexity'] == 1) {
                     complexityWiseQuestions['verylow'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 2){
+                if (ques['questionComplexity'] == 2) {
                     complexityWiseQuestions['low'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 3){
+                if (ques['questionComplexity'] == 3) {
                     complexityWiseQuestions['medium'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 4){
+                if (ques['questionComplexity'] == 4) {
                     complexityWiseQuestions['high'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 5){
+                if (ques['questionComplexity'] == 5) {
                     complexityWiseQuestions['veryhigh'].push(ques)
                 }
 
             }
         }
         // screening paper
-        else if(PaperType_ == 'S'){
+        else if (PaperType_ == 'S') {
             // questions type
-            if(ques['questionType'] == 'M' || ques['questionType'] == 'B' || ques['questionType'] == 'P' || ques['questionType'] == 'A' || ques['questionType'] == 'V'){
+            if (ques['questionType'] == 'M' || ques['questionType'] == 'B' || ques['questionType'] == 'P' || ques['questionType'] == 'A' || ques['questionType'] == 'V') {
 
-                if(ques['questionComplexity'] == 1){
+                if (ques['questionComplexity'] == 1) {
                     complexityWiseQuestions['verylow'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 2){
+                if (ques['questionComplexity'] == 2) {
                     complexityWiseQuestions['low'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 3){
+                if (ques['questionComplexity'] == 3) {
                     complexityWiseQuestions['medium'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 4){
+                if (ques['questionComplexity'] == 4) {
                     complexityWiseQuestions['high'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 5){
+                if (ques['questionComplexity'] == 5) {
                     complexityWiseQuestions['veryhigh'].push(ques)
                 }
 
             }
         }
         // interview test
-        else if(PaperType_ == 'I'){
+        else if (PaperType_ == 'I') {
             // interview questions type
-            if(ques['questionType'] == 'I'){
+            if (ques['questionType'] == 'I') {
 
-                if(ques['questionComplexity'] == 1){
+                if (ques['questionComplexity'] == 1) {
                     complexityWiseQuestions['verylow'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 2){
+                if (ques['questionComplexity'] == 2) {
                     complexityWiseQuestions['low'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 3){
+                if (ques['questionComplexity'] == 3) {
                     complexityWiseQuestions['medium'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 4){
+                if (ques['questionComplexity'] == 4) {
                     complexityWiseQuestions['high'].push(ques)
                 }
 
-                if(ques['questionComplexity'] == 5){
+                if (ques['questionComplexity'] == 5) {
                     complexityWiseQuestions['veryhigh'].push(ques)
                 }
-                
+
             }
         }
 
@@ -820,70 +912,69 @@ function createAQuestion( skill_Id, topicId, subTopicId, quesData, test_Id, Pape
     var complexitysHtmlList = []
     var complexityHtml
 
-    if(complexityWiseQuestions['verylow'].length > 0 ){
-        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['verylow'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'verylow',paper_id)
+    if (complexityWiseQuestions['verylow'].length > 0) {
+        complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['verylow'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'verylow', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
-    if(complexityWiseQuestions['low'].length > 0){
+    if (complexityWiseQuestions['low'].length > 0) {
         complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['low'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'low', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
-    if(complexityWiseQuestions['medium'].length > 0){
+    if (complexityWiseQuestions['medium'].length > 0) {
         complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['medium'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'medium', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
-    if(complexityWiseQuestions['high'].length > 0){
+    if (complexityWiseQuestions['high'].length > 0) {
         complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['high'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'high', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
-    if(complexityWiseQuestions['veryhigh'].length > 0){
+    if (complexityWiseQuestions['veryhigh'].length > 0) {
         complexityHtml = createComplexityQuestionsContainer(complexityWiseQuestions['veryhigh'], skill_Id, topicId, subTopicId, test_Id, PaperType_, 'veryhigh', paper_id)
         complexitysHtmlList.push(complexityHtml)
     }
 
     return complexitysHtmlList
-    
+
 }
 
 
 // it create complexity container for each subtopic it create low , verylow, medium, hard , veryhard complexity container and put in html
-function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, topicId, subTopicId, test_Id, PaperType_, complexityType, paper_id){
+function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, topicId, subTopicId, test_Id, PaperType_, complexityType, paper_id) {
     // console.log('test_Id',test_Id)
-    console.log('complexityWiseQuestions',complexityWiseQuestions)
     var fndFirstQuestionComplexity
     var complexityTxt
     var dynamicId
     var ComplexityTitles
 
-    if(complexityWiseQuestions.length > 0){
+    if (complexityWiseQuestions.length > 0) {
         fndFirstQuestionComplexity = complexityWiseQuestions[0]['questionComplexity']
     }
 
-    if(fndFirstQuestionComplexity == 1){
+    if (fndFirstQuestionComplexity == 1) {
         complexityTxt = 'veryLow'
         ComplexityTitles = 'Complexity - Beginner'
     }
 
-    if(fndFirstQuestionComplexity == 2){
+    if (fndFirstQuestionComplexity == 2) {
         complexityTxt = 'low'
         ComplexityTitles = 'Complexity - Intermediate'
     }
 
-    if(fndFirstQuestionComplexity == 3){
+    if (fndFirstQuestionComplexity == 3) {
         complexityTxt = 'medium'
         ComplexityTitles = 'Complexity - Moderate'
     }
 
-    if(fndFirstQuestionComplexity == 4){
+    if (fndFirstQuestionComplexity == 4) {
         complexityTxt = 'high'
         ComplexityTitles = 'Complexity - Advanced'
     }
 
-    if(fndFirstQuestionComplexity == 5){
+    if (fndFirstQuestionComplexity == 5) {
         complexityTxt = 'veryHigh'
         ComplexityTitles = 'Complexity - Expert'
     }
@@ -900,8 +991,8 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
     var complexityHeading = document.createElement('h5');
     complexityHeading.classList.add('m-0')
-    complexityHeading.innerText = ComplexityTitles; 
-    
+    complexityHeading.innerText = ComplexityTitles;
+
     // // Add a suitable text for the header
     var DynamicInoutTitle = document.createElement('h5')
     DynamicInoutTitle.classList.add('dynamicinptLabel')
@@ -911,11 +1002,11 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     complexityDynamicInput.classList.add('dynamicInpt', 'form-control')
     complexityDynamicInput.id = `DynamicInput_TestId_${test_Id}_subTopic_${subTopicId}_complex_${complexityTxt}`;  // Set appropriate input type
     complexityDynamicInput.type = "number";  // Set appropriate input type
-    complexityDynamicInput.min="0"
+    complexityDynamicInput.min = "0"
     complexityDynamicInput.dataset['complexitytype'] = complexityTxt;  // Set appropriate input type
-    complexityDynamicInput.dataset['testid'] = test_Id; 
-    complexityDynamicInput.dataset['skillid'] = skill_Id; 
-    complexityDynamicInput.dataset['topicid'] = topicId; 
+    complexityDynamicInput.dataset['testid'] = test_Id;
+    complexityDynamicInput.dataset['skillid'] = skill_Id;
+    complexityDynamicInput.dataset['topicid'] = topicId;
     complexityDynamicInput.dataset['subtopicid'] = subTopicId;
     complexityDynamicInput.dataset['paperid'] = paper_id
     // complexityDynamicInput.setAttribute(
@@ -939,14 +1030,14 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     dynamicInputLabelContainer.dataset['']
 
     // if there is only one question in a complexity do not show the dynamic container 
-    if(complexityWiseQuestions.length == 1){
+    if (complexityWiseQuestions.length == 1) {
         dynamicInputLabelContainer.hidden = true
     }
 
-    dynamicInputLabelContainer.append(DynamicInoutTitle , complexityDynamicInput)
+    dynamicInputLabelContainer.append(DynamicInoutTitle, complexityDynamicInput)
 
     complexiytHeaderContainer.append(complexityHeading, dynamicInputLabelContainer);
-    
+
     var complexiytQuestionTypeLabels = document.createElement('div');
     complexiytQuestionTypeLabels.classList.add('questionTypeLabels')
     var questionTypeLabelStatic = document.createElement('h5')
@@ -957,11 +1048,11 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
     questionTypeLabelStatic.innerText = 'Static'
     questionTypeLabelDynamic.innerText = 'Dynamic'
-    if(PaperType_ == 'I'){
+    if (PaperType_ == 'I') {
         questionTypeLabelDynamic.hidden = true
     }
 
-    complexiytQuestionTypeLabels.append(questionTypeLabelStatic,questionTypeLabelDynamic)
+    complexiytQuestionTypeLabels.append(questionTypeLabelStatic, questionTypeLabelDynamic)
 
     complexityMainContainer.append(complexiytHeaderContainer, complexiytQuestionTypeLabels);
 
@@ -969,11 +1060,11 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
     var questionsContainer = document.createElement('ol');
 
     for (let question_ = 0; question_ < complexityWiseQuestions.length; question_++) {
-        
+
         let ques = complexityWiseQuestions[question_];
-        
+
         // from here===================================
-        
+
         var questionContainer = document.createElement('div');
         questionContainer.classList.add('customQuestionContainer')
         questionContainer.id = `QuestionContainerId_${ques['questionId']}`
@@ -1002,7 +1093,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
         let firstInpt = document.createElement('input');
         firstInpt.type = 'checkbox';  // Assuming you want checkboxes
-        firstInpt.classList.add('form-check-input','mx-4')
+        firstInpt.classList.add('form-check-input', 'mx-4')
         firstInpt.id = `questionId_${ques['questionId']}_${test_Id}_S`
         firstInpt.dataset['qid'] = ques['questionId']
         firstInpt.dataset['testid'] = test_Id
@@ -1020,8 +1111,8 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 
         // Another checkbox
         let secondInpt = document.createElement('input');
-        secondInpt.type = 'checkbox'; 
-        secondInpt.classList.add('form-check-input','mx-4','dynamic-custom-checkbox')
+        secondInpt.type = 'checkbox';
+        secondInpt.classList.add('form-check-input', 'mx-4', 'dynamic-custom-checkbox')
         secondInpt.id = `questionId_${ques['questionId']}_${test_Id}_D`
         secondInpt.dataset['qid'] = ques['questionId']
         secondInpt.dataset['testid'] = test_Id
@@ -1037,7 +1128,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
             `addQuestionsToList(${ques['questionId']},this.id,${test_Id})`
         );
 
-        if(complexityWiseQuestions.length == 1){
+        if (complexityWiseQuestions.length == 1) {
             secondInpt.disabled = true
         }
 
@@ -1054,26 +1145,26 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         }
 
         var paper_data = ques['paperdata'][paper_id]
-        
-        if (paper_data){
+
+        if (paper_data) {
             // console.log('paper_data',paper_data)
-            if(paper_data['starQuestion'] == 'Y'){                                                    
-                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;  
-                allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
+            if (paper_data['starQuestion'] == 'Y') {
+                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;
+                allTestsQuestions[test_Id]['starQuestions'].push({ "qid": ques['questionId'], 'star_flag': 'Y' })
             }
-            else{                                                                               
+            else {
                 starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;
-                allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})  
+                allTestsQuestions[test_Id]['starQuestions'].push({ "qid": ques['questionId'], 'star_flag': 'N' })
             }
         } else {
-            
-            if(ques['starQuestion'] == 'Y'){                                                    
-                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;  
-                allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
+
+            if (ques['starQuestion'] == 'Y') {
+                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;
+                allTestsQuestions[test_Id]['starQuestions'].push({ "qid": ques['questionId'], 'star_flag': 'Y' })
             }
-            else{                                                                               
+            else {
                 starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${test_Id}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${test_Id})"></i>`;
-                allTestsQuestions[test_Id]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})  
+                allTestsQuestions[test_Id]['starQuestions'].push({ "qid": ques['questionId'], 'star_flag': 'N' })
             }
         }
 
@@ -1081,17 +1172,25 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         questionCheckBox.classList.add('questionElements')
         questionCheckBox.append(firstInpt, secondInpt, starContainer)
 
-        if (paper_data){
+        if (paper_data) {
 
-            if(paper_data['paperQuestion'] == 'Y'){
-                
-                if(paper_data?.staticOrDynamic){
-                    if(paper_data['staticOrDynamic'] == 'S'){
+            if (paper_data['paperQuestion'] == 'Y') {
+
+                if (paper_data?.staticOrDynamic) {
+                    if (paper_data['staticOrDynamic'] == 'S') {
                         questionHasToBeSelected.push(firstInpt.id)
+
+                        setTimeout(() => {
+                            highlightQuestion(ques['questionId']);
+                        }, 0);
                     }
 
-                    if(paper_data['staticOrDynamic'] == 'D'){
+                    if (paper_data['staticOrDynamic'] == 'D') {
                         questionHasToBeSelected.push(secondInpt.id)
+
+                        setTimeout(() => {
+                            highlightQuestion(ques['questionId']);
+                        }, 0);
                     }
 
                 }
@@ -1099,31 +1198,31 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
             }
         }
 
-        if(PaperType_ == 'S'){
-            if(ques['questionType'] == 'M' || ques['questionType'] == 'B' || ques['questionType'] == 'P' || ques['questionType'] == 'A' || ques['questionType'] == 'V'){
-                questionContainer.append(questionElement ,questionCheckBox);
+        if (PaperType_ == 'S') {
+            if (ques['questionType'] == 'M' || ques['questionType'] == 'B' || ques['questionType'] == 'P' || ques['questionType'] == 'A' || ques['questionType'] == 'V') {
+                questionContainer.append(questionElement, questionCheckBox);
                 questionsContainer.append(questionContainer);
             }
         }
-        else if(PaperType_ == 'E'){
-            if(ques['questionType'] == 'C' || ques['questionType'] == 'R'){
-                questionContainer.append(questionElement ,questionCheckBox);
+        else if (PaperType_ == 'E') {
+            if (ques['questionType'] == 'C' || ques['questionType'] == 'R') {
+                questionContainer.append(questionElement, questionCheckBox);
                 questionsContainer.append(questionContainer);
             }
         }
-        else if(PaperType_ == 'I'){
-            if(ques['questionType'] == 'I'){
+        else if (PaperType_ == 'I') {
+            if (ques['questionType'] == 'I') {
 
                 // hide dynamic questions count input container
                 dynamicInputLabelContainer.hidden = true
-                
+
                 // star question was not in the interview
                 starContainer.hidden = true
 
                 // hide the dynamic check box
                 secondInpt.hidden = true
 
-                questionContainer.append(questionElement ,questionCheckBox);
+                questionContainer.append(questionElement, questionCheckBox);
                 questionsContainer.append(questionContainer);
             }
         }
@@ -1131,7 +1230,7 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
         // checking for show more questions flag
         var showMoreLabelCOntainer
         if (ques?.moreQuestions) {
-            if(ques['moreQuestions'] == 'Y'){
+            if (ques['moreQuestions'] == 'Y') {
                 var showMoreMainContainer = document.createElement('div');
                 showMoreMainContainer.classList.add('showMoreMainContainer');
                 showMoreMainContainer.innerHTML = `<span class="showMoreText" onclick="showMoreQuestions( ${skill_Id}, ${topicId}, ${subTopicId},${test_Id},'${PaperType_}')">Show more Questions</span>`;
@@ -1139,17 +1238,17 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
                 showMoreLabelCOntainer = showMoreMainContainer;
             }
         }
-        
+
     }
 
     var complexitySepraters = document.createElement('div')
     complexitySepraters.classList.add('containersSepratersCustomCls')
-    
-    if(showMoreLabelCOntainer == undefined){
+
+    if (showMoreLabelCOntainer == undefined) {
         showMoreLabelCOntainer = ''
     }
 
-    complexityMainContainer.append(questionsContainer ,showMoreLabelCOntainer ,complexitySepraters);
+    complexityMainContainer.append(questionsContainer, showMoreLabelCOntainer, complexitySepraters);
 
     //  return the main container
     return complexityMainContainer;
@@ -1157,97 +1256,97 @@ function createComplexityQuestionsContainer(complexityWiseQuestions, skill_Id, t
 }
 
 
-function questionCheckAsSelected(){
+function questionCheckAsSelected() {
 
     // console.log('questionHasToBeSelected',questionHasToBeSelected)
     for (let quesId = 0; quesId < questionHasToBeSelected.length; quesId++) {
 
         let element = questionHasToBeSelected[quesId];
 
-        if(element){
+        if (element) {
 
             var elementHasChecked = document.getElementById(element)
 
-            if(elementHasChecked){
+            if (elementHasChecked) {
                 // console.log('***',elementHasChecked)
 
                 elementHasChecked.checked = true;
-    
-                if(elementHasChecked.checked){
+
+                if (elementHasChecked.checked) {
 
                     var elementData = elementHasChecked.dataset
 
-                    if(elementData){
+                    if (elementData) {
 
                         var ElementTestId = elementData['testid']
                         var ElementSubtopicId = elementData['subtopic']
                         var ElementType = elementData['type']
                         var ElementQid = elementData['qid']
                         var ElementComplexity = elementData['complexity']
-    
-                        if(!allTestsQuestions[ElementTestId]){
+
+                        if (!allTestsQuestions[ElementTestId]) {
                             allTestsQuestions[ElementTestId] = {};
                         }
 
-                        if(!allTestsQuestions[ElementTestId]['staticQuestions']){
+                        if (!allTestsQuestions[ElementTestId]['staticQuestions']) {
                             allTestsQuestions[ElementTestId]['staticQuestions'] = [];
                         }
-                        
+
                         // orginial
                         if (!allTestsQuestions[ElementTestId][ElementSubtopicId]) {
                             allTestsQuestions[ElementTestId][ElementSubtopicId] = {
-                                veryLow:  { qIds: [] },
-                                low:      { qIds: [] },
-                                medium:   { qIds: [] },
-                                high:     { qIds: [] },
+                                veryLow: { qIds: [] },
+                                low: { qIds: [] },
+                                medium: { qIds: [] },
+                                high: { qIds: [] },
                                 veryHigh: { qIds: [] }
                             };
                         }
-    
-                        if(ElementComplexity == 'verylow'){
+
+                        if (ElementComplexity == 'verylow') {
                             ElementComplexity = 'veryLow'
                         }
-    
-                        if(ElementComplexity == 'veryhigh'){
+
+                        if (ElementComplexity == 'veryhigh') {
                             ElementComplexity = 'veryHigh'
                         }
 
                         // console.log('>>>>>',ElementQid);
-                        
 
-                        if(ElementQid){
-    
+
+                        if (ElementQid) {
+
                             // checking questions are static questions are dynamic question
                             // static questions
-                            if(ElementType == 'S'){
+                            if (ElementType == 'S') {
                                 // Push the question ID to the appropriate ElementQid array
                                 allTestsQuestions[ElementTestId]['staticQuestions'].push(parseInt(ElementQid))
                             }
-                            
-                            if(ElementType == 'D'){
+
+                            if (ElementType == 'D') {
                                 // Push the question ID to the appropriate ElementQid array
                                 allTestsQuestions[ElementTestId][ElementSubtopicId][ElementComplexity]['qIds'].push(parseInt(ElementQid));
                             }
-        
-                            if(ElementType == 'screening'){
+
+                            if (ElementType == 'screening') {
                                 // Push the question ID to the appropriate ElementQid array
                                 allTestsQuestions[ElementTestId]['staticQuestions'].push(parseInt(ElementQid))
                             }
-    
+
                         }
-    
+
                     }
-                    else{
+                    else {
                         console.log('Question data was not in the element');
                     }
                 }
-    
+
             }
 
         }
 
     }
-    
+
     questionHasToBeSelected = []
 
 }
@@ -1255,101 +1354,101 @@ function questionCheckAsSelected(){
 
 // make a normal question to star question , when every user click on the icon we change the dataset of the icon
 // question id , subtopic id, test id
-function markAsStarQuestion(question_id , subtopic_id, test_id){
-    
-    if(subtopic_id){
+function markAsStarQuestion(question_id, subtopic_id, test_id) {
+
+    if (subtopic_id) {
         // starQuestion_Q_131_11_testId_202
         var starQuestionId = `starQuestion_Q_${question_id}_${subtopic_id}_testId_${test_id}`
 
         var CheckBoxElement = document.getElementById(`questionId_${question_id}_${test_id}_S`)
 
         // console.log('CheckBoxElement',CheckBoxElement);
-        
-        if(CheckBoxElement){
-            if(CheckBoxElement.checked){
+
+        if (CheckBoxElement) {
+            if (CheckBoxElement.checked) {
 
                 var starElement = document.getElementById(starQuestionId)
-                if(starElement){
+                if (starElement) {
 
                     var starData = starElement.dataset
-                    
-                    if(starData['star'] == 'N'){
+
+                    if (starData['star'] == 'N') {
                         starData['star'] = 'Y'
                         starElement.className = ''
-                        starElement.classList.add('fas','fa-star','customStarCursor')
+                        starElement.classList.add('fas', 'fa-star', 'customStarCursor')
 
-                        updateStarVariableStatus(question_id,test_id,starData['star'])
+                        updateStarVariableStatus(question_id, test_id, starData['star'])
                     }
-                    else{
+                    else {
                         starData['star'] = 'N'
                         starElement.className = ''
-                        starElement.classList.add('far','fa-star','customStarCursor')
-                        updateStarVariableStatus(question_id,test_id,starData['star'])
+                        starElement.classList.add('far', 'fa-star', 'customStarCursor')
+                        updateStarVariableStatus(question_id, test_id, starData['star'])
                     }
 
                     // console.log('starData',starData['star']);
-                    
+
 
                 }
-                else{
+                else {
                     console.log('can not found the star element');
                 }
-                
+
 
 
 
             }
-            else{
+            else {
                 console.log('element was not checked');
             }
         }
-        else{
+        else {
             console.log('can not find question checked element');
         }
 
     }
-    else{
+    else {
         var starQuestionId = `starQuestion_Q_${question_id}_subTopic_BasicScreening_testId_${test_id}`
-        
+
         var CheckBoxElement = document.getElementById(`questionId-${test_id}_${question_id}`)
 
-        if(CheckBoxElement){
-            if(CheckBoxElement.checked){
+        if (CheckBoxElement) {
+            if (CheckBoxElement.checked) {
 
                 var starElement = document.getElementById(starQuestionId)
-                if(starElement){
+                if (starElement) {
 
                     var starData = starElement.dataset
-                    
-                    if(starData['star'] == 'N'){
+
+                    if (starData['star'] == 'N') {
                         starData['star'] = 'Y'
                         starElement.className = ''
-                        starElement.classList.add('fas','fa-star','customStarCursor')
+                        starElement.classList.add('fas', 'fa-star', 'customStarCursor')
 
-                        updateStarVariableStatus(question_id,test_id,starData['star'])
+                        updateStarVariableStatus(question_id, test_id, starData['star'])
                     }
-                    else{
+                    else {
                         starData['star'] = 'N'
                         starElement.className = ''
-                        starElement.classList.add('far','fa-star','customStarCursor')
+                        starElement.classList.add('far', 'fa-star', 'customStarCursor')
 
-                        updateStarVariableStatus(question_id,test_id,starData['star'])
+                        updateStarVariableStatus(question_id, test_id, starData['star'])
                     }
 
                 }
-                else{
+                else {
                     console.log('can not found the star element');
                 }
 
             }
-            else{
+            else {
                 console.log('element was not checked');
             }
         }
-        else{
+        else {
             console.log('can not find question checked element');
         }
-        
+
     }
 
 }
@@ -1357,19 +1456,19 @@ function markAsStarQuestion(question_id , subtopic_id, test_id){
 
 // it get's ten more questions
 // and append to the same container
-function showMoreQuestions( skillId, topic_Id ,subTopicId, TestCardId, paper_Type){
+function showMoreQuestions(skillId, topic_Id, subTopicId, TestCardId, paper_Type) {
     var complexityQuestionsContainer = document.getElementById(`complexitySubTopicQuestions_${subTopicId}_testId_${TestCardId}`)
     var complexityQuestionsDataSet = complexityQuestionsContainer.dataset
     var complexity = complexityQuestionsDataSet['complexitytype']
 
-    if(complexity){
+    if (complexity) {
 
         // get the last question id
         var FndlastQuestionId = complexityQuestionsContainer.querySelector('ol').lastElementChild.id
         var elementLenght = FndlastQuestionId.split('_')
         var questId = FndlastQuestionId.split('_')[elementLenght.length - 1]
 
-        if(questId){
+        if (questId) {
 
             // adding loading style to the container
             complexityQuestionsContainer.style.cursor = 'wait'
@@ -1382,24 +1481,24 @@ function showMoreQuestions( skillId, topic_Id ,subTopicId, TestCardId, paper_Typ
                 subTopicId: subTopicId,
                 complexityType: complexity,
                 lastQuestionId: questId,
-                paperType : paper_Type,
-                paperid : testsList[TestCardId]['paperid']
+                paperType: paper_Type,
+                paperid: testsList[TestCardId]['paperid']
 
             };
-        
+
             // Prepare data to be sent to the backend
             var final_data = {
                 "data": JSON.stringify(getQuestions),
                 csrfmiddlewaretoken: CSRF_TOKEN,
             };
 
-            console.log('card-data',allTestsQuestions[TestCardId]);
-            
-        
+            console.log('card-data', allTestsQuestions[TestCardId]);
+
+
             try {
 
-                $.post(CONFIG['acert'] + "/api/show-more-questions", final_data, function(res) {
-                
+                $.post(CONFIG['acert'] + "/api/show-more-questions", final_data, function (res) {
+
                     if (res.statusCode == 0) {
                         if (res.data) {
                             // Call the function after the data is received
@@ -1408,22 +1507,22 @@ function showMoreQuestions( skillId, topic_Id ,subTopicId, TestCardId, paper_Typ
                         complexityQuestionsContainer.style.cursor = 'default';
                     }
 
-                }).fail(function(error) {
+                }).fail(function (error) {
                     console.error("Error occurred during API call:", error);
                 });
-                
-            } 
+
+            }
             catch (error) {
                 console.error('Failed to send data to backend:', error);
             }
 
         }
-        else{
+        else {
             console.log("can't find the last question id when click on the show more questions");
         }
 
     }
-    else{
+    else {
         console.log('complexity Not Found');
     }
 
@@ -1431,7 +1530,7 @@ function showMoreQuestions( skillId, topic_Id ,subTopicId, TestCardId, paper_Typ
 
 
 
-function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, questionsLst, TestCardId){
+function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, questionsLst, TestCardId) {
 
     var newQuesLst = questionsLst['newQuestionsLst']
     var complexityContainer = document.getElementById(`complexitySubTopicQuestions_${subTopicId}_testId_${TestCardId}`)
@@ -1440,7 +1539,7 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
     showMoreLabelContainer.hidden = false
 
     for (let question_ = 0; question_ < newQuesLst.length; question_++) {
-        
+
         let ques = newQuesLst[question_];
         var questionContainer = document.createElement('div');
         questionContainer.classList.add('customQuestionContainer')
@@ -1466,30 +1565,30 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
             questionElement.appendChild(badgeWrapper);
         }
 
-        
+
         let questionMarks = ques['marks']
-        console.log('questionMarks',ques)
+        console.log('questionMarks', ques)
         let complex = null
 
-        if(ques['questionComplexity'] == 1){
+        if (ques['questionComplexity'] == 1) {
             complex = 'verylow'
         }
-        if(ques['questionComplexity'] == 2){
+        if (ques['questionComplexity'] == 2) {
             complex = 'low'
         }
-        if(ques['questionComplexity'] == 3){
+        if (ques['questionComplexity'] == 3) {
             complex = 'medium'
         }
-        if(ques['questionComplexity'] == 4){
+        if (ques['questionComplexity'] == 4) {
             complex = 'heigh'
         }
-        if(ques['questionComplexity'] == 5){ 
+        if (ques['questionComplexity'] == 5) {
             complex = 'veryheigh'
         }
 
         let firstInpt = document.createElement('input');
         firstInpt.type = 'checkbox';  // Assuming you want checkboxes
-        firstInpt.classList.add('form-check-input','mx-4')
+        firstInpt.classList.add('form-check-input', 'mx-4')
         firstInpt.id = `questionId_${ques['questionId']}_${TestCardId}_S`
         firstInpt.dataset['qid'] = ques['questionId']
         firstInpt.dataset['testid'] = TestCardId
@@ -1506,8 +1605,8 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
 
         // Another checkbox
         let secondInpt = document.createElement('input');
-        secondInpt.type = 'checkbox'; 
-        secondInpt.classList.add('form-check-input','mx-4','dynamic-custom-checkbox')
+        secondInpt.type = 'checkbox';
+        secondInpt.classList.add('form-check-input', 'mx-4', 'dynamic-custom-checkbox')
         secondInpt.id = `questionId_${ques['questionId']}_${TestCardId}_D`
         secondInpt.dataset['qid'] = ques['questionId']
         secondInpt.dataset['testid'] = TestCardId
@@ -1523,14 +1622,14 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         );
 
 
-        if(ques['paperQuestion'] == 'Y'){
-            
-            if(ques?.staticOrDynamic){
-                if(ques['staticOrDynamic'] == 'S'){
+        if (ques['paperQuestion'] == 'Y') {
+
+            if (ques?.staticOrDynamic) {
+                if (ques['staticOrDynamic'] == 'S') {
                     questionHasToBeSelected.push(firstInpt.id)
                 }
 
-                if(ques['staticOrDynamic'] == 'D'){
+                if (ques['staticOrDynamic'] == 'D') {
                     questionHasToBeSelected.push(secondInpt.id)
                 }
 
@@ -1542,27 +1641,27 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
         var starContainer = document.createElement('span');
         // starContainer.innerHTML = '<i class="fas fa-star"></i>';
 
-        if(ques['starQuestion'] == 'Y'){                                                    // question id , subtopic id, test id
-            starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${TestCardId}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${TestCardId})"></i>`;  
-            allTestsQuestions[TestCardId]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
+        if (ques['starQuestion'] == 'Y') {                                                    // question id , subtopic id, test id
+            starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${TestCardId}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${TestCardId})"></i>`;
+            allTestsQuestions[TestCardId]['starQuestions'].push({ "qid": ques['questionId'], 'star_flag': 'Y' })
         }
-        else{                                                                               // question id , subtopic id, test id
-            starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${TestCardId}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${TestCardId})"></i>`;  
-            allTestsQuestions[TestCardId]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
+        else {                                                                               // question id , subtopic id, test id
+            starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_${subTopicId}_testId_${TestCardId}" onclick="markAsStarQuestion(${ques['questionId']},${subTopicId},${TestCardId})"></i>`;
+            allTestsQuestions[TestCardId]['starQuestions'].push({ "qid": ques['questionId'], 'star_flag': 'Y' })
         }
 
         var questionCheckBox = document.createElement('div')
         questionCheckBox.classList.add('questionElements')
         questionCheckBox.append(firstInpt, secondInpt, starContainer)
 
-        questionContainer.append(questionElement ,questionCheckBox);
+        questionContainer.append(questionElement, questionCheckBox);
 
         findOlElement.append(questionContainer)
 
         // checking for show more questions flag
         if (ques?.moreQuestions) {
-            if(ques['moreQuestions'] == 'N'){
-                showMoreLabelContainer.hidden = true 
+            if (ques['moreQuestions'] == 'N') {
+                showMoreLabelContainer.hidden = true
             }
         }
 
@@ -1570,12 +1669,13 @@ function genrateComplexityQuestionsWithHtml(skillId, topic_Id, subTopicId, quest
 
     }
 
+
 }
 
 
 // basic screening questions genrate add to html (JD Based Generated Questions)
 async function genrateHtmlWithScreeningBasicQuestion(testId) {
-    
+
     try {
         const screeningBasicQuestionsList = await getAllBasicScreeningQuestions(testId);
         // console.log('--------------')
@@ -1583,7 +1683,7 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
         // console.log('screeningBasicQuestionsList',screeningBasicQuestionsList)
         // console.log('--------------')
         var basicQuestionsContainer = document.getElementById(`basicScreeningContainer_${testId}`)
-            
+
         var olElement = document.createElement('ol')
         basicQuestionsContainer.append(olElement)
 
@@ -1634,15 +1734,15 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
 
             // console.log('quesid',ques['questionId'])
 
-            
+
             if (!allTestsQuestions[testId]) {
                 allTestsQuestions[testId] = {}; // Initialize the testId key if it doesn't exist
             }
-    
-           
 
-            if(!allTestsQuestions[testId]['staticQuestions']){
-                allTestsQuestions[testId] = {'staticQuestions':[]};
+
+
+            if (!allTestsQuestions[testId]['staticQuestions']) {
+                allTestsQuestions[testId] = { 'staticQuestions': [] };
             }
 
             // if (!allTestsQuestions[testId]['starQuestions']) {
@@ -1654,11 +1754,11 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
                 allTestsQuestions[testId]['starQuestions'] = []; // Initialize starQuestions as an empty array
             }
 
-            if (ques['paperQuestion'] == 'Y'){
+            if (ques['paperQuestion'] == 'Y') {
                 firstInpt.checked = true;
 
-                if(!allTestsQuestions[testId]['staticQuestions']){
-                    allTestsQuestions[testId] = {'staticQuestions':[]};
+                if (!allTestsQuestions[testId]['staticQuestions']) {
+                    allTestsQuestions[testId] = { 'staticQuestions': [] };
                 }
 
                 allTestsQuestions[testId]['staticQuestions'].push(parseInt(ques['questionId']))
@@ -1666,17 +1766,17 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
             }
 
             var starContainer = document.createElement('span');
-            
+
             // console.log('allTestsQuestions[testId]',allTestsQuestions[testId])
             // console.log('Star Question',allTestsQuestions[testId]['starQuestions'])
 
-            if(ques['starQuestion'] == 'Y'){                                                // question id , subtopic id, test id
-                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_subTopic_BasicScreening_testId_${testId}" onclick="markAsStarQuestion(${ques['questionId']},null,${testId})"></i>`; 
-                allTestsQuestions[testId]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'Y'})
+            if (ques['starQuestion'] == 'Y') {                                                // question id , subtopic id, test id
+                starContainer.innerHTML = `<i class="fas fa-star customStarCursor" data-star="Y" id="starQuestion_Q_${ques['questionId']}_subTopic_BasicScreening_testId_${testId}" onclick="markAsStarQuestion(${ques['questionId']},null,${testId})"></i>`;
+                allTestsQuestions[testId]['starQuestions'].push({ "qid": ques['questionId'], 'star_flag': 'Y' })
             }
-            else{                                                                           // question id , subtopic id, test id
-                starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_subTopic_BasicScreening_testId_${testId}" onclick="markAsStarQuestion(${ques['questionId']},null,${testId})"></i>`;  
-                allTestsQuestions[testId]['starQuestions'].push({"qid":  ques['questionId'], 'star_flag': 'N'})
+            else {                                                                           // question id , subtopic id, test id
+                starContainer.innerHTML = `<i class="far fa-star customStarCursor" data-star="N" id="starQuestion_Q_${ques['questionId']}_subTopic_BasicScreening_testId_${testId}" onclick="markAsStarQuestion(${ques['questionId']},null,${testId})"></i>`;
+                allTestsQuestions[testId]['starQuestions'].push({ "qid": ques['questionId'], 'star_flag': 'N' })
             }
 
             var questionCheckBox = document.createElement('div');
@@ -1686,13 +1786,18 @@ async function genrateHtmlWithScreeningBasicQuestion(testId) {
             questionContainer.append(questionElement, questionCheckBox);
 
             olElement.append(questionContainer)
-            
+
+            if (ques['paperQuestion'] == 'Y') {
+                highlightQuestion(ques['questionId']);
+            }
         }
+
 
     }
     catch (error) {
         console.error("Error fetching screening questions:", error);
     }
+
 }
 
 
@@ -1707,7 +1812,7 @@ function unhideTheTopicContainer(elementId) {
     var clickedElement = document.getElementById(elementId);
     var clickedElementDataSet = clickedElement.dataset;
 
-    if(clickedElementDataSet['data'] != 'N'){
+    if (clickedElementDataSet['data'] != 'N') {
 
         var testId = clickedElementDataSet['testid'];
 
@@ -1716,7 +1821,7 @@ function unhideTheTopicContainer(elementId) {
 
                 // add css style to clicked skill
                 clickedElement.classList.add('active-skill');
-                
+
                 // un hide the topic main container
                 // finding the topic container which is realted to a specific skill
                 var skillTopicContainerId = `SkillTopicContainer_${clickedElementDataSet['skillid']}_Test_${testId}`;
@@ -1730,25 +1835,31 @@ function unhideTheTopicContainer(elementId) {
 
                 // check for if there any active topic in the skill
                 var topicFirstElement
-                if(skillTopicsListContainer.querySelector('.active-skill')){
+                if (skillTopicsListContainer.querySelector('.active-skill')) {
                     // finding the active topic from the topic container
                     topicFirstElement = skillTopicsListContainer.querySelector('.active-skill')
                 }
                 // if there is no active topic selected in the topics from a skill we will directily active first element 
-                else{
-                    topicFirstElement = topicContainerElement.querySelector('.skillsListTopicsList').firstElementChild;
-                    if(topicFirstElement){
-                    topicFirstElement.classList.add('active-skill');
+                else {
+                    // topicFirstElement = topicContainerElement.querySelector('.skillsListTopicsList').firstElementChild;
+                    topicFirstElement = topicContainerElement
+                        .querySelector('.skillsListTopicsList')
+                        .querySelector('button:not([disabled])');
+                    if (topicFirstElement) {
+                        topicFirstElement.classList.add('active-skill');
+                    } else {
+                        // No valid topics → stop here
+                        return;
                     }
                 }
 
                 // extracting the data from a topic element for unhide the subtopic container.
                 var topicDataSet
-                if(topicFirstElement){
+                if (topicFirstElement) {
                     topicDataSet = topicFirstElement.dataset;
                 }
 
-                if(topicDataSet){
+                if (topicDataSet) {
 
                     // subtopic container id bulid with topic data with dataset.
                     var skillSubTopicContainerId = `SkillSubTopicContainer_${topicDataSet['topicid']}_Skill_${topicDataSet['skillid']}_Test_${testId}`;
@@ -1763,13 +1874,20 @@ function unhideTheTopicContainer(elementId) {
 
                     // checking for active subtopic
                     var subtopicFirstElement
-                    if(skillSubTopicsListContainer.querySelector('.active-skill')){
+                    if (skillSubTopicsListContainer.querySelector('.active-skill')) {
                         subtopicFirstElement = skillSubTopicsListContainer.querySelector('.active-skill');
                     }
                     // if there no active subtopic we select the first one as active skill
-                    else{
-                        subtopicFirstElement = subTopicContainerElement.querySelector('.skillsList').firstElementChild;
-                        subtopicFirstElement.classList.add('active-skill');
+                    else {
+                        // subtopicFirstElement = subTopicContainerElement.querySelector('.skillsList').firstElementChild;
+                        subtopicFirstElement = subTopicContainerElement
+                            .querySelector('.skillsList')
+                            .querySelector('button:not([disabled])');
+                        if (subtopicFirstElement) {
+                            subtopicFirstElement.classList.add('active-skill');
+                        } else {
+                            return;
+                        }
                     }
 
                     // Hidding and removing styles
@@ -1801,10 +1919,10 @@ function unhideTheTopicContainer(elementId) {
                     // un hide the SubTopic Questions container
                     let clickedSubtopicElementkey = subtopicFirstElement.dataset['subtopicid']
                     let SubTopicQuestionsContainer = document.getElementById(`SubTopicQuestionsContainer_${clickedSubtopicElementkey}_test_${testId}`)
-                    if(SubTopicQuestionsContainer){
+                    if (SubTopicQuestionsContainer) {
                         SubTopicQuestionsContainer.hidden = false
                     }
-                    else{
+                    else {
                         console.warn('trying to find the subtopic questions but there is no question in this subtopic');
                     }
 
@@ -1815,20 +1933,20 @@ function unhideTheTopicContainer(elementId) {
                     skillsClickesTracker[`previousSelectedSubTopicContainerId_${testId}`] = subTopicContainerElement.id;
                     skillsClickesTracker[`previousSelectedSubTopicQuestionsContainerId_${testId}`] = `SubTopicQuestionsContainer_${clickedSubtopicElementkey}_test_${testId}`
                 }
-                else{
-                    
+                else {
+
                     // hide the topic container 
                     var topicContainerHid = document.getElementById(`SkillTopicContainer_${clickedElementDataSet['skillid']}_Test_${testId}`)
-                    if(topicContainerHid){
+                    if (topicContainerHid) {
                         topicContainerHid.hidden = true
                         console.log('Skill does not have topic data, sub topic data container is hide');
                     }
-                    
+
                 }
 
-                
+
             }
-        } 
+        }
         else if (clickedElementDataSet['type'] == 'topic') {
 
             if (skillsClickesTracker[`previousSelectedTopicId_${testId}`] != elementId) {
@@ -1869,14 +1987,14 @@ function unhideTheTopicContainer(elementId) {
 
                 // finding the subtopics list container
                 var skillSubTopicsListContainer = subTopicContainerElement.querySelector('.skillsList')
-                
+
                 // finding the active subtopic from the subtopic container.
                 var subtopicFirstElement
-                if(skillSubTopicsListContainer.querySelector('.active-skill')){
+                if (skillSubTopicsListContainer.querySelector('.active-skill')) {
                     subtopicFirstElement = skillSubTopicsListContainer.querySelector('.active-skill')
                 }
                 // if we can not find the active subtopic we select the first subtopic from the topic
-                else{
+                else {
                     subtopicFirstElement = subTopicContainerElement.querySelector('.skillsList').firstElementChild;
                     subtopicFirstElement.classList.add('active-skill');
                 }
@@ -1890,13 +2008,13 @@ function unhideTheTopicContainer(elementId) {
                 // un hide the SubTopic Questions container
                 let clickedSubtopicElementkey = subtopicFirstElement.dataset['subtopicid']
                 let SubTopicQuestionsContainer = document.getElementById(`SubTopicQuestionsContainer_${clickedSubtopicElementkey}_test_${testId}`)
-                if(SubTopicQuestionsContainer){
+                if (SubTopicQuestionsContainer) {
                     SubTopicQuestionsContainer.hidden = false
                 }
-                else{
+                else {
                     console.warn('trying to find the subtopic questions but there is no question in this subtopic');
                 }
-                
+
                 skillsClickesTracker[`previousSelectedTopicId_${testId}`] = elementId;
                 skillsClickesTracker[`previousSelectedSubTopicId_${testId}`] = subtopicFirstElement.id;
                 skillsClickesTracker[`previousSelectedSubTopicContainerId_${testId}`] = subTopicContainerElement.id;
@@ -1923,10 +2041,10 @@ function unhideTheTopicContainer(elementId) {
                     // un hide the SubTopic Questions container
                     let clickedSubtopicElementkey = clickedSubTopicElement.dataset['subtopicid']
                     let SubTopicQuestionsContainer = document.getElementById(`SubTopicQuestionsContainer_${clickedSubtopicElementkey}_test_${testId}`)
-                    if(SubTopicQuestionsContainer){
+                    if (SubTopicQuestionsContainer) {
                         SubTopicQuestionsContainer.hidden = false
                     }
-                    else{
+                    else {
                         console.warn('trying to find the subtopic questions but there is no question in this subtopic');
                     }
 
@@ -1945,7 +2063,7 @@ function unhideTheTopicContainer(elementId) {
         }
 
     }
-    
+
 }
 
 
@@ -1961,9 +2079,9 @@ function unhideTheTopicContainer(elementId) {
 // }
 
 
-function activeScreeningTab(element){
-    
-    if(element){
+function activeScreeningTab(element) {
+
+    if (element) {
         let elementId = element.id
         let TestCardId = elementId.split('_')[elementId.split('_').length - 1]
 
@@ -1971,74 +2089,74 @@ function activeScreeningTab(element){
         var screnningSecondTab = document.getElementById(`screeningTab_2_${TestCardId}`)
         var dynamicQuestionsContainerToHide = document.getElementById(`dynamicQuestionsContainer_${TestCardId}`)
 
-        if(element.classList.contains('active-screeningTab')){
+        if (element.classList.contains('active-screeningTab')) {
             // clicking on a active tab nothing to do here
         }
-        else{
+        else {
             var basicQuestionsContainer = document.getElementById(`basicScreeningContainer_${TestCardId}`)
-            
-            if(element.dataset['screeningtype'] == 'basic'){
+
+            if (element.dataset['screeningtype'] == 'basic') {
 
                 screnningfirstTab.classList.add('active-screeningTab')
                 screnningSecondTab.classList.remove('active-screeningTab')
                 // un hide the basic questions container
-                
+
                 basicQuestionsContainer.hidden = false
                 // KnowledgeQuestionsContainer.hidden = true
 
                 // hide the dynamic questions count
-                if(dynamicQuestionsContainerToHide){
+                if (dynamicQuestionsContainerToHide) {
                     dynamicQuestionsContainerToHide.hidden = true
                 }
-                else{
+                else {
                     console.log(" can't hide the dynamic questions container ");
                 }
 
                 // hide the skills & topics & subtopics Container
                 let skillsAndTopicsAndSubTopicsContainerId = `skillsAndTopicsAndSubtopicsContainer_${TestCardId}`
                 let skillsTopicSubtopicsElement = document.getElementById(skillsAndTopicsAndSubTopicsContainerId)
-                if(skillsTopicSubtopicsElement){
+                if (skillsTopicSubtopicsElement) {
                     skillsTopicSubtopicsElement.hidden = true
                 }
-                else{
+                else {
                     console.log('try to show basic screening test question by hidding the knowledge test questions container but somthing went wrong');
                 }
-                
-                $('#knowledge_'+TestCardId).hide();
-                $('#screening_basic_'+TestCardId).show();
-                
+
+                $('#knowledge_' + TestCardId).hide();
+                $('#screening_basic_' + TestCardId).show();
+
             }
 
-            if(element.dataset['screeningtype'] == 'knowledge'){
+            if (element.dataset['screeningtype'] == 'knowledge') {
 
                 // add active class to screening tab
                 screnningSecondTab.classList.add('active-screeningTab')
                 // remove active class to screening tab
                 screnningfirstTab.classList.remove('active-screeningTab')
-                
+
                 // hidde the JD questions container
                 basicQuestionsContainer.hidden = true
 
                 // un hide the dynamic questions count
-                if(dynamicQuestionsContainerToHide){
+                if (dynamicQuestionsContainerToHide) {
                     dynamicQuestionsContainerToHide.hidden = false
                 }
-                else{
+                else {
                     console.log(" can't un hide the dynamic questions container ");
                 }
 
                 // un hidding the skills & topics & subtopics Container
                 let skillsAndTopicsAndSubTopicsContainerId = `skillsAndTopicsAndSubtopicsContainer_${TestCardId}`
                 let skillsTopicSubtopicsElement = document.getElementById(skillsAndTopicsAndSubTopicsContainerId)
-                if(skillsTopicSubtopicsElement){
+                if (skillsTopicSubtopicsElement) {
                     skillsTopicSubtopicsElement.hidden = false
                 }
-                else{
+                else {
                     console.log('try to show knowledge test screening question by hidding the basic test questions container but somthing went wrong');
                 }
 
-                $('#knowledge_'+TestCardId).show();
-                $('#screening_basic_'+TestCardId).hide();
+                $('#knowledge_' + TestCardId).show();
+                $('#screening_basic_' + TestCardId).hide();
                 // click first skill if there is no active skill.
                 // clickOnFirstSkill(TestCardId)
             }
@@ -2056,40 +2174,40 @@ function activeScreeningTab(element){
         }
 
     }
-    else{
+    else {
         console.log('Screening Swatch tab does not have test card Id');
     }
 }
 
 
 //  when we click on new screen or coding or interview button this function will be called 
-function createNewTestModalOpen(testType){
+function createNewTestModalOpen(testType) {
 
     testCreateOrUpdate = 'create'
     // Hidding validators
-    document.getElementById('test_name_validator').hidden = true 
-    document.getElementById('promot_validator').hidden  = true
+    document.getElementById('test_name_validator').hidden = true
+    document.getElementById('promot_validator').hidden = true
     document.getElementById('holdInputContainer').style.display = 'none'
     document.getElementById('testHold').checked = false;
 
     var testName
-    if (testType == 'screening'){
+    if (testType == 'screening') {
         testName = 'Screening'
         document.getElementById('promotLevelContainer').hidden = false;
         document.getElementById('holdContainer').hidden = false;
     }
-    else if(testType == 'coding'){
+    else if (testType == 'coding') {
         testName = 'Coding'
         document.getElementById('promotLevelContainer').hidden = false;
         document.getElementById('holdContainer').hidden = false;
     }
-    else if(testType == 'interview'){
+    else if (testType == 'interview') {
         testName = 'Interview'
         document.getElementById('promotLevelContainer').hidden = true;
         document.getElementById('holdContainer').hidden = true;
     }
 
-    if(testName){
+    if (testName) {
         document.getElementById('modalCenterTitle').innerText = testName
         document.getElementById('testType').value = testName
         document.getElementById('promot_level').value = 80
@@ -2103,8 +2221,8 @@ function createNewTestModalOpen(testType){
 
 
 // this function Update the Test data and Save's the Test Data.
-function saveOrUpdateTest(){
-    
+function saveOrUpdateTest() {
+
     var testName = document.getElementById('testType').value;
     var promotValue = document.getElementById('promot_level').value;
     var holdCheck = document.getElementById('testHold');
@@ -2113,17 +2231,17 @@ function saveOrUpdateTest(){
     var testType = document.getElementById('testType').dataset.test_type
     var saveTest = true;
     var testHoldYesOrNo = 'N'
-    var holdPercenTageVal 
+    var holdPercenTageVal
 
-    if(holdCheck.checked){
+    if (holdCheck.checked) {
         testHoldYesOrNo = 'Y'
         var holdPercentageValue = document.getElementById('holdPercentage')
 
-        if (!holdPercentageValue.value){ // input is empty this will call
+        if (!holdPercentageValue.value) { // input is empty this will call
             saveTest = false
             hold_validator.hidden = false
         }
-        else{ // input has value
+        else { // input has value
             holdPercenTageVal = parseInt(holdPercentageValue.value)
             hold_validator.hidden = true
         }
@@ -2146,40 +2264,40 @@ function saveOrUpdateTest(){
         promotValidator.hidden = true;     // Hide the validation message
     }
 
-    var questionTitle = document.getElementById('questionPaperTitle_'+cureentTestId)
-    if(questionTitle){
+    var questionTitle = document.getElementById('questionPaperTitle_' + cureentTestId)
+    if (questionTitle) {
         questionTitle.innerText = testName
     }
-    
 
-    if(saveTest){
-        
+
+    if (saveTest) {
+
         $('#modalCenter').modal('hide')
 
-        if (testCreateOrUpdate == 'create'){
+        if (testCreateOrUpdate == 'create') {
 
             dataObj = {
-                'createOrUpdate'  : testCreateOrUpdate,
-                'testName'        : testName,
+                'createOrUpdate': testCreateOrUpdate,
+                'testName': testName,
                 'promotPercentage': promotValue,
-                'testType'        : testType,
-                'holdYesOrNo'     : testHoldYesOrNo,
-                'holdvalue'       : holdPercenTageVal,
-                'jdId'            : jdId
+                'testType': testType,
+                'holdYesOrNo': testHoldYesOrNo,
+                'holdvalue': holdPercenTageVal,
+                'jdId': jdId
             }
 
         }
 
-        if (testCreateOrUpdate == 'update'){
+        if (testCreateOrUpdate == 'update') {
             dataObj = {
-                'createOrUpdate'  : testCreateOrUpdate,
-                'testId'          : cureentTestId,
-                'testName'        : testName,
+                'createOrUpdate': testCreateOrUpdate,
+                'testId': cureentTestId,
+                'testName': testName,
                 'promotPercentage': promotValue,
-                'testType'        : testType,
-                'holdYesOrNo'     : testHoldYesOrNo,
-                'holdvalue'       : holdPercenTageVal,
-                'jdId'            : jdId
+                'testType': testType,
+                'holdYesOrNo': testHoldYesOrNo,
+                'holdvalue': holdPercenTageVal,
+                'jdId': jdId
             }
         }
 
@@ -2190,48 +2308,48 @@ function saveOrUpdateTest(){
 
         $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data, function (res) {
 
-            if (res.statusCode == 0){
-                if(res.data){
+            if (res.statusCode == 0) {
+                if (res.data) {
                     var data = res.data
 
-                    console.log("data ::::",data);
+                    console.log("data ::::", data);
 
                     // test is updated and update card data
-                    if ('updateEvent' in data && data['updateEvent'] == 'Y'){
+                    if ('updateEvent' in data && data['updateEvent'] == 'Y') {
 
                         var key_ = data['id']
-                        testsList[[key_]] =  data
-                        updateCardAfterSaveData(testsList,data['id'])
+                        testsList[[key_]] = data
+                        updateCardAfterSaveData(testsList, data['id'])
 
                         // call the test questions main container 
 
-                        if(data['paperid']){
+                        if (data['paperid']) {
 
                             dataObj = {
-                                'event':'update',
+                                'event': 'update',
                                 'paperId': data['paperid'],
                                 'paperTitle': data['papertitle'],
-                                'promotPercentage':data['promot'],
-                                'holdYesOrNo'     : testHoldYesOrNo,
-                                'holdvalue'       : holdPercenTageVal,
+                                'promotPercentage': data['promot'],
+                                'holdYesOrNo': testHoldYesOrNo,
+                                'holdvalue': holdPercenTageVal,
                             }
-                            
+
                             var final_data = {
                                 'data': JSON.stringify(dataObj),
                                 csrfmiddlewaretoken: CSRF_TOKEN,
                             }
-                            
+
                             $.post(CONFIG['acert'] + "/api/update-paperdetails", final_data, function (res) {
 
                             })
                         }
 
                     }
-                    else{
+                    else {
                         // creating new test card
                         // test is add and create card
                         var key_ = data[0]['id'] // test card id
-                        testsList[[key_]] =  data[0]
+                        testsList[[key_]] = data[0]
                         testsList_.push(key_)
 
                         // creating keys with values null for the Test skills click tracker
@@ -2245,7 +2363,7 @@ function saveOrUpdateTest(){
                         testType = testType
 
                         // it create test cards and appends to webpage.
-                        addTestCardToShow(testName,promotValue,testType,data[0])
+                        addTestCardToShow(testName, promotValue, testType, data[0])
 
                         // when loading the page initalTestCard was guides to show which test when it is opening
                         initalTestCard = false
@@ -2253,14 +2371,14 @@ function saveOrUpdateTest(){
                         let paperType__ = data[0]['papertype']
 
                         // this function create the questions containenr for the newly created test 
-                        TestCardQuestionsMainContainers(key_, paperType__,PaperTitle , 'show', initalTestCard)
+                        TestCardQuestionsMainContainers(key_, paperType__, PaperTitle, 'show', initalTestCard)
 
                         // this function call when a new test created, with out page referesh 
                         // this function create skills and topics and subtopics with html and show in webapge.
                         skillsListShowInHtml(key_, skillsTopicSubtopics, paperType__, null);
 
                         // clicking on the newlly created test card
-                        document.getElementById(paperType__+'_'+data[0]['id']).click();
+                        document.getElementById(paperType__ + '_' + data[0]['id']).click();
 
                     }
 
@@ -2275,24 +2393,24 @@ function saveOrUpdateTest(){
 
 
 //  this function update the Html TEST card on webpage after save the data
-function updateCardAfterSaveData(allTestsList,testId){
-    
+function updateCardAfterSaveData(allTestsList, testId) {
+
     var testType = allTestsList[testId]['papertype']
     var testName
-    if (testType == 'S'){
+    if (testType == 'S') {
         testName = 'Screening'
-        document.getElementById('testTitle_'+testId).innerText = allTestsList[testId]['papertitle']
-        document.getElementById('testCardTestType_'+testId).innerText = ""+testName+"( Promote % "+allTestsList[testId]['promot']+" )"
+        document.getElementById('testTitle_' + testId).innerText = allTestsList[testId]['papertitle']
+        document.getElementById('testCardTestType_' + testId).innerText = "" + testName + "( Promote % " + allTestsList[testId]['promot'] + " )"
     }
-    else if(testType == 'E'){
+    else if (testType == 'E') {
         testName = 'Coding'
-        document.getElementById('testTitle_'+testId).innerText = allTestsList[testId]['papertitle']
-        document.getElementById('testCardTestType_'+testId).innerText = ""+testName+"( Promote % "+allTestsList[testId]['promot']+" )"
+        document.getElementById('testTitle_' + testId).innerText = allTestsList[testId]['papertitle']
+        document.getElementById('testCardTestType_' + testId).innerText = "" + testName + "( Promote % " + allTestsList[testId]['promot'] + " )"
     }
-    else if(testType == 'I'){
+    else if (testType == 'I') {
         testName = 'Interview'
-        document.getElementById('testTitle_'+testId).innerText = allTestsList[testId]['papertitle']
-        document.getElementById('testCardTestType_'+testId).innerText = ""+testName
+        document.getElementById('testTitle_' + testId).innerText = allTestsList[testId]['papertitle']
+        document.getElementById('testCardTestType_' + testId).innerText = "" + testName
     }
 
 }
@@ -2369,31 +2487,31 @@ function addTestCardToShow(testName, promotValue, testType, data) {
 
 
 // when we click on the Test card this function will be called , and add Styles and Hide and Unhide the Test's Questions Container.
-function selectTest(element_id){
+function selectTest(element_id) {
 
-    console.log('element_id::::::::::',element_id);
-    
+    console.log('element_id::::::::::', element_id);
 
-    if (element_id != perviousSelectedTest){
+
+    if (element_id != perviousSelectedTest) {
 
         var test_type = element_id.split('_')[0]
         var workFlowId = element_id.split('_')[1]
 
-        if(element_id){
+        if (element_id) {
 
             var workFlowId = element_id.split('_')[1]
-            var currentSelectedTestWorkFlow = document.getElementById('TestContainer_'+workFlowId)
-            if(currentSelectedTestWorkFlow){
+            var currentSelectedTestWorkFlow = document.getElementById('TestContainer_' + workFlowId)
+            if (currentSelectedTestWorkFlow) {
                 currentSelectedTestWorkFlow.hidden = false
             }
 
         }
 
-        if(perviousSelectedTest){
+        if (perviousSelectedTest) {
 
             var perviousSelectedTestId = perviousSelectedTest.split('_')[1]
-            var perviousSelectedTestWorkFlow = document.getElementById('TestContainer_'+perviousSelectedTestId)
-            if(perviousSelectedTestWorkFlow){
+            var perviousSelectedTestWorkFlow = document.getElementById('TestContainer_' + perviousSelectedTestId)
+            if (perviousSelectedTestWorkFlow) {
                 perviousSelectedTestWorkFlow.hidden = true
             }
 
@@ -2404,16 +2522,16 @@ function selectTest(element_id){
             instialSelectTest.push(workFlowId)
             // getPapersLibraries(test_type, workFlowId);
         }
-        
+
         var custumStyles
-        
-        if(test_type == 'S'){
+
+        if (test_type == 'S') {
             custumStyles = 'activeTestCars-screen-test'
         }
-        if(test_type == 'E'){
+        if (test_type == 'E') {
             custumStyles = 'activeTestCars-coding-test'
         }
-        if(test_type == 'I'){
+        if (test_type == 'I') {
             custumStyles = 'activeTestCars-interview-test'
         }
 
@@ -2421,64 +2539,64 @@ function selectTest(element_id){
         testBox.classList.remove('unActiveTestCard')
         testBox.classList.add(custumStyles)
 
-        if (perviousSelectedTest){
+        if (perviousSelectedTest) {
             var testBox = document.getElementById(perviousSelectedTest)
-            if(testBox){
+            if (testBox) {
                 testBox.classList.remove('activeTestCars-screen-test', 'activeTestCars-coding-test', 'activeTestCars-interview-test')
                 testBox.classList.add('unActiveTestCard')
             }
         }
 
-        if(test_type == "S"){
+        if (test_type == "S") {
 
-            let element1 = document.getElementById("screeningTab_1_"+workFlowId);
-            let element2 = document.getElementById("screeningTab_2_"+workFlowId);
+            let element1 = document.getElementById("screeningTab_1_" + workFlowId);
+            let element2 = document.getElementById("screeningTab_2_" + workFlowId);
 
             if (element1 && element1.classList.contains("active-screeningTab")) {
-                $('#knowledge_'+workFlowId).hide();
-                $('#screening_basic_'+workFlowId).show();
+                $('#knowledge_' + workFlowId).hide();
+                $('#screening_basic_' + workFlowId).show();
 
                 $('#new_question_type').val('B').change();
 
             } else if (element2 && element2.classList.contains("active-screeningTab")) {
-                $('#knowledge_'+workFlowId).show();
-                $('#screening_basic_'+workFlowId).hide();
+                $('#knowledge_' + workFlowId).show();
+                $('#screening_basic_' + workFlowId).hide();
                 $('#new_question_type').val('B').change();
             }
 
-        }else {
-            $('#knowledge_'+workFlowId).show();
-            $('#screening_basic_'+workFlowId).hide();
+        } else {
+            $('#knowledge_' + workFlowId).show();
+            $('#screening_basic_' + workFlowId).hide();
         }
 
-        
+
     }
-    
+
     perviousSelectedTest = element_id
     // document.getElementById('TestCardQuestionsContainersList').hidden = false
 
 }
 
 
-function clickOnFirstSkill(testId){
+function clickOnFirstSkill(testId) {
 
     // checking for the active skill if test does not have any active skill we click directly first skill first topic and first subtopic.
-    if(skillsClickesTracker[`previousSelectedSkill_${testId}`] == null){
-        
+    if (skillsClickesTracker[`previousSelectedSkill_${testId}`] == null) {
+
         let skillsAndTopicsAndSubtopicsContainerId = `skillsAndTopicsAndSubtopicsContainer_${testId}`
         let skillsAndTopicsAndSubTopicsContainerElement = document.getElementById(skillsAndTopicsAndSubtopicsContainerId)
-        
+
         let skillsListOfElements = skillsAndTopicsAndSubTopicsContainerElement.querySelector('.skillsList')
         var allSkillsList = skillsListOfElements.querySelectorAll('.skill')
 
         for (let checkSkill = 0; checkSkill < allSkillsList.length; checkSkill++) {
             const element = allSkillsList[checkSkill];
-            if(element.dataset['data'] == 'Y'){
-                element.click(); 
+            if (element.dataset['data'] == 'Y') {
+                element.click();
                 break
             }
         }
-    
+
     }
 
 }
@@ -2496,23 +2614,23 @@ function updateTest(event, currentSelectedtestId) {
 //  this function open Test model with releated data.
 function openUpdateTestModel(currentSelectedtestId) {
     if (currentSelectedtestId) {
-        
+
         var testType = testsList[currentSelectedtestId]['papertype'];
         var holdStatus = testsList[currentSelectedtestId]['hold']
         var holdPercentageValue = testsList[currentSelectedtestId]['holdpercentage']
 
         var holdMainContainer = document.getElementById('holdContainer')
         var holdElement = document.getElementById('testHold')
-        var holdInputContai = document.getElementById('holdInputContainer') 
-        var holdInfo = document.getElementById('holdInfo') 
+        var holdInputContai = document.getElementById('holdInputContainer')
+        var holdInfo = document.getElementById('holdInfo')
 
-        if(holdStatus == 'Y'){
+        if (holdStatus == 'Y') {
             holdElement.checked = true
             document.getElementById('holdPercentage').value = holdPercentageValue
             holdInputContai.style.display = 'block'
             holdInfo.innerText = 'Below the Hold percentage candidate will be rejected'
         }
-        else{
+        else {
             holdElement.checked = false
             holdInputContai.style.display = 'none'
             holdInfo.innerText = 'Below the Promote percentage candidate will be rejected'
@@ -2524,16 +2642,16 @@ function openUpdateTestModel(currentSelectedtestId) {
             testName = 'Screening';
             document.getElementById('promotLevelContainer').hidden = false;
             holdMainContainer.hidden = false
-        } 
+        }
         else if (testType == 'coding' || testType == 'E') {
-                testName = 'Coding';
-                document.getElementById('promotLevelContainer').hidden = false;
-                holdMainContainer.hidden = false
+            testName = 'Coding';
+            document.getElementById('promotLevelContainer').hidden = false;
+            holdMainContainer.hidden = false
         }
         else if (testType == 'interview' || testType == 'I') {
-                testName = 'Interview';
-                document.getElementById('promotLevelContainer').hidden = true;
-                holdMainContainer.hidden = true
+            testName = 'Interview';
+            document.getElementById('promotLevelContainer').hidden = true;
+            holdMainContainer.hidden = true
         }
 
         var modalTitle = document.getElementById('modalCenterTitle');
@@ -2579,15 +2697,15 @@ document.getElementById('script_copy_btn').addEventListener('click', function ()
 // when we click on the delete Icon on a test card Delete Model opens for Conformation.
 function deleteTestModalOpen(testid) {
 
-    var testTilt =  document.getElementById('testTitle_'+testid).innerText
+    var testTilt = document.getElementById('testTitle_' + testid).innerText
     document.getElementById('delectCancelBtn').hidden = false
     document.getElementById('deleteTestConformation').hidden = false
-    document.getElementById('conformationForDelete').innerText =  'Are sure want to delete '+testTilt
+    document.getElementById('conformationForDelete').innerText = 'Are sure want to delete ' + testTilt
     document.getElementById('deleteTestConformation').dataset['deletetestid'] = testid
     $('#modalToggle').modal('show')
     event.stopPropagation();
     // TestWithLibrariesAndQuestions
-    
+
 }
 
 
@@ -2597,7 +2715,7 @@ function deleteTest() {
 
     if (deleteTestid) {
         var dataObj = {
-            'deleteTestId' : parseInt(deleteTestid),
+            'deleteTestId': parseInt(deleteTestid),
             'jdid': jdId
         };
 
@@ -2611,20 +2729,20 @@ function deleteTest() {
 
                 var data = res.data
 
-                if(data['paperId']){
+                if (data['paperId']) {
 
                     dataObj = {
-                        'event':'paperStatus',
+                        'event': 'paperStatus',
                         'paperId': data['paperId'],
                         'paperTitle': data['papertitle'],
                         'promotPercentage': ""
                     }
-                    
+
                     var final_data = {
                         'data': JSON.stringify(dataObj),
                         csrfmiddlewaretoken: CSRF_TOKEN,
                     }
-                    
+
                     $.post(CONFIG['acert'] + "/api/update-paperdetails", final_data, function (res) {
 
                     })
@@ -2638,10 +2756,10 @@ function deleteTest() {
                 var removeQuestionsContainer = document.getElementById(`TestContainer_${testCardDetails['testData']['id']}`)
 
                 var clickOnAnotherCard = false
-                if ( removeTestCard.classList.contains('activeTestCars-interview-test') || removeTestCard.classList.contains('activeTestCars-coding-test') || removeTestCard.classList.contains('activeTestCars-screen-test')) {
+                if (removeTestCard.classList.contains('activeTestCars-interview-test') || removeTestCard.classList.contains('activeTestCars-coding-test') || removeTestCard.classList.contains('activeTestCars-screen-test')) {
                     clickOnAnotherCard = true;
                 }
-                
+
                 // // Check if the element exists before removing it
                 if (testCardContainer && removeQuestionsContainer) {
                     testCardContainer.innerHTML = ""
@@ -2651,12 +2769,12 @@ function deleteTest() {
                     removeQuestionsContainer.remove()
                 }
 
-                if(clickOnAnotherCard){
-                    if(testCardDetails['nextSelectTestId'] != 0){   
+                if (clickOnAnotherCard) {
+                    if (testCardDetails['nextSelectTestId'] != 0) {
                         document.getElementById(`${testsList[testCardDetails['nextSelectTestId']]['papertype']}_${testsList[testCardDetails['nextSelectTestId']]['id']}`).click()
                     }
                 }
-                
+
                 delete testsList[deleteTestid]
 
             }
@@ -2673,10 +2791,10 @@ function deleteTest() {
 document.addEventListener('DOMContentLoaded', function () {
     function disableSelectedOptions() {
         var allSelects = document.getElementsByClassName('interviewer-select');
-        
+
         Array.from(allSelects).forEach(function (select) {
             var selectedValue = select.value;
-            
+
             Array.from(select.options).forEach(function (option) {
                 if (option.value !== "" && option.value !== selectedValue) {
                     var isOptionSelected = Array.from(allSelects).some(function (otherSelect) {
@@ -2715,7 +2833,7 @@ document.addEventListener('DOMContentLoaded', function () {
         defaultOption.selected = true;
         defaultOption.textContent = 'Select Interviewer';
         newSelect.appendChild(defaultOption);
-        
+
         interviewersList.forEach(function (interviewer) {
             var option = document.createElement('option');
             option.value = interviewer.id;
@@ -2766,28 +2884,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 // Save Interviewers List 
-function saveInterviewers(){
-    if(jdId){
+function saveInterviewers() {
+    if (jdId) {
         var selectedInterviewersList = []
         var selectedInterviewersLst = document.getElementsByClassName('interviewer-select')
 
-        for(var interviewer = 0; interviewer < selectedInterviewersLst.length; interviewer++ ){
-            if(selectedInterviewersLst[interviewer].tagName == 'SELECT'){
+        for (var interviewer = 0; interviewer < selectedInterviewersLst.length; interviewer++) {
+            if (selectedInterviewersLst[interviewer].tagName == 'SELECT') {
 
-                if (selectedInterviewersLst[interviewer].value){
+                if (selectedInterviewersLst[interviewer].value) {
                     selectedInterviewersList.push(selectedInterviewersLst[interviewer].value)
                 }
 
             }
         }
 
-        if(selectedInterviewersList.length > 0){
+        if (selectedInterviewersList.length > 0) {
 
             totalinterviwersLst = selectedInterviewersList
 
             dataObj = {
-                'interviwersLst' : selectedInterviewersList,
-                'jdId'           : jdId
+                'interviwersLst': selectedInterviewersList,
+                'jdId': jdId
             }
 
             var final_data = {
@@ -2798,7 +2916,7 @@ function saveInterviewers(){
             // save paper id in jbdesc table 
             $.post(CONFIG['portal'] + "/api/save-interviewers-lst", final_data, function (res) {
 
-                if(res.statusCode == 0){
+                if (res.statusCode == 0) {
                     totalinterviwersLst = res.data
                     $('#InterviewPanel').modal('hide');
                 }
@@ -2811,67 +2929,67 @@ function saveInterviewers(){
 
 
 // this function executes when user Click on the Publish Button or Stop Button.
-function publishJd(){
+function publishJd() {
 
     var testLst = Object.keys(testsList).length
 
-    if(testLst >= 1){
+    if (testLst >= 1) {
 
         dataObj = {
-            'jobDescriptionId' : jdId,
-            'nextStatus_' : nextStatus
+            'jobDescriptionId': jdId,
+            'nextStatus_': nextStatus
         }
-        
+
         var final_data = {
             'data': JSON.stringify(dataObj),
             csrfmiddlewaretoken: CSRF_TOKEN,
         }
-    
+
         // save paper id in jbdesc table 
         $.post(CONFIG['portal'] + "/api/jd-publish", final_data, function (res) {
-    
-            if(res.statusCode == 0){
+
+            if (res.statusCode == 0) {
 
                 changeStatusInHtml(res.data['jdStatus_'])
 
                 JdStatus = res.data['jdStatus_']
 
-                if(res.data['noPaper'] == 'Y'){
+                if (res.data['noPaper'] == 'Y') {
                     // Show Modal
-                    document.getElementById('PublishValidators').innerText = res.data['paperTitle']+' '+'Does not Select any Library.'
+                    document.getElementById('PublishValidators').innerText = res.data['paperTitle'] + ' ' + 'Does not Select any Library.'
                     $('#JdPublishConformation').modal('hide')
                     // $('#publishValidationModal').modal('show')
                 }
-                else{
-    
+                else {
+
                     dataObj = {
-                        'data':res.data
+                        'data': res.data
                     }
-                
+
                     var final_data = {
                         'data': JSON.stringify(dataObj),
                         csrfmiddlewaretoken: CSRF_TOKEN,
                     }
-    
+
                     $.post(CONFIG['acert'] + "/api/update-brules", final_data, function (res) {
-                    
+
                     });
 
-                    if(JdStatus == 'A'){
+                    if (JdStatus == 'A') {
                         showSuccessMessage('JD Published Successfully');
                     }
-                    if(JdStatus == 'P'){
+                    if (JdStatus == 'P') {
                         showSuccessMessage('JD Stopped Successfully');
                     }
 
                     $('#JdPublishConformation').modal('hide')
-    
+
                 }
             }
-    
+
         })
     }
-    else{
+    else {
         $('#JdPublishConformation').modal('hide')
         $('#jdPublishValidators').modal('show')
     }
@@ -2879,42 +2997,42 @@ function publishJd(){
 }
 
 
-function closeModals(){
+function closeModals() {
     $('#publishValidationModal').modal('hide')
 }
 
 
-function openInterviewpPanel(){
+function openInterviewpPanel() {
     $('#InterviewPanel').modal('show')
 }
 
 
 // it update the star question state and status
-function makeAsStarQuestion(questionId, TestId){
+function makeAsStarQuestion(questionId, TestId) {
 
     var staticstarElement = document.getElementById(`staticstarQuestion_${questionId}_${TestId}`)
 
     // disable "N" means that question was in Paper
     // if star was disable "N" means NO then only we have to update or change state of the star
-    if(staticstarElement.dataset['disable'] == 'N'){
+    if (staticstarElement.dataset['disable'] == 'N') {
 
         // un checked star
-        if (staticstarElement.dataset['star'] == 'Y') { 
+        if (staticstarElement.dataset['star'] == 'Y') {
             staticstarElement.classList.remove('fas'); // remove filled star
             staticstarElement.classList.add('far'); // empty star
             staticstarElement.dataset['star'] = 'N';
-        } 
+        }
         // checked star
         else {
             staticstarElement.classList.remove('far'); // remove empty star
             staticstarElement.classList.add('fas'); // filled star
-            staticstarElement.dataset['star'] = 'Y'; 
+            staticstarElement.dataset['star'] = 'Y';
         }
 
         dataObj = {
-            'questionId'  : questionId,
-            'testCardId'  : TestId,
-            'staryesorno' : staticstarElement.dataset['star']
+            'questionId': questionId,
+            'testCardId': TestId,
+            'staryesorno': staticstarElement.dataset['star']
         }
 
         var final_data = {
@@ -2924,12 +3042,12 @@ function makeAsStarQuestion(questionId, TestId){
 
         $.post(CONFIG['portal'] + "/api/make-star-question", final_data, function (res) {
             if (res.statusCode == 0) {
-                
+
             }
         }).fail(function (error) {
             console.error("API request failed:", error);
         });
-        
+
     }
 
 }
@@ -2943,10 +3061,10 @@ function enableOrDisableHold() {
     var promotePercentageValueElement = document.getElementById('promot_level')
 
     // if(!holdPercentageInputElement.value){
-        var reducedValue = 50
-        if(promotePercentageValueElement.value){
-            reducedValue = promotePercentageValueElement.value - (promotePercentageValueElement.value * (20 / 100));
-        }
+    var reducedValue = 50
+    if (promotePercentageValueElement.value) {
+        reducedValue = promotePercentageValueElement.value - (promotePercentageValueElement.value * (20 / 100));
+    }
     // }
 
     if (testHoldElement.checked) {
@@ -2961,17 +3079,17 @@ function enableOrDisableHold() {
 
 
 // it changes the Status in html
-function changeStatusInHtml(changeStatus){
-    
-    if(changeStatus == 'D'){
+function changeStatusInHtml(changeStatus) {
+
+    if (changeStatus == 'D') {
         document.getElementById('JdStatusShowElement').innerText = 'Publish'
     }
-    
-    if(changeStatus == 'A'){
+
+    if (changeStatus == 'A') {
         document.getElementById('JdStatusShowElement').innerText = 'Stop'
     }
 
-    if(changeStatus == 'P'){ // Paused JD
+    if (changeStatus == 'P') { // Paused JD
         document.getElementById('JdStatusShowElement').innerText = 'Publish'
     }
 
@@ -2979,43 +3097,43 @@ function changeStatusInHtml(changeStatus){
 
 
 // when we click Publish Button this function will be called
-function openPublishJd(){
+function openPublishJd() {
 
-    if(totalinterviwersLst != 0){
+    if (totalinterviwersLst != 0) {
 
         var totalTestLst = Object.keys(testsList).length
 
-        if(totalTestLst == 0){
+        if (totalTestLst == 0) {
             $('#jdPublishValidators').modal('show')
         }
-        else{
+        else {
 
-            if(JdStatus == 'D'){
+            if (JdStatus == 'D') {
                 changeStatusInHtml('D')
                 nextStatus = 'A'
-                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one','margin-top-adjust_two');
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one', 'margin-top-adjust_two');
                 document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_three');
                 document.getElementById('conformationPublish').innerHTML = "One's Publish you can not delete any of the tests"
                 document.getElementById('publishJdConform').innerText = 'Publish'
                 $('#JdPublishConformation').modal('show')
             }
-            
-            if(JdStatus == 'A'){
+
+            if (JdStatus == 'A') {
                 changeStatusInHtml('A')
                 nextStatus = 'P'
                 document.getElementById('conformationPublish').innerHTML = "Do you want to stop registering candidates to this JD"
-                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one','margin-top-adjust_three');
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_one', 'margin-top-adjust_three');
                 document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_two');
-    
+
                 document.getElementById('publishJdConform').innerText = 'Confirm'
                 $('#JdPublishConformation').modal('show')
             }
-    
-            if(JdStatus == 'P'){ // Paused JD
+
+            if (JdStatus == 'P') { // Paused JD
                 changeStatusInHtml('P')
                 nextStatus = 'A'
                 document.getElementById('conformationPublish').innerHTML = "Do you want to publish this JD again"
-                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_two','margin-top-adjust_three');
+                document.getElementById('publishConformationCloseBtn').classList.remove('margin-top-adjust_two', 'margin-top-adjust_three');
                 document.getElementById('publishConformationCloseBtn').classList.add('margin-top-adjust_one');
                 document.getElementById('publishJdConform').innerText = 'Publish'
                 $('#JdPublishConformation').modal('show')
@@ -3024,24 +3142,24 @@ function openPublishJd(){
         }
 
     }
-    else{
-        
+    else {
+
         $('#InterviewValidationModal').modal('show')
-        
+
     }
 
 }
 
 
 // career page Modal Open integrations script button
-function OpenIntegrationModal(){
-    
-    if(JdStatus == 'A'){
+function OpenIntegrationModal() {
+
+    if (JdStatus == 'A') {
         $('#jd_integration_modal').modal('show')
     }
-    else{
+    else {
         var jdTitle = document.getElementById('JDTitle').innerText
-        document.getElementById('carrersPageIntegrationValidation').innerText = jdTitle +' JD is not Published.'
+        document.getElementById('carrersPageIntegrationValidation').innerText = jdTitle + ' JD is not Published.'
         $('#integrationValidationJd').modal('show')
     }
 }
@@ -3085,13 +3203,13 @@ function OpenIntegrationModal(){
 //     }
 // }
 // here ===============================================================
-  
+
 
 function addQuestionsToList(Qid, elementId, test_Id) {
 
 
     var elements = document.querySelectorAll(`#${elementId}`);
-    
+
     if (elements.length === 0) {
         console.error('No elements found with the provided ID.');
         return;
@@ -3106,11 +3224,11 @@ function addQuestionsToList(Qid, elementId, test_Id) {
         var questionDataSet = questionElement_.dataset;
 
         // Extract attributes
-        let testCardId    = questionDataSet['testid']; 
-        let questionType_ = questionDataSet['type']; 
-        let subTopic_Id   = questionDataSet['subtopic']; 
-        let complexType   = questionDataSet['complexity']?.toLowerCase(); 
-        let QueMarks      = questionDataSet['marks']
+        let testCardId = questionDataSet['testid'];
+        let questionType_ = questionDataSet['type'];
+        let subTopic_Id = questionDataSet['subtopic'];
+        let complexType = questionDataSet['complexity']?.toLowerCase();
+        let QueMarks = questionDataSet['marks']
 
         // Normalize complexType keys
         const complexityMapping = {
@@ -3123,18 +3241,18 @@ function addQuestionsToList(Qid, elementId, test_Id) {
         complexType = complexityMapping[complexType] || complexType;
 
         // check if the test card is persent
-    
-        if(!allTestsQuestions[testCardId]){
+
+        if (!allTestsQuestions[testCardId]) {
             allTestsQuestions[testCardId] = {};
         }
-        
-        if(!allTestsQuestions[testCardId]['staticQuestions']){
+
+        if (!allTestsQuestions[testCardId]['staticQuestions']) {
             allTestsQuestions[testCardId]['staticQuestions'] = [];
         }
 
         // orginial
         // // Check if the subTopic is present
-        if(subTopic_Id) {
+        if (subTopic_Id) {
 
             if (!allTestsQuestions[testCardId][subTopic_Id]) {
                 allTestsQuestions[testCardId][subTopic_Id] = {
@@ -3160,52 +3278,52 @@ function addQuestionsToList(Qid, elementId, test_Id) {
 
         // checking questions are static questions are dynamic question
         // static questions adding in to static questions list
-        if(questionType_ == 'S'){
+        if (questionType_ == 'S') {
 
-            if(questionElement_.checked){
+            if (questionElement_.checked) {
                 // Push the question ID to the appropriate qIds array
                 allTestsQuestions[testCardId]['staticQuestions'].push(Qid)
 
-                if(testsList[testCardId]['papertype'] == 'S'){
+                if (testsList[testCardId]['papertype'] == 'S') {
 
                     // increase the test static questions count
                     // screening static questions count in to html
                     var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
                     var lstOfCountElements = document.getElementsByClassName(screeningStaticQuesElementId)
-        
+
                     for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
                         let element = lstOfCountElements[elem_];
-        
-                        if(element.innerText){
+
+                        if (element.innerText) {
                             let totalCount_ = parseInt(element.innerText) + 1
                             element.innerText = totalCount_
                         }
                     }
-        
+
                     // increase the paper weightage 
                     // paper weightage
                     var screeningWeightAgeElementId = `screeningTestId_${testCardId}`
                     var lstOfElements = document.getElementsByClassName(screeningWeightAgeElementId)
-        
+
                     for (let elem = 0; elem < lstOfElements.length; elem++) {
                         let element = lstOfElements[elem];
-        
-                        if(element.innerText){
+
+                        if (element.innerText) {
                             let totalMarks_ = parseInt(element.innerText) + parseInt(QueMarks)
                             element.innerText = totalMarks_
                         }
-        
+
                     }
 
                 }
 
-                if(testsList[testCardId]['papertype'] == 'E'){
+                if (testsList[testCardId]['papertype'] == 'E') {
 
                     var WeightAgeElementId = `TestWeightage_${testCardId}`
                     var element_ = document.getElementById(WeightAgeElementId)
 
-                    if(element_) {
-                        if(element_.innerText){
+                    if (element_) {
+                        if (element_.innerText) {
                             let totalMarks_ = parseInt(element_.innerText) + parseInt(QueMarks)
                             element_.innerText = totalMarks_
                         }
@@ -3214,9 +3332,9 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                     var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
                     var Qcount_Element = document.getElementById(StaticQuesElementId)
 
-                    if(Qcount_Element) {
+                    if (Qcount_Element) {
 
-                        if(Qcount_Element.innerText){
+                        if (Qcount_Element.innerText) {
                             let totalCount_ = parseInt(Qcount_Element.innerText) + 1
                             Qcount_Element.innerText = totalCount_
                         }
@@ -3224,11 +3342,11 @@ function addQuestionsToList(Qid, elementId, test_Id) {
 
                 }
 
-                if(testsList[testCardId]['papertype'] == 'I'){
+                if (testsList[testCardId]['papertype'] == 'I') {
 
                     let interviewTestQuesId = document.getElementById(`InterviewQuestionsCount_${testCardId}`)
-                    if(interviewTestQuesId){
-                        if(interviewTestQuesId.innerText){
+                    if (interviewTestQuesId) {
+                        if (interviewTestQuesId.innerText) {
                             let interQuestotalCount_ = parseInt(interviewTestQuesId.innerText) + 1
                             interviewTestQuesId.innerText = interQuestotalCount_
                         }
@@ -3238,13 +3356,13 @@ function addQuestionsToList(Qid, elementId, test_Id) {
 
 
             }
-            else{
+            else {
 
                 // Push the question ID to the appropriate qIds array
                 let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
-                if(checkQuestionInLst){
+                if (checkQuestionInLst) {
                     let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
-                    
+
                     // if index not equal to minus one that means index value is found 
                     if (index !== -1) {
                         // remove from the list
@@ -3252,7 +3370,7 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                     }
                 }
 
-                if(testsList[testCardId]['papertype'] == 'S'){
+                if (testsList[testCardId]['papertype'] == 'S') {
 
                     // Decrease the test static questions count
                     var screeningStaticQuesElementId = `screeningStaticQuestionsCount_${testCardId}`
@@ -3262,7 +3380,7 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                         let element = lstOfCountElements[elem_];
                         // element.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
 
-                        if(element.innerText){
+                        if (element.innerText) {
                             let totalCount_ = parseInt(element.innerText) - 1
                             element.innerText = totalCount_
                         }
@@ -3276,7 +3394,7 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                     for (let elem = 0; elem < lstOfElements.length; elem++) {
                         let element = lstOfElements[elem];
 
-                        if(element.innerText){
+                        if (element.innerText) {
                             let totalMarks_ = parseInt(element.innerText) - parseInt(QueMarks)
                             element.innerText = totalMarks_
                         }
@@ -3285,14 +3403,14 @@ function addQuestionsToList(Qid, elementId, test_Id) {
 
                 }
 
-                if(testsList[testCardId]['papertype'] == 'E'){
+                if (testsList[testCardId]['papertype'] == 'E') {
 
                     // test total score
                     var WeightAgeElementId = `TestWeightage_${testCardId}`
                     var element_ = document.getElementById(WeightAgeElementId)
 
-                    if(element_) {
-                        if(element_.innerText){
+                    if (element_) {
+                        if (element_.innerText) {
                             let totalMarks_ = parseInt(element_.innerText) - parseInt(QueMarks)
                             element_.innerText = totalMarks_
                         }
@@ -3303,8 +3421,8 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                     var StaticQuesElementId = `StaticQuestionsCount_${testCardId}`
                     var Qcount_Element = document.getElementById(StaticQuesElementId)
 
-                    if(Qcount_Element) {
-                        if(Qcount_Element.innerText){
+                    if (Qcount_Element) {
+                        if (Qcount_Element.innerText) {
                             let totalCount_ = parseInt(Qcount_Element.innerText) - 1
                             Qcount_Element.innerText = totalCount_
                         }
@@ -3312,11 +3430,11 @@ function addQuestionsToList(Qid, elementId, test_Id) {
 
                 }
 
-                if(testsList[testCardId]['papertype'] == 'I'){
+                if (testsList[testCardId]['papertype'] == 'I') {
 
                     let interviewTestQuesId = document.getElementById(`InterviewQuestionsCount_${testCardId}`)
-                    if(interviewTestQuesId){
-                        if(interviewTestQuesId.innerText){
+                    if (interviewTestQuesId) {
+                        if (interviewTestQuesId.innerText) {
                             let interQuestotalCount_ = parseInt(interviewTestQuesId.innerText) - 1
                             interviewTestQuesId.innerText = interQuestotalCount_
                         }
@@ -3330,18 +3448,18 @@ function addQuestionsToList(Qid, elementId, test_Id) {
 
         // checking questions are static questions are dynamic question
         // dynamic questions adding in to questions list
-        if(questionType_ == 'D'){
+        if (questionType_ == 'D') {
 
-            if(questionElement_.checked){
+            if (questionElement_.checked) {
                 // Push the question ID to the appropriate qIds array
                 allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.push(Qid);
             }
-            else{
-                
+            else {
+
                 let checkQuestionInLst = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.includes(Qid)
-                if(checkQuestionInLst){
+                if (checkQuestionInLst) {
                     let index = allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.indexOf(Qid);
-                    
+
                     if (index !== -1) {
                         // remove from the list
                         allTestsQuestions[testCardId][subTopic_Id][complexType].qIds.splice(index, 1);
@@ -3354,9 +3472,9 @@ function addQuestionsToList(Qid, elementId, test_Id) {
 
         // checking questions are static questions are dynamic question
         // jd basic screening questions in to the static questions list
-        if(questionType_ == 'screening'){
+        if (questionType_ == 'screening') {
 
-            if(questionElement_.checked){
+            if (questionElement_.checked) {
                 // Push the question ID to the appropriate qIds array
                 allTestsQuestions[testCardId]['staticQuestions'].push(Qid)
 
@@ -3368,7 +3486,7 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                 for (let elem_ = 0; elem_ < lstOfCountElements.length; elem_++) {
                     let element = lstOfCountElements[elem_];
 
-                    if(element.innerText){
+                    if (element.innerText) {
                         let totalCount_ = parseInt(element.innerText) + 1
                         element.innerText = totalCount_
                     }
@@ -3382,7 +3500,7 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                 for (let elem = 0; elem < lstOfElements.length; elem++) {
                     let element = lstOfElements[elem];
 
-                    if(element.innerText){
+                    if (element.innerText) {
                         let totalMarks_ = parseInt(element.innerText) + parseInt(QueMarks)
                         element.innerText = totalMarks_
                     }
@@ -3390,13 +3508,13 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                 }
 
             }
-            else{
-                
+            else {
+
                 // Push the question ID to the appropriate qIds array
                 let checkQuestionInLst = allTestsQuestions[testCardId]['staticQuestions'].includes(Qid)
-                if(checkQuestionInLst){
+                if (checkQuestionInLst) {
                     let index = allTestsQuestions[testCardId]['staticQuestions'].indexOf(Qid);
-                    
+
                     // if index not equal to minus one that means index value is found 
                     if (index !== -1) {
                         // remove from the list
@@ -3412,7 +3530,7 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                     let element = lstOfCountElements[elem_];
                     // element.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
 
-                    if(element.innerText){
+                    if (element.innerText) {
                         let totalCount_ = parseInt(element.innerText) - 1
                         element.innerText = totalCount_
                     }
@@ -3426,23 +3544,23 @@ function addQuestionsToList(Qid, elementId, test_Id) {
                 for (let elem = 0; elem < lstOfElements.length; elem++) {
                     let element = lstOfElements[elem];
 
-                    if(element.innerText){
+                    if (element.innerText) {
                         let totalMarks_ = parseInt(element.innerText) - parseInt(QueMarks)
                         element.innerText = totalMarks_
                     }
 
                 }
-                
+
 
             }
 
         }
-       
+
     } else {
         console.log('No element found with the matching test-id');
     }
 
-    
+
 
 }
 
@@ -3463,42 +3581,42 @@ function savePaper(BtnElement) {
         // console.log('allTestsQuestions',allTestsQuestions)
 
         dataObj = {
-            'paperid'              :  testsList[testid_]['paperid'],
-            'paperType'            :  paperType,
-            'paperTitle'           :  testTitle.innerText,
-            'questionsData'        :  allTestsQuestions[testid]
+            'paperid': testsList[testid_]['paperid'],
+            'paperType': paperType,
+            'paperTitle': testTitle.innerText,
+            'questionsData': allTestsQuestions[testid]
         };
 
-        
+
         checkCandidateRegistration().then(data => {
 
-            if(data == 'N'){
+            if (data == 'N') {
 
                 var final_data = {
                     "data": JSON.stringify(dataObj),
                     csrfmiddlewaretoken: CSRF_TOKEN,
                 };
-        
+
                 // First AJAX call
                 $.post(CONFIG['acert'] + "/api/save-paper", final_data, function (res) {
-        
+
                     if (res.statusCode == 0 && res.data) {
-        
+
                         var data = res.data;
                         selectedPaper = data;
-        
+
                         var dataObj = {
-                            'createOrUpdate' : 'update',
+                            'createOrUpdate': 'update',
                             'createdPaperid': data['createdPaperid'],
                             'testId': testid,
                             'jdId': jdId
                         };
-        
+
                         var final_data_jd = {
                             'data': JSON.stringify(dataObj),
                             csrfmiddlewaretoken: CSRF_TOKEN,
                         };
-        
+
                         // Saving Paper id in hireline with this api
                         $.post(CONFIG['portal'] + "/api/jd-add-or-update-test", final_data_jd, function (res) {
                             resolve(data); // Resolve the promise with the data after both calls
@@ -3506,8 +3624,8 @@ function savePaper(BtnElement) {
                         }).fail((error) => {
                             reject(error); // Reject on second API call error
                         });
-        
-                    } 
+
+                    }
                     else {
                         reject(new Error("Failed to create paper")); // Reject on first API call error
                     }
@@ -3520,16 +3638,16 @@ function savePaper(BtnElement) {
 
 
         })
-        .catch(err => {
-            console.error("Error occurred:", err);
-        });
+            .catch(err => {
+                console.error("Error occurred:", err);
+            });
 
     })
 }
 
 
 // user entered an number in the input or changed the input value is updated in the varibale
-function dynamicQuestionscountSave(inputElement){
+function dynamicQuestionscountSave(inputElement) {
 
     var dynamicInptElement = document.getElementById(inputElement)
     var dynInptDataSet = dynamicInptElement.dataset
@@ -3537,12 +3655,12 @@ function dynamicQuestionscountSave(inputElement){
     var testId = dynInptDataSet['testid']
     var subTopic_Id = dynInptDataSet['subtopicid']
 
-    if(subTopic_Id){
+    if (subTopic_Id) {
 
         var complexitytype = dynInptDataSet['complexitytype']
-        
+
         if (!allTestsQuestions[testId]) {
-            allTestsQuestions[testId] = {'staticQuestions':[]};
+            allTestsQuestions[testId] = { 'staticQuestions': [] };
         }
 
         // Check if the subTopic is present
@@ -3558,19 +3676,19 @@ function dynamicQuestionscountSave(inputElement){
 
         allTestsQuestions[testId][subTopic_Id][complexitytype]['qCount'] = dynamicInptElement.value
 
-        updateTestWeightage(allTestsQuestions[testId],testId)
-        
+        updateTestWeightage(allTestsQuestions[testId], testId)
+
 
     }
-    
-    if(testsList[testId]['papertype'] == 'S'){
+
+    if (testsList[testId]['papertype'] == 'S') {
 
         let codingDynamicElemId = `DynamicQuestionsCount_${testId}`
         let codingDynamicElem = document.getElementById(codingDynamicElemId)
 
         // if(codingDynamicElem){
         //     var labelCount = parseInt(codingDynamicElem.innerText)
- 
+
         //     if(isNaN(labelCount)){
         //         labelCount = 0
         //     }
@@ -3582,11 +3700,11 @@ function dynamicQuestionscountSave(inputElement){
         //     if(isNaN(parseInt(dynamicInptElement.value))){
         //         DynInptVal = 0
         //     }
-            
+
         //     let finalDynCount = labelValue + DynInptVal
 
         //     codingDynamicElem.innerText = finalDynCount
-            
+
         //     if(isNaN(dynamicInptElement.value)){
         //         dynamicQuestionCountInputValueBackup = 0
         //     }
@@ -3598,37 +3716,37 @@ function dynamicQuestionscountSave(inputElement){
 
         // }
         let totalDynamicCount = 0;
-    let dynamicInputs = document.querySelectorAll(
-        `input[data-testid='${testId}'].dynamicInpt`
-    );
+        let dynamicInputs = document.querySelectorAll(
+            `input[data-testid='${testId}'].dynamicInpt`
+        );
 
-    dynamicInputs.forEach((inp) => {
-        let val = parseInt(inp.value);
-        if (!isNaN(val)) totalDynamicCount += val;
-    });
+        dynamicInputs.forEach((inp) => {
+            let val = parseInt(inp.value);
+            if (!isNaN(val)) totalDynamicCount += val;
+        });
 
-    // Update the total label
-    let totalLabelElem = document.getElementById(`DynamicQuestionsCount_${testId}`);
-    if (totalLabelElem) {
-        totalLabelElem.innerText = totalDynamicCount;
+        // Update the total label
+        let totalLabelElem = document.getElementById(`DynamicQuestionsCount_${testId}`);
+        if (totalLabelElem) {
+            totalLabelElem.innerText = totalDynamicCount;
+        }
+
+        // Backup new value
+        dynamicQuestionCountInputValueBackup = newValue;
+
+        console.log(`Updated total for Test ${testId}: ${totalDynamicCount}`);
+
+
     }
 
-    // Backup new value
-    dynamicQuestionCountInputValueBackup = newValue;
-
-    console.log(`Updated total for Test ${testId}: ${totalDynamicCount}`);
-        
-
-    }
-
-    if(testsList[testId]['papertype'] == 'E'){
+    if (testsList[testId]['papertype'] == 'E') {
 
         let codingDynamicElemId = `DynamicQuestionsCount_${testId}`
         let codingDynamicElem = document.getElementById(codingDynamicElemId)
 
         // if(codingDynamicElem){
         //     var labelCount = parseInt(codingDynamicElem.innerText)
- 
+
         //     if(isNaN(labelCount)){
         //         labelCount = 0
         //     }
@@ -3640,7 +3758,7 @@ function dynamicQuestionscountSave(inputElement){
         //         DynInptVal = 0
         //     }
 
-            
+
         //     let finalDynCount = labelValue + parseInt(DynInptVal)
 
         //     if (isNaN(finalDynCount)) {
@@ -3651,7 +3769,7 @@ function dynamicQuestionscountSave(inputElement){
         //         codingDynamicElem.innerText = labelValue + parseInt(DynInptVal)
         //     }
 
-            
+
         //     if(isNaN(dynamicInptElement.value)){
         //         dynamicQuestionCountInputValueBackup = 0
         //     }
@@ -3661,81 +3779,81 @@ function dynamicQuestionscountSave(inputElement){
 
         // }
         let totalDynamicCount = 0;
-    let dynamicInputs = document.querySelectorAll(
-        `input[data-testid='${testId}'].dynamicInpt`
-    );
+        let dynamicInputs = document.querySelectorAll(
+            `input[data-testid='${testId}'].dynamicInpt`
+        );
 
-    dynamicInputs.forEach((inp) => {
-        let val = parseInt(inp.value);
-        if (!isNaN(val)) totalDynamicCount += val;
-    });
+        dynamicInputs.forEach((inp) => {
+            let val = parseInt(inp.value);
+            if (!isNaN(val)) totalDynamicCount += val;
+        });
 
-    // Update the total label
-    let totalLabelElem = document.getElementById(`DynamicQuestionsCount_${testId}`);
-    if (totalLabelElem) {
-        totalLabelElem.innerText = totalDynamicCount;
-    }
+        // Update the total label
+        let totalLabelElem = document.getElementById(`DynamicQuestionsCount_${testId}`);
+        if (totalLabelElem) {
+            totalLabelElem.innerText = totalDynamicCount;
+        }
 
-    // Backup new value
-    dynamicQuestionCountInputValueBackup = newValue;
+        // Backup new value
+        dynamicQuestionCountInputValueBackup = newValue;
 
-    console.log(`Updated total for Test ${testId}: ${totalDynamicCount}`);
-       
+        console.log(`Updated total for Test ${testId}: ${totalDynamicCount}`);
 
-        console.log('dynamicQuestionCountInputValueBackup',dynamicQuestionCountInputValueBackup)
+
+        console.log('dynamicQuestionCountInputValueBackup', dynamicQuestionCountInputValueBackup)
 
     }
 
 }
 
 
-function DynamicInputValueBackUp(element_Id){
+function DynamicInputValueBackUp(element_Id) {
 
     dynamicQuestionCountInputValueBackup = 0
 
     var Elem_ = document.getElementById(element_Id)
-    if(Elem_){
-        if(Elem_.value){
+    if (Elem_) {
+        if (Elem_.value) {
             dynamicQuestionCountInputValueBackup = Elem_.value
         }
-        else{
+        else {
             dynamicQuestionCountInputValueBackup = 0
         }
     }
 
-    console.log('dynamicQuestionCountInputValueBackup',dynamicQuestionCountInputValueBackup)
+    console.log('dynamicQuestionCountInputValueBackup', dynamicQuestionCountInputValueBackup)
 
 }
 
 
 // this function takes data from the backend and insert in to a variable that contains static and dynamic question that variable go to backend
-function fillDynamicQuestionsInputField(TestCardid_,data) {
+function fillDynamicQuestionsInputField(TestCardid_, data) {
 
     for (const subtopicId in data) {
         const complexities = data[subtopicId];
 
-        if(!allTestsQuestions[TestCardid_]){
+        if (!allTestsQuestions[TestCardid_]) {
             allTestsQuestions[TestCardid_] = {};
         }
 
-        if(!allTestsQuestions[TestCardid_]['staticQuestions']){
+        if (!allTestsQuestions[TestCardid_]['staticQuestions']) {
             allTestsQuestions[TestCardid_]['staticQuestions'] = [];
         }
-        
+
         if (!allTestsQuestions[TestCardid_][subtopicId]) {
             allTestsQuestions[TestCardid_][subtopicId] = {
-                veryLow:  { qCount: 0 ,  qIds: [] },
-                low:      { qCount: 0 ,  qIds: [] },
-                medium:   { qCount: 0 ,  qIds: [] },
-                high:     { qCount: 0 ,  qIds: [] },
-                veryHigh: { qCount: 0 ,  qIds: [] }
+                veryLow: { qCount: 0, qIds: [] },
+                low: { qCount: 0, qIds: [] },
+                medium: { qCount: 0, qIds: [] },
+                high: { qCount: 0, qIds: [] },
+                veryHigh: { qCount: 0, qIds: [] }
             };
         }
-        
-        // inserting dynamic questions count in to the variable.
-        if(subtopicId){
 
-            if(complexities){
+        // inserting dynamic questions count in to the variable.
+        if (subtopicId) {
+
+            if (complexities) {
                 allTestsQuestions[TestCardid_][subtopicId]['veryLow']['qCount'] = parseInt(complexities['veryLow'])
                 allTestsQuestions[TestCardid_][subtopicId]['low']['qCount'] = parseInt(complexities['low'])
                 allTestsQuestions[TestCardid_][subtopicId]['medium']['qCount'] = parseInt(complexities['medium'])
@@ -3750,14 +3868,14 @@ function fillDynamicQuestionsInputField(TestCardid_,data) {
 
             // Construct the dynamic element ID
             const elementId = `DynamicInput_TestId_${TestCardid_}_subTopic_${subtopicId}_complex_${complexity}`;
-            
+
             // Get the input element by ID
             const complexityInputElement = document.getElementById(elementId);
 
             // If the element exists, set its value
             if (complexityInputElement) {
                 complexityInputElement.value = complexities[complexity];
-            } 
+            }
         }
     }
 
@@ -3804,18 +3922,18 @@ function checkCandidateRegistration() {
 }
 //  code in between
 
-function paperQuestionsCountAndMarksSetInHTML(papersData){
-    
+function paperQuestionsCountAndMarksSetInHTML(papersData) {
+
     for (var key in workFlowDetails) {
-                    
+
         if (workFlowDetails.hasOwnProperty(key)) {
 
             var workflowData = workFlowDetails[key]
             var testCardId__ = workflowData['id']
 
-            if(papersData[workflowData['paperid']]){
+            if (papersData[workflowData['paperid']]) {
 
-                if(workflowData['papertype'] == 'S'){
+                if (workflowData['papertype'] == 'S') {
 
                     // paper weightage
                     var screeningWeightAgeElementId = `screeningTestId_${testCardId__}`
@@ -3838,7 +3956,7 @@ function paperQuestionsCountAndMarksSetInHTML(papersData){
                     // inserting dynamic questions count in to html
                     var ScrenningDynamicQuesCountElement = document.getElementById(`DynamicQuestionsCount_${testCardId__}`)
 
-                    if(ScrenningDynamicQuesCountElement){
+                    if (ScrenningDynamicQuesCountElement) {
                         ScrenningDynamicQuesCountElement.innerText = papersData[workflowData['paperid']]['dynamicQuestionsCount']
                     }
 
@@ -3846,34 +3964,34 @@ function paperQuestionsCountAndMarksSetInHTML(papersData){
 
                 }
 
-                if(workflowData['papertype'] == 'E'){
+                if (workflowData['papertype'] == 'E') {
 
                     papersData[workflowData['paperid']]['totalMarks']
 
                     var codingPaperTotalWeightage = document.getElementById(`TestWeightage_${testCardId__}`)
-                    if(codingPaperTotalWeightage){
+                    if (codingPaperTotalWeightage) {
                         codingPaperTotalWeightage.innerText = papersData[workflowData['paperid']]['totalMarks']
                     }
 
                     var codingStaticQues = document.getElementById(`StaticQuestionsCount_${testCardId__}`)
-                    if(codingStaticQues){
+                    if (codingStaticQues) {
                         codingStaticQues.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
                     }
 
                     var codingDynamicQuesCount = document.getElementById(`DynamicQuestionsCount_${testCardId__}`)
-                    if(codingDynamicQuesCount){
+                    if (codingDynamicQuesCount) {
                         codingDynamicQuesCount.innerText = papersData[workflowData['paperid']]['dynamicQuestionsCount']
                     }
 
                 }
 
-                if(workflowData['papertype'] == 'I'){
+                if (workflowData['papertype'] == 'I') {
 
                     var interviewQuestionsCount = document.getElementById(`InterviewQuestionsCount_${testCardId__}`)
-                    if(interviewQuestionsCount){
+                    if (interviewQuestionsCount) {
                         interviewQuestionsCount.innerText = papersData[workflowData['paperid']]['staticQuestionsCount']
                     }
-                    
+
                 }
 
             }
@@ -3943,9 +4061,9 @@ function updateTestWeightage(test_data, test_id) {
     // Calculate total marks for static questions
     if (test_data.staticQuestions && Array.isArray(test_data.staticQuestions)) {
         test_data.staticQuestions.forEach(qId => {
-            
+
             let element = document.getElementById(`questionId_${qId}_${test_id}_S`);
-        
+
             // If not found, try to find the element without the "_S" suffix (JD Based Questions)
             if (!element) {
                 element = document.getElementById(`questionId-${test_id}_${qId}`);
@@ -3955,15 +4073,15 @@ function updateTestWeightage(test_data, test_id) {
                 const marks = parseFloat(element.getAttribute('data-marks')) || 0;
                 totalMarks += marks; // Add the marks for the static question
             }
-            else{
+            else {
                 console.log('Element not found');
-                
+
             }
         });
     }
 
     console.log("Consolidated Total Marks (including Static Questions):", totalMarks);
-   
+
 
     // Assuming the total marks are to be updated in the corresponding <span> element
     const totalMarksElement = document.querySelector(`#TestWeightage_${test_id}`);
@@ -3978,11 +4096,11 @@ function updateTestWeightage(test_data, test_id) {
 
 
 
-function createNewQuestionContainer(test_id, paperType){
+function createNewQuestionContainer(test_id, paperType) {
 
-    if(paperType == 'I'){
-       styleElement =  `style = "margin-top:1rem"`
-    }else {
+    if (paperType == 'I') {
+        styleElement = `style = "margin-top:1rem"`
+    } else {
         styleElement = ''
     }
 
@@ -4014,7 +4132,7 @@ function createQuestionModel(test_id, paperType, QuesType) {
     //     'question_marks': '1'
     // },"S")
 
-    if (QuesType == 'screening'){
+    if (QuesType == 'screening') {
 
         let subTopicElement = document.getElementById("new_question_subtopic_name");
         subTopicElement.textContent = "JD Screening";
@@ -4022,7 +4140,7 @@ function createQuestionModel(test_id, paperType, QuesType) {
         subTopicElement.setAttribute("data-new-question-subtopicid", '');
         subTopicElement.setAttribute("data-test-id", test_id);
         subTopicElement.setAttribute("data-paper-type", paperType);
-       
+
         $('#question-complexity-div').hide();
         $('#expected_response_div').show();
 
@@ -4038,29 +4156,29 @@ function createQuestionModel(test_id, paperType, QuesType) {
         $('#new_question_type option[value="V"]').show();
 
 
-    }else{
+    } else {
 
         let key = `previousSelectedSubTopicId_${test_id}`;
-    
+
         let previousSelectedSubTopicId = skillsClickesTracker.hasOwnProperty(key) ? skillsClickesTracker[key] : null;
-    
+
         let subTopicElement = document.getElementById("new_question_subtopic_name");
-    
+
         if (previousSelectedSubTopicId) {
             let subTopicSourceElement = document.getElementById(previousSelectedSubTopicId);
             if (subTopicSourceElement) {
-    
+
                 let subTopicText = subTopicSourceElement.textContent.trim();
                 let subTopicId = subTopicSourceElement.getAttribute("data-subtopicid");
                 subTopicElement.textContent = subTopicText;
-    
+
                 subTopicElement.setAttribute("data-new-question-subtopicid", subTopicId);
                 subTopicElement.setAttribute("data-test-id", test_id);
                 subTopicElement.setAttribute("data-paper-type", paperType);
                 subTopicElement.setAttribute("data-new-question-typefor", 'knowledge');
-                
-                console.log("paperType",paperType);
-                
+
+                console.log("paperType", paperType);
+
                 if (paperType === "I") {
 
                     $('#expected_response_div').hide();
@@ -4097,13 +4215,13 @@ function createQuestionModel(test_id, paperType, QuesType) {
                     $('#new_question_type').val('B').change();
                 }
 
-    
+
                 let modalElement = document.getElementById('createQuestionModal');
                 modalElement.removeAttribute("aria-hidden");
-    
+
                 var myModal = new bootstrap.Modal(modalElement);
                 myModal.show();
-    
+
             } else {
                 console.log("Element not found for ID:", subTopicId);
             }
@@ -4123,7 +4241,7 @@ $(document).on('change', '#new_question_type', function () {
 
 document.getElementById('createQuestionModal').addEventListener('hidden.bs.modal', function () {
     let subTopicElement = document.getElementById("new_question_subtopic_name");
-    
+
     if (subTopicElement) {
         subTopicElement.textContent = "N/A";
 
@@ -4146,17 +4264,17 @@ document.getElementById("save-new-question").onclick = function () {
     paper_type = subTopicElement.getAttribute("data-paper-type");
 
     $('#new-question-form').unbind('submit').bind('submit', function (event) {
-        event.preventDefault(); 
+        event.preventDefault();
     })
 
     dataObjs = {
         'company_id': companyId,
         'subtopic_id': subtopic_id,
-        'ques_typefor':ques_typefor,
+        'ques_typefor': ques_typefor,
         'question': $('#new_question_text').val(),
         'question_type': $('#new_question_type').val(),
-        'question_complexity':$('#new_question_complexity').val(),
-        'expected_answer':  $("input[name='expected-response']:checked").val(),
+        'question_complexity': $('#new_question_complexity').val(),
+        'expected_answer': $("input[name='expected-response']:checked").val(),
     }
 
     var final_data = {
@@ -4177,15 +4295,15 @@ document.getElementById("save-new-question").onclick = function () {
 
             questionData = res.data
 
-            if(ques_typefor == "basic-screening"){
+            if (ques_typefor == "basic-screening") {
 
-                addNewBasicScreeningQuestion(test_id,questionData);
+                addNewBasicScreeningQuestion(test_id, questionData);
 
                 scrollToSection(`QuestionContainerId_${questionData["question_id"]}`);
 
-            }else {
+            } else {
 
-                addKnowledgeBasedQuestion(test_id,questionData,paper_type);
+                addKnowledgeBasedQuestion(test_id, questionData, paper_type);
 
                 scrollToSection(`questionId_${questionData["question_id"]}_${test_id}_S`);
 
@@ -4206,7 +4324,7 @@ document.getElementById("save-new-question").onclick = function () {
 }
 
 
-function addNewBasicScreeningQuestion(test_id,questionData){
+function addNewBasicScreeningQuestion(test_id, questionData) {
 
     screeningContainer = document.getElementById(`basicScreeningContainer_${test_id}`);
 
@@ -4242,13 +4360,13 @@ function addNewBasicScreeningQuestion(test_id,questionData){
         allTestsQuestions[test_id]['starQuestions'] = []; // Initialize starQuestions as an empty array
     }
 
-    allTestsQuestions[test_id]['starQuestions'].push({"qid":  questionData["question_id"], 'star_flag': 'N'}) 
-    console.log("allTestsQuestions[test_id]",allTestsQuestions[test_id]);
-    
+    allTestsQuestions[test_id]['starQuestions'].push({ "qid": questionData["question_id"], 'star_flag': 'N' })
+    console.log("allTestsQuestions[test_id]", allTestsQuestions[test_id]);
+
 }
 
 
-function addKnowledgeBasedQuestion(test_id,questionData,paperType){
+function addKnowledgeBasedQuestion(test_id, questionData, paperType) {
 
     let testQuestionsContainer = document.getElementById(`SubTopicQuestionsContainer_${questionData['question_subtopic']}_test_${test_id}`)
 
@@ -4272,7 +4390,7 @@ function addKnowledgeBasedQuestion(test_id,questionData,paperType){
 
     let questionComplexity = questionData['question_complexity']
 
-    let complexityMapping = {1:'verylow',2:'low',3:'medium',4:'high',5:'veryhigh'}
+    let complexityMapping = { 1: 'verylow', 2: 'low', 3: 'medium', 4: 'high', 5: 'veryhigh' }
 
     let complexityType = complexityMapping[questionComplexity];
 
@@ -4304,67 +4422,67 @@ function addKnowledgeBasedQuestion(test_id,questionData,paperType){
         undefined
     )
 
-    if(complexityContainer){
+    if (complexityContainer) {
 
-        if(existingElement){
+        if (existingElement) {
 
             let existingQuestionsOl = existingElement.querySelector("ol");
-    
+
             if (existingQuestionsOl) {
-        
+
                 let newOl = complexityContainer.querySelector("ol");
-        
+
                 if (newOl) {
-    
+
                     let newDivs = newOl.querySelectorAll("div.customQuestionContainer");
-                    console.log("newDivs",newDivs);
-                    
+                    console.log("newDivs", newDivs);
+
                     newDivs.forEach(div => {
                         existingQuestionsOl.appendChild(div);
                     });
 
-                    if(paperType != "I"){
-                        setTimeout(() => updateDynamicContainerVisibility(existingElement,questionData['question_subtopic'],test_id), 0);
+                    if (paperType != "I") {
+                        setTimeout(() => updateDynamicContainerVisibility(existingElement, questionData['question_subtopic'], test_id), 0);
                     }
 
 
-        
+
                 } else {
                     console.log("Error: No <ol> found inside the generated complexity container.");
                 }
-    
+
             } else {
                 console.log("Error: No <ol> found inside the existing complexity container.");
             }
-    
-        }else {
-    
+
+        } else {
+
             let children = [...testQuestionsContainer.children];
-            
+
             let inserted = false;
-    
+
             for (let child of children) {
                 let childComplexityType = child.getAttribute("data-complexitytype");
                 let childComplexityIndex = Object.values(complexityMapping).indexOf(childComplexityType);
                 let newComplexityIndex = Object.values(complexityMapping).indexOf(complexityType);
-    
+
                 if (newComplexityIndex < childComplexityIndex) {
                     testQuestionsContainer.insertBefore(complexityContainer, child);
                     inserted = true;
                     break;
                 }
             }
-    
+
             if (!inserted) {
                 testQuestionsContainer.appendChild(complexityContainer);
             }
 
-            if(paperType != "I"){
-                setTimeout(() => updateDynamicContainerVisibility(complexityContainer,questionData['question_subtopic'],test_id), 0);
+            if (paperType != "I") {
+                setTimeout(() => updateDynamicContainerVisibility(complexityContainer, questionData['question_subtopic'], test_id), 0);
             }
         }
 
-    }else {
+    } else {
         console.log("Error: Complexity container creation failed.");
     }
 
@@ -4390,15 +4508,15 @@ function scrollToSection(id) {
     document.getElementById(id).scrollIntoView({ behavior: "smooth" });
 }
 
-function updateDynamicContainerVisibility(complexityContainer,subTopicId,TestId) {
+function updateDynamicContainerVisibility(complexityContainer, subTopicId, TestId) {
     let questionsOl = complexityContainer.querySelector("ol");
-    
+
     if (questionsOl) {
 
-        let dynamicContainer =  complexityContainer.querySelector(`#complexityDynamicContainer_subtopicId_${subTopicId}_testId_${TestId}`);
-        
+        let dynamicContainer = complexityContainer.querySelector(`#complexityDynamicContainer_subtopicId_${subTopicId}_testId_${TestId}`);
+
         let totalQuestions = questionsOl.querySelectorAll("div.customQuestionContainer").length;
-        
+
         if (totalQuestions > 1 && dynamicContainer) {
             dynamicContainer.removeAttribute("hidden");
 
@@ -4444,7 +4562,7 @@ function previewQuestions(testId, paperType) {
                     success: function (res2) {
                         if (res2.statusCode === 0 && res2.data) {
                             const questions = res2.data;
-                            console.log("questions",questions)
+                            console.log("questions", questions)
                             $("#preview_paper_details").html(
                                 `<span>Total Questions : ${questions.length} </span>`
                             );
@@ -4481,9 +4599,9 @@ function previewQuestions(testId, paperType) {
                             $("#question_preview").html("<p>No questions found.</p>");
                         }
 
-                               
+
                         //         $("#question_preview").append(`
-                                   
+
                         //             <div class="question mb-3">
                         //                 <p style="margin: 0; line-height: 2.0;">
                         //                     <strong>${sno}. </strong>${q.question || "dynamic question"}
@@ -4571,3 +4689,51 @@ function copyPopoverUrl() {
         setTimeout(() => (msg.style.display = "none"), 1500);
     });
 }
+
+
+
+
+function highlightQuestion(qid) {
+
+    let checkboxes = document.querySelectorAll(`[data-qid="${qid}"]`);
+    let active = Array.from(checkboxes).some(cb => cb.checked);
+
+    let elements = document.querySelectorAll(`[id^="QuestionContainerId_${qid}"]`);
+
+    elements.forEach(el => {
+        el.classList.toggle("fw700", active);
+    });
+}
+$(document).on("change", `[id^="questionId_"], [id^="questionId-"]`, function () {
+    let qid = this.dataset.qid;
+    if (qid) {
+        highlightQuestion(qid);
+    }
+});
+
+
+setTimeout(() => {
+    $(`[id^="questionId_"], [id^="questionId-"]`).each(function () {
+        if (this.dataset.qid) {
+            highlightQuestion(this.dataset.qid);
+        }
+    });
+}, 0);
+function highlightAllQuestions() {
+
+    let processed = new Set();
+
+    document.querySelectorAll('[data-qid]').forEach(cb => {
+
+        let qid = cb.dataset.qid;
+
+        if (!processed.has(qid)) {
+            highlightQuestion(qid);
+            processed.add(qid);
+        }
+    });
+}
+
+$(document).on("change", `[data-qid]`, function () {
+    highlightQuestion(this.dataset.qid);
+});

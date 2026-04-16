@@ -550,3 +550,11 @@ table.dataTable thead th, table.dataTable thead td {
   margin-right: 10px;
   cursor: pointer;
 }
+
+.fw600{
+  font-weight: 600 !important;
+}
+
+.fw700{
+  font-weight: 700 !important;
+}
